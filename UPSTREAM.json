@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/NousResearch/hermes-agent",
+  "commit": "73b9f2af7b87a619f42396710c332be04353aef2",
+  "imported_on": "2026-10-15",
+  "method": "Source snapshot; upstream Git history not imported",
+  "license": "MIT",
+  "maintenance_guide": "docs/project/UPSTREAM.md"
+}
