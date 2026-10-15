@@ -20,6 +20,8 @@ Read `DEVELOPMENT.md`, `docs/project/ENGINEERING.md`, and the relevant nested in
 
 **Task:** choose one repeatable multi-session task from the audit and improve how its goals, decisions, preferences, or unresolved work survive a session boundary.
 
+The initial [Home thread implementation](HOME_THREAD.md) adds stable CLI/Ink/web navigation and bounded, source-linked transcript recall alongside independent chats. Deterministic integration tests cover request assembly, profile/owner boundaries, resets, and exclusions. The [larger design](HOME_THREAD_PLAN.md) still requires measured retrieval quality, learned-fact correction/forgetting semantics, and separate authorization/notification design before proactive coordination.
+
 **Done when:** a synthetic before/after fixture demonstrates improved retrieval; source/freshness and correction/deletion behavior are documented; token use is bounded; session caching and profile-isolation regressions are covered. Record the storage/assembly decision before adding a new subsystem.
 
 ## P3 — Deliver one proactive workflow

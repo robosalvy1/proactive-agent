@@ -2,6 +2,17 @@
 
 Record durable decisions with date, context, chosen approach, and consequences. Keep alternatives only when they explain a material tradeoff.
 
+## 2026-10-15 — Bound Home reflection and preserve source authority
+
+Home dreaming now adds opt-in reflection to the existing gateway housekeeping loop. Store a bounded set of source-linked candidate notes and durable reservations/cadence/day counters in profile-owned `state_meta`; do not overwrite native memory or introduce another scheduler. Use existing auxiliary provider resolution with one completion attempt per reservation, capped input/output and no tool execution. Preserve source quotations, invalidate changed/excluded evidence on reads and before publication, and retain a physical reservation while a revoked request finishes. Notes remain fallible data on the current-user recall sidecar; no unsolicited notifications or task continuation. [DREAMING.md](DREAMING.md) defines the implemented controls, budgets and limits.
+
+## 2026-10-15 — Preserve multiple chats in the Home thread direction
+
+The requested “God thread” feature retains multiple chats in both CLI and web. A persistent Home binding resolves an ordinary conversation through existing compression and local reset lineage. New personal chats participate after explicit Home enablement; older chats require explicit sharing. Separate transcripts and existing turn ownership remain intact.
+
+The initial continuity source reads bounded, dated transcript excerpts through existing SQLite FTS. It stores only routing/participation metadata in `state_meta`, avoiding a second learned-fact store and extraction queue before those prove necessary. Managed workers use an owner-mediated read, not direct database access. Recall enters the current-user API sidecar, preserving existing prompt prefixes and the configured external memory provider. Exclusion affects future Home retrieval only; native notes, explicit history search, and previously sent context keep their existing semantics. [HOME_THREAD.md](HOME_THREAD.md) documents the implemented scope; [HOME_THREAD_PLAN.md](HOME_THREAD_PLAN.md) retains future design gates.
+
+
 ## 2026-10-15 — Use Hermes source as the foundation
 
 The user wants to start with Hermes and evolve a polished, proactive harness with excellent context. Import the upstream source into this repository, retaining its license and recording the exact revision in `UPSTREAM.json`. Agents can edit existing execution paths and reuse the upstream test suite directly.

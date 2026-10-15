@@ -1882,6 +1882,16 @@ export interface BrowserControllerParams {
 export interface BrowserControllerDetachResult {
   detached?: boolean
 }
+export interface HomeActionParams {
+  session_id?: string | null
+  profile?: string | null
+  action?: '' | 'status' | 'overview' | 'share' | 'exclude' | 'off' | 'on' | 'dream' | 'dream status' | 'dream on' | 'dream off' | 'dream now' | 'dream notes' | 'dream clear'
+  cwd?: string | null
+}
+export interface HomeActionResult {
+  output: string
+  session_id?: string | null
+}
 export interface I18nLanguagesResult {
   languages: LanguageOption[]
 }
@@ -6036,6 +6046,8 @@ export interface RpcMethods {
   'handoff.request': { params: HandoffRequestParams; result: HandoffRequestResult }
   /** Poll the handoff row for this session. */
   'handoff.state': { params: SessionParams; result: HandoffStateResult }
+  /** Resolve the persistent Home conversation or manage profile-owned cross-chat recall. */
+  'home.action': { params: HomeActionParams; result: HomeActionResult }
   /** Pack + overlay messages for one language and surface; the renderer merges them over its bundled catalog. */
   'i18n.catalog': { params: I18nCatalogParams; result: I18nCatalogResult }
   /** Every language some layer supplies (bundled ∪ user overlay ∪ plugin packs), en first. */
@@ -6470,6 +6482,7 @@ export const RPC_METHODS = [
   'handoff.fail',
   'handoff.request',
   'handoff.state',
+  'home.action',
   'i18n.catalog',
   'i18n.languages',
   'image.attach',
