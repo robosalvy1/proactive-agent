@@ -542,17 +542,6 @@ class GatewayTurnPrepareMixin:
         # surfaces: it never appended this note, and mark_seen would rewrite config.yaml under
         # an ordinary launch that promises to leave the profile's files untouched.
         human_platform = bool(source.platform) and source.platform not in (Platform.LOCAL, Platform.WEBHOOK)
-        if human_platform and source.chat_type == "dm":
-            # All messaging adapters, including plugins, use this shared path.
-            # CLI setup/use must not consume the messaging introduction. The profile-local
-            # latch survives /new, channel changes and gateway restarts.
-            from gateway.messaging_onboarding import first_messaging_note
-            note = first_messaging_note(
-                _load_gateway_config(), _gateway_config_home() / "config.yaml",
-            )
-            if note:
-                turn_sidecar_notes.append(note)
-
         # One-time prompt if no home channel is set (webhooks deliver to configured targets instead).
         if not human_platform:
             return
@@ -588,6 +577,17 @@ class GatewayTurnPrepareMixin:
             await self._deliver_platform_notice(
                 source, t("gateway.notify.no_home_channel", platform=platform_name.title(), sethome_cmd=sethome_cmd),
             )
+
+        if source.chat_type == "dm" and not source.is_bot:
+            # All messaging adapters, including plugins, use this shared path.
+            # CLI setup/use must not consume the messaging introduction. The profile-local
+            # latch survives /new, channel changes and gateway restarts.
+            from gateway.messaging_onboarding import first_messaging_note
+            note = first_messaging_note(
+                _load_gateway_config(), _gateway_config_home() / "config.yaml",
+            )
+            if note:
+                turn_sidecar_notes.append(note)
 
     def _hmwa_apply_message_timestamp(self, event, message_text):
         """Capture the platform event time as message metadata and keep the persisted transcript
@@ -699,8 +699,6 @@ class GatewayTurnPrepareMixin:
             from gateway.session_results import record_unexecuted_failure
             return record_unexecuted_failure(t("gateway.errors.history_unavailable")), _session_env_tokens
 
-        await self._hmwa_first_contact_notes(source, history, turn_sidecar_notes, internal=event.internal)
-
         # Voice channel state rides the user message ONLY when changed (in the system prompt it
         # forced a rebuild + prompt-cache re-key per message).
         _vc_note = self._voice_channel_sidecar_note(event, source, session_key)
@@ -718,6 +716,9 @@ class GatewayTurnPrepareMixin:
         message_text, persist_user_message, persist_user_timestamp = (
             self._hmwa_apply_message_timestamp(event, message_text)
         )
+
+        # Only accepted input may claim the profile's one-shot introduction.
+        await self._hmwa_first_contact_notes(source, history, turn_sidecar_notes, internal=event.internal)
 
         # Stage the notes (one-shot; consumed in run_sync) AFTER the early-out so an aborted turn
         # cannot leak them into the next turn.

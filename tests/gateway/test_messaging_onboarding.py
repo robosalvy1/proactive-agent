@@ -36,5 +36,8 @@ def test_each_profile_has_its_own_offer_and_identity_paths(tmp_path):
 
 
 def test_failed_latch_does_not_start_an_untracked_offer(tmp_path, monkeypatch):
-    monkeypatch.setattr("gateway.messaging_onboarding.mark_seen", lambda *_: False)
+    def fail_write(*_args):
+        raise OSError("synthetic write failure")
+
+    monkeypatch.setattr("hermes_cli.config.atomic_config_write", fail_write)
     assert first_messaging_note({}, tmp_path / "config.yaml") is None

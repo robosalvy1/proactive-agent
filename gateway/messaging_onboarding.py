@@ -7,10 +7,14 @@ use that history and the existing memory/file tools; no prompt rebuild is needed
 from __future__ import annotations
 
 import json
+import logging
+import threading
 from pathlib import Path
 from typing import Any, Mapping
 
-from agent.onboarding import TASK_FIRST_CLAUSE, is_seen, mark_seen, profile_build_mode
+from agent.onboarding import TASK_FIRST_CLAUSE, is_seen, profile_build_mode
+
+logger = logging.getLogger(__name__)
 
 MESSAGING_PERSONALIZATION_FLAG = "messaging_personalization_offered"
 
@@ -64,6 +68,34 @@ def first_messaging_note(config: Mapping[str, Any], config_path: Path) -> str | 
     """Latch only the messaging offer; existing CLI/desktop offers are independent."""
     if profile_build_mode(config) == "off" or is_seen(config, MESSAGING_PERSONALIZATION_FLAG):
         return None
-    if not mark_seen(config_path, MESSAGING_PERSONALIZATION_FLAG):
+    try:
+        if not _claim_offer(config_path):
+            return None
+    except (OSError, ValueError, RuntimeError, TypeError):
+        logger.debug("Could not claim messaging personalization", exc_info=True)
         return None
     return personalization_directive(config_path.parent)
+
+
+def _claim_offer(config_path: Path) -> bool:
+    """Re-read and claim under the existing cross-process lock primitive.
+
+    Each call is non-reentrant and owns its tracker; the lock file belongs to
+    the profile, so stale config snapshots cannot produce duplicate offers.
+    """
+    from hermes_cli.auth import _file_lock
+    from hermes_cli.config import atomic_config_write, require_readable_config_before_write
+
+    with _file_lock(config_path.with_name("messaging-onboarding.lock"), threading.local(), 15.0,
+                    "Timed out claiming messaging personalization"):
+        config = require_readable_config_before_write(config_path)
+        if is_seen(config, MESSAGING_PERSONALIZATION_FLAG) or profile_build_mode(config) == "off":
+            return False
+        if not isinstance(config.get("onboarding"), dict):
+            config["onboarding"] = {}
+        section = config["onboarding"]
+        if not isinstance(section.get("seen"), dict):
+            section["seen"] = {}
+        section["seen"][MESSAGING_PERSONALIZATION_FLAG] = True
+        atomic_config_write(config_path, config)
+        return True
