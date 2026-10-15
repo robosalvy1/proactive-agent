@@ -8,6 +8,13 @@
 import { atom } from 'nanostores'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+// Exercise primary-window persistence without booting notification/RPC services.
+vi.mock('@/store/windows', () => ({
+  isBrowserWindow: () => false,
+  isHudWindow: () => false,
+  isSecondaryWindow: () => false
+}))
+
 const MODE_KEY = 'hermes.desktop.interfaceMode.v1'
 
 const loadStore = () => import('./interface-mode')
