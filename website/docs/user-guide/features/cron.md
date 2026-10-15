@@ -665,24 +665,16 @@ This applies only to cron deliveries. `TELEGRAM_HOME_CHANNEL_THREAD_ID` (used el
 
 ### Response wrapping
 
-By default, delivered cron output is wrapped with a header and footer so the recipient knows it came from a scheduled task:
+Delivered cron output contains only the task's result by default. Job IDs and management instructions stay out of routine reminders.
 
-```
-Cronjob Response: Morning feeds
--------------
-
-<agent output here>
-
-Note: The agent cannot see this message, and therefore cannot respond to it.
-```
-
-To deliver the raw agent output without the wrapper, set `cron.wrap_response` to `false`:
+To restore the technical header and management footer:
 
 ```yaml
-# ~/.hermes/config.yaml
 cron:
-  wrap_response: false
+  wrap_response: true
 ```
+
+`hermes cron list` and `/cron list` show compact, name-first summaries. Add `--details` to inspect job IDs, prompts, and technical fields; combine it with `--all` to include disabled and completed jobs. Job names work for management commands; ambiguous names require an ID.
 
 ### Push notifications (`cron.delivery.notify`)
 

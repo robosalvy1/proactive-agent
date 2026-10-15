@@ -823,20 +823,20 @@ class CLIAgentSetupMixin:
     def _display_resumed_history(self):
         """Render a dim Rich-panel recap of the previous conversation, capped at the last
         ``resume_exchanges`` user/assistant exchanges with a hidden-count indicator."""
-        from cli import CLI_CONFIG, _record_output_history_entry, _strip_reasoning_tags, _suspend_output_history
+        from cli import _record_output_history_entry, _strip_reasoning_tags, _suspend_output_history
         from tools.ansi_strip import sanitize_display_text as _sanitize_display_text
         display_history = getattr(self, "_resume_display_history", self.conversation_history)
         if not display_history or self.resume_display == "minimal":
             return
-        _disp = CLI_CONFIG.get("display", {})
+        _disp = self.config.get("display", {})
         entries, _last_asst_idx, _last_asst_full = _collect_resume_entries(
             display_history, _disp, lambda t: _sanitize_display_text(_strip_reasoning_tags(t)))
         if not entries:
             return
-        skipped = max(0, len(entries) - int(_disp.get("resume_exchanges", 10)) * 2)
+        skipped = max(0, len(entries) - int(_disp.get("resume_exchanges", 10 if self.resume_display == "full" else 1)) * 2)
         entries = entries[skipped:]
         # Show the last assistant entry in full so the user sees where they left off.
-        if _last_asst_idx is not None and _last_asst_full:
+        if self.resume_display == "full" and _last_asst_idx is not None and _last_asst_full:
             adj_idx = _last_asst_idx - skipped
             if 0 <= adj_idx < len(entries):
                 entries[adj_idx] = ("assistant_last", _last_asst_full)

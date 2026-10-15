@@ -14,21 +14,21 @@ from typing import Any
 
 # Settings configurable per-platform; other display settings are CLI-only.
 _GLOBAL_DEFAULTS: dict[str, Any] = {
-    "tool_progress": "all",
+    "tool_progress": "off",
     "tool_progress_grouping": "accumulate",  # "accumulate" = edit one bubble; "separate" = one msg per tool
     "show_reasoning": False,
     "reasoning_style": "code",  # "code" (💭 **Reasoning:** + fence), "blockquote" ("> "), "subtext" ("-# " Discord)
-    "tool_preview_length": 0,
+    "tool_preview_length": 120,
     "streaming": None,  # None = follow top-level streaming config
     # Gateway-only assistant/status chatter; mobile platforms opt down to final-answer-first.
-    "interim_assistant_messages": True,
+    "interim_assistant_messages": False,
     "suppress_warning_notifications": False,
     "long_running_notifications": True,
-    "busy_ack_detail": True,
+    "busy_ack_detail": False,
     "busy_steer_ack_enabled": True,  # busy_input_mode=steer echo; the text still lands in the run
     # Delete tool-progress / "⏳ Working" bubbles after a SUCCESSFUL final response where deletion is
     # supported (Telegram); failed runs keep them as breadcrumbs.
-    "cleanup_progress": False,
+    "cleanup_progress": True,
     # Working-state text on text-rendering indicators (Slack assistant status): "full"/true = verb +
     # argument preview, "verb" = verb only (keeps paths out of shared channels), "off"/false = static.
     "live_status": "full",
@@ -37,20 +37,19 @@ _GLOBAL_DEFAULTS: dict[str, Any] = {
 # Tiers: HIGH = editing, personal/team use; MEDIUM = editing but customer-facing;
 # LOW = no edit support (progress messages are permanent); MINIMAL = batch delivery.
 _TIER_HIGH = {
-    "tool_progress": "all", "show_reasoning": False, "tool_preview_length": 40,
+    "tool_progress": "off", "show_reasoning": False, "tool_preview_length": 40,
     "streaming": None,  # follow global
-    "interim_assistant_messages": True, "long_running_notifications": True, "busy_ack_detail": True,
+    "interim_assistant_messages": False, "long_running_notifications": True, "busy_ack_detail": False,
 }
-_TIER_MEDIUM = {**_TIER_HIGH, "tool_progress": "new"}
+_TIER_MEDIUM = {**_TIER_HIGH, "tool_progress": "off"}
 _TIER_LOW = {
     **_TIER_HIGH, "tool_progress": "off", "streaming": False,
     "interim_assistant_messages": False, "long_running_notifications": False, "busy_ack_detail": False,
 }
-_TIER_MINIMAL = {**_TIER_LOW, "tool_preview_length": 0}
+_TIER_MINIMAL = {**_TIER_LOW, "tool_preview_length": 120}
 
 _PLATFORM_DEFAULTS: dict[str, dict[str, Any]] = {
-    # Mobile inbox: quiet tool_progress / busy-ack, but keep interim commentary and heartbeats so it
-    # doesn't look like "typing..." for 30 minutes.
+    # Mobile inbox: quiet tool progress and busy acknowledgments; retain long-running heartbeats.
     "telegram": {**_TIER_HIGH, "tool_progress": "off", "busy_ack_detail": False},
     "discord": {**_TIER_HIGH, "reasoning_style": "subtext"},  # "-# " subtext reads as metadata
     # Slack: Bolt posts cannot be edited like CLI; "new"/"all" spam permanent lines.
@@ -72,7 +71,7 @@ _PLATFORM_DEFAULTS: dict[str, dict[str, Any]] = {
     "email": _TIER_MINIMAL,
     "sms": _TIER_MINIMAL,
     "webhook": _TIER_MINIMAL,
-    "api_server": {**_TIER_HIGH, "tool_preview_length": 0},
+    "api_server": {**_TIER_HIGH, "tool_preview_length": 120},
 }
 
 _TIERS = {"high": _TIER_HIGH, "medium": _TIER_MEDIUM, "low": _TIER_LOW, "minimal": _TIER_MINIMAL}

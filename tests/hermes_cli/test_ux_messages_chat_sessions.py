@@ -26,7 +26,7 @@ class _StatusError(Exception):
     (Exception("Unknown error"), "hermes doctor", "Unknown error"),
 ])
 def test_chat_error_response_leads_with_plain_copy_and_pointer(exc, pointer, absent):
-    text = chat_error_response(exc, provider="openrouter", model="foo/bar")
+    text = chat_error_response(exc, provider="openrouter", model="foo/bar", include_details=True)
     lead = text.splitlines()[0]
     assert pointer in lead
     assert absent not in lead, "raw HTTP code/exception text must not be the lead sentence"
@@ -43,7 +43,7 @@ def test_chat_error_response_accepts_plain_string_summary():
 
 def test_chat_error_response_trusts_stamped_provider_verdict_over_reclassifying_text():
     # The loop stamped 'rate_limit'; the summarised text alone would classify as unknown.
-    text = chat_error_response("upstream said no", provider="openrouter", model="m", failure_reason="rate_limit")
+    text = chat_error_response("upstream said no", provider="openrouter", model="m", failure_reason="rate_limit", include_details=True)
     assert "Rate limited" in text.splitlines()[0]
     assert "Details: upstream said no" in text
 
@@ -104,3 +104,10 @@ def test_unknown_command_without_close_match_has_no_suggestion():
     lead, pointer = unknown_command_lines("/zzzzzz", {"/model", "/help"})
     assert "Did you mean" not in lead
     assert "/help" in pointer
+
+
+def test_chat_errors_hide_raw_provider_payload_unless_details_are_requested():
+    text = chat_error_response("HTTP 401: Invalid API key", provider="openrouter", model="m")
+    assert "hermes model" in text
+    assert "HTTP 401" not in text
+    assert "Details:" not in text

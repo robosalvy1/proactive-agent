@@ -66,6 +66,17 @@ describe('formatToolResultSummary', () => {
   })
 })
 
+it('keeps internal identifiers out of product summaries without losing outcomes', () => {
+  const payload = { job_id: 'internal-job', id: 'internal-run', name: 'Morning brief', status: 'paused' }
+  const summary = formatToolResultSummary(payload)
+
+  expect(summary).toContain('Morning brief')
+  expect(summary).toContain('paused')
+  expect(summary).not.toContain('internal-job')
+  expect(summary).not.toContain('internal-run')
+  expect(payload.id).toBe('internal-run')
+})
+
 describe('extractToolErrorMessage', () => {
   it('requires a failure envelope before interpreting returned data as an error', () => {
     const payload = { output: { error: { message: 'Connection refused' } } }

@@ -119,7 +119,7 @@ def _reasoning(agent, policy, cfg, connection=None, ref=None):
     elif not isinstance(value, dict):
         value = resolve_reasoning_config(cfg, '')
     effort = 'none' if value and value.get('enabled') is False else (value or {}).get('effort', 'medium')
-    return {'value': effort, 'display': 'show' if cfg.get('display', {}).get('show_reasoning', True) else 'hide'}
+    return {'value': effort, 'display': 'show' if cfg.get('display', {}).get('show_reasoning', False) else 'hide'}
 
 
 def _project(params, policy, cfg):

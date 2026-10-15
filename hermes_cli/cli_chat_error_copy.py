@@ -34,9 +34,9 @@ def _short(text: str, limit: int = _SUMMARY_LIMIT) -> str:
 
 
 def chat_error_response(
-    error: Exception | str, *, provider: str = "", model: str = "", failure_reason: str | None = None,
+    error: Exception | str, *, provider: str = "", model: str = "", failure_reason: str | None = None, include_details: bool = False,
 ) -> str:
-    """Two-line panel text: plain sentence with the fix command, then ``Details: <raw>``.
+    """Plain sentence with the fix command; raw provider details are opt-in.
 
     ``failure_reason`` is the verdict the turn loop already stamped on its result
     (``agent/turn_failure_copy.stamp_failure``). When present it is used as-is instead of
@@ -60,7 +60,7 @@ def chat_error_response(
         provider=provider or t("cli.error.the_provider"),
         model=model or t("cli.error.the_current_model"),
     )
-    return t("cli.error.with_details", lead=lead, details=_short(str(error), 300))
+    return t("cli.error.with_details", lead=lead, details=_short(str(error), 300)) if include_details else lead
 
 
 def agent_init_failure_message(error: BaseException) -> str:

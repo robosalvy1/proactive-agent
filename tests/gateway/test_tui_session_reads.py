@@ -93,10 +93,12 @@ async def test_tui_cron_is_the_classic_overview_with_the_profile_jobs(owner):
         reset_hermes_home_override(token)
     sid = (await owner.call('session.create', request_id='t', source='tui', cwd=str(owner.workdir)))['session_id']
     out = await _exec(owner, sid, 'cron')
-    assert '(^_^) Scheduled Tasks' in out and '/cron list' in out, out
-    assert '0 9 * * *' in out and 'Summarize the news' in out, out
+    assert 'Scheduled Jobs:' in out and 'daily-digest' in out, out
+    assert '0 9 * * *' in out and 'Summarize the news' not in out, out
     listed = await _exec(owner, sid, 'cron list')
     assert 'Scheduled Jobs:' in listed and 'daily-digest' in listed, listed
+    detailed = await _exec(owner, sid, 'cron list --details')
+    assert 'Summarize the news' in detailed and 'ID:' in detailed, detailed
 
 
 @pytest.mark.asyncio

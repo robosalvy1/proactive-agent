@@ -186,7 +186,8 @@ def test_migration_scrubs_personality_text_from_system_prompt(tmp_path):
         {"_config_version": 33, "agent": {"system_prompt": KAWAII}},
     )
     assert raw["agent"]["system_prompt"] == ""
-    assert resolve_ephemeral_system_prompt(raw) == ""
+    assert resolve_ephemeral_system_prompt(raw) == BUILTIN_PERSONALITIES["concise"]
+    assert KAWAII not in resolve_ephemeral_system_prompt(raw)
 
 
 def test_migration_preserves_manual_system_prompt(tmp_path):
@@ -225,3 +226,9 @@ def test_post_v34_choice_is_never_reset(tmp_path):
     )
     assert raw["display"]["personality"] == "kawaii"
     assert resolve_ephemeral_system_prompt(raw) == KAWAII
+
+
+def test_concise_default_respects_manual_prompt_and_explicit_neutral():
+    assert resolve_ephemeral_system_prompt({}) == BUILTIN_PERSONALITIES["concise"]
+    assert resolve_ephemeral_system_prompt({"agent": {"system_prompt": "manual"}}) == "manual"
+    assert resolve_ephemeral_system_prompt({"display": {"personality": ""}}) == ""

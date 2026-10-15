@@ -23,7 +23,7 @@ def _make_cli(config_overrides=None, env_overrides=None, **kwargs):
             "base_url": "https://openrouter.ai/api/v1",
             "provider": "auto",
         },
-        "display": {"compact": False, "tool_progress": "all", "resume_display": "full"},
+        "display": {"compact": False, "tool_progress": "all", "resume_display": "full", "resume_exchanges": 10},
         "agent": {},
         "terminal": {"env_type": "local"},
     }
@@ -448,3 +448,20 @@ class TestResumeDisplaySanitization:
         assert "\x07" not in output
         assert "hi" in output and "there" in output
         assert "fine" in output
+
+
+def test_brief_resume_bounds_the_last_assistant_answer():
+    cli = _make_cli(config_overrides={"display": {"resume_display": "brief", "resume_exchanges": 1}})
+    cli.conversation_history = [
+        {"role": "user", "content": "old question"},
+        {"role": "assistant", "content": "old answer"},
+        {"role": "user", "content": "latest question"},
+        {"role": "assistant", "content": "Brief outcome.\n" + "extra detail\n" * 40},
+    ]
+    buf = StringIO()
+    cli.console.file = buf
+    cli._display_resumed_history()
+    text = buf.getvalue()
+    assert "latest question" in text and "Brief outcome." in text
+    assert "old question" not in text
+    assert text.count("extra detail") <= 2
