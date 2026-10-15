@@ -8,6 +8,13 @@
 import { atom } from 'nanostores'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+// Exercise primary-window persistence without booting notification/RPC services.
+vi.mock('@/store/windows', () => ({
+  isBrowserWindow: () => false,
+  isHudWindow: () => false,
+  isSecondaryWindow: () => false
+}))
+
 const MODE_KEY = 'hermes.desktop.interfaceMode.v1'
 
 const loadStore = () => import('./interface-mode')
@@ -18,21 +25,21 @@ describe('interface mode persistence', () => {
     vi.resetModules()
   })
 
-  it('never writes a record for Advanced, so an untouched install stays untouched', async () => {
+  it('starts in Simple and preserves an explicit Advanced choice across reloads', async () => {
     const { $interfaceMode, setInterfaceMode } = await loadStore()
 
-    expect($interfaceMode.get()).toBe('advanced')
+    expect($interfaceMode.get()).toBe('simple')
     setInterfaceMode('advanced')
-    expect(window.localStorage.getItem(MODE_KEY)).toBeNull()
+    vi.resetModules()
+    expect((await loadStore()).$interfaceMode.get()).toBe('advanced')
 
-    setInterfaceMode('simple')
-    expect(window.localStorage.getItem(MODE_KEY)).not.toBeNull()
-
-    setInterfaceMode('advanced')
-    expect(window.localStorage.getItem(MODE_KEY)).toBeNull()
+    const next = await loadStore()
+    next.setInterfaceMode('simple')
+    vi.resetModules()
+    expect((await loadStore()).$interfaceMode.get()).toBe('simple')
   })
 
-  it('restores Simple across a reload and treats anything else as Advanced', async () => {
+  it('restores Simple across a reload and treats unknown values as Simple', async () => {
     const first = await loadStore()
 
     first.setInterfaceMode('simple')
@@ -41,7 +48,7 @@ describe('interface mode persistence', () => {
 
     window.localStorage.setItem(MODE_KEY, 'intermediate')
     vi.resetModules()
-    expect((await loadStore()).$interfaceMode.get()).toBe('advanced')
+    expect((await loadStore()).$interfaceMode.get()).toBe('simple')
   })
 })
 
@@ -52,7 +59,8 @@ describe('modeBound resolver', () => {
   })
 
   it('falls through to the preference in Advanced, and writes reach the preference', async () => {
-    const { modeBound } = await loadStore()
+    const { modeBound, setInterfaceMode } = await loadStore()
+    setInterfaceMode('advanced')
     const $pref = atom(true)
     const $bound = modeBound('statusbarVisible', $pref, value => $pref.set(value))
 
@@ -163,6 +171,7 @@ describe('tiers', () => {
     expect(items.filter(shownInMode('advanced')).map(item => item.id)).toEqual(['settings', 'hud'])
     expect(items.filter(shownInMode('simple')).map(item => item.id)).toEqual(['settings', 'side'])
 
+    setInterfaceMode('advanced')
     expect($showsAdvancedChrome.get()).toBe(true)
     setInterfaceMode('simple')
     expect($showsAdvancedChrome.get()).toBe(false)

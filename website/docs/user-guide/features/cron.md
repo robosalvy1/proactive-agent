@@ -286,7 +286,7 @@ What they do:
   (`hermes cron list` shows it) and fire on the next tick after `hermes gateway start`; their
   schedule is not advanced or penalised. `no_agent` script jobs still run from a bare tick.
 
-**Name-based lookup.** All four mutating verbs (`pause`, `resume`, `run`, `remove`, `edit`) plus the agent's `cronjob_manage` tool now accept a job **name** (case-insensitive) in place of the hex ID. The agent and CLI both prefer an exact ID match if one exists; ambiguous name matches (multiple jobs sharing the same name) are refused with the full list of candidate IDs so you can pick one explicitly. Names are not unique, so this guard is load-bearing — it prevents silently mutating the wrong job when two share a name.
+**Name-based lookup.** All five mutating verbs (`pause`, `resume`, `run`, `remove`, `edit`) plus the agent's `cronjob_manage` tool now accept a job **name** (case-insensitive) in place of the hex ID. The agent and CLI both prefer an exact ID match if one exists; ambiguous name matches (multiple jobs sharing the same name) are refused with the full list of candidate IDs so you can pick one explicitly. Names are not unique, so this guard is load-bearing — it prevents silently mutating the wrong job when two share a name.
 
 ### Pausing everything: `hermes pause`
 
@@ -665,24 +665,16 @@ This applies only to cron deliveries. `TELEGRAM_HOME_CHANNEL_THREAD_ID` (used el
 
 ### Response wrapping
 
-By default, delivered cron output is wrapped with a header and footer so the recipient knows it came from a scheduled task:
+Delivered cron output contains only the task's result by default. Job IDs and management instructions stay out of routine reminders.
 
-```
-Cronjob Response: Morning feeds
--------------
-
-<agent output here>
-
-Note: The agent cannot see this message, and therefore cannot respond to it.
-```
-
-To deliver the raw agent output without the wrapper, set `cron.wrap_response` to `false`:
+To restore the technical header and management footer:
 
 ```yaml
-# ~/.hermes/config.yaml
 cron:
-  wrap_response: false
+  wrap_response: true
 ```
+
+`hermes cron list` and `/cron list` show compact, name-first summaries. Add `--details` to inspect job IDs, prompts, and technical fields; combine it with `--all` to include disabled and completed jobs. Job names work for `edit`, `pause`, `resume`, `run`, and `remove`; ambiguous names require an ID.
 
 ### Push notifications (`cron.delivery.notify`)
 

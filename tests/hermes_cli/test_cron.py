@@ -46,7 +46,7 @@ class TestCronCommandLifecycle:
         updated = get_job(job["id"])
         assert updated["model"] == "new-model"
         assert updated["provider"] == "nous"
-        assert "Updated job" in capsys.readouterr().out
+        assert "Updated '" in capsys.readouterr().out
 
     def test_edit_can_replace_and_clear_skills(self, tmp_cron_dir, capsys):
         job = create_job(
@@ -104,7 +104,7 @@ class TestCronCommandLifecycle:
         assert cleared["skill"] is None
 
         out = capsys.readouterr().out
-        assert "Updated job" in out
+        assert "Updated '" in out
 
     def test_create_with_multiple_skills(self, tmp_cron_dir, capsys):
         cron_command(
@@ -123,7 +123,7 @@ class TestCronCommandLifecycle:
             )
         )
         out = capsys.readouterr().out
-        assert "Created job" in out
+        assert "Scheduled '" in out
 
         jobs = list_jobs()
         assert len(jobs) == 1
@@ -147,7 +147,7 @@ class TestUnverifiedDeliveryVisibility:
 
     def test_list_shows_unverified_delivery(self, tmp_cron_dir, capsys):
         job = self._seed()
-        cron_command(Namespace(cron_command="list", all=True, json=False))
+        cron_command(Namespace(cron_command="list", all=True, json=False, details=True))
         out = capsys.readouterr().out
         assert job["id"] in out
         assert "Delivery UNVERIFIED" in out
@@ -156,7 +156,7 @@ class TestUnverifiedDeliveryVisibility:
 
     def test_list_is_quiet_when_delivery_was_verified(self, tmp_cron_dir, capsys):
         create_job(prompt="Nightly brief", schedule="every 1h", deliver="slack:C0123456")
-        cron_command(Namespace(cron_command="list", all=True, json=False))
+        cron_command(Namespace(cron_command="list", all=True, json=False, details=True))
         assert "UNVERIFIED" not in capsys.readouterr().out
 
     def test_doctor_reports_unverified_delivery(self, tmp_cron_dir, capsys):
@@ -268,8 +268,9 @@ class TestCronListStatusRendering:
         cron_command(Namespace(cron_command="list", all=False))
 
         out = capsys.readouterr().out
-        assert job["id"] in out
-        assert "[paused]" in out
+        assert job["name"] in out
+        assert "paused" in out
+        assert job["id"] not in out
         assert "No scheduled jobs" not in out
 
     def test_delivery_failed_is_not_green_ok(self, tmp_cron_dir, capsys, monkeypatch):
@@ -284,7 +285,7 @@ class TestCronListStatusRendering:
         jobs[0]["last_delivery_error"] = "telegram timeout"
         save_jobs(jobs)
 
-        cron_command(Namespace(cron_command="list", all=True))
+        cron_command(Namespace(cron_command="list", all=True, details=True))
 
         out = capsys.readouterr().out
         last_run_line = next(l for l in out.splitlines() if "Last run:" in l)
@@ -303,7 +304,7 @@ class TestCronListStatusRendering:
         jobs[0]["last_status"] = "ok"
         save_jobs(jobs)
 
-        cron_command(Namespace(cron_command="list", all=True))
+        cron_command(Namespace(cron_command="list", all=True, details=True))
 
         out = capsys.readouterr().out
         last_run_line = next(l for l in out.splitlines() if "Last run:" in l)
@@ -322,7 +323,7 @@ class TestGatewayNotRunningWarning:
     def test_list_warns_when_gateway_absent(self, tmp_cron_dir, capsys, monkeypatch):
         create_job(prompt="Daily report", schedule="0 11 * * *")
         monkeypatch.setattr("hermes_cli.gateway.find_gateway_pids", list)
-        cron_command(Namespace(cron_command="list", all=True))
+        cron_command(Namespace(cron_command="list", all=True, details=True))
         out = capsys.readouterr().out
         assert "Scheduler is not ready" in out
 
@@ -382,7 +383,7 @@ class TestExternalCronProviderStatus:
             )
         )
         out = capsys.readouterr().out
-        assert "Created job" in out
+        assert "Scheduled '" in out
         assert "Scheduler is not ready" not in out
 
 
@@ -461,7 +462,7 @@ class TestCronRunBackgroundDispatch:
         rc, out = self._run_cmd(capsys)
 
         assert rc == 0
-        assert "Running in background (delegation del-abc123)." in out
+        assert "Running in background." in out
         assert "failed" not in out.lower()
         assert "Ran now" not in out
 
@@ -542,7 +543,7 @@ class TestCronRunBackgroundDispatch:
         rc, out = self._run_cmd(capsys)
 
         assert rc == 0
-        assert "Running in background (delegation del-xyz)." in out
+        assert "Running in background." in out
         assert "failed" not in out.lower()
 
 
@@ -558,7 +559,7 @@ class TestSlashCronListLastStatus:
         class _Host(CLICommandsMixin):
             pass
 
-        _Host()._handle_cron_command("/cron list --all")
+        _Host()._handle_cron_command("/cron list --all --details")
         return capsys.readouterr().out
 
     def test_delivery_failed_names_the_delivery_error(self, tmp_cron_dir, capsys):
@@ -654,7 +655,7 @@ class TestStatusSurfacesDeadScheduler:
 
         _Host()._handle_cron_command("/cron")
         overview_out = capsys.readouterr().out
-        _Host()._handle_cron_command("/cron list --all")
+        _Host()._handle_cron_command("/cron list --all --details")
         list_out = capsys.readouterr().out
 
         for out in (overview_out, list_out):

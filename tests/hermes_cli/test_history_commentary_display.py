@@ -9,6 +9,12 @@ import asyncio
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def explicit_commentary(monkeypatch):
+    monkeypatch.setattr("hermes_cli.config.load_config", lambda: {
+        "display": {"show_commentary": True, "interim_assistant_messages": True}})
+
+
 def _row(text="I will inspect the files."):
     return {
         "role": "assistant",
@@ -107,7 +113,7 @@ def test_owner_profile_settings_apply_to_rest_and_rpc(monkeypatch, tmp_path, dis
     def config():
         home = get_hermes_home_override()
         observed.append(str(home))
-        return {"display": {} if str(home) == str(enabled_home) else disabled}
+        return {"display": {"show_commentary": True, "interim_assistant_messages": True} if str(home) == str(enabled_home) else disabled}
 
     monkeypatch.setattr(config_mod, "load_config", config)
     row = _row()
@@ -143,6 +149,7 @@ def test_rest_pages_bind_the_history_owner_for_messages_and_around(
         "load_config",
         lambda: {
             "display": {
+                "interim_assistant_messages": True,
                 "show_commentary": str(get_hermes_home_override())
                 == str(homes["visible"])
             }
@@ -207,6 +214,7 @@ def test_unscoped_rest_history_uses_custom_home_of_its_database(monkeypatch, tmp
         "load_config",
         lambda: {
             "display": {
+                "interim_assistant_messages": True,
                 "show_commentary": str(get_hermes_home_override()) != str(custom)
             }
         },
@@ -357,7 +365,7 @@ def test_stream_recovered_final_without_final_sidecar_is_authoritative(
         monkeypatch.setattr(
             config_mod,
             "load_config",
-            lambda visible=visible: {"display": {"show_commentary": visible}},
+            lambda visible=visible: {"display": {"show_commentary": visible, "interim_assistant_messages": True}},
         )
         for projected in (
             _project_for_display([row])[0],
@@ -392,7 +400,7 @@ def test_canonical_content_matching_final_item_is_never_stripped(
         monkeypatch.setattr(
             config_mod,
             "load_config",
-            lambda visible=visible: {"display": {"show_commentary": visible}},
+            lambda visible=visible: {"display": {"show_commentary": visible, "interim_assistant_messages": True}},
         )
         for projected in (
             _project_for_display([row])[0],
@@ -416,7 +424,7 @@ def test_mixed_canonical_preserves_final_repetition_of_a_commentary_phrase(monke
         monkeypatch.setattr(
             config_mod,
             "load_config",
-            lambda visible=visible: {"display": {"show_commentary": visible}},
+            lambda visible=visible: {"display": {"show_commentary": visible, "interim_assistant_messages": True}},
         )
         for projected in (
             _project_for_display([row])[0],
@@ -480,7 +488,7 @@ def test_overlapping_public_items_do_not_leave_partial_text_in_final_or_thinking
         monkeypatch.setattr(
             config_mod,
             "load_config",
-            lambda visible=visible: {"display": {"show_commentary": visible}},
+            lambda visible=visible: {"display": {"show_commentary": visible, "interim_assistant_messages": True}},
         )
         for projected in (
             _project_for_display([row])[0],
@@ -496,7 +504,7 @@ def test_overlapping_public_items_do_not_leave_partial_text_in_final_or_thinking
         monkeypatch.setattr(
             config_mod,
             "load_config",
-            lambda visible=visible: {"display": {"show_commentary": visible}},
+            lambda visible=visible: {"display": {"show_commentary": visible, "interim_assistant_messages": True}},
         )
         for projected in (
             _project_for_display([row])[0],
@@ -514,3 +522,13 @@ def test_overlapping_public_items_do_not_leave_partial_text_in_final_or_thinking
     for projected in (_project_for_display([row])[0], _history_to_messages([row])[0]):
         assert projected["display_content"] == row["content"]
         assert projected["display_commentary"] == []
+
+
+def test_unconfigured_history_hides_commentary_without_mutating_provider_replay(monkeypatch):
+    monkeypatch.setattr("hermes_cli.config.load_config", dict)
+    row = _row()
+    for adapter in (_project_for_display, _history_to_messages):
+        projected = adapter([row])[0]
+        assert projected["display_commentary"] == []
+        assert projected["codex_message_items"] == row["codex_message_items"]
+        assert row["reasoning"].endswith("I will inspect the files.")

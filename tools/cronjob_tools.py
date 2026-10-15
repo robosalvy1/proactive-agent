@@ -34,6 +34,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from cron.jobs import (
     AmbiguousJobReference,
     claim_job_for_fire,
+    effective_job_state,
     get_job,
     is_job_runnable,
     list_jobs,
@@ -506,22 +507,40 @@ def _background_session_key(session_id: Optional[str]) -> str:
 def _manual_run_completion(
     res: dict[str, Any], job_id: str, job_name: str, deliver: str, started_at: float) -> dict[str, Any]:
     """Async-delegation completion block for a finished background manual run."""
+    from agent.redact import redact_sensitive_text
+
     duration = round(time.time() - started_at, 2)
     refreshed = get_job(job_id) or {}
-    lines = [
-        f"Cron job '{job_name}' ({job_id}) finished its manual run.",
-        f"Result: {'ok' if res.get('success') else 'FAILED'}"
-        + (f" — {res.get('error')}" if res.get("error") else ""),
-        f"Delivery target: {deliver}" + _manual_run_delivery_note(deliver, refreshed),
-    ]
-    if refreshed.get("next_run_at"):
-        lines.append(f"Next scheduled run: {refreshed['next_run_at']}")
-    excerpt = _latest_job_output_excerpt(job_id)
-    if excerpt:
-        lines += ["--- JOB OUTPUT ---", excerpt]
+    run_error = res.get("error")
+    delivery_error = refreshed.get("last_delivery_error")
+
+    def safe_error(value: Any) -> str:
+        return redact_sensitive_text(
+            str(value or "Unknown error"), force=True, redact_url_credentials=True)[:500]
+
+    if delivery_error:
+        outcome = f"Delivery failed: {safe_error(delivery_error)}."
+        if not res.get("success") and run_error != delivery_error:
+            outcome += f" Run failed: {safe_error(run_error)}."
+    elif not res.get("success"):
+        outcome = f"Failed: {safe_error(run_error)}."
+    elif refreshed.get("last_delivery_queued"):
+        outcome = "Finished; delivery queued, not yet confirmed. Do not resend."
+    elif refreshed.get("last_delivery_unverified"):
+        outcome = "Finished; delivery unverified."
+    elif not deliver or deliver == "local":
+        outcome = "Finished; output saved locally."
+    else:
+        outcome = "Finished and delivered."
+    lines = [f"{job_name}: {outcome}"]
+    # A delivered result already has its own message. Local-only runs still need their result.
+    if not deliver or deliver == "local" or not res.get("success"):
+        excerpt = _latest_job_output_excerpt(job_id)
+        if excerpt:
+            lines.append(excerpt)
     return {
         "status": "completed" if res.get("success") else "error", "summary": "\n".join(lines),
-        "error": res.get("error"), "api_calls": 0, "duration_seconds": duration,
+        "error": safe_error(run_error) if run_error else None, "api_calls": 0, "duration_seconds": duration,
     }
 
 
@@ -607,7 +626,7 @@ def _try_dispatch_background_run(
         return _manual_run_completion(res, job_id, job_name, deliver, started_at)
 
     dispatch = dispatch_async_delegation(
-        goal=f"Manual run of cron job '{job_name}' ({job_id})",
+        goal=f"Run '{job_name}'",
         context=("Triggered via cronjob(action='run'). The job executed in its own "
                  "fresh cron session; this block reports its outcome."),
         toolsets=None, role="cron_run", model=job.get("model"), session_key=session_key,
@@ -703,7 +722,8 @@ def _action_create(a: dict[str, Any]) -> str:
     except CronSchedulerRegistrationError as exc:
         _partial = exc.to_dict()
         return tool_error(_partial.pop("error"), success=False, **_partial)
-    _create_message = " ".join(filter(None, (f"Cron job '{job['name']}' created.",
+    from hermes_cli.cron_presentation import job_confirmation
+    _create_message = " ".join(filter(None, (job_confirmation(job),
         "Created PAUSED — resume to schedule, or explicitly run now." if not job.get("enabled", True) else None,
         _local_delivery_notice(job, deliver))))
     # The builtin ticker lives in the gateway process: with no gateway running the job is stored
@@ -742,7 +762,8 @@ def _action_remove(job: dict[str, Any], a: dict[str, Any]) -> str:
 
 def _job_state_result(updated: dict[str, Any]) -> str:
     _notify_provider_jobs_changed_safe()
-    return _dumps({"success": True, "job": _format_job(updated)})
+    return _dumps({"success": True, "job": _format_job(updated),
+                   "message": f"{updated.get('name') or 'Reminder'}: {effective_job_state(updated)}."})
 
 
 def _refreshed_job_view(job_id: str) -> dict[str, Any]:
@@ -950,8 +971,10 @@ def _action_update(job: dict[str, Any], a: dict[str, Any]) -> str:
     updated = update_job(job["id"], updates)
     _notify_provider_jobs_changed_safe()
     # An update can switch modes or delivery — echo the same guidance as create.
+    from hermes_cli.cron_presentation import job_confirmation
     return _dumps(_with_guidance(
-        {"success": True, "job": _format_job(updated)}, updated, _normalize_deliver_param(a["deliver"])))
+        {"success": True, "job": _format_job(updated), "message": job_confirmation(updated, updated=True)},
+        updated, _normalize_deliver_param(a["deliver"])))
 
 
 _JOBLESS_ACTIONS = {"create": _action_create, "list": _action_list}
@@ -1055,11 +1078,11 @@ def _cronjob_schema_overrides() -> dict:
 
 CRONJOB_SCHEMA = {
     "name": "cronjob_manage",
-    "description": """Manage scheduled cron jobs: action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id (always list first — never guess job IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only).
+    "description": """Manage scheduled cron jobs: action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id or exact name (list first to resolve ambiguity; never guess IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only).
 
-Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless pinned.
+Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.
 
-Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.""",
+User-facing replies: give a short name-based confirmation with the schedule and relevant delivery status. Do not echo internal IDs, raw job records, or management instructions unless requested or needed to distinguish matching jobs. Never hide paused state, inactive scheduler warnings, local-only output, failed delivery, or queued/unverified delivery.""",
     "parameters": {
         "type": "object",
         "properties": {

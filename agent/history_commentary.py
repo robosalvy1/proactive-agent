@@ -162,9 +162,9 @@ def project_history_commentary(messages: list[dict], *, home: Any = None) -> lis
         try:
             display = load_config().get("display") or {}
             enabled = is_truthy_value(
-                display.get("show_commentary"), default=True
+                display.get("show_commentary"), default=False
             ) and is_truthy_value(
-                display.get("interim_assistant_messages"), default=True
+                display.get("interim_assistant_messages"), default=False
             )
         except Exception:
             enabled = False  # unreadable policy must not publish raw provider items

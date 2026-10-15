@@ -18,8 +18,8 @@ Last updated: 2026-10-15.
 ## Not implemented or verified yet
 
 - No project-specific context engine, proactive workflow, or UI redesign has shipped.
-- Dependencies have not been provisioned; no provider has been configured and no live agent has been launched as part of the foundation setup.
-- The Hermes runtime test suite and full lint suite have not been run for this initial import.
+- Development dependencies are now provisioned in isolated state for response-polish validation; no provider has been configured and no live agent has been launched as part of this work.
+- The full Hermes runtime test suite has not been run. Focused runtime and lint validation is recorded below.
 - Upstream update/install/distribution routes still exist in the source; project-specific distribution is not ready.
 
 ## Next action
@@ -33,3 +33,9 @@ Project instructions now stand on their own: no required upstream root guide, ex
 ## PR babysitting workflow
 
 Added the invocation and authority in root AGENTS.md, with reviewer selection, feedback iteration, monitoring, and merge gates in PR_BABYSITTING.md. Bot availability has not been verified and no PR review or merge has been started by this documentation change.
+
+## Minimal response cleanup
+
+Implemented the approved response-polish changes on the feature branch: concise defaults, clean scheduled deliveries, name-first cron summaries with explicit details, quieter UI defaults, bounded resume output, and actionable errors. [RESPONSE_POLISH.md](RESPONSE_POLISH.md) records the behavior and controls.
+
+Provisioned an isolated PM-managed Python test environment and JS workspace dependencies. Passed focused Python acceptance (150 tests), history projection (26), isolated Python checks (59), cron review regressions (24), TUI rendering (22), focused desktop checks (48), TUI type/build checks, and lint for changed JS files. CodeRabbit review fixes normalize cron delivery destinations, redact/bound manual-run errors, and preserve supported explicit reasoning settings. [PR #1](https://github.com/robosalvy1/proactive-agent/pull/1) records final desktop validation, repository gates, and review/merge status. No live provider, personal profile, external delivery, or recurring test job was used; the full runtime suite was not run.

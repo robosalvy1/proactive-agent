@@ -81,7 +81,7 @@ def _ellipsize(text: str, limit: int) -> str:
 
 # /cron flag tables: flag -> opts key. Order-sensitive in _parse_cron_flags: bool flags never
 # consume a value; --repeat is int-validated separately.
-_CRON_BOOL_FLAGS = {"--clear-skills": "clear_skills", "--all": "all"}
+_CRON_BOOL_FLAGS = {"--clear-skills": "clear_skills", "--all": "all", "--details": "details"}
 _CRON_LIST_FLAGS = {"--skill": "skills", "--add-skill": "add_skills", "--remove-skill": "remove_skills"}
 _CRON_VALUE_FLAGS = {"--name": "name", "--deliver": "deliver", "--prompt": "prompt", "--schedule": "schedule"}
 # /cron subcommand -> CLICommandsMixin method name.
@@ -199,7 +199,7 @@ def _parse_cron_flags(tokens):
     opts = {
         "name": None, "deliver": None, "repeat": None, "prompt": None, "schedule": None,
         "skills": [], "add_skills": [], "remove_skills": [],
-        "clear_skills": False, "all": False, "positionals": []}
+        "clear_skills": False, "all": False, "details": False, "positionals": []}
     i = 0
     while i < len(tokens):
         token = tokens[i]
@@ -1359,7 +1359,6 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
         _set_active(result.slug)
         print(_t("hatch.hatched", name=result.display_name))
 
-    # ---- /cron ----------------------------------------------------------------------------
     def _handle_cron_command(self, cmd: str):
         """Handle the /cron command to manage scheduled tasks."""
         tokens = shlex.split(cmd)
@@ -1380,7 +1379,7 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
 
     def _cron_list(self, subcommand: str, opts: dict) -> None:
         from hermes_cli.cli_cron_lines import cron_list_lines
-        _pr(*cron_list_lines(include_disabled=opts["all"]))
+        _pr(*cron_list_lines(include_disabled=opts["all"], details=opts.get("details", False)))
 
     def _cron_add(self, subcommand: str, opts: dict) -> None:
         positionals = opts["positionals"]
@@ -1396,22 +1395,23 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
             deliver=opts["deliver"], repeat=opts["repeat"], skills=skills or None)
         if not result.get("success"):
             return print(_t("cron.create_failed", error=result.get("error")))
-        _pr(_t("cron.created", job_id=result["job_id"]),
-            f"  {_t('cron.schedule', schedule=result['schedule'])}")
-        if result.get("skills"):
-            print(f"  {_t('cron.skills', skills=', '.join(result['skills']))}")
-        print(f"  {_t('cron.next_run', value=result['next_run_at'])}")
+        from hermes_cli.cron_presentation import job_confirmation, scheduler_warning
+        print(job_confirmation(result.get("job") or result))
+        if warning := scheduler_warning(result):
+            print(warning)
 
     def _cron_edit(self, subcommand: str, opts: dict) -> None:
-        from cron import get_job
+        from cron.jobs import resolve_job_ref, AmbiguousJobReference
         positionals = opts["positionals"]
         if not positionals:
             return print(_t("cron.usage_edit"))
         job_id = positionals[0]
-        existing = get_job(job_id)
+        try:
+            existing = resolve_job_ref(job_id)
+        except AmbiguousJobReference as exc:
+            return print(str(exc))
         if not existing:
             return print(_t("cron.job_not_found", job_id=job_id))
-        # Skill edit precedence: --clear-skills > --skill (replace) > --add/--remove (merge) > untouched.
         final_skills = None
         replacement_skills = _normalize_skills(opts["skills"])
         add_skills = _normalize_skills(opts["add_skills"])
@@ -1431,12 +1431,12 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
         if not result.get("success"):
             return print(_t("cron.update_failed", error=result.get("error")))
         job = result["job"]
-        _pr(_t("cron.updated", job_id=job["job_id"]), f"  {_t('cron.schedule', schedule=job['schedule'])}",
-            f"  {_t('cron.skills', skills=', '.join(job['skills']))}" if job.get("skills")
-            else f"  {_t('cron.skills_none')}")
+        from hermes_cli.cron_presentation import job_confirmation, scheduler_warning
+        print(job_confirmation(job, updated=True))
+        if warning := scheduler_warning(result):
+            print(warning)
 
     def _cron_job_action(self, subcommand: str, opts: dict) -> None:
-        """pause / resume / run / remove (aliases rm, delete) on one job id."""
         positionals = opts["positionals"]
         if not positionals:
             return print(_t("cron.usage_action", subcommand=subcommand))
@@ -1453,7 +1453,6 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
         if action == "run" and job.get("execution_skipped"):
             # A refused run-now (claim lost, paused, gone) must not read as accepted.
             return print(_t("cron.did_not_run", name=job["name"], job_id=job_id, reason=job["execution_skipped"]))
-        # One full template per action verb (cron.paused / cron.resumed / cron.triggered).
         print(_t({"pause": "cron.paused", "resume": "cron.resumed", "run": "cron.triggered"}[action],
                  name=job["name"], job_id=job_id))
         if action == "resume":

@@ -387,7 +387,7 @@ def _load_busy_input_mode() -> str:
 def _load_interim_assistant_messages() -> bool:
     """``display.interim_assistant_messages`` (default true); when false no ``interim_assistant_callback``
     is installed, so tool-call/verify-on-stop interim text never becomes ``message.interim`` (gateway parity)."""
-    return is_truthy_value(_display_cfg().get("interim_assistant_messages", True))
+    return is_truthy_value(_display_cfg().get("interim_assistant_messages", False))
 
 
 def _shutdown_sessions() -> None:

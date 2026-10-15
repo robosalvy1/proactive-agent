@@ -112,7 +112,7 @@ def test_init_session_attaches_background_review_callback(server, monkeypatch):
 @pytest.mark.parametrize(
     "raw,expected",
     [
-        (None, "on"),       # unset → default on
+        (None, "off"),      # unset → quiet default
         ("on", "on"),
         ("off", "off"),
         ("verbose", "verbose"),
@@ -123,7 +123,7 @@ def test_init_session_attaches_background_review_callback(server, monkeypatch):
 )
 def test_load_memory_notifications_normalization(server, monkeypatch, raw, expected):
     """_load_memory_notifications mirrors the gateway's bool→str normalization
-    and defaults to 'on' when the key is absent."""
+    and defaults to 'off' when the key is absent."""
     display = {} if raw is None else {"memory_notifications": raw}
     monkeypatch.setattr(server, "_load_cfg", lambda: {"display": display})
     assert server._load_memory_notifications() == expected

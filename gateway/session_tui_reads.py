@@ -22,8 +22,8 @@ def _cron_read(arg: str):
     tokens = arg.split()
     if not tokens:
         return 'overview'
-    if tokens[0].lower() == 'list' and set(tokens[1:]) <= {'--all', '-a'}:
-        return 'list-all' if tokens[1:] else 'list'
+    if tokens[0].lower() == 'list' and set(tokens[1:]) <= {'--all', '-a', '--details'}:
+        return 'list-all' if set(tokens[1:]) & {'--all', '-a'} else 'list'
     return None
 
 
@@ -114,7 +114,7 @@ def _cron(authority, ref, live, policy, agent, arg) -> str:
     """The classic CLI's ``/cron`` / ``/cron list`` text (main's TUI ran it in the slash worker)."""
     from hermes_cli.cli_cron_lines import cron_list_lines, cron_overview_lines
     mode = _cron_read(arg)
-    lines = cron_overview_lines() if mode == 'overview' else cron_list_lines(include_disabled=mode == 'list-all')
+    lines = cron_overview_lines() if mode == 'overview' else cron_list_lines(include_disabled=mode == 'list-all', details='--details' in arg.split())
     return '\n'.join(lines).strip('\n')
 
 

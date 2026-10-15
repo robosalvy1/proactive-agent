@@ -912,15 +912,12 @@ def _build_compact_banner() -> str:
     def _color(key, default):
         return _skin.get_color(key, default) if _skin else default
 
-    border_color = _color("banner_border", "#FFD700")
     title_color = _color("banner_title", "#FFBF00")
-    dim_color = _color("banner_dim", "#B8860B")
 
     if (getattr(_skin, "name", "default") if _skin else "default") == "default":
         tiny_line = "☤ NOUS HERMES"
     else:
         tiny_line = _skin.get_branding("agent_name", "Hermes Agent") if _skin else "Hermes Agent"
-    line1 = t("cli.render.banner_tagline", name=tiny_line)
 
     if os.environ.get("HERMES_FAST_STARTUP_BANNER") == "1":
         from hermes_cli import __release_date__ as _release_date
@@ -930,23 +927,9 @@ def _build_compact_banner() -> str:
     else:
         version_line = format_banner_version_label()
 
-    w = min(shutil.get_terminal_size().columns - 2, 88)
-    if w < 30:
-        return f"\n[{title_color}]{tiny_line}[/] [dim {dim_color}]- Nous Research[/]\n"
-
-    inner = w - 2  # inside the box border
-    bar = "═" * w
-    content_width = inner - 2
-
-    line1 = line1[:content_width].ljust(content_width)
-    line2 = version_line[:content_width].ljust(content_width)
-
-    return (
-        f"\n[bold {border_color}]╔{bar}╗[/]\n"
-        f"[bold {border_color}]║[/] [{title_color}]{line1}[/] [bold {border_color}]║[/]\n"
-        f"[bold {border_color}]║[/] [dim {dim_color}]{line2}[/] [bold {border_color}]║[/]\n"
-        f"[bold {border_color}]╚{bar}╝[/]\n"
-    )
+    width = max(10, shutil.get_terminal_size().columns - 2)
+    label = f"{tiny_line} · {version_line}"
+    return f"[{title_color}]{label[:width]}[/]"
 
 
 def _panel_box_width(title: str, content_lines: list[str], min_width: int = 46, max_width: int = 76) -> int:
