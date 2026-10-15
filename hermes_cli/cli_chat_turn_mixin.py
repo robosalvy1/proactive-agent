@@ -248,7 +248,8 @@ class CLIChatTurnMixin:
             def display_callback(sentence: str):
                 if not turn.box_opened:
                     turn.box_opened = True
-                    label = " ☤ Hermes "
+                    from hermes_cli.cli_identity import get_agent_name
+                    label = f" ☤ {get_agent_name()} "
                     if self.show_timestamps:
                         label = f"{label}{datetime.now().strftime(self.timestamp_format)} "
                     w = self._scrollback_box_width(getattr(self.console, "width", 80))
@@ -648,10 +649,14 @@ class CLIChatTurnMixin:
                 from hermes_cli.skin_engine import get_active_skin
                 _skin = get_active_skin()
                 label = _skin.get_branding("response_label", "☤ Hermes")
+                if label == "☤ Hermes":
+                    from hermes_cli.cli_identity import get_agent_name
+                    label = f"☤ {get_agent_name()}"
                 _resp_color = _maybe_remap_for_light_mode(_skin.get_color("response_border", "#CD7F32"))
                 _resp_text = _maybe_remap_for_light_mode(_skin.get_color("banner_text", "#FFF8DC"))
             except Exception:
-                label = "☤ Hermes"
+                from hermes_cli.cli_identity import get_agent_name
+                label = f"☤ {get_agent_name()}"
                 _resp_color = _maybe_remap_for_light_mode("#CD7F32")
                 _resp_text = _maybe_remap_for_light_mode("#FFF8DC")
 
