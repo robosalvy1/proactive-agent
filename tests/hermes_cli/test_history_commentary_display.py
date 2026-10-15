@@ -525,7 +525,7 @@ def test_overlapping_public_items_do_not_leave_partial_text_in_final_or_thinking
 
 
 def test_unconfigured_history_hides_commentary_without_mutating_provider_replay(monkeypatch):
-    monkeypatch.setattr("hermes_cli.config.load_config", lambda: {})
+    monkeypatch.setattr("hermes_cli.config.load_config", dict)
     row = _row()
     for adapter in (_project_for_display, _history_to_messages):
         projected = adapter([row])[0]
