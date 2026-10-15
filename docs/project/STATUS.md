@@ -33,3 +33,11 @@ Project instructions now stand on their own: no required upstream root guide, ex
 ## PR babysitting workflow
 
 Added the invocation and authority in root AGENTS.md, with reviewer selection, feedback iteration, monitoring, and merge gates in PR_BABYSITTING.md. Bot availability has not been verified and no PR review or merge has been started by this documentation change.
+
+## Messaging personalization
+
+Added a first-private-message personalization directive across the shared messaging gateway, including runtime-registered adapters. Prior CLI/desktop conversations do not suppress it. The offer flag is profile-local and survives app changes and restarts. It asks one question at a time about both names, personality/style, and intended help; tasks take priority and users can skip. `onboarding.profile_build: off` disables it. Groups, internal events, local sessions, webhooks, and continuing conversations do not start it.
+
+The directive uses existing memory/file tools: confirmed user facts go to user memory, names go to separate profile-local `USER_NAME.txt` and `AGENT_NAME.txt` files, and labeled names/personality also go to `SOUL.md`. Renames/forgetting must update all copies. File writes and progression remain model-driven and use existing approval gates; there is no separate onboarding state machine. Each app already appears in its session context's `Source` field. Future adapters inherit this through standard routing and accurate source metadata, documented in `gateway/platforms/ADDING_A_PLATFORM.md`.
+
+Development validation passed 42 focused messaging tests, 5 future-adapter/persistence tests, and existing agent/TUI onboarding regressions. The original dirty checkout's full lint check found unrelated concurrent changes and ignored development state; isolated PR validation is pending. No live provider conversation, external delivery, or actual name-file writes through messaging services were tested. Next action: isolated PR checks, independent review, then a user-authorized live conversation to assess question quality and file writes.

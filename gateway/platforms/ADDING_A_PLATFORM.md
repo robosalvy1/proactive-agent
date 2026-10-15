@@ -81,6 +81,21 @@ See `plugins/platforms/irc/`, `plugins/platforms/teams/`, and
 `website/docs/developer-guide/adding-platform-adapters.md` for the full
 plugin guide with code examples and hook documentation.
 
+### Shared onboarding and current-app context
+
+Route human messages through the standard gateway message handler with the adapter's
+registered `Platform` value and accurate `SessionSource.chat_type` (`dm` for private
+conversations). The shared turn-preparation path automatically offers personalization
+on the first eligible DM. No onboarding platform allowlist or per-adapter implementation
+is needed. Its saved flag belongs to the runtime profile, so adding another app or
+restarting the gateway does not repeat onboarding for that profile.
+
+The shared session-context builder also supplies the current app in the prompt's
+`Source` field from `SessionSource.platform`, including dynamically registered adapters.
+Keep the actual receiving platform on the source; do not infer it from the profile's
+first configured app or copy a previous conversation's source. The context is pinned
+per session to preserve prompt caching, while each app's conversation has its own source.
+
 ---
 
 Plugin-registered native handlers (`ctx.register_platform_handler(<platform>, factory)`): call
