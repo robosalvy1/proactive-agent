@@ -286,7 +286,7 @@ What they do:
   (`hermes cron list` shows it) and fire on the next tick after `hermes gateway start`; their
   schedule is not advanced or penalised. `no_agent` script jobs still run from a bare tick.
 
-**Name-based lookup.** All four mutating verbs (`pause`, `resume`, `run`, `remove`, `edit`) plus the agent's `cronjob_manage` tool now accept a job **name** (case-insensitive) in place of the hex ID. The agent and CLI both prefer an exact ID match if one exists; ambiguous name matches (multiple jobs sharing the same name) are refused with the full list of candidate IDs so you can pick one explicitly. Names are not unique, so this guard is load-bearing — it prevents silently mutating the wrong job when two share a name.
+**Name-based lookup.** All five mutating verbs (`pause`, `resume`, `run`, `remove`, `edit`) plus the agent's `cronjob_manage` tool now accept a job **name** (case-insensitive) in place of the hex ID. The agent and CLI both prefer an exact ID match if one exists; ambiguous name matches (multiple jobs sharing the same name) are refused with the full list of candidate IDs so you can pick one explicitly. Names are not unique, so this guard is load-bearing — it prevents silently mutating the wrong job when two share a name.
 
 ### Pausing everything: `hermes pause`
 
@@ -674,7 +674,7 @@ cron:
   wrap_response: true
 ```
 
-`hermes cron list` and `/cron list` show compact, name-first summaries. Add `--details` to inspect job IDs, prompts, and technical fields; combine it with `--all` to include disabled and completed jobs. Job names work for management commands; ambiguous names require an ID.
+`hermes cron list` and `/cron list` show compact, name-first summaries. Add `--details` to inspect job IDs, prompts, and technical fields; combine it with `--all` to include disabled and completed jobs. Job names work for `edit`, `pause`, `resume`, `run`, and `remove`; ambiguous names require an ID.
 
 ### Push notifications (`cron.delivery.notify`)
 

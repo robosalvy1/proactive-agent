@@ -61,3 +61,17 @@ def test_confirmation_preserves_timezone_paused_and_local_only_state(job):
     assert "Morning brief" in text and "UTC" in text
     assert "Paused" in text and "no chat delivery" in text
     assert "internal-123" not in text and "Next:" not in text
+
+
+@pytest.mark.parametrize("deliver", ["origin", ["origin"], ("origin",)])
+def test_origin_delivery_has_no_redundant_destination_label(job, deliver):
+    job["deliver"] = deliver
+    text = job_confirmation(job)
+    assert "Delivery:" not in text
+    assert "no chat delivery" not in text
+
+
+@pytest.mark.parametrize("deliver", ["local", ["local"], [], None])
+def test_local_delivery_forms_keep_the_local_only_warning(job, deliver):
+    job["deliver"] = deliver
+    assert "no chat delivery" in job_confirmation(job)

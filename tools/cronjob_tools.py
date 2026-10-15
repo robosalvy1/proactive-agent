@@ -507,14 +507,23 @@ def _background_session_key(session_id: Optional[str]) -> str:
 def _manual_run_completion(
     res: dict[str, Any], job_id: str, job_name: str, deliver: str, started_at: float) -> dict[str, Any]:
     """Async-delegation completion block for a finished background manual run."""
+    from agent.redact import redact_sensitive_text
+
     duration = round(time.time() - started_at, 2)
     refreshed = get_job(job_id) or {}
-    if refreshed.get("last_delivery_error"):
-        outcome = f"Delivery failed: {refreshed['last_delivery_error']}."
-        if not res.get("success") and res.get("error") != refreshed["last_delivery_error"]:
-            outcome += f" Run failed: {res.get('error') or 'Unknown error'}."
+    run_error = res.get("error")
+    delivery_error = refreshed.get("last_delivery_error")
+
+    def safe_error(value: Any) -> str:
+        return redact_sensitive_text(
+            str(value or "Unknown error"), force=True, redact_url_credentials=True)[:500]
+
+    if delivery_error:
+        outcome = f"Delivery failed: {safe_error(delivery_error)}."
+        if not res.get("success") and run_error != delivery_error:
+            outcome += f" Run failed: {safe_error(run_error)}."
     elif not res.get("success"):
-        outcome = f"Failed: {res.get('error') or 'Unknown error'}."
+        outcome = f"Failed: {safe_error(run_error)}."
     elif refreshed.get("last_delivery_queued"):
         outcome = "Finished; delivery queued, not yet confirmed. Do not resend."
     elif refreshed.get("last_delivery_unverified"):
@@ -531,7 +540,7 @@ def _manual_run_completion(
             lines.append(excerpt)
     return {
         "status": "completed" if res.get("success") else "error", "summary": "\n".join(lines),
-        "error": res.get("error"), "api_calls": 0, "duration_seconds": duration,
+        "error": safe_error(run_error) if run_error else None, "api_calls": 0, "duration_seconds": duration,
     }
 
 
@@ -1070,8 +1079,6 @@ def _cronjob_schema_overrides() -> dict:
 CRONJOB_SCHEMA = {
     "name": "cronjob_manage",
     "description": """Manage scheduled cron jobs: action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id or exact name (list first to resolve ambiguity; never guess IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only).
-
-Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless pinned.
 
 Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.
 
