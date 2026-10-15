@@ -84,3 +84,78 @@ async def test_proxy_forwards_onboarding_once_without_changing_transcript_text(t
             'later', 'fixed context', history, source, 'sid', session_key='key', scheduled_heartbeat=True,
         )
         assert session.captured_json['messages'][-1] == {'role': 'user', 'content': 'later'}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('failure', ['connection', 'http', 'cancelled'])
+async def test_failed_proxy_retries_pending_offer_on_a_later_turn(tmp_path, monkeypatch, failure):
+    """Pre-acceptance failures retain onboarding alongside newly staged notes."""
+    monkeypatch.setattr('gateway.run._hermes_home', tmp_path)
+    monkeypatch.setattr('gateway.run._load_gateway_config', dict)
+    monkeypatch.setenv('GATEWAY_PROXY_URL', 'http://proxy.invalid:8642')
+    runner = _make_runner()
+    source = SessionSource(platform=Platform.TELEGRAM, chat_id='dm', user_id='u')
+    notes = []
+    await runner._hmwa_first_contact_notes(source, [], notes)
+    runner._set_pending_turn_sidecar_notes('key', notes)
+    rejected = _FakeSession(_FakeSSEResponse(status=503, error_text='Unavailable'))
+    if failure != 'http':
+        def fail_post(*args, **kwargs):
+            """Fail before a remote acceptance can be observed."""
+            if failure == 'cancelled':
+                raise asyncio.CancelledError
+            raise ConnectionError('Offline')
+        rejected.post = fail_post
+    with _patch_aiohttp(rejected):
+        if failure == 'cancelled':
+            with pytest.raises(asyncio.CancelledError):
+                await runner._run_agent_via_proxy(
+                    'hi', '', [], source, 'sid', session_key='key', scheduled_heartbeat=True,
+                )
+        else:
+            result = await runner._run_agent_via_proxy(
+                'hi', '', [], source, 'sid', session_key='key', scheduled_heartbeat=True,
+            )
+            assert result['api_calls'] == 0
+
+    # Preparation of the next turn may stage another note; it must not erase the retry.
+    runner._set_pending_turn_sidecar_notes('key', ['voice mode changed'])
+    accepted = _FakeSession(_FakeSSEResponse(sse_chunks=['data: [DONE]\n\n']))
+    with _patch_aiohttp(accepted):
+        await runner._run_agent_via_proxy(
+            'try again', '', [{'role': 'user', 'content': 'hi'}], source, 'sid',
+            session_key='key', scheduled_heartbeat=True,
+        )
+        outbound = accepted.captured_json['messages'][-1]['content']
+        assert outbound == 'try again\n\n' + notes[0] + '\n\nvoice mode changed'
+        assert runner._consume_pending_turn_sidecar_notes('key') == []
+        await runner._run_agent_via_proxy(
+            'after acceptance', '', [], source, 'sid', session_key='key', scheduled_heartbeat=True,
+        )
+        assert accepted.captured_json['messages'][-1]['content'] == 'after acceptance'
+
+
+@pytest.mark.asyncio
+async def test_proxy_ack_preserves_notes_staged_while_request_is_in_flight(monkeypatch):
+    """An older request's acceptance must not erase newer pending context."""
+    monkeypatch.setattr('gateway.run._load_gateway_config', dict)
+    monkeypatch.setenv('GATEWAY_PROXY_URL', 'http://proxy.invalid:8642')
+    runner = _make_runner()
+    source = SessionSource(platform=Platform.TELEGRAM, chat_id='dm', user_id='u')
+    runner._set_pending_turn_sidecar_notes('key', ['original note'])
+
+    class ResponseWithNewNote(_FakeSSEResponse):
+        """Stage new context after the request snapshot but before acceptance."""
+
+        async def __aenter__(self):
+            """Simulate another callback staging a note while HTTP is pending."""
+            runner._set_pending_turn_sidecar_notes('key', ['new note'])
+            return self
+
+    accepted = _FakeSession(ResponseWithNewNote(sse_chunks=['data: [DONE]\n\n']))
+    with _patch_aiohttp(accepted):
+        await runner._run_agent_via_proxy(
+            'hi', '', [], source, 'sid', session_key='key', scheduled_heartbeat=True,
+        )
+    assert accepted.captured_json['messages'][-1]['content'] == 'hi\n\noriginal note'
+    assert runner._consume_pending_turn_sidecar_notes('key') == ['new note']

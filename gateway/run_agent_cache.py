@@ -635,7 +635,22 @@ class GatewayAgentCacheMixin:
         """Stage per-turn must-deliver notes for the next agent run (one-shot)."""
         if not session_key or not notes:
             return
-        self._session_state(session_key).conversation.sidecar_notes = list(notes)
+        pending = self._peek_pending_turn_sidecar_notes(session_key)
+        self._session_state(session_key).conversation.sidecar_notes = list(dict.fromkeys([*pending, *notes]))
+
+    def _peek_pending_turn_sidecar_notes(self, session_key: str) -> list[str]:
+        """Snapshot must-deliver notes without dropping them before remote acceptance."""
+        state = self._peek_session_state(session_key) if session_key else None
+        notes = state.conversation.sidecar_notes if state is not None else None
+        return list(notes) if isinstance(notes, list) else []
+
+    def _ack_pending_turn_sidecar_notes(self, session_key: str, sent: list[str]) -> None:
+        """Remove only an accepted request's notes, preserving anything staged later."""
+        state = self._peek_session_state(session_key) if session_key else None
+        if state is not None:
+            state.conversation.sidecar_notes = [
+                note for note in self._peek_pending_turn_sidecar_notes(session_key) if note not in sent
+            ]
 
     def _consume_pending_turn_sidecar_notes(self, session_key: str) -> list[str]:
         state = self._peek_session_state(session_key) if session_key else None
