@@ -583,8 +583,8 @@ class GatewayTurnPrepareMixin:
             # CLI setup/use must not consume the messaging introduction. The profile-local
             # latch survives /new, channel changes and gateway restarts.
             from gateway.messaging_onboarding import first_messaging_note
-            note = first_messaging_note(
-                _load_gateway_config(), _gateway_config_home() / "config.yaml",
+            note = await asyncio.to_thread(
+                first_messaging_note, _load_gateway_config(), _gateway_config_home() / "config.yaml",
             )
             if note:
                 turn_sidecar_notes.append(note)

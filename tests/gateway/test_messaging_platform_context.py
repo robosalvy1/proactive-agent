@@ -14,6 +14,7 @@ from gateway.session import SessionSource, build_session_context, build_session_
 
 @pytest.mark.asyncio
 async def test_future_adapters_inherit_onboarding_and_identify_the_current_app(tmp_path, monkeypatch):
+    """Runtime registration alone supplies onboarding and current-app context."""
     registry = PlatformRegistry()
     monkeypatch.setattr("gateway.platform_registry.platform_registry", registry)
     monkeypatch.setattr("gateway.run._hermes_home", tmp_path)
@@ -43,6 +44,7 @@ async def test_future_adapters_inherit_onboarding_and_identify_the_current_app(t
 
 
 def test_current_app_context_changes_with_the_transport():
+    """The source label comes from this conversation rather than a prior app."""
     config = GatewayConfig()
     for platform in (Platform.TELEGRAM, Platform.SIGNAL, Platform("photon")):
         source = SessionSource(platform=platform, chat_id="chat", user_id="u", chat_type="dm")

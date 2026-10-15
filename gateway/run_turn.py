@@ -864,12 +864,11 @@ class GatewayTurnMixin(GatewayTurnPrepareMixin, GatewayTurnHygieneMixin, Gateway
 
         # OpenAI chat format. The remote keeps continuity via X-Hermes-Session-Id; send the current
         # message plus a compact text-only history for a remote that has none yet.
-        api_messages: list[dict[str, str]] = [{"role": "system", "content": context_prompt}] if context_prompt else []
-        api_messages += [
-            {"role": msg.get("role"), "content": msg.get("content")}
-            for msg in history if msg.get("role") in {"user", "assistant"} and msg.get("content")
-        ]
-        api_messages.append({"role": "user", "content": message})
+        from gateway.proxy_messages import build_proxy_messages
+        api_messages = build_proxy_messages(
+            message, context_prompt, history,
+            self._consume_pending_turn_sidecar_notes(session_key or ""),
+        )
 
         headers: dict[str, str] = {"Content-Type": "application/json"}
         if proxy_key:

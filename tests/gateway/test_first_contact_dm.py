@@ -19,6 +19,7 @@ _MESSAGING_PLATFORMS = sorted(
 
 
 def _runner(tmp_path, monkeypatch):
+    """Bind a minimal runner to disposable state and a fake messaging transport."""
     monkeypatch.setattr("gateway.run._hermes_home", tmp_path)
     monkeypatch.setenv("TELEGRAM_HOME_CHANNEL", "home")
     runner = GatewayRunner.__new__(GatewayRunner)
@@ -31,6 +32,7 @@ def _runner(tmp_path, monkeypatch):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("platform_name", _MESSAGING_PLATFORMS)
 async def test_first_dm_gets_personalization_once_after_cli_use(tmp_path, monkeypatch, platform_name):
+    """Exercise every discovered adapter without an onboarding platform allowlist."""
     from gateway.messaging_onboarding import MESSAGING_PERSONALIZATION_FLAG, personalization_directive
 
     (tmp_path / "config.yaml").write_text("model: test\n", encoding="utf-8")
@@ -51,6 +53,7 @@ async def test_first_dm_gets_personalization_once_after_cli_use(tmp_path, monkey
 
 @pytest.mark.asyncio
 async def test_switching_apps_after_restart_does_not_repeat_onboarding(tmp_path, monkeypatch):
+    """The profile claim survives a new runner and a different messaging transport."""
     runner = _runner(tmp_path, monkeypatch)
     notes = []
     await runner._hmwa_first_contact_notes(
@@ -79,6 +82,7 @@ async def test_switching_apps_after_restart_does_not_repeat_onboarding(tmp_path,
 async def test_non_first_human_dm_does_not_start_personalization(
     tmp_path, monkeypatch, chat_type, platform, history, internal,
 ):
+    """Excluded events must not mutate the profile onboarding state."""
     runner = _runner(tmp_path, monkeypatch)
     source = SessionSource(platform=platform, chat_id="chat", user_id="u", chat_type=chat_type)
     notes = []
@@ -89,6 +93,7 @@ async def test_non_first_human_dm_does_not_start_personalization(
 
 @pytest.mark.asyncio
 async def test_off_disables_personalization_without_writing_config(tmp_path, monkeypatch):
+    """Explicit opt-out leaves both the offer and the existing config untouched."""
     path = tmp_path / "config.yaml"
     original = "onboarding:\n  profile_build: 'off'\n"
     path.write_text(original)
@@ -102,6 +107,7 @@ async def test_off_disables_personalization_without_writing_config(tmp_path, mon
 
 @pytest.mark.asyncio
 async def test_routed_profile_owns_the_offer_and_name_destinations(tmp_path, monkeypatch):
+    """A routed conversation must never personalize the launch profile."""
     from hermes_constants import reset_hermes_home_override, set_hermes_home_override
 
     runner = _runner(tmp_path, monkeypatch)

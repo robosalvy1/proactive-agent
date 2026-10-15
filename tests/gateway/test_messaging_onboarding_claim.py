@@ -16,16 +16,19 @@ from hermes_yaml import safe_load
 
 
 def test_stale_config_cannot_claim_an_already_saved_offer(tmp_path):
+    """An old config snapshot must not bypass the durable profile flag."""
     path = tmp_path / 'config.yaml'
     assert first_messaging_note({}, path) is not None
     assert first_messaging_note({}, path) is None
 
 
 def test_concurrent_claims_offer_only_once(tmp_path):
+    """Competing callers share the persisted claim instead of duplicating offers."""
     path = tmp_path / 'config.yaml'
     start = Barrier(2)
 
     def claim():
+        """Start both stale-snapshot callers together without timing sleeps."""
         start.wait(timeout=10)
         return first_messaging_note({}, path)
 
@@ -36,6 +39,7 @@ def test_concurrent_claims_offer_only_once(tmp_path):
 
 
 def _runner(tmp_path, monkeypatch):
+    """Bind a minimal runner to disposable state and a fake messaging transport."""
     monkeypatch.setattr('gateway.run._hermes_home', tmp_path)
     monkeypatch.setenv('TELEGRAM_HOME_CHANNEL', 'home')
     runner = GatewayRunner.__new__(GatewayRunner)
@@ -46,6 +50,7 @@ def _runner(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_bot_dm_does_not_consume_the_human_offer(tmp_path, monkeypatch):
+    """An admitted bot message must leave onboarding available for a human."""
     runner = _runner(tmp_path, monkeypatch)
     source = SessionSource(platform=Platform.TELEGRAM, chat_id='dm', user_id='bot', is_bot=True)
     notes = []
@@ -60,6 +65,7 @@ async def test_bot_dm_does_not_consume_the_human_offer(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_refused_input_leaves_onboarding_for_the_next_accepted_turn(tmp_path, monkeypatch):
+    """Refused input must neither stage a directive nor consume its claim."""
     runner = _runner(tmp_path, monkeypatch)
     source = SessionSource(platform=Platform.TELEGRAM, chat_id='dm', user_id='user')
     event = MessageEvent(text='read @file:blocked.txt', source=source)
@@ -96,6 +102,7 @@ async def test_refused_input_leaves_onboarding_for_the_next_accepted_turn(tmp_pa
 
 
 def test_stale_snapshot_does_not_override_a_persisted_opt_out(tmp_path):
+    """The locked config read must honor a newer user opt-out."""
     path = tmp_path / 'config.yaml'
     original = "onboarding:\n  profile_build: 'off'\n"
     path.write_text(original)
@@ -104,6 +111,7 @@ def test_stale_snapshot_does_not_override_a_persisted_opt_out(tmp_path):
 
 
 def test_unreadable_config_does_not_abort_the_turn_or_overwrite_it(tmp_path):
+    """Malformed config must be preserved while optional onboarding is omitted."""
     path = tmp_path / 'config.yaml'
     original = 'onboarding: [broken yaml'
     path.write_text(original)

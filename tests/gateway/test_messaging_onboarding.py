@@ -10,6 +10,7 @@ from gateway.messaging_onboarding import (
 
 
 def test_cli_offer_does_not_consume_messaging_offer(tmp_path):
+    """CLI and messaging offers have separate flags while preserving other config."""
     path = tmp_path / "config.yaml"
     config = {"model": {"default": "test"}, "onboarding": {
         "seen": {"profile_build_offered": True},
@@ -25,6 +26,7 @@ def test_cli_offer_does_not_consume_messaging_offer(tmp_path):
 
 
 def test_each_profile_has_its_own_offer_and_identity_paths(tmp_path):
+    """Separate profiles must each receive their own offer and file destinations."""
     for profile in ("first", "second"):
         home = tmp_path / profile
         home.mkdir()
@@ -36,7 +38,9 @@ def test_each_profile_has_its_own_offer_and_identity_paths(tmp_path):
 
 
 def test_failed_latch_does_not_start_an_untracked_offer(tmp_path, monkeypatch):
+    """A failed write must not report an offer as claimed."""
     def fail_write(*_args):
+        """Simulate a disk failure without modifying profile state."""
         raise OSError("synthetic write failure")
 
     monkeypatch.setattr("hermes_cli.config.atomic_config_write", fail_write)
