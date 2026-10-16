@@ -522,6 +522,18 @@ def apply_llm_output_transform(
     return final_response, transformed, pre_transform
 
 
+def _capture_open_loops(agent, original_user_message, final_response, interrupted) -> None:
+    """Post-turn open-loop capture (``agent/open_loops.py``); completed turns only, never raises."""
+    if not final_response or interrupted:
+        return
+    from agent.open_loops import maybe_capture_after_turn
+
+    try:
+        maybe_capture_after_turn(agent, original_user_message)
+    except Exception:  # proactive bookkeeping must never fail a finished turn
+        logging.getLogger(__name__).warning("Open-loop capture failed", exc_info=True)
+
+
 def finalize_turn(
     agent, *, final_response, api_call_count, interrupted, failed, messages, conversation_history,
     effective_task_id, turn_id, user_message, original_user_message, _should_review_memory,
@@ -789,6 +801,10 @@ def finalize_turn(
                 messages_snapshot=list(messages), review_memory=_should_review_memory,
                 review_skills=_should_review_skills,
             )
+
+    # Attention open loops (opt-in): commitments the user just stated, extracted off-thread
+    # outside the conversation, so the agent can check in before they lapse.
+    _capture_open_loops(agent, original_user_message, final_response, interrupted)
 
     # Memory provider on_session_end()/shutdown_all() are NOT called here:
     # run_conversation() runs once per message; CLI/gateway own session-end cleanup.

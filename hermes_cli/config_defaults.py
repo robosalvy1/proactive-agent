@@ -6,6 +6,9 @@ docs of config.yaml.
 
 from hermes_cli.config_env_defaults import category as _category, env as _env
 
+from hermes_cli.config_defaults_aux import _aux
+
+
 #: Image every container terminal backend (docker/modal/daytona/singularity) uses unless the
 #: user pins one. LEGACY_SANDBOX_IMAGES are the plain defaults that preceded the desktop stack
 #: (the 3.14 pin shipped between the two without a migration); a saved config still holding one
@@ -16,19 +19,6 @@ LEGACY_SANDBOX_IMAGE = LEGACY_SANDBOX_IMAGES[0]
 # Vercel Sandbox managed image (Vercel deprecated its `runtime` presets in Aug 2026).
 DEFAULT_VERCEL_IMAGE = "vercel/sandbox/universal:latest"
 LEGACY_VERCEL_RUNTIME = "node24"  # the seeded pre-49 default, never a user choice
-
-
-def _aux(timeout, *, reasoning_effort=True, **extra):
-    """Standard auxiliary-task model block (see DEFAULT_CONFIG["auxiliary"]).
-
-    reasoning_effort=False omits that key (MoA blocks configure depth per slot);
-    ``extra`` keys are appended after the standard ones.
-    """
-    d = {"provider": "auto", "model": "", "base_url": "", "api_key": "", "timeout": timeout, "extra_body": {}}
-    if reasoning_effort:
-        d["reasoning_effort"] = ""
-    d.update(extra)
-    return d
 
 
 DEFAULT_CONFIG = {
@@ -799,6 +789,7 @@ DEFAULT_CONFIG = {
         # of skills); route cheaper via `hermes model` → auxiliary → Curator.
         "curator": _aux(600),
         "monitor": _aux(60),   # important-mail 0-10 scorer; high-volume, small model fine
+        "open_loops": _aux(60),  # attention open-loop extractor; one JSON call per cued message
         # Post-turn self-improvement fork (save memory / patch skill). "auto" = main model replaying
         # the full conversation (warm cache); other models replay a compact digest (~3-5x cheaper).
         # Automatic review is opt-in; enabled=true permits auto spawns (/refine always works).
@@ -1891,6 +1882,13 @@ DEFAULT_CONFIG = {
         # cron.scheduler.DEFAULT_FAILURE_REPEAT_ALERT_HOURS.
         "failure_repeat_alert_hours": 6,
     },
+    # Proactive inbox (cron/attention*.py; user-guide/features/attention.md); off by default. level:
+    # off|quiet (digests only)|balanced|eager. quiet_hours: local "HH:MM-HH:MM", "" = none.
+    # max_interrupts_per_day: None = level default. route_cron: recurring cron results go to the
+    # inbox. open_loops: track commitments stated in chat. deliver: fallback target, "" = inbox only.
+    "attention": {"enabled": False, "level": "quiet", "quiet_hours": "22:00-08:00",
+                  "digest_times": ["08:30", "13:00", "18:30"], "max_interrupts_per_day": None,
+                  "route_cron": True, "open_loops": True, "deliver": ""},
     # Kanban multi-agent coordination. The dispatcher ticks every N seconds, reclaims stale claims,
     # promotes dependency-satisfied todos to ready, and fires `hermes -p <assignee> chat -q ...` per
     # claimable task. Run ONE dispatcher per profile; two on the same kanban.db race for claims.

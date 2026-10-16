@@ -3060,6 +3060,8 @@ class _RunDelivery:
     incident_acked: bool = False
     failure_incident_id: Optional[str] = None
     side_effect_ownership_lost: bool = False
+    # The result went to the attention inbox/digest (cron/attention.py) instead of direct delivery.
+    routed_to_inbox: bool = False
 
 
 def _save_compose_deliver(
@@ -3117,6 +3119,11 @@ def _save_compose_deliver(
     if d.should_deliver and fence.lost():
         d.should_deliver = False
         logger.warning("Job '%s': skipping delivery after fire claim ownership loss", job["id"])
+
+    if d.should_deliver and d.success:
+        from cron.scheduler_attention import route_result_to_inbox
+        if route_result_to_inbox(d, fence, deliver_content):
+            return
 
     if not d.should_deliver:
         return
