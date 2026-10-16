@@ -330,6 +330,16 @@ def test_completed_review_does_not_requeue(monkeypatch):
     assert calls["enqueued"] == []
 
 
+@pytest.mark.parametrize("focus", [None, "save the deploy workflow"])
+def test_preempted_explicit_review_does_not_requeue(monkeypatch, focus):
+    """Cancellation ends manual /refine even without focus text."""
+    requeue, calls = _requeue_agent(monkeypatch)
+    requeue(_Run(cancelled=True),
+            {"task_cfg": {"defer": "auto"}, "focus": focus,
+             "explicit": True, "_requeue_attempts": 1})
+    assert calls["enqueued"] == []
+
+
 def test_requeue_attempt_cap(monkeypatch):
     requeue, calls = _requeue_agent(monkeypatch)
     requeue(_Run(cancelled=True),

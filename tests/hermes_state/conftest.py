@@ -28,3 +28,38 @@ def worker(tmp_path):
     store.journal['pending'] = []
     store.close()
     db.close()
+
+
+@pytest.fixture
+def endpoint():
+    import json
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    requests = []
+    state = {'status': 200, 'vectors': {}, 'callback': None, 'response': None}
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+            requests.append((self.path, dict(self.headers), data))
+            if state['callback']:
+                state['callback']()
+            self.send_response(state['status'])
+            self.end_headers()
+            result = state['response']
+            if result is None:
+                result = {'data': [{'index': i, 'embedding': state['vectors'].get(text, [0, 0, 1])}
+                                   for i, text in enumerate(data['input'])]}
+            self.wfile.write(json.dumps(result).encode())
+
+        def log_message(self, *_args):
+            pass
+
+    server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    yield f'http://127.0.0.1:{server.server_port}/v1', requests, state
+    server.shutdown()
+    server.server_close()
+    thread.join(timeout=2)

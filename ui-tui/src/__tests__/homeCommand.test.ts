@@ -46,3 +46,14 @@ it('does not apply a delayed Home result after the user switched chats', async (
   await Promise.resolve()
   expect(ctx.session.resumeById).not.toHaveBeenCalled()
 })
+
+it('preserves case-sensitive session IDs in private-conversation controls', async () => {
+  const ctx = context()
+  ctx.gateway.rpc.mockResolvedValue({ output: 'Linked.' } as any)
+  homeCommands[0]!.run('link CaseSensitive-ID', ctx as any, 'home')
+  await vi.waitFor(() => expect(ctx.transcript.sys).toHaveBeenCalledWith('Linked.'))
+  expect(ctx.gateway.rpc).toHaveBeenCalledWith('home.action', {
+    session_id: 'side-chat',
+    action: 'link CaseSensitive-ID'
+  })
+})

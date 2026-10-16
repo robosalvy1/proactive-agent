@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from hermes_state_home import HomeStore
 
-USAGE = "/home [status | overview | share | exclude | off | on | dream [on|off|now|status|notes|clear]]"
+USAGE = "/home [status | overview | share | exclude | link <session-id> | unlink <session-id> | links | index [clear] | sources | forget <message-id> | supersede <old-id> <new-id> | off | on | dream [on|off|now|status|notes|clear]]"
 
 
 def format_overview(rows: list[dict]) -> str:
@@ -19,14 +19,33 @@ def format_overview(rows: list[dict]) -> str:
         title = redact_sensitive_text(str(row["title"])[:100], force=True)
         text = redact_sensitive_text(str(row["content"] or "")[:400], force=True, redact_url_credentials=True)
         speaker = "You" if row["role"] == "user" else "Assistant"
-        lines.append(f"\n{title} · {when}\n{speaker}: {text}\n{row.get('link', '')}")
+        lines.append(f"\n{title} · {when} · message {row['id']}\n{speaker}: {text}\n{row.get('link', '')}")
     return "\n".join(lines)
 
 
 def home_action(db, session_id: str, action: str = "", *, cwd: str | None = None,
                 principal_id: str | None = None) -> dict:
     store = HomeStore(db, principal_id=principal_id)
-    action = action.strip().lower()
+    action = action.strip()
+    if action:
+        from hermes_cli.home_controls import source_action
+        result = source_action(db, session_id, action, principal_id=principal_id)
+        if result is not None:
+            return result
+    verb, _, argument = action.partition(' ')
+    if verb.lower() in {'link', 'unlink', 'links'}:
+        from hermes_state_home_links import list_links, set_link
+        if verb.lower() == 'links' and not argument:
+            links = list_links(store, caller_session_id=session_id)
+            output = '\n'.join(f"{item['session_id']} · {item['source']} · {'linked' if item['valid'] else 'inactive'}"
+                               for item in links) or 'No private conversations linked.'
+            return {'output': output}
+        if verb.lower() == 'links' or not argument.strip() or len(argument.split()) != 1:
+            raise ValueError(USAGE)
+        set_link(store, argument.strip(), verb.lower() == 'link', caller_session_id=session_id)
+        return {'output': ('Private conversation linked to Home for future recall.' if verb.lower() == 'link' else
+                           'Private conversation unlinked. Future Home recall stops; existing context, native memory, and explicit history search are unchanged.')}
+    action = action.lower()
     if action == 'dream' or action.startswith('dream '):
         from hermes_cli.home_dreams import dream_action
         return dream_action(db, action, principal_id=principal_id)

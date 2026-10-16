@@ -20,11 +20,11 @@ Ask Home a topical question to recall relevant messages from participating chats
 
 ## Scope and limits
 
-Home recall is personal and profile-local. Groups, messaging transports, jobs, subagents, hidden chats, and other principals are excluded. Existing profile and turn ownership/approval controls still apply. Reading unfinished work never authorizes executing it.
+Home recall is personal and profile-local. Private messaging conversations require an explicit local-owner `/home link <session-id>` grant and exact current source identity; `/home unlink <session-id>` revokes one. Groups, jobs, subagents, hidden chats, unlinked messaging and other principals are excluded. Existing profile and turn ownership/approval controls still apply. Reading unfinished work never authorizes executing it.
 
 `exclude` means future **Home retrieval**, not private chat or forgetting. It does not clear content already sent in active contexts, native `MEMORY.md`/`USER.md`, external memory, or explicit session-search access. Use separate Hermes profiles when separate memory is required. No private-chat label is exposed.
 
-Retrieval is keyword-based. Dream notes can add useful phrasing and cross-chat connections, but paraphrases can still miss and old matches can crowd the candidate limit. The excerpts carry dates and sources rather than being promoted into asserted facts. Overview is recent context, not a complete task ledger. Revisioned fact-level forgetting, semantic retrieval, full lifecycle evaluation, and proactive task coordination remain future work. No live-provider quality benchmark has been run.
+Keyword retrieval remains the configuration-free baseline. Optional semantic retrieval adds a bounded derived vector index and query embeddings; explicit source forgetting and user supersession apply to future recall and reflection. [Memory continuity](MEMORY_CONTINUITY.md) documents setup, `/home index`, linking and source controls. Excerpts remain dated evidence rather than asserted facts. Overview is recent context, not a complete task ledger. General fact-level erasure across independent stores, live-provider quality evaluation and proactive coordination remain future work.
 
 ## Research basis
 

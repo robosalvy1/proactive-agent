@@ -20288,22 +20288,7 @@
           },
           "action": {
             "default": "",
-            "enum": [
-              "",
-              "status",
-              "overview",
-              "share",
-              "exclude",
-              "off",
-              "on",
-              "dream",
-              "dream status",
-              "dream on",
-              "dream off",
-              "dream now",
-              "dream notes",
-              "dream clear"
-            ],
+            "maxLength": 512,
             "title": "Action",
             "type": "string"
           },

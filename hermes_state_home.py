@@ -109,7 +109,7 @@ class HomeStore:
         def update(conn):
             row = conn.execute("SELECT * FROM sessions WHERE id=?", (session_id,)).fetchone()
             if not row or not self._personal_on(conn, row):
-                raise ValueError("Home sharing supports personal CLI and web chats in this profile.")
+                raise ValueError("Home sharing supports local personal chats and explicitly linked private conversations.")
             anchor = self.anchor_on(conn, session_id)
             conn.execute("INSERT INTO state_meta(key,value) VALUES (?,?) "
                          "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
@@ -117,7 +117,11 @@ class HomeStore:
         self.db._execute_write(update)
 
     def _personal_on(self, conn, row) -> bool:
-        if row["source"] not in PERSONAL_SOURCES or row["hidden"]:
+        if row["source"] not in PERSONAL_SOURCES:
+            from hermes_state_home_links import link_on
+            grant = link_on(self, conn, row['id'])
+            return bool(grant and grant['principal_id'] == self.principal_id)
+        if row["hidden"]:
             return False
         if not row["user_id"] and not row["chat_id"]:
             return True
@@ -149,15 +153,16 @@ class HomeStore:
 
     def _eligible_on(self, conn, state: dict) -> list[dict]:
         # Page metadata only; non-participating rows must not consume the output budget.
-        placeholders = ",".join("?" for _ in PERSONAL_SOURCES)
+        sources = self._candidate_sources_on(conn)
+        placeholders = ",".join("?" for _ in sources)
         eligible, position = [], None
         while len(eligible) < MAX_SESSIONS:
             cursor = "AND (COALESCE(last_activity_at,started_at),id) < (?,?) " if position else ""
             rows = conn.execute(
                 f"SELECT *,COALESCE(last_activity_at,started_at) AS home_activity FROM sessions WHERE source IN ({placeholders}) "
-                "AND (user_id IS NULL OR user_id=?) AND hidden=0 "
+                "AND (user_id IS NULL OR user_id=? OR source NOT IN ('cli','tui','gui','desktop','dashboard','local')) AND hidden=0 "
                 + cursor + "ORDER BY COALESCE(last_activity_at,started_at) DESC, id DESC LIMIT ?",
-                (*PERSONAL_SOURCES, self.principal_id, *(position or ()), MAX_SESSIONS),
+                (*sources, self.principal_id, *(position or ()), MAX_SESSIONS),
             ).fetchall()
             eligible.extend(entry for row in rows if (entry := self._participating_on(conn, row, state)))
             if len(rows) < MAX_SESSIONS:
@@ -201,22 +206,37 @@ class HomeStore:
                 continue
             evidence = [row] if overview else [row, *self._following_on(conn, row)]
             for item in evidence:
+                from hermes_state_home_controls import resolve_source_on
+
+                item = resolve_source_on(self.db, conn, item, self.principal_id)
+                if item is None:
+                    continue
+                item_meta = self._participating_on(conn, conn.execute(
+                    'SELECT * FROM sessions WHERE id=?', (item['session_id'],)).fetchone(), state)
+                if item_meta is None or item_meta['home_anchor'] == current['home_anchor']:
+                    continue
                 identity = item["message_uid"] or str(item["id"])
                 if identity in seen:
                     continue
                 seen.add(identity)
                 profile = self.db._own_profile_name()
-                link = f"@session:{profile}/{sid}" if profile else f"@session:{sid}"
-                result.append({**dict(item), "title": meta["title"] or "Untitled",
+                item_sid = item['session_id']
+                link = f"@session:{profile}/{item_sid}" if profile else f"@session:{item_sid}"
+                result.append({**dict(item), "title": item_meta["title"] or "Untitled",
                                "source_session_id": item["session_id"], "link": link})
                 if len(result) == MAX_RESULTS:
                     return result
         return result
 
+    def _candidate_sources_on(self, conn):
+        from hermes_state_home_links import linked_sources_on
+        return (*PERSONAL_SOURCES, *linked_sources_on(self, conn))
+
     def _search_on(self, conn, terms: list[str], current_id: str):
         # Search indexed history before bounding candidates: an old decision must not
         # disappear merely because many unrelated conversations happened afterwards.
-        marks = ",".join("?" for _ in PERSONAL_SOURCES)
+        sources = self._candidate_sources_on(conn)
+        marks = ",".join("?" for _ in sources)
         exists = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='messages_fts'").fetchone()
         if not exists:
             return
@@ -226,7 +246,7 @@ class HomeStore:
             "snippet(messages_fts,0,'','',' … ',80) AS content "
             "FROM messages_fts JOIN messages m ON m.id=messages_fts.rowid JOIN sessions s ON s.id=m.session_id "
             f"WHERE messages_fts MATCH ? AND s.source IN ({marks}) AND s.hidden=0 "
-            "AND (s.user_id IS NULL OR s.user_id=?) "
+            "AND (s.user_id IS NULL OR s.user_id=? OR s.source NOT IN ('cli','tui','gui','desktop','dashboard','local')) "
             "AND m.session_id != ? "
             "AND m.role IN ('user','assistant') AND (m.active=1 OR m.compacted=1) "
             "AND m._compressed_summary=0 AND COALESCE(m.display_kind,'')!='hidden' "
@@ -235,7 +255,7 @@ class HomeStore:
         # past excluded/old/own-lineage hits instead of letting the first page hide
         # relevant evidence; recall_on stops us once its output budget is filled.
         for offset in range(0, MAX_SEARCH_HITS, MAX_SESSIONS):
-            rows = conn.execute(sql, (query, *PERSONAL_SOURCES, self.principal_id, current_id,
+            rows = conn.execute(sql, (query, *sources, self.principal_id, current_id,
                                       MAX_SESSIONS, offset)).fetchall()
             yield from rows
             if len(rows) < MAX_SESSIONS:

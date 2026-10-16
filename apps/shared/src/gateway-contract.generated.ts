@@ -1885,7 +1885,7 @@ export interface BrowserControllerDetachResult {
 export interface HomeActionParams {
   session_id?: string | null
   profile?: string | null
-  action?: '' | 'status' | 'overview' | 'share' | 'exclude' | 'off' | 'on' | 'dream' | 'dream status' | 'dream on' | 'dream off' | 'dream now' | 'dream notes' | 'dream clear'
+  action?: string
   cwd?: string | null
 }
 export interface HomeActionResult {

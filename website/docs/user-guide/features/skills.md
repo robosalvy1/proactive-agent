@@ -609,9 +609,11 @@ The agent can create, update, and delete its own skills via the `skill_manage` t
 
 Skills and memory work together in the self-improvement loop: memory stores
 small durable facts that should always be in context, while skills store longer
-procedures that should load only when relevant. The background review can
-suggest or stage skill changes after a session, but the write-approval gate
-below lets you require human review before those changes land.
+procedures that should load only when relevant. Automatic background review is
+off by default; `/refine` requests a review explicitly. Reviews save evidenced,
+durable lessons and may make no change. If you opt into automatic review, it can
+suggest or stage skill changes after a turn. The write-approval gate below lets
+you require human review before those changes land.
 
 ### When the Agent Creates Skills
 
@@ -667,9 +669,9 @@ The targeted `patch` is preferred for updates — it's more token-efficient than
 
 ### Gating agent skill writes (`skills.write_approval`)
 
-By default the agent writes skills freely — including from the [background
-self-improvement review](./memory.md#controlling-memory-writes-write_approval)
-that runs after a turn. If you'd rather approve every skill write first
+By default the agent writes skills freely during a task. An explicitly enabled
+[background self-improvement review](./memory.md#opting-into-automatic-reviews-enabled)
+can also write skills after a turn. If you'd rather approve every skill write first
 (small models that misjudge what they learned, secure environments, or just
 wanting eyes on the self-improvement loop), turn on the write-approval gate:
 

@@ -2,6 +2,10 @@
 
 Record durable decisions with date, context, chosen approach, and consequences. Keep alternatives only when they explain a material tradeoff.
 
+## 2026-10-16 — Extend Home recall and keep learning selective
+
+Retain canonical transcripts and small native notes. Add explicitly configured embeddings as derived SQLite state with bounded manual indexing, query-time keyword fallback and canonical source/access revalidation. Private messaging participates only through local-owner exact-conversation grants, never inferred cross-service identity. Source-level forgetting and explicit user supersession use stable message identities, including compression copies; they govern future Home recall and reflection, not existing prompt bytes or independent stores. Preserve compression's existing provider hooks without introducing an unmeasured extraction call. Automatic skill/memory review defaults off, with explicit opt-in and manual `/refine` retained. [MEMORY_CONTINUITY.md](MEMORY_CONTINUITY.md) describes controls and evaluation limits.
+
 ## 2026-10-15 — Proactive output goes through one attention layer on the cron tick
 
 All proactive output (recurring cron results, open-loop check-ins) becomes an item in a profile-local SQLite store (`<profile>/cron/attention.db`, `cron/attention*.py`). A deterministic gate routes each item to an immediate interruption, the next digest, or the inbox only; the gateway's existing cron tick sends due items under its per-home lock. Choices: no second scheduler; no model on the gate or idle ticks; a separate DB rather than a `state.db` migration, because items are delivery state owned by cron, not transcript state; digests are at-most-once per slot. Open-loop extraction is a post-turn auxiliary call behind a regex pre-filter, with verbatim-evidence validation. Consequences: everything is off by default (`attention.enabled`) and starts at level `quiet`; delivery requires a running ticker (gateway, desktop backend or `hermes cron tick`); open loops may later migrate into the Home plan's continuity records. Details: [PROACTIVITY_PLAN.md](PROACTIVITY_PLAN.md).
