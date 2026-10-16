@@ -150,18 +150,19 @@ class HomeStore:
     def _eligible_on(self, conn, state: dict) -> list[dict]:
         # Page metadata only; non-participating rows must not consume the output budget.
         placeholders = ",".join("?" for _ in PERSONAL_SOURCES)
-        eligible, offset = [], 0
+        eligible, position = [], None
         while len(eligible) < MAX_SESSIONS:
+            cursor = "AND (COALESCE(last_activity_at,started_at),id) < (?,?) " if position else ""
             rows = conn.execute(
-                f"SELECT * FROM sessions WHERE source IN ({placeholders}) "
+                f"SELECT *,COALESCE(last_activity_at,started_at) AS home_activity FROM sessions WHERE source IN ({placeholders}) "
                 "AND (user_id IS NULL OR user_id=?) AND hidden=0 "
-                "ORDER BY COALESCE(last_activity_at,started_at) DESC, id DESC LIMIT ? OFFSET ?",
-                (*PERSONAL_SOURCES, self.principal_id, MAX_SESSIONS, offset),
+                + cursor + "ORDER BY COALESCE(last_activity_at,started_at) DESC, id DESC LIMIT ?",
+                (*PERSONAL_SOURCES, self.principal_id, *(position or ()), MAX_SESSIONS),
             ).fetchall()
             eligible.extend(entry for row in rows if (entry := self._participating_on(conn, row, state)))
             if len(rows) < MAX_SESSIONS:
                 break
-            offset += len(rows)
+            position = (rows[-1]['home_activity'], rows[-1]['id'])
         return eligible[:MAX_SESSIONS]
 
     def conversations(self) -> list[dict]:

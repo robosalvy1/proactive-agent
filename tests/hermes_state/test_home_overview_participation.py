@@ -8,7 +8,7 @@ from hermes_state_dreams import DreamStore
 from hermes_state_home import HomeStore, MAX_SESSIONS
 
 
-@pytest.mark.parametrize('noise', ['excluded', 'predates_enablement'])
+@pytest.mark.parametrize('noise', ['excluded', 'predates_enablement', 'tied_excluded', 'fallback_excluded'])
 def test_overview_and_dreaming_page_past_newer_nonparticipating_chats(tmp_path, noise):
     with SessionDB(tmp_path / 'state.db') as db:
         store = HomeStore(db)
@@ -16,13 +16,16 @@ def test_overview_and_dreaming_page_past_newer_nonparticipating_chats(tmp_path, 
         db.create_session('travel', 'cli')
         db.append_message('travel', 'user', 'Lisbon budget is 1200 euros')
         recent = time.time() + 100
+        if noise in {'tied_excluded', 'fallback_excluded'}:
+            db._write_sql('UPDATE sessions SET started_at=?,last_activity_at=NULL WHERE id=?', (recent, 'travel'))
         for index in range(MAX_SESSIONS + 3):
-            sid = f'noise-{index}'
+            sid = f'z-noise-{index}'
             db.create_session(sid, 'cli')
             db.append_message(sid, 'user', 'Excluded evidence')
             db._write_sql('UPDATE sessions SET started_at=?,last_activity_at=? WHERE id=?',
-                          (0 if noise == 'predates_enablement' else recent, recent, sid))
-            if noise == 'excluded':
+                          (0 if noise == 'predates_enablement' else recent,
+                           None if noise == 'fallback_excluded' else recent, sid))
+            if noise != 'predates_enablement':
                 store.set_shared(sid, False)
         assert {row['id'] for row in store.conversations()} == {home, 'travel'}
         overview = store.recall(home, '', overview=True)
