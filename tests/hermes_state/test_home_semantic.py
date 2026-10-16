@@ -170,6 +170,16 @@ def test_invalid_vectors_are_rejected(value):
         normalized_vector(value)
 
 
+def test_redaction_expansion_cannot_exceed_the_egress_budget(db, endpoint):
+    from pathlib import Path
+    profile = Path(db.db_path).parent
+    with profile.joinpath('.env').open('a') as stream:
+        stream.write('SHORT_SECRET=abc12345\n')
+    with pytest.raises(ValueError, match='Redacted embedding input'):
+        embed(load_embedding_config(db), ['abc12345' * 2000])
+    assert endpoint[1] == []
+
+
 def test_clear_is_available_offline_and_revokes_inflight_index(db, endpoint):
     home = HomeStore(db).ensure_home()
     add(db, 'topic', 'Private source.')

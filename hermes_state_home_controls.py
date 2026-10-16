@@ -57,7 +57,7 @@ class HomeSourceControls:
     def _source_on(self, conn, message_id):
         from hermes_state_home import HomeStore
 
-        if type(message_id) is not int or message_id < 1:
+        if type(message_id) is not int or not 1 <= message_id <= 2**63 - 1:
             raise ValueError('Use the positive message id shown in Home evidence.')
         row = conn.execute('SELECT * FROM messages WHERE id=?', (message_id,)).fetchone()
         store = HomeStore(self.db, principal_id=self.principal_id)

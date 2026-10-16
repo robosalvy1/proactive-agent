@@ -129,6 +129,10 @@ def _request_embeddings(config: EmbeddingConfig, texts: list[str]) -> list[tuple
         for secret in sorted(secrets, key=len, reverse=True):
             text = text.replace(secret, '[REDACTED]')
         inputs.append(redact_sensitive_text(text, force=True, redact_url_credentials=True))
+    # Redaction markers can be longer than the value they replace. The egress
+    # budget applies to the actual request, including that expansion.
+    if sum(map(len, inputs)) > MAX_INPUT_CHARS:
+        raise ValueError('Redacted embedding input exceeds the bounded batch.')
     payload = json.dumps({'model': config.model, 'input': inputs, 'encoding_format': 'float'}).encode()
     url = urlsplit(config.base_url)
     connection_cls = http.client.HTTPSConnection if url.scheme == 'https' else http.client.HTTPConnection

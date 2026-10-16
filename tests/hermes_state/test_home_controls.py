@@ -80,6 +80,8 @@ def test_control_cannot_be_replaced_silently_or_target_unknown_source(setup):
     controls.forget(old)  # Idempotent explicit deletion.
     with pytest.raises(ValueError):
         controls.forget(999999)
+    with pytest.raises(ValueError, match='positive message id'):
+        controls.forget(2**63)
 
 
 def test_forget_invalidates_dreams_and_prevents_reextraction(setup):
