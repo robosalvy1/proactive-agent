@@ -226,8 +226,7 @@ def _review_input_token_budget(
 
 
 def load_background_review_settings() -> tuple[bool, dict[str, Any]]:
-    """Single config read -> ``(enabled, task_cfg)``. Fail-open (``enabled=True``) so a broken
-    config never silently disables reviews — but WARN so the cost is visible."""
+    """Read the explicit automatic-review opt-in; missing or invalid settings stay off."""
     from agent.safe_worker_policy import safe_worker_enabled
     from gateway.session_finite import finite_turn_required
 
@@ -240,14 +239,18 @@ def load_background_review_settings() -> tuple[bool, dict[str, Any]]:
         from hermes_cli.config import load_config_readonly
         from utils import is_truthy_value
         task = _task_block(load_config_readonly())
-        return is_truthy_value(task.get("enabled"), default=True), task
+        value = task.get("enabled")
+        # Shared boolean spellings stay supported, but arbitrary truthy YAML collections or
+        # numbers are not consent to background calls and durable writes.
+        enabled = ((isinstance(value, (bool, int)) and value == 1)
+                   or (isinstance(value, str) and is_truthy_value(value)))
+        return enabled, task
     except Exception:
         logger.warning(
-            "Failed to read background_review.enabled; leaving automatic "
-            "review enabled (fail-open)",
+            "Failed to read background_review.enabled; automatic review remains disabled",
             exc_info=True,
         )
-        return True, {}
+        return False, {}
 
 
 def _resolve_review_runtime(agent: Any, task_cfg: Optional[dict[str, Any]] = None) -> dict[str, Any]:
@@ -446,14 +449,14 @@ _DO_NOT_CAPTURE_BLOCK = (
 )
 
 _SKILL_REVIEW_PROMPT = (
-    "Review the conversation above and update the skill library. Be ACTIVE — most sessions produce "
-    "at least one skill update, even if small. A pass that does nothing is a missed learning "
-    "opportunity, not a neutral outcome.\n\n"
+    "Review the conversation above for a durable, evidenced lesson worth saving to the skill "
+    "library. Save only a verified working method or an explicit user correction that applies "
+    "to future tasks. Making no change is a successful review when no such lesson exists.\n\n"
     "Target shape of the library: CLASS-LEVEL skills, each with a SKILL.md of always-on rules and a "
     "small `references/` set of topical depth. Not a flat list of narrow one-session skills, and "
-    "not an umbrella hoarding a references/ file per session. This shapes HOW you update, not "
-    "WHETHER you update.\n\n" + _LESSON_LAYER_BLOCK +
-    "Signals to look for (any one of these warrants action):\n"
+    "not an umbrella hoarding a references/ file per session. Apply this structure only when "
+    "a change is warranted.\n\n" + _LESSON_LAYER_BLOCK +
+    "Potential signals to assess for relevance, durability, and existing coverage:\n"
     "  • User corrected your style, tone, format, legibility, or verbosity. Frustration signals "
     "like 'stop doing X', 'this is too verbose', 'don't format like this', 'why are you "
     "explaining', 'just give me the answer', 'you always do Y and I hate it', or an explicit "
@@ -465,8 +468,7 @@ _SKILL_REVIEW_PROMPT = (
     "that a future session would benefit from. Capture it.\n"
     "  • A skill that got loaded or consulted this session turned out to be wrong, missing a step, "
     "or outdated. Patch it NOW.\n\n"
-    "Preference order — prefer the earliest action that fits, but do pick one when a signal above "
-    "fired:\n"
+    "If a change is justified, prefer the earliest action that fits:\n"
     "  1. UPDATE A CURRENTLY-LOADED SKILL. Look back through the conversation for skills the user "
     "loaded via /skill-name or you read via skill_view. If any of them covers the territory of the "
     "new learning, PATCH that one first (re-load it with skill_view during this review — see "
@@ -511,21 +513,19 @@ _SKILL_REVIEW_PROMPT = (
     "If you notice two existing skills that overlap, note it in your reply — the background "
     "curator handles consolidation at scale. Never delete a skill here.\n\n"
     "Do NOT capture" + _DO_NOT_CAPTURE_BLOCK +
-    "'Nothing to save.' is a real option but should NOT be the default. If the session ran "
-    "smoothly with no corrections and produced no new technique, just say 'Nothing to save.' and "
-    "stop. Otherwise, act."
+    "If evidence is uncertain, the lesson is already covered, or no durable improvement is "
+    "needed, say 'Nothing to save.' and stop. Do not invent work to justify this review."
 )
 
 _COMBINED_REVIEW_PROMPT = (
-    "Review the conversation above and update two things:\n\n"
+    "Review the conversation above for durable, evidenced lessons worth saving:\n\n"
     "**Memory**: " + _MEMORY_ROUTING_BLOCK +
-    "**Skills**: how to do this class of task. Be ACTIVE — most sessions produce at least one "
-    "skill update. A pass that does nothing is a missed learning opportunity, not a neutral "
-    "outcome.\n\n"
+    "**Skills**: verified working methods and explicit user corrections for future tasks. "
+    "Making no change is a successful review when no durable improvement is needed.\n\n"
     "Target shape of the skill library: CLASS-LEVEL skills with a SKILL.md of always-on rules and a "
     "small `references/` set of topical depth — not narrow one-session skills, and not an umbrella "
     "hoarding a references/ file per session.\n\n" + _LESSON_LAYER_BLOCK +
-    "Signals that warrant a skill update (any one is enough):\n"
+    "Potential skill signals to assess for relevance, durability, and existing coverage:\n"
     "  • User corrected your style, tone, format, legibility, verbosity, or approach. Frustration "
     "is a FIRST-CLASS skill signal, not just a memory signal. 'stop doing X', 'don't format like "
     "this', 'I hate when you Y' — embed the lesson in the skill that governs that task so the next "
@@ -564,8 +564,9 @@ _COMBINED_REVIEW_PROMPT = (
     "If you notice overlapping existing skills, mention it — the background curator handles "
     "consolidation. Never delete a skill here.\n\n"
     "Do NOT capture as skills" + _DO_NOT_CAPTURE_BLOCK +
-    "Act on whichever of the two dimensions has real signal. If genuinely nothing stands out on "
-    "either, say 'Nothing to save.' and stop — but don't reach for that conclusion as a default."
+    "Save only what has clear evidence and is not already covered. If evidence is uncertain or "
+    "neither store needs a durable improvement, say 'Nothing to save.' and stop. Do not invent "
+    "work to justify this review."
 )
 
 

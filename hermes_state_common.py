@@ -549,6 +549,18 @@ CREATE TABLE IF NOT EXISTS worker_receipts (
     PRIMARY KEY (execution_id, sequence)
 );
 
+-- Home revocations use stable message identities, including compression copies.
+-- No content or foreign keys: suppression must survive physical transcript removal.
+CREATE TABLE IF NOT EXISTS home_source_controls (
+    message_uid TEXT PRIMARY KEY,
+    source_session_id TEXT NOT NULL,
+    source_message_id INTEGER NOT NULL,
+    principal_id TEXT,
+    action TEXT NOT NULL CHECK(action IN ('forgotten','superseded')),
+    replacement_uid TEXT,
+    created_at REAL NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS state_meta (
     key TEXT PRIMARY KEY,
     value TEXT

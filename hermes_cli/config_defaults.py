@@ -4,6 +4,7 @@ Pure-data leaf module — must not import from hermes_cli.config. Comments are t
 docs of config.yaml.
 """
 
+from hermes_cli.config_env_defaults import category as _category, env as _env
 
 #: Image every container terminal backend (docker/modal/daytona/singularity) uses unless the
 #: user pins one. LEGACY_SANDBOX_IMAGES are the plain defaults that preceded the desktop stack
@@ -800,7 +801,8 @@ DEFAULT_CONFIG = {
         "monitor": _aux(60),   # important-mail 0-10 scorer; high-volume, small model fine
         # Post-turn self-improvement fork (save memory / patch skill). "auto" = main model replaying
         # the full conversation (warm cache); other models replay a compact digest (~3-5x cheaper).
-        # enabled=false skips auto spawns (/refine still works). An explicit max_input_tokens caps
+        # Automatic review is opt-in; enabled=true permits auto spawns (/refine always works).
+        # An explicit max_input_tokens caps
         # the SUM of replayed input tokens over the review loop (iterations capped at 16); the loop
         # stops before crossing it. When unset, the runtime derives a budget from the active model
         # context window. <= 0 = unlimited.
@@ -808,7 +810,7 @@ DEFAULT_CONFIG = {
         # conversation's reasoning config verbatim so its request bytes keep the parent's warm
         # prompt-cache prefix (#30532). Set provider/model below to route the review to another model
         # if you want a different effort level; a one-time warning says so when the key is set.
-        "background_review": {"enabled": True, **_aux(120)},
+        "background_review": {"enabled": False, **_aux(120)},
         # No reasoning_effort on MoA blocks by design — configured PER SLOT in the preset
         # (moa.presets.<name>.reference_models[].reasoning_effort / aggregator.reasoning_effort).
         "moa_reference": _aux(900, reasoning_effort=False),
@@ -1309,6 +1311,15 @@ DEFAULT_CONFIG = {
         },
     },
     "memory": {  # Persistent memory — bounded curated memory injected into the system prompt
+        # Explicit /home index builds a bounded derived index; recall embeds only the query.
+        "home_recall": {
+            "enabled": False,
+            "base_url": "",
+            "model": "",
+            "api_key_env": "HOME_EMBEDDING_API_KEY",
+            "timeout_seconds": 5,
+            "min_similarity": 0.55,
+        },
         "memory_enabled": True,
         "user_profile_enabled": True,
         "prefetch_spill_enabled": False,  # External recall opt-in to hooks.output_spill.
@@ -2722,33 +2733,6 @@ DEFAULT_CONFIG = {
 }
 
 
-def _env(description, prompt, **keys):
-    """One OPTIONAL_ENV_VARS entry; keyword order is preserved as dict key order."""
-    return {"description": description, "prompt": prompt, **keys}
-
-
-_OMIT = object()
-
-
-def _category(category, password, advanced):
-    """Entry factory for one category with its usual password/advanced defaults.
-
-    ``url``/``help``/``tools`` are only written when passed; ``password=None`` omits the key;
-    ``advanced`` is only written when true. Key order matches the plain ``_env`` entries.
-    """
-    def make(description, prompt, url=_OMIT, *, help=_OMIT, tools=_OMIT, password=password,
-             advanced=advanced):
-        d = {"description": description, "prompt": prompt}
-        d.update((k, v) for k, v in (("help", help), ("url", url), ("tools", tools)) if v is not _OMIT)
-        if password is not None:
-            d["password"] = password
-        d["category"] = category
-        if advanced:
-            d["advanced"] = True
-        return d
-    return make
-
-
 _prov = _category("provider", password=True, advanced=True)
 _tool = _category("tool", password=True, advanced=False)
 _msg = _category("messaging", password=False, advanced=False)
@@ -3004,6 +2988,9 @@ OPTIONAL_ENV_VARS = {
     # ── Mem0 ──
     "MEM0_API_KEY": _tool("Mem0 Platform API key for semantic persistent memory", "Mem0 API key",
         "https://app.mem0.ai", tools=["mem0_search"]),
+    # ── Home semantic recall ──
+    "HOME_EMBEDDING_API_KEY": _tool("Embedding endpoint key for opt-in Home semantic recall",
+        "Home embedding API key", advanced=True),
     # ── RetainDB ──
     "RETAINDB_API_KEY": _tool("RetainDB API key for persistent memory", "RetainDB API key",
         "https://retaindb.com", tools=["retaindb_search"]),

@@ -1,0 +1,67 @@
+name: Memory runtime checks
+
+on:
+  pull_request:
+    paths:
+      - 'agent/**'
+      - 'gateway/**'
+      - 'hermes_state*.py'
+      - 'hermes_cli/**'
+      - 'tools/memory*'
+      - 'tests/**'
+      - 'tui_gateway/**'
+      - 'ui-tui/src/app/slash/commands/home.ts'
+      - 'apps/shared/src/gateway-contract*'
+      - 'scripts/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - '.github/workflows/memory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  memory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HERMES_HOME: ${{ github.workspace }}/.dev/ci-home
+      HERMES_TEST_FILE_RETRIES: '0'
+      HERMES_TEST_WORKERS: '2'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Build isolated test environment through PM
+        run: python -m pm.build_env --source . --out .venv --group dev --group test
+      - name: Repository checks
+        run: .venv/bin/python scripts/check
+      - name: Memory, continuity, learning and isolation regressions
+        env:
+          HERMES_PYTHON: ${{ github.workspace }}/.venv/bin/python
+        run: |
+          scripts/run_tests.sh \
+            tests/hermes_state/test_home*.py \
+            tests/hermes_state/test_worker_home*.py \
+            tests/hermes_state/test_dreams.py \
+            tests/hermes_state/test_worker_dreams.py \
+            tests/agent/test_home*.py \
+            tests/agent/test_memory*.py \
+            tests/agent/test_background_review*.py \
+            tests/gateway/test_home*.py \
+            tests/gateway/test_worker_home_read.py \
+            tests/gateway/test_refine*.py \
+            tests/hermes_cli/test_home*.py \
+            tests/agent/test_skip_background_review.py \
+            tests/agent/test_review_idle_queue.py \
+            tests/tui_gateway/test_home.py \
+            tests/tui_gateway/test_slash_refine_live.py \
+            tests/tui_gateway/contracts/test_generated.py \
+            tests/hermes_cli/test_config.py \
+            tests/hermes_cli/test_config_env_refs.py \
+            tests/gateway/test_canonical_wire_contract.py \
+            tests/tools/test_memory*.py -q

@@ -95,3 +95,33 @@ async def test_home_adopts_and_resets_through_real_local_conversation_receipts(t
         assert HomeMemoryProvider(authority.db).prefetch("Lisbon budget", session_id=target) == ""
     finally:
         await connection.close()
+
+
+@pytest.mark.asyncio
+async def test_private_link_controls_require_authenticated_local_owner(owner):
+    from tests.hermes_state.test_home_links import messaging_chat
+    from hermes_state_home_links import list_links
+
+    authority, identity = owner
+    messaging_chat(authority.db)
+    native = AuthorityConnection(authority, object(), identity)
+    remote = AuthorityConnection(authority, object(), {**identity, 'provider': 'remote'})
+    stranger = AuthorityConnection(authority, object(), {**identity, 'user_id': 'other-local-user'})
+    try:
+        opened = await native.dispatch({'id': 1, 'method': 'home.action', 'params': {}})
+        assert 'result' in opened
+        denied = await remote.dispatch({'id': 2, 'method': 'home.action', 'params': {'action': 'link dm'}})
+        assert denied['error']['data']['reason'] == 'permission_denied'
+        linked = await native.dispatch({'id': 3, 'method': 'home.action', 'params': {'action': 'link dm'}})
+        assert 'result' in linked, linked
+        for action in ('link dm', 'unlink dm'):
+            refused = await stranger.dispatch({'id': 4, 'method': 'home.action', 'params': {'action': action}})
+            assert refused['error']['data']['reason'] == 'invalid_params'
+        assert len(list_links(HomeStore(authority.db, principal_id=native.actor.subject))) == 1
+        unlinked = await native.dispatch({'id': 5, 'method': 'home.action', 'params': {'action': 'unlink dm'}})
+        assert 'result' in unlinked
+        assert list_links(HomeStore(authority.db, principal_id=native.actor.subject)) == []
+    finally:
+        await native.close()
+        await remote.close()
+        await stranger.close()

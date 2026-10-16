@@ -5,9 +5,13 @@ from hermes_state_dreams import DreamStore
 from hermes_state_home import HomeStore, MAX_CONTEXT_CHARS, render_recall
 
 
-def home_context_on(db, conn, principal_id, session_id, query, *, overview=False):
+def home_context_on(db, conn, principal_id, session_id, query, *, overview=False, semantic_plan=None):
+    from hermes_state_home_semantic import merge_recall, semantic_rows_on
+
     store = HomeStore(db, principal_id=principal_id)
     rows = store.recall_on(conn, session_id, query, overview=overview)
+    if not overview:
+        rows = merge_recall(rows, semantic_rows_on(db, conn, principal_id, session_id, semantic_plan))
     notes = DreamStore(db, principal_id=principal_id).recall_on(conn, session_id, query, overview=overview)
     raw = render_recall(rows)
     parts, used, count = [], 0, 0

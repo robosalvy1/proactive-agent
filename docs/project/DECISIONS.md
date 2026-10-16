@@ -2,6 +2,10 @@
 
 Record durable decisions with date, context, chosen approach, and consequences. Keep alternatives only when they explain a material tradeoff.
 
+## 2026-10-16 — Extend Home recall and keep learning selective
+
+Retain canonical transcripts and small native notes. Add explicitly configured embeddings as derived SQLite state with bounded manual indexing, query-time keyword fallback and canonical source/access revalidation. Private messaging participates only through local-owner exact-conversation grants, never inferred cross-service identity. Source-level forgetting and explicit user supersession use stable message identities, including compression copies; they govern future Home recall and reflection, not existing prompt bytes or independent stores. Preserve compression's existing provider hooks without introducing an unmeasured extraction call. Automatic skill/memory review defaults off, with explicit opt-in and manual `/refine` retained. [MEMORY_CONTINUITY.md](MEMORY_CONTINUITY.md) describes controls and evaluation limits.
+
 ## 2026-10-15 — Bound Home reflection and preserve source authority
 
 Home dreaming now adds opt-in reflection to the existing gateway housekeeping loop. Store a bounded set of source-linked candidate notes and durable reservations/cadence/day counters in profile-owned `state_meta`; do not overwrite native memory or introduce another scheduler. Use existing auxiliary provider resolution with one completion attempt per reservation, capped input/output and no tool execution. Preserve source quotations, invalidate changed/excluded evidence on reads and before publication, and retain a physical reservation while a revoked request finishes. Notes remain fallible data on the current-user recall sidecar; no unsolicited notifications or task continuation. [DREAMING.md](DREAMING.md) defines the implemented controls, budgets and limits.

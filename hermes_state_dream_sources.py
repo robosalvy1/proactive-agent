@@ -3,6 +3,7 @@ import hashlib
 import json
 
 from hermes_state_home import HomeStore
+from hermes_state_home_controls import source_allowed_on
 
 MAX_MESSAGES = 24
 MAX_INPUT_CHARS = 16000
@@ -22,7 +23,7 @@ def snapshots_on(store: HomeStore, conn, state: dict, *, anchors=None) -> dict:
             (meta['id'], MAX_MESSAGES),
         ).fetchall()
         bucket = grouped.setdefault(anchor, {'anchor': anchor, 'title': meta['title'] or 'Untitled', 'rows': []})
-        bucket['rows'].extend(dict(row) for row in rows)
+        bucket['rows'].extend(dict(row) for row in rows if source_allowed_on(conn, row))
     for bucket in grouped.values():
         # Compression copies keep message_uid; one copy is enough for reflection.
         seen, rows = set(), []

@@ -3,6 +3,17 @@ from hermes_state import SessionDB
 from tui_gateway import server
 
 
+def test_home_wire_accepts_argument_actions_and_bounds_input():
+    import pytest
+    from pydantic import ValidationError
+    from tui_gateway.contracts.home import HomeActionParams
+
+    for action in ('link CaseSensitive-ID', 'index clear', 'forget 12', 'supersede 12 28'):
+        assert HomeActionParams(action=action).action == action
+    with pytest.raises(ValidationError):
+        HomeActionParams(action='x' * 513)
+
+
 def test_home_action_resolves_from_the_profile_store(tmp_path, monkeypatch):
     with SessionDB(tmp_path / "state.db") as db:
         monkeypatch.setattr(server, "_get_db", lambda: db)

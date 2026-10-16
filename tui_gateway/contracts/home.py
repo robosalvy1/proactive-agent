@@ -1,5 +1,5 @@
 """Home navigation/recall actions shared by local and canonical gateways."""
-from typing import Literal
+from pydantic import Field
 
 from .base import Params, Result
 from .registry import method
@@ -8,8 +8,9 @@ from .registry import method
 class HomeActionParams(Params):
     session_id: str | None = None
     profile: str | None = None
-    action: Literal["", "status", "overview", "share", "exclude", "off", "on", "dream",
-                    "dream status", "dream on", "dream off", "dream now", "dream notes", "dream clear"] = ""
+    # Arguments include case-sensitive canonical session IDs; the shared parser
+    # validates verbs and argument shapes on both legacy and native transports.
+    action: str = Field(default="", max_length=512)
     cwd: str | None = None
 
 

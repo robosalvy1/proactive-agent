@@ -328,8 +328,8 @@ for the configuration details.
 
 ## Controlling memory writes (`write_approval`)
 
-By default the agent saves memory freely — including from the background
-self-improvement review that runs after a turn. If you'd rather approve saves
+By default the agent saves memory freely during a task. The optional background
+self-improvement review can also save memories when enabled. If you'd rather approve saves
 first, set `memory.write_approval: true`. It's a simple on/off gate applied to
 **both** foreground turns and the background review:
 
@@ -363,23 +363,22 @@ every entry it overwrote or removed.
 
 ## Background review notifications (`display.memory_notifications`)
 
-After a turn, the background self-improvement review may quietly save a memory
-or update a skill. This is Hermes' consent-aware learning loop: repeated
+When explicitly enabled, the background self-improvement review may quietly save
+a memory or update a skill after a turn. In this learning loop, repeated
 corrections and durable workflow lessons become compact memory entries or
 procedural skills, while `write_approval` can stage those writes for review
-before they affect future sessions. By default it surfaces a short
-`💾 Memory updated` line in chat so you know it happened. Control how chatty
-that is:
+before they affect future sessions. Notifications are off by default. Choose a short
+`💾 Memory updated` line or a preview of changes with:
 
 ```yaml
 display:
-  memory_notifications: on    # off | on (default) | verbose
+  memory_notifications: off    # off (default) | on | verbose
 ```
 
 | Value | Behaviour |
 |-------|-----------|
-| `off` | No chat notification. The review still runs and still writes — you just don't see a line for it. |
-| `on` (default) | Generic line, e.g. `💾 Memory updated`, `💾 Skill 'foo' patched`. |
+| `off` (default) | No chat notification. Enabled reviews can still run and write. |
+| `on` | Generic line, e.g. `💾 Memory updated`, `💾 Skill 'foo' patched`. |
 | `verbose` | Includes a compact preview of what changed, e.g. `💾 Memory ➕ User prefers terse replies` or a `"old" → "new"` skill diff snippet. |
 
 > This only governs the **gateway** chat notification. The review itself, and
@@ -424,19 +423,25 @@ Reasoning settings, the system prompt, the full conversation snapshot, and tool 
 
 To reduce review work without changing the main conversation's effort, adjust `memory.nudge_interval` / `skills.creation_nudge_interval`, disable automatic reviews as described below, or route reviews to a different model. A different-model route uses a digest and does not share the parent's warm prefix; on that route `auxiliary.background_review.reasoning_effort` IS honored (unset = the routed provider's default). A one-time warning is printed when the key is set but the review stays on the main model. These frequency and routing controls do not decouple same-model reasoning.
 
-### Disabling automatic reviews (`enabled`)
+### Opting into automatic reviews (`enabled`)
 
-The review fork can burn a meaningful share of total tokens on busy hosts.
-Operators can disable it without zeroing nudge intervals:
+Automatic review is off by default. The review fork consumes extra model calls
+and can modify durable memory and skills; those changes do not by themselves
+prove better future results. The default is:
 
 ```yaml
 auxiliary:
   background_review:
-    enabled: true              # false = skip automatic post-turn forks
+    enabled: false             # true = opt into automatic post-turn forks
 ```
 
-With `enabled: false`, automatic post-turn forks do not spawn; manual
-`/refine` still works.
+Set `enabled: true` to opt into periodic reviews. Missing or invalid settings
+leave automatic reviews off. Existing profiles with
+an explicit `enabled: true` keep that choice. With automatic review off, manual
+`/refine` (with or without focus instructions), explicit memory saves, and
+foreground skill tools still work. Review prompts save evidenced, durable lessons;
+making no change is a valid outcome. Skill housekeeping is controlled separately
+by `curator:` and Home dreaming remains separately opt-in.
 
 ### Capping review cost (`max_input_tokens`)
 
