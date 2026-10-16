@@ -50,6 +50,16 @@ def test_ambient_database_access_cannot_substitute_for_current_gateway_identity(
     assert HomeMemoryProvider(db).prefetch('Lisbon', session_id=sid) == ''
 
 
+def test_attached_dm_requires_authenticated_turn_binding_before_recall(private_chat):
+    db, store, home, sid, source, agent = private_chat
+    set_link(store, sid, True, caller_session_id=home)
+    provider = agent._memory_manager.get_provider('builtin')
+    assert provider.runtime_identity is None
+    assert provider.prefetch('Lisbon', session_id=sid) == ''
+    bind_home_source(agent, source, db.get_session(sid)['session_key'])
+    assert 'Azul' in provider.prefetch('Lisbon', session_id=sid)
+
+
 @pytest.mark.parametrize('change', ['user', 'chat', 'group', 'bot', 'profile', 'source', 'transport'])
 def test_gateway_source_mismatch_never_reuses_granted_identity(private_chat, monkeypatch, change):
     db, store, home, sid, source, agent = private_chat

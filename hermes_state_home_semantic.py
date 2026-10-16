@@ -10,7 +10,7 @@ import sqlite3
 import struct
 import time
 
-from agent.home_embeddings import embed, load_embedding_config, MAX_DIMENSIONS, MAX_INPUT_CHARS
+from agent.home_embeddings import embed, embedding_input_sizes, load_embedding_config, MAX_DIMENSIONS, MAX_INPUT_CHARS
 from hermes_state_home import HomeStore, MAX_RESULTS
 
 MAX_INDEX_ROWS = 4096
@@ -221,8 +221,9 @@ class HomeIndex:
                         cached[indexed['message_id']] = indexed['source_hash']
                     else:
                         obsolete.append(indexed['message_id'])
-            pending, chars, scanned = [], 0, 0
-            for row in rows:
+            pending, chars, scanned, skipped = [], 0, 0, 0
+            sizes = embedding_input_sizes(cfg, [row['content'] for row in rows])
+            for row, input_size in zip(rows, sizes):
                 if _source_allowed_on(self.home, conn, row, state) is None or not row['content']:
                     cursor, scanned = row['id'], scanned + 1
                     continue
@@ -230,12 +231,15 @@ class HomeIndex:
                 if cached.get(row['id']) == digest:
                     cursor, scanned = row['id'], scanned + 1
                     continue
-                if len(pending) == 32 or chars + len(row['content']) > MAX_INPUT_CHARS:
+                if input_size > MAX_INPUT_CHARS:
+                    cursor, scanned, skipped = row['id'], scanned + 1, skipped + 1
+                    continue
+                if len(pending) == 32 or chars + input_size > MAX_INPUT_CHARS:
                     break
                 if len(cached) + len(pending) >= MAX_INDEX_ROWS and row['id'] not in cached:
                     raise ValueError('Home semantic index is full (4096 sources); clear or exclude older sources.')
                 pending.append((dict(row), digest))
-                chars += len(row['content'])
+                chars += input_size
                 cursor, scanned = row['id'], scanned + 1
             more = len(rows) == MAX_SCAN_ROWS or scanned < len(rows)
             generation = (state.get('anchor'), state.get('enabled_at'), _index_generation_on(conn))
@@ -282,6 +286,7 @@ class HomeIndex:
             conn.execute('INSERT INTO state_meta(key,value) VALUES (?,?) '
                          'ON CONFLICT(key) DO UPDATE SET value=excluded.value',
                          (cursor_key, str(cursor if more else 0)))
-            return {'indexed': published, 'scanned': scanned, 'more': more, 'cursor': cursor if more else 0,
+            return {'indexed': published, 'scanned': scanned, 'skipped': skipped,
+                    'more': more, 'cursor': cursor if more else 0,
                     'model': cfg.model, 'status': 'ready' if not more else 'more'}
         return self.db._execute_write(publish)

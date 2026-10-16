@@ -111,13 +111,10 @@ def embed(config: EmbeddingConfig, texts: list[str]) -> list[tuple[float, ...]]:
         return _request_embeddings(config, texts)
 
 
-def _request_embeddings(config: EmbeddingConfig, texts: list[str]) -> list[tuple[float, ...]]:
-    """One request, no retries/redirects/tools; bound response, time and vector shape."""
+def _redact_inputs(config, texts):
     from agent.redact import redact_sensitive_text
     from agent.secret_scope import current_secret_scope
 
-    if not 1 <= len(texts) <= MAX_BATCH or sum(map(len, texts)) > MAX_INPUT_CHARS:
-        raise ValueError('Embedding input exceeds the bounded batch.')
     # Prefix/assignment redaction cannot recognize arbitrary provider-issued values
     # mentioned in prose. Exact profile values are also removed before egress.
     secrets = {value for value in (current_secret_scope() or {}).values()
@@ -129,6 +126,21 @@ def _request_embeddings(config: EmbeddingConfig, texts: list[str]) -> list[tuple
         for secret in sorted(secrets, key=len, reverse=True):
             text = text.replace(secret, '[REDACTED]')
         inputs.append(redact_sensitive_text(text, force=True, redact_url_credentials=True))
+    return inputs
+
+
+def embedding_input_sizes(config, texts):
+    """Budget both original and redacted inputs without sending any provider request."""
+    with embedding_profile_scope(config.profile_home):
+        return [max(len(raw), len(redacted))
+                for raw, redacted in zip(texts, _redact_inputs(config, texts))]
+
+
+def _request_embeddings(config: EmbeddingConfig, texts: list[str]) -> list[tuple[float, ...]]:
+    """One request, no retries/redirects/tools; bound response, time and vector shape."""
+    if not 1 <= len(texts) <= MAX_BATCH or sum(map(len, texts)) > MAX_INPUT_CHARS:
+        raise ValueError('Embedding input exceeds the bounded batch.')
+    inputs = _redact_inputs(config, texts)
     # Redaction markers can be longer than the value they replace. The egress
     # budget applies to the actual request, including that expansion.
     if sum(map(len, inputs)) > MAX_INPUT_CHARS:

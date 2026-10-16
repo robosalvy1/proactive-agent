@@ -114,12 +114,8 @@ def attach_home_memory(agent, *, skip_memory: bool, platform: str | None) -> Non
     if manager is None:
         manager = agent._memory_manager = MemoryManager()
     if manager.get_provider("builtin") is None:
-        identity = None
-        if platform not in (None, 'cli', 'tui', 'gui', 'desktop', 'dashboard', 'local'):
-            identity = {'source': platform, 'user_id': getattr(agent, '_user_id', None),
-                        'chat_id': getattr(agent, '_chat_id', None), 'thread_id': getattr(agent, '_thread_id', None),
-                        'session_key': getattr(agent, '_gateway_session_key', None)}
-        manager.add_provider(HomeMemoryProvider(db, warning_callback=agent._emit_warning, runtime_identity=identity))
+        # Messaging identity is supplied only by the authenticated turn binding.
+        manager.add_provider(HomeMemoryProvider(db, warning_callback=agent._emit_warning))
 
 
 def bind_home_source(agent, source, session_key: str) -> None:

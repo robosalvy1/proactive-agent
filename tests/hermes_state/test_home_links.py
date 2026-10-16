@@ -8,7 +8,7 @@ from gateway.session import SessionSource, SessionStore
 from hermes_cli.home import home_action
 from hermes_state import SessionDB
 from hermes_state_home import HomeStore, render_recall
-from hermes_state_home_links import link_on, set_link
+from hermes_state_home_links import LINK_PREFIX, link_on, list_links, set_link
 
 
 def messaging_chat(db, sid='dm', *, source='telegram', user='remote-user', chat='private-chat',
@@ -206,3 +206,33 @@ def test_messaging_worker_does_not_reuse_a_replaced_grant(worker, monkeypatch):
         set_link(store, 'owned', True, caller_session_id=home)
     monkeypatch.setattr('hermes_state_home_semantic.prepare_semantic_query', regrant)
     assert remote.home_recall('owned', 'Lisbon') == {'context': '', 'count': 0}
+
+
+@pytest.mark.parametrize('corrupt', [
+    '{unfinished', 'null', '[]', '"grant"', '{}',
+    '{"anchor":"broken","identity":{"source":"telegram"}}',
+    '{"anchor":"broken","principal_id":null,"identity":null}',
+    '{"anchor":"broken","principal_id":null,"identity":[]}',
+    '{"anchor":"broken","principal_id":null,"identity":{}}',
+    '{"anchor":"broken","principal_id":null,"identity":{"source":[]}}',
+])
+def test_corrupt_grant_is_ignored_without_blocking_other_recall_or_controls(chats, corrupt):
+    db, store, home = chats
+    valid = messaging_chat(db, 'valid', chat='valid-private')
+    broken = messaging_chat(db, 'broken', chat='broken-private')
+    set_link(store, valid, True, caller_session_id=home)
+    set_link(store, broken, True, caller_session_id=home)
+    db._write_sql('UPDATE state_meta SET value=? WHERE key=?', (corrupt, LINK_PREFIX + broken))
+
+    assert {row['source_session_id'] for row in store.recall(home, 'Lisbon')} == {valid}
+    assert store.recall(broken, 'Lisbon') == []
+    assert list_links(store, caller_session_id=home) == [
+        {'session_id': valid, 'source': 'telegram', 'valid': True}]
+    with db._read_ctx() as conn:
+        assert link_on(store, conn, broken) is None
+
+    # Local-owner controls can remove corrupt state, or replace it with a new grant.
+    set_link(store, broken, False, caller_session_id=home)
+    db._write_sql('INSERT INTO state_meta(key,value) VALUES(?,?)', (LINK_PREFIX + broken, corrupt))
+    set_link(store, broken, True, caller_session_id=home)
+    assert {row['source_session_id'] for row in store.recall(home, 'Lisbon')} == {valid, broken}

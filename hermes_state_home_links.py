@@ -48,6 +48,22 @@ def private_identity(row) -> dict | None:
     return identity
 
 
+def _decode_grant(value) -> dict | None:
+    """Corrupt persisted grants confer no authority and must not block other recall."""
+    try:
+        grant = json.loads(value)
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(grant, dict) or not isinstance(grant.get('anchor'), str) or not grant['anchor']:
+        return None
+    if 'principal_id' not in grant or not isinstance(grant['principal_id'], (str, type(None))):
+        return None
+    identity = grant.get('identity')
+    if not isinstance(identity, dict) or not isinstance(identity.get('source'), str) or not identity['source']:
+        return None
+    return grant
+
+
 def link_on(store, conn, session_id: str) -> dict | None:
     """Read and revalidate the grant and original source on every recall."""
     row = conn.execute('SELECT * FROM sessions WHERE id=?', (session_id,)).fetchone()
@@ -59,12 +75,9 @@ def link_on(store, conn, session_id: str) -> dict | None:
     root = conn.execute('SELECT * FROM sessions WHERE id=?', (anchor,)).fetchone()
     if not saved or private_identity(root) != identity:
         return None
-    try:
-        grant = json.loads(saved[0])
-        if grant['anchor'] == anchor and grant['identity'] == identity:
-            return grant
-    except (ValueError, TypeError, KeyError):
-        return None
+    grant = _decode_grant(saved[0])
+    if grant and grant['anchor'] == anchor and grant['identity'] == identity:
+        return grant
     return None
 
 
@@ -97,7 +110,8 @@ def set_link(store, session_id: str, enabled: bool, *, caller_session_id: str = 
         anchor = store.anchor_on(conn, session_id)
         key = LINK_PREFIX + anchor
         saved = conn.execute('SELECT value FROM state_meta WHERE key=?', (key,)).fetchone()
-        if saved and json.loads(saved[0]).get('principal_id') != store.principal_id:
+        grant = _decode_grant(saved[0]) if saved else None
+        if grant and grant['principal_id'] != store.principal_id:
             raise ValueError('This conversation is linked by a different local principal.')
         if not enabled:
             conn.execute('DELETE FROM state_meta WHERE key=?', (key,))
@@ -120,11 +134,9 @@ def linked_sources_on(store, conn) -> list[str]:
     """Candidate source expansion only; every hit still passes exact grant validation."""
     sources = set()
     for row in conn.execute('SELECT value FROM state_meta WHERE key GLOB ?', (LINK_PREFIX + '*',)):
-        grant = json.loads(row[0])
-        if grant.get('principal_id') == store.principal_id:
-            source = grant.get('identity', {}).get('source')
-            if isinstance(source, str):
-                sources.add(source)
+        grant = _decode_grant(row[0])
+        if grant and grant['principal_id'] == store.principal_id:
+            sources.add(grant['identity']['source'])
     return sorted(sources)
 
 
@@ -133,8 +145,8 @@ def list_links(store, *, caller_session_id='') -> list[dict]:
         require_local_owner(store, conn, caller_session_id)
         links = []
         for row in conn.execute('SELECT value FROM state_meta WHERE key GLOB ?', (LINK_PREFIX + '*',)):
-            grant = json.loads(row[0])
-            if grant.get('principal_id') == store.principal_id:
+            grant = _decode_grant(row[0])
+            if grant and grant['principal_id'] == store.principal_id:
                 links.append({'session_id': grant['anchor'], 'source': grant['identity']['source'],
                               'valid': link_on(store, conn, grant['anchor']) is not None})
         return links

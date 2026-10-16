@@ -400,6 +400,7 @@ instead:
 ```yaml
 auxiliary:
   background_review:
+    enabled: true
     provider: openrouter
     model: google/gemini-3-flash-preview   # auto (default) = main chat model
 ```

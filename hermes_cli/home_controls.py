@@ -23,6 +23,8 @@ def source_action(db, session_id, action, *, principal_id=None):
             return {'output': 'Home semantic index cleared. Canonical history and source controls are retained.'}
         result = index.index(session_id)
         tail = ' Run /home index again for the next batch.' if result['more'] else ' Indexing pass complete.'
+        if result['skipped']:
+            tail += f" Skipped {result['skipped']} sources exceeding the redacted input budget."
         return {'output': f"Indexed {result['indexed']} sources; inspected {result['scanned']} messages." + tail}
     if verb == 'sources' and not args:
         rows = controls.list()

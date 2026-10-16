@@ -180,6 +180,49 @@ def test_redaction_expansion_cannot_exceed_the_egress_budget(db, endpoint):
     assert endpoint[1] == []
 
 
+def test_redaction_expansion_batches_keep_advancing_to_later_sources(db, endpoint):
+    """Near-limit raw batches split before HTTP using the owning profile's redacted size."""
+    from pathlib import Path
+
+    with Path(db.db_path).parent.joinpath('.env').open('a') as stream:
+        stream.write('SHORT_SECRET=abc12345\n')
+    home = HomeStore(db).ensure_home()
+    for i in range(20):
+        add(db, f'topic-{i}', f'{i:02} ' + 'abc12345' * 110)
+    index = HomeIndex(db)
+    first = index.index(home)
+    assert first['more']
+    final = index.index(home)
+    assert final['more'] is False
+    assert first['indexed'] + final['indexed'] == 20
+    assert len(endpoint[1]) == 2
+    for _, _, payload in endpoint[1]:
+        assert sum(map(len, payload['input'])) <= 16000
+        assert all('abc12345' not in text for text in payload['input'])
+    assert endpoint[1][-1][2]['input'][-1].startswith('19 ')
+
+
+def test_unindexable_redacted_source_does_not_block_later_rows(db, endpoint, monkeypatch):
+    """A single over-budget source is reported and skipped without retrying HTTP."""
+    from agent import home_embeddings
+
+    original = home_embeddings._redact_inputs
+
+    def redact(config, texts):
+        return ['[REDACTED]' * 2000 if text == 'expanding' else text
+                for text in original(config, texts)]
+
+    monkeypatch.setattr(home_embeddings, '_redact_inputs', redact)
+    home = HomeStore(db).ensure_home()
+    add(db, 'too-large', 'expanding')
+    add(db, 'later', 'Useful later fact.')
+    result = HomeIndex(db).index(home)
+    assert result['indexed'] == 1
+    assert result['skipped'] == 1
+    assert result['more'] is False
+    assert endpoint[1][0][2]['input'] == ['Useful later fact.']
+
+
 def test_clear_is_available_offline_and_revokes_inflight_index(db, endpoint):
     home = HomeStore(db).ensure_home()
     add(db, 'topic', 'Private source.')
