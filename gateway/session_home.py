@@ -6,7 +6,9 @@ from hermes_state_runtime import RuntimeStoreError
 
 
 def handlers(connection):
-    return {"home.action": partial(home_action, connection)}
+    from gateway.session_worker import worker_request
+    return {"home.action": partial(home_action, connection),
+            "worker.home.recall": partial(worker_request, connection, operation='home_recall')}
 
 
 async def home_action(connection, ref, params):

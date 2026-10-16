@@ -15,6 +15,7 @@ HOME_KEY = "home.v1"
 SHARING_PREFIX = "home.sharing.v1:"
 PERSONAL_SOURCES = ("cli", "tui", "gui", "desktop", "dashboard", "local")
 MAX_SESSIONS = 128
+MAX_SEARCH_HITS = 4096
 MAX_RESULTS = 8
 MAX_CONTEXT_CHARS = 6000
 _STOP_WORDS = frozenset(
@@ -205,15 +206,15 @@ class HomeStore:
                     return result
         return result
 
-    def _search_on(self, conn, terms: list[str], current_id: str) -> list:
+    def _search_on(self, conn, terms: list[str], current_id: str):
         # Search indexed history before bounding candidates: an old decision must not
         # disappear merely because many unrelated conversations happened afterwards.
         marks = ",".join("?" for _ in PERSONAL_SOURCES)
         exists = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='messages_fts'").fetchone()
         if not exists:
-            return []
+            return
         query = " OR ".join('"' + term + '"' for term in terms)
-        return conn.execute(
+        sql = (
             "SELECT m.id,m.session_id,m.message_uid,m.role,m.timestamp, "
             "snippet(messages_fts,0,'','',' … ',80) AS content "
             "FROM messages_fts JOIN messages m ON m.id=messages_fts.rowid JOIN sessions s ON s.id=m.session_id "
@@ -222,9 +223,16 @@ class HomeStore:
             "AND m.session_id != ? "
             "AND m.role IN ('user','assistant') AND (m.active=1 OR m.compacted=1) "
             "AND m._compressed_summary=0 AND COALESCE(m.display_kind,'')!='hidden' "
-            "ORDER BY rank, m.timestamp DESC LIMIT ?",
-            (query, *PERSONAL_SOURCES, self.principal_id, current_id, MAX_SESSIONS),
-        ).fetchall()
+            "ORDER BY rank, m.timestamp DESC, m.id DESC LIMIT ? OFFSET ?")
+        # Participation depends on logical lineage and owner receipts. Page lazily
+        # past excluded/old/own-lineage hits instead of letting the first page hide
+        # relevant evidence; recall_on stops us once its output budget is filled.
+        for offset in range(0, MAX_SEARCH_HITS, MAX_SESSIONS):
+            rows = conn.execute(sql, (query, *PERSONAL_SOURCES, self.principal_id, current_id,
+                                      MAX_SESSIONS, offset)).fetchall()
+            yield from rows
+            if len(rows) < MAX_SESSIONS:
+                return
 
     @staticmethod
     def _following_on(conn, row) -> list:

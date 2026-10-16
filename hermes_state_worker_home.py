@@ -4,6 +4,20 @@ from hermes_state_home_context import home_context_on
 from hermes_state_runtime import RuntimeStoreError
 
 
+def read_worker_home(db, *, epoch, execution_id, session_id, generation, query, overview):
+    """Fresh assignment-fenced read: no receipt, journal sequence or copied recall cache."""
+    from hermes_state_runtime import _epoch, _worker_assignment
+
+    with db._read_ctx() as conn:
+        _epoch(conn, epoch)
+        row = _worker_assignment(conn, execution_id, session_id, generation)
+        if row['owner_epoch'] != epoch:
+            raise RuntimeStoreError('stale_epoch')
+        if row['status'] not in {'registered', 'running'}:
+            raise RuntimeStoreError('stale_generation')
+        return worker_home_recall(db, conn, session_id, {'query': query, 'overview': overview})
+
+
 def worker_home_recall(db, conn, session_id, payload):
     if (set(payload) != {"query", "overview"} or not isinstance(payload["query"], str)
             or len(payload["query"]) > 2000 or type(payload["overview"]) is not bool):

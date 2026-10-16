@@ -6,6 +6,8 @@ import re
 import sqlite3
 
 from agent.memory_provider import MemoryProvider, RecallStatus
+from agent.runtime_session_store import RuntimeSessionStore
+from websockets.exceptions import WebSocketException
 from hermes_state_home import HomeStore
 from hermes_state_home_context import home_context_on
 
@@ -36,8 +38,6 @@ class HomeMemoryProvider(MemoryProvider):
     def prefetch(self, query: str, *, session_id: str = "") -> str:
         self._last_count = 0
         try:
-            from agent.runtime_session_store import RuntimeSessionStore
-
             if isinstance(self.db, RuntimeSessionStore):
                 packet = self.db.home_recall(session_id, query, overview=bool(_OVERVIEW.search(query)))
                 self._last_count = packet["count"]
@@ -50,7 +50,7 @@ class HomeMemoryProvider(MemoryProvider):
                 packet = home_context_on(self.db, conn, store.principal_id, session_id, query, overview=overview)
             self._last_count = packet['count']
             return packet['context']
-        except (sqlite3.Error, ValueError) as exc:
+        except (sqlite3.Error, ValueError, RuntimeError, OSError, WebSocketException) as exc:
             logger.warning("Home recall unavailable: %s", exc)
             if not self._warned and self.warning_callback:
                 self.warning_callback("Home recall is unavailable; this chat can continue without it.")
@@ -64,7 +64,6 @@ class HomeMemoryProvider(MemoryProvider):
 def attach_home_memory(agent, *, skip_memory: bool, platform: str | None) -> None:
     """Personal harnesses recall locally or through their assigned owner's read operation."""
     from hermes_state import SessionDB
-    from agent.runtime_session_store import RuntimeSessionStore
 
     db = getattr(agent, "_session_db", None)
     if (skip_memory or platform not in (None, "cli", "tui", "gui", "desktop", "dashboard", "local")

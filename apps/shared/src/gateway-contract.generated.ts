@@ -4809,6 +4809,22 @@ export interface WorkerPersistParams {
 }
 /** The operation's durable receipt (``message_id`` for an append, delegation results, …). */
 export type WorkerPersistResult = Record<string, unknown>
+export interface WorkerHomeRecallParams {
+  profile_id: string
+  session_id: string
+  execution_id: string
+  generation: number
+  pid: number
+  birth: number
+  secret: string
+  epoch: number
+  query: string
+  overview?: boolean
+}
+export interface WorkerHomeRecallResult {
+  context: string
+  count: number
+}
 export interface GroupsAttachmentUploadParams {
   profile?: string | null
   room_id: string
@@ -6724,6 +6740,8 @@ export interface CanonicalRpcMethods {
   'shell.exec': { params: CanonicalShellExecParams; result: ShellExecResult }
   /** Adopt a registered execution after verifying the live producer claim. */
   'worker.adopt': { params: WorkerScopeParams; result: WorkerExecution }
+  /** Best-effort assignment-fenced Home read without a persistence receipt. */
+  'worker.home.recall': { params: WorkerHomeRecallParams; result: WorkerHomeRecallResult }
   /** Sequence-fenced typed persistence write from an adopted worker. */
   'worker.persist': { params: WorkerPersistParams; result: WorkerPersistResult }
   /** Register a compute worker execution on an idle session. */
@@ -6771,6 +6789,7 @@ export const CANONICAL_RPC_METHODS = [
   'session.steer',
   'shell.exec',
   'worker.adopt',
+  'worker.home.recall',
   'worker.persist',
   'worker.register'
 ] as const satisfies readonly CanonicalRpcMethod[]

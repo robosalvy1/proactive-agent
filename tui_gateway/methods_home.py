@@ -22,8 +22,10 @@ def _home_action(rid, params):
         if db is None:
             return _db_unavailable_error(rid, code=5007)
         key = _session_lookup_key(session) if session else ""
+        selected = (db.get_session(key) or {}) if session else {}
         try:
-            result = home_action(db, key, params.get("action", ""), cwd=params.get("cwd"))
+            result = home_action(db, key, params.get("action", ""), cwd=params.get("cwd"),
+                                 principal_id=selected.get('user_id'))
         except ValueError as exc:
             return _err(rid, 4001, str(exc))
         return _ok(rid, result)

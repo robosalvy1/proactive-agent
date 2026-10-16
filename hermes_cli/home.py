@@ -64,7 +64,9 @@ def handle_cli_home(cli, command: str) -> None:
     if db is None:
         return _cp("Home requires an available session database.")
     try:
-        result = home_action(db, cli.session_id, command.partition(" ")[2], cwd=getattr(cli, "cwd", None))
+        selected = db.get_session(cli.session_id) or {}
+        result = home_action(db, cli.session_id, command.partition(" ")[2], cwd=getattr(cli, "cwd", None),
+                             principal_id=selected.get('user_id'))
     except ValueError as exc:
         return _cp(str(exc))
     _cp(result["output"])

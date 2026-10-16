@@ -669,11 +669,9 @@ def mutate_worker_execution(db, *, epoch, execution_id, session_id, generation,
                                              worker_tail_role, worker_tool_names)
     from hermes_state_worker_compression import WORKER_COMPRESSION_HANDLERS
     from hermes_state_worker_lifecycle import WORKER_LIFECYCLE_HANDLERS
-    from hermes_state_worker_home import worker_home_recall
     handlers = {
         **WORKER_LIFECYCLE_HANDLERS,
         **WORKER_COMPRESSION_HANDLERS,
-        'home.recall': worker_home_recall,
         'session.context': worker_context,
         'session.prompt': worker_prompt,
         'session.sidecars': worker_sidecars,

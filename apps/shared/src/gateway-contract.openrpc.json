@@ -46220,6 +46220,84 @@
         "title": "WorkerExecution",
         "type": "object"
       },
+      "WorkerHomeRecallParams": {
+        "additionalProperties": false,
+        "properties": {
+          "profile_id": {
+            "title": "Profile Id",
+            "type": "string"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "execution_id": {
+            "title": "Execution Id",
+            "type": "string"
+          },
+          "generation": {
+            "title": "Generation",
+            "type": "integer"
+          },
+          "pid": {
+            "title": "Pid",
+            "type": "integer"
+          },
+          "birth": {
+            "title": "Birth",
+            "type": "number"
+          },
+          "secret": {
+            "title": "Secret",
+            "type": "string"
+          },
+          "epoch": {
+            "title": "Epoch",
+            "type": "integer"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "overview": {
+            "default": false,
+            "title": "Overview",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profile_id",
+          "session_id",
+          "execution_id",
+          "generation",
+          "pid",
+          "birth",
+          "secret",
+          "epoch",
+          "query"
+        ],
+        "title": "WorkerHomeRecallParams",
+        "type": "object"
+      },
+      "WorkerHomeRecallResult": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "title": "Context",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "context",
+          "count"
+        ],
+        "title": "WorkerHomeRecallResult",
+        "type": "object"
+      },
       "WorkerPersistParams": {
         "additionalProperties": false,
         "properties": {
@@ -47155,6 +47233,24 @@
         "name": "result",
         "schema": {
           "$ref": "#/components/schemas/WorkerExecution"
+        }
+      }
+    },
+    {
+      "name": "worker.home.recall",
+      "summary": "Best-effort assignment-fenced Home read without a persistence receipt.",
+      "params": [
+        {
+          "name": "params",
+          "schema": {
+            "$ref": "#/components/schemas/WorkerHomeRecallParams"
+          }
+        }
+      ],
+      "result": {
+        "name": "result",
+        "schema": {
+          "$ref": "#/components/schemas/WorkerHomeRecallResult"
         }
       }
     },

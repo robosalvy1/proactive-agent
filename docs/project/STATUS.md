@@ -1,8 +1,10 @@
 # Project status
 
-Last updated: 2026-10-15.
+Last updated: 2026-10-16.
 
 ## Home thread implementation
+
+PR #3 review follow-up: worker Home recall uses a non-journaled authenticated read, so optional retrieval failures cannot poison durable transcript writes. Classic CLI and legacy sidecar controls carry the selected session's persisted owner. Ranked search pages past non-participating hits within a 4,096-hit scan bound. Regression coverage includes lost responses followed by successful writes, stale assignments and invalid credentials, owner-stamped controls, and 260 higher-ranked excluded/old/own-lineage distractors. Validation on the isolated PR branch: the canonical no-retry Python runner passed 164 tests across 26 files; `scripts/check --base origin/main` passed all 12 checks; web and Ink type checks, changed-file Ruff and whitespace checks passed. Independent re-review is pending; the PR remains unmerged.
 
 ### Dreaming
 
