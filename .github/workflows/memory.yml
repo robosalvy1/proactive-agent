@@ -26,10 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      HERMES_HOME: ${{ runner.temp }}/hermes-memory-ci-home
       HERMES_TEST_FILE_RETRIES: '0'
       HERMES_TEST_WORKERS: '2'
     steps:
+      - name: Isolate CI profile state
+        run: echo "HERMES_HOME=$RUNNER_TEMP/hermes-memory-ci-home" >> "$GITHUB_ENV"
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
