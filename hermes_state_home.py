@@ -148,15 +148,21 @@ class HomeStore:
         return dict(row, home_anchor=anchor)
 
     def _eligible_on(self, conn, state: dict) -> list[dict]:
-        # Bound candidate selection as well as the returned context. No transcript blobs here.
+        # Page metadata only; non-participating rows must not consume the output budget.
         placeholders = ",".join("?" for _ in PERSONAL_SOURCES)
-        rows = conn.execute(
-            f"SELECT * FROM sessions WHERE source IN ({placeholders}) "
-            "AND (user_id IS NULL OR user_id=?) AND hidden=0 "
-            "ORDER BY COALESCE(last_activity_at,started_at) DESC LIMIT ?",
-            (*PERSONAL_SOURCES, self.principal_id, MAX_SESSIONS),
-        ).fetchall()
-        return [entry for row in rows if (entry := self._participating_on(conn, row, state))]
+        eligible, offset = [], 0
+        while len(eligible) < MAX_SESSIONS:
+            rows = conn.execute(
+                f"SELECT * FROM sessions WHERE source IN ({placeholders}) "
+                "AND (user_id IS NULL OR user_id=?) AND hidden=0 "
+                "ORDER BY COALESCE(last_activity_at,started_at) DESC, id DESC LIMIT ? OFFSET ?",
+                (*PERSONAL_SOURCES, self.principal_id, MAX_SESSIONS, offset),
+            ).fetchall()
+            eligible.extend(entry for row in rows if (entry := self._participating_on(conn, row, state)))
+            if len(rows) < MAX_SESSIONS:
+                break
+            offset += len(rows)
+        return eligible[:MAX_SESSIONS]
 
     def conversations(self) -> list[dict]:
         with self.db._read_ctx() as conn:
