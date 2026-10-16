@@ -93,7 +93,27 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   payload, and only then drops the marker: a source-update relaunch (`-I`, no `PYTHONPATH`) or a
   post-restore re-exec must replay the whole worker, never land after the ack with the payload
   gone and no dependency boot.
-- Cron sessions pass `skip_memory=True`; memory providers intentionally do not run during cron.
+- Cron sessions pass `skip_memory=False`: built-in `MEMORY.md`/`USER.md` load as in any session, and
+  `agent.disabled_toolsets: [memory]` is the only off-switch. Pinned with its flip history in
+  `tests/cron/test_cron_memory_contract.py`; change it only by editing that test consciously.
+- **Attention layer** (`cron/attention*.py`, user doc `features/attention.md`): with
+  `attention.enabled` + `route_cron`, a successful RECURRING run is captured as an inbox item in
+  `_save_compose_deliver` (under the fire-claim fence) instead of delivered; outcome `inbox`.
+  One-shots, `[SILENT]` and failures never route. `scheduler_tick._run_attention_flush` runs on
+  every admitted tick (idle included) under the tick lock and never raises into the tick; it
+  returns before loading config while `cron/attention.db` does not exist. A digest slot is
+  recorded BEFORE sending (at-most-once); a delivery that resolves no target leaves the item in
+  `/inbox`, never reads as sent. The `[ALERT]` prompt hint is added only for routed jobs so every
+  other job's prompt stays byte-identical. Attention sends set `attach_to_session` so replies
+  to a proactive message have context.
+- **Source watchers** (`cron/attention_watch.py`, `cron/attention_sources.py`): ordinary cron
+  jobs owned through `attention_sources.job_id` / the `discovery_job_id` state key
+  (`job_role`). Their output is data: always owned by the gate, parsed into one item per entry,
+  and DROPPED (never delivered raw) when capture fails or attention is off. Watchers get only
+  their source's toolsets plus the `no_mcp` sentinel; their run context arrives as
+  `runtime_data_prompt` (scanned as data). The headless index runs from `flush` at most hourly
+  on a background thread (stamp written first). A source the user removed (or whose job they
+  deleted) is latched `removed`; discovery never overwrites an indexed source.
 - Cron execution has its own session. Eligible continuable deliveries may mirror or seed the
   reply-facing conversation: origin, origin-less home fallback, user-written bare-platform home,
   or opted-in explicit targets. `all` expansions do not gain home mirror eligibility. Mirrored

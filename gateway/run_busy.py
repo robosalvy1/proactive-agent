@@ -924,7 +924,7 @@ class GatewayBusySessionMixin:
         "approvals", "model", "codex-runtime", "personality", "suggestions", "save", "retry",
         "sethome", "compress", "usage", "topup", "insights", "reload-mcp", "reload-skills",
         "bundles", "debug", "title", "resume", "sessions", "branch", "rollback", "diff", "goal",
-        "loop", "refine", "review", "voice", "curator",
+        "loop", "refine", "review", "voice", "curator", "inbox",
     )
 
     def _command_handler_table(self, names) -> dict[str, Any]:
@@ -1280,6 +1280,15 @@ class GatewayBusySessionMixin:
         except Exception as e:
             logger.debug("suggestions command failed: %s", e)
             return t("gateway.suggestions.failed", error=e)
+
+    async def _handle_inbox_command(self, event: MessageEvent) -> str:
+        """/inbox via the shared handler (attention items are profile-wide, not per chat)."""
+        try:
+            from hermes_cli.inbox_cmd import handle_inbox_command
+            return handle_inbox_command((event.get_command_args() or "").strip())
+        except Exception as e:  # reply with the error instead of dropping the command
+            logger.warning("inbox command failed", exc_info=True)
+            return f"Inbox command failed: {e}"
 
     async def _handle_blueprint_command(self, event: MessageEvent):
         """/blueprint via the shared handler (origin = event source so jobs deliver back here)."""

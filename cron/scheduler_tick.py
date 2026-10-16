@@ -89,6 +89,15 @@ def _pre_dispatch_housekeeping(_sched, headless: bool) -> None:
     _sched._maybe_reap_dead_owners()
 
 
+def _run_attention_flush(adapters, loop) -> None:
+    """Send due attention items for the home this tick serves (``cron/attention_flush.py``)."""
+    try:
+        from cron.attention_flush import flush
+        flush(adapters=adapters, loop=loop)
+    except Exception as exc:  # proactive delivery must never stop due jobs
+        logger.warning("Attention flush failed: %s", exc, exc_info=True)
+
+
 def _tick_admitted(
     verbose: bool = True, adapters=None, loop=None, sync: bool = True, *, can_dispatch=None,
     headless: bool = False):
@@ -123,6 +132,9 @@ def _tick_admitted(
             return 0
 
         _pre_dispatch_housekeeping(_sched, headless)
+        # Attention interruptions/digests are due on idle ticks too, so this runs before the
+        # due-job scan; held under the tick lock, so two processes never send the same digest.
+        _run_attention_flush(adapters, loop)
         # Periodic worktree GC (6h, threaded) — the only sweep gateway-only boxes get.
         try:
             _sched._maybe_run_worktree_maintenance()
