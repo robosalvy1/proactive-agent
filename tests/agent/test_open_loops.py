@@ -149,3 +149,27 @@ def test_hook_captures_on_a_background_thread(home, model):
     wait_until(lambda: store.current_attention_file().exists() and loops(), what="open loop stored")
     [loop] = loops()
     assert loop["session_id"] == "s9" and loop["deliver"] == "local"
+
+
+def test_oneshot_exit_waits_for_a_started_capture(home, model, monkeypatch):
+    """`hermes -z` hard-exits after the reply; its cleanup must let the capture commit first."""
+    import threading
+
+    from hermes_cli import oneshot
+
+    release = threading.Event()
+    original = open_loops.capture_from_message
+
+    def slow_capture(*args, **kwargs):
+        release.wait(5)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(open_loops, "capture_from_message", slow_capture)
+    model.reply = {"add": [{"title": "Call mom", "due": None, "evidence": "call mom"}], "close": []}
+    agent = SimpleNamespace(session_id="s1", platform="cli", skip_background_review=False,
+                            skip_memory=False, _delegate_depth=0)
+    open_loops.maybe_capture_after_turn(agent, "Remind me to call mom")
+    threading.Timer(0.2, release.set).start()
+    monkeypatch.setattr(oneshot, "_linger_for_background_completions", lambda: None)
+    oneshot._close_agent(SimpleNamespace(shutdown_memory_provider=lambda *a: None, close=lambda: None), None)
+    assert [loop["title"] for loop in loops()] == ["Call mom"] and not open_loops._pending

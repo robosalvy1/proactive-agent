@@ -136,6 +136,8 @@ Review follow-up (PR #5, CodeRabbit round 1):
 - Gateway `/inbox` is limited to operator DMs.
 - Loop closure from chat logs `done` events.
 
-Regressions for each fix; `tests/cron` plus the inbox, open-loop, command, session-authoring, login and Home suites: 1695 passed, 0 failed, 2 skipped. `scripts/check`: 12 ok.
+Round 2: on the gateway ticker the flush runs on one thread per home, so a slow send never delays another profile's jobs. `hermes -z` waits for started open-loop captures before its hard exit.
+
+Regressions for each fix; `tests/cron` plus the inbox, open-loop, command, session-authoring, login, one-shot and Home suites: 1727 passed, 0 failed, 2 skipped (round 2). `scripts/check`: 12 ok.
 
 Next: a live smoke test on a disposable profile with one MCP server or Google account. When the dreaming PR merges, feed dream notes into each source's "look for" list.

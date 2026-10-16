@@ -13,10 +13,16 @@ from __future__ import annotations
 import json
 import logging
 import re
+import threading
+import time as time_module
 from datetime import datetime, time, timedelta
 from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
+
+# Captures started but not finished; one-shot exit waits for them (wait_for_pending_captures).
+_pending: set[threading.Thread] = set()
+_pending_guard = threading.Lock()
 
 MAX_NEW_PER_TURN = 3
 MAX_OPEN_LOOPS = 50
@@ -233,5 +239,20 @@ def maybe_capture_after_turn(agent: Any, user_message: Any) -> None:
             capture_from_message(user_message, session_id=session_id, origin=origin)
         except Exception:  # background capture must never surface into the chat
             logger.warning("Open-loop capture failed (non-fatal)", exc_info=True)
+        finally:
+            with _pending_guard:
+                _pending.discard(threading.current_thread())
 
-    spawn_context_thread(_run, name="open-loops").start()
+    thread = spawn_context_thread(_run, name="open-loops")
+    with _pending_guard:
+        _pending.add(thread)
+    thread.start()
+
+
+def wait_for_pending_captures(timeout: float = 20.0) -> None:
+    """Let started captures commit before a one-shot process hard-exits (``hermes -z``)."""
+    deadline = time_module.monotonic() + timeout
+    with _pending_guard:
+        threads = list(_pending)
+    for thread in threads:
+        thread.join(max(0.0, deadline - time_module.monotonic()))

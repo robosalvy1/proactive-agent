@@ -134,3 +134,26 @@ def test_attention_flush_runs_after_the_tick_lock_is_released(home, monkeypatch)
     monkeypatch.setattr(attention_flush, "flush", fake_flush)
     tick(verbose=False)
     assert observed == [True, True]  # tick lock free; attention lock held by this flush
+
+
+def test_gateway_ticker_does_not_wait_for_a_slow_attention_flush(home, monkeypatch):
+    """sync=False (the gateway ticker serving profiles in turn): the flush runs on its own thread,
+    one per home, so a slow send never delays the next profile's tick."""
+    import threading
+
+    from cron import attention_flush, scheduler_tick
+
+    enable(home, quiet_hours="''")
+    release, calls = threading.Event(), []
+
+    def slow_flush(adapters=None, loop=None):
+        calls.append(1)
+        release.wait(10)
+
+    monkeypatch.setattr(attention_flush, "flush", slow_flush)
+    scheduler_tick.tick(verbose=False, sync=False)
+    scheduler_tick.tick(verbose=False, sync=False)  # previous flush still sending: skipped
+    [thread] = [t for t in scheduler_tick._flush_threads.values() if t.is_alive()]
+    release.set()
+    thread.join(5)
+    assert calls == [1] and not thread.is_alive()

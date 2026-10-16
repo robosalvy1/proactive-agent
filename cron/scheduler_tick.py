@@ -3,12 +3,17 @@
 import concurrent.futures
 import contextlib
 import logging
+import threading
 import time
 
 from cron import store_health
 from cron.constants import is_recurring
 
 logger = logging.getLogger("cron.scheduler")
+
+# One background attention flush per home at a time (``_start_attention_flush``).
+_flush_threads: dict[str, threading.Thread] = {}
+_flush_threads_guard = threading.Lock()
 
 # Log the yield at most once per episode (reset when the skew changes) to avoid per-interval spam.
 _YIELD_LOG_INTERVAL_SECONDS = 3600.0
@@ -106,6 +111,27 @@ def _run_attention_flush(_sched, adapters, loop) -> None:
     finally:
         if lock_fd is not None:
             _sched._release_tick_lock(lock_fd)
+
+
+def _start_attention_flush(_sched, adapters, loop, sync: bool) -> None:
+    """Flush inline for a synchronous tick (``hermes cron tick``, tests). The gateway ticker
+    (``sync=False``) serves several profiles in turn, so there the flush runs on a context-bound
+    thread and never delays the next profile's due jobs; a home whose previous flush is still
+    sending is skipped until it finishes."""
+    if sync:
+        _run_attention_flush(_sched, adapters, loop)
+        return
+    from agent.memory_provider import spawn_context_thread
+
+    key = str(_sched._get_lock_paths()[0])
+    with _flush_threads_guard:
+        running = _flush_threads.get(key)
+        if running is not None and running.is_alive():
+            return
+        thread = spawn_context_thread(_run_attention_flush, name="attention-flush",
+                                      args=(_sched, adapters, loop))
+        _flush_threads[key] = thread
+    thread.start()
 
 
 def _tick_admitted(
@@ -226,4 +252,4 @@ def _tick_admitted(
     finally:
         _sched._release_tick_lock(lock_fd)
         if flush_attention:
-            _run_attention_flush(_sched, adapters, loop)
+            _start_attention_flush(_sched, adapters, loop, sync)

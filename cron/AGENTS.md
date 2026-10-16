@@ -102,7 +102,8 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   One-shots, `[SILENT]` and failures never route. `scheduler_tick._run_attention_flush` runs on
   every admitted, unpaused tick (idle included) AFTER the tick lock is released, under its own
   non-blocking `<home>/cron/.attention.lock` (slow sends never delay due jobs; two tickers never
-  send the same digest), and never raises into the tick; it
+  send the same digest); on the gateway ticker (`sync=False`) it runs on one context-bound thread
+  per home so a slow send never delays the next profile. It never raises into the tick; it
   returns before loading config while `cron/attention.db` does not exist. A digest slot is
   recorded BEFORE sending (at-most-once); a delivery that resolves no target leaves the item in
   `/inbox`, never reads as sent. The `[ALERT]` prompt hint is added only for routed jobs so every
