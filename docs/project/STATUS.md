@@ -72,3 +72,72 @@ Review follow-up: CodeRabbit identified duplicate claims from stale config, bot-
 Second review follow-up: moved the blocking claim to `asyncio.to_thread`, preserving routed profile context without stalling the gateway event loop. Proxy turns now consume staged sidecar notes into outbound user content through `gateway/proxy_messages.py`; local transcript text and existing system/history content stay unchanged. Two regressions failed before these fixes and passed afterward. Repeated the preceding eight-file canonical test slice plus `tests/gateway/test_messaging_onboarding_delivery.py` and `tests/gateway/test_proxy_mode.py`: **93 tests passed across ten files**, with **two macOS-only proxy tests skipped on Linux**. The complete repository gate passed all **12 checks** with zero code-health findings; changed-file Ruff and whitespace checks passed. Added test contract docstrings in response to the review documentation warning. No live remote agent or messaging service was contacted.
 
 Proxy retry follow-up: proxy requests now snapshot pending notes and acknowledge that snapshot only after HTTP 200 acceptance. Connection failure, HTTP rejection, or cancellation before acceptance leaves notes available for the next turn; staging fresh context preserves the undelivered offer, and acknowledging an older request preserves newer notes. Three failure/retry regressions failed before the fix and passed after it; a fourth test covers in-flight staging. The canonical runner on `tests/gateway/test_messaging_onboarding_delivery.py tests/gateway/test_proxy_mode.py tests/gateway/test_prompt_tail_freeze.py -q` passed **29 tests**, with **two macOS-only skips on Linux**. All **12 repository checks** passed with zero code-health findings. This uses existing process-local conversation state: restart or an explicit conversation boundary can discard an undelivered retry note, while the profile claim remains saved. Durable outbox/restart recovery remains outside this implementation.
+
+## Proactive attention layer (steps 0–2 of PROACTIVITY_PLAN.md)
+
+Branch `feature/attention-layer` (based on `main` after the Home/dreaming merge). Added an off-by-default attention layer:
+- An item store and deterministic gate: quiet hours, a daily interrupt budget per level, digests at fixed times, dedup, mute/snooze/expiry, and an activity log with reasons.
+- A flush on every cron tick, including idle ticks.
+- Recurring cron results routed to the inbox, with `[ALERT]` for time-critical results and a new `inbox` delivery outcome.
+- Open-loop capture from chat, with staged check-ins (24 hours before, 2 hours before, 24 hours overdue, undated after 3 days).
+- `/inbox` on CLI, gateway and TUI/Desktop.
+- User docs in `website/docs/user-guide/features/attention.md`.
+
+Also fixed the stale `skip_memory=True` note in `cron/AGENTS.md`.
+
+Verification:
+- New tests: `tests/cron/test_attention.py`, `tests/cron/test_attention_cron_routing.py`, `tests/agent/test_open_loops.py`, `tests/hermes_cli/test_inbox_cmd.py`. All 137 tests pass together with the command and desktop-registry suites.
+- A broad run (`tests/cron/` plus the command, config, goal/loop/heartbeat, finalizer, background-review and gateway-session suites): 1983 passed and 11 failed.
+- The cross-surface `/inbox` E2E in `tests/gateway/test_session_authoring_commands.py` passes.
+- A scripted two-day dry run (synthetic data, recording sender) found and fixed a per-tick duplicate-logging bug.
+- `scripts/check`: code health and docs drift pass.
+
+How the 11 broad-run failures were resolved:
+- Fixed on this branch and re-run green: the stale desktop slash registry dump, Slack's 50-command cap (`/inbox` now goes through `/hermes inbox`), and two gateway E2E handshake timeouts under parallel load.
+
+Pre-existing failures, unrelated to this branch:
+- `tests/agent/test_background_review.py`: 3 tests.
+- `tests/cron/test_restart_safe_worker.py::test_managed_gateway_restart_preserves_active_worker_and_single_side_effect`.
+- `tests/hermes_cli/test_config.py`: 2 tests.
+- `tests/gateway/test_session_read_commands.py`: the `/diff` RPC timeout.
+- One ruff finding in `tests/hermes_cli/test_history_commentary_display.py`.
+
+Each of these fails the same way on base 556ac1ab.
+
+Not verified: no live provider, real messaging delivery, or long-running gateway was used. Next action: user review, then a live smoke run on a disposable profile with Telegram/Bot Chat delivery, followed by step 3 (durable concerns/goals).
+
+### Source watchers (step 4)
+
+Added on the same branch, at the user's request to be proactive across everything connected:
+- A connected-source registry: an hourly headless index plus a weekly model discovery run that records evidence and reports broken connections.
+- One scoped cron watcher per source, emitting deduplicated JSON items into the gate.
+- `/inbox watch` and `/inbox sources`.
+- Attention sends are mirrored into the chat so replies have context.
+- Fixed the gateway command-parity generator so it keeps the project-scope note. The doc no longer drifts, and `/inbox` is listed.
+
+Verification:
+- `tests/cron/test_attention_watch.py` (26 tests) and the new `/inbox watch|sources` tests pass.
+- The full `tests/cron/` run plus the inbox and open-loop suites: 1592 passed, 0 failed.
+- The command-parity, command and session-authoring suites pass.
+- `scripts/check`: code health passes; ruff only reports the pre-existing base finding.
+
+Not verified:
+- No real watcher run against a live model or account.
+- Connector watchers rely on `tool_search` reaching `connectors__*` tools through the `connections` toolset; this was not exercised.
+- Skill-based watchers hold `terminal`. They are read-only by instruction only; `approvals.cron_mode: deny` blocks only commands flagged as dangerous.
+
+After rebasing onto `main` (Home/dreaming merged): `scripts/run_tests.sh` on `tests/cron`, `tests/hermes_state` and the inbox, open-loop, command, session-authoring, Home/dreams, messaging-onboarding, finalizer and config suites passed **3608 tests, 0 failed, 32 skipped** (374 files). `scripts/check --staged`: all 12 checks ok.
+
+Review follow-up (PR #5, CodeRabbit round 1):
+- Digest failures now count toward a total cap of six attempts; after that the item stays in `/inbox`.
+- Existing watcher jobs pick up skill changes.
+- Unparseable watcher output is dropped and logged instead of stored raw.
+- The attention flush runs after the tick lock is released, under its own `.attention.lock`.
+- Gateway `/inbox` is limited to operator DMs.
+- Loop closure from chat logs `done` events.
+
+Round 2: on the gateway ticker the flush runs on one thread per home, so a slow send never delays another profile's jobs. `hermes -z` waits for started open-loop captures before its hard exit.
+
+Regressions for each fix; `tests/cron` plus the inbox, open-loop, command, session-authoring, login, one-shot and Home suites: 1727 passed, 0 failed, 2 skipped (round 2). `scripts/check`: 12 ok.
+
+Next: a live smoke test on a disposable profile with one MCP server or Google account. When the dreaming PR merges, feed dream notes into each source's "look for" list.

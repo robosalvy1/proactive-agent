@@ -30,10 +30,12 @@ def finish_interrupted_run(job, execution_id, delivery_error):
 def _classify_delivery_outcome(
     *, delivery_error, should_deliver: bool, unresolved_origin: bool,
     normalized_deliver: str, incident_acked: bool, success: bool,
-    delivery_queued=None, notification_suppressed: bool = False,
+    delivery_queued=None, notification_suppressed: bool = False, routed_to_inbox: bool = False,
 ) -> str:
     if delivery_error:
         return "failed"
+    if routed_to_inbox:
+        return "inbox"
     if should_deliver and delivery_queued:
         return "queued"
     if notification_suppressed:
@@ -103,6 +105,7 @@ def finish_completed_run(d, fire_owner: Optional[str], execution_id: str, *, rec
             scheduler._delivery_lane_value(job, for_failure=not d.success)),
         incident_acked=d.incident_acked,
         success=d.success,
+        routed_to_inbox=getattr(d, "routed_to_inbox", False),
     )
     from cron.delivery_outcome import settle_quietly, settled_outcome
     if delivery_outcome == "queued":

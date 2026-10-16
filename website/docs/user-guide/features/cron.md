@@ -841,6 +841,10 @@ Otherwise, report the issue.
 
 Failed jobs always deliver regardless of the `[SILENT]` marker — only successful runs can be silenced. For quiet monitoring jobs, prompt the agent to reply with only `[SILENT]` when there is nothing to report.
 
+### Inbox and digests (attention)
+
+With the [proactive inbox](./attention.md) enabled (`attention.enabled: true`, `attention.route_cron: true`), a successful run of a **recurring** job goes to `/inbox` and the next digest instead of being sent on every run. An unchanged result is not captured again. If the job starts its reply with `[ALERT]`, the result is time-critical and may interrupt immediately, depending on the attention level, quiet hours and the daily budget. The run's delivery outcome is `inbox`. One-shot reminders, `[SILENT]` runs and failure alerts deliver as described above.
+
 ### Declaring a failed run
 
 Only runtime failures (exceptions, timeouts, an unreachable model) mark a run as failed. When the agent itself

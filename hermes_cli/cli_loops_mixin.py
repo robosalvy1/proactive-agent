@@ -787,3 +787,14 @@ class CLILoopsMixin:
                     self._pending_input.put(prompt)
                 except Exception as exc:
                     logging.debug("goal continuation enqueue failed: %s", exc)
+
+    def _handle_inbox_command(self, cmd: str) -> None:
+        """/inbox — proactive items, open loops and attention status (``hermes_cli/inbox_cmd.py``)."""
+        from hermes_cli.inbox_cmd import handle_inbox_command
+
+        try:
+            output = handle_inbox_command(cmd.strip().partition(" ")[2])
+        except Exception as exc:  # the REPL survives a broken attention store; traceback is logged
+            logging.getLogger(__name__).warning("/inbox failed", exc_info=True)
+            output = f"Inbox command failed: {exc}"
+        self._console_print(output)

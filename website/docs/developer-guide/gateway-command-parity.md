@@ -29,7 +29,7 @@ narrower routes (`hermes_cli/gateway_chat_commands.py`).
 setting to this local session (its next turn and `config.get`), saving config.yaml only where the
 handler does; `client-local (cli_only)` commands are terminal/UI features of a client.
 
-102 registry commands: 28 control, 18 read, 56 refused.
+104 registry commands: 29 control, 18 read, 57 refused.
 
 | Command | Gateway (`slash.exec`) | Classic CLI | Ink | Desktop | ACP | Notes |
 |---|---|---|---|---|---|---|
@@ -67,8 +67,10 @@ handler does; `client-local (cli_only)` commands are terminal/UI features of a c
 | `/heartbeat` (/hb) | control | HermesCLI._handle_heartbeat_command | slash.exec | slash.exec | refused |  |
 | `/help` | read | HermesCLI._cmd_help | local | action: help | refused |  |
 | `/history` | refused | HermesCLI.show_history | local | unavailable: terminal | refused | client-local (cli_only) |
+| `/home` | refused | HermesCLI._handle_home_command | home.action | slash.exec: refused | refused | client-local (cli_only) |
 | `/image` | refused | HermesCLI._handle_image_command | local | unavailable: terminal | refused | client-local (cli_only) |
 | `/import` | refused | HermesCLI._handle_import_command | slash.exec: refused | slash.exec: refused | refused | client-local (cli_only) |
+| `/inbox` | control | HermesCLI._handle_inbox_command | slash.exec | slash.exec | refused |  |
 | `/indicator` | refused | HermesCLI._handle_indicator_command | config.get, config.set | unavailable: terminal | refused | client-local (cli_only) |
 | `/init` | control | HermesCLI._handle_init_command | slash.exec | slash.exec | refused |  |
 | `/insights` | read | HermesCLI._show_insights | slash.exec | unavailable: advanced | refused |  |
