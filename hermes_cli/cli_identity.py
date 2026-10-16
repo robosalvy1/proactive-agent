@@ -8,7 +8,8 @@ from pathlib import Path
 def read_agent_name(path: Path) -> str | None:
     """Read the onboarding name file, accepting only its first non-empty line."""
     try:
-        name = path.read_text(encoding="utf-8").splitlines()[0].strip()
+        # Brackets are Rich markup in panel titles; a name never needs them.
+        name = path.read_text(encoding="utf-8").splitlines()[0].strip().replace("[", "").replace("]", "")
     except (OSError, UnicodeError, IndexError):
         return None
     return name[:80] if name else None

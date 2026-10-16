@@ -10,6 +10,13 @@ def test_profile_name_file_wins(tmp_path, monkeypatch):
     assert cli_identity.get_agent_name() == "Mira"
 
 
+def test_markup_brackets_are_stripped_from_profile_name(tmp_path, monkeypatch):
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    (tmp_path / "AGENT_NAME.txt").write_text("Nova [/red]\n", encoding="utf-8")
+
+    assert cli_identity.get_agent_name() == "Nova /red"
+
+
 def test_blank_name_file_falls_back_to_skin_branding(tmp_path, monkeypatch):
     monkeypatch.setenv("HERMES_HOME", str(tmp_path))
     (tmp_path / "AGENT_NAME.txt").write_text("   \n", encoding="utf-8")

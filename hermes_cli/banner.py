@@ -750,11 +750,10 @@ def build_welcome_banner(
     layout_table.add_column("right", justify="left")
     layout_table.add_row("\n".join(left_lines), "\n".join(right_lines))
     version_label = format_banner_version_label()
-    from hermes_cli.cli_identity import read_agent_name
-    from hermes_constants import get_hermes_home
-    profile_agent_name = read_agent_name(get_hermes_home() / "AGENT_NAME.txt")
-    if profile_agent_name:
-        version_label = version_label.replace("Hermes Agent", profile_agent_name, 1)
+    from hermes_cli.cli_identity import get_agent_name
+    agent_name = get_agent_name()
+    if agent_name != "Hermes":
+        version_label = version_label.replace("Hermes Agent", agent_name, 1)
     release_info = get_latest_release_tag()
     if release_info:
         version_label = f"[link={release_info[1]}]{version_label}[/link]"
