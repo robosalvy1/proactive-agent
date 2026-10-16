@@ -100,7 +100,9 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   `attention.enabled` + `route_cron`, a successful RECURRING run is captured as an inbox item in
   `_save_compose_deliver` (under the fire-claim fence) instead of delivered; outcome `inbox`.
   One-shots, `[SILENT]` and failures never route. `scheduler_tick._run_attention_flush` runs on
-  every admitted tick (idle included) under the tick lock and never raises into the tick; it
+  every admitted, unpaused tick (idle included) AFTER the tick lock is released, under its own
+  non-blocking `<home>/cron/.attention.lock` (slow sends never delay due jobs; two tickers never
+  send the same digest), and never raises into the tick; it
   returns before loading config while `cron/attention.db` does not exist. A digest slot is
   recorded BEFORE sending (at-most-once); a delivery that resolves no target leaves the item in
   `/inbox`, never reads as sent. The `[ALERT]` prompt hint is added only for routed jobs so every

@@ -169,6 +169,7 @@ def capture_from_message(message: Any, *, session_id: str = "", origin: Optional
     """Run the gate and, when it passes, extraction + store writes. Returns counts."""
     from cron import attention_policy as policy
     from cron import attention_store as store
+    from cron.attention import close_loop_items
     from hermes_time import now as hermes_now
 
     settings = policy.load_settings()
@@ -189,9 +190,7 @@ def capture_from_message(message: Any, *, session_id: str = "", origin: Optional
             if store.set_loop_status(conn, close["id"], close["status"], now):
                 closed += 1
                 store.log_event(conn, now, None, f"loop_{close['status']}", f"{close['id']}: from chat")
-                for item in store.select_items(conn, "loop_id=? AND status IN ('pending', 'sent')",
-                                               (close["id"],)):
-                    store.update_item(conn, item["id"], status="done", resolved_at=store.iso(now))
+                close_loop_items(conn, close["id"], now)
         remaining = MAX_OPEN_LOOPS - len(store.list_open_loops(conn))
         for entry in result["add"][:max(0, remaining)]:
             loop = store.add_open_loop(

@@ -23,6 +23,8 @@ from hermes_time import now as _hermes_now, safe_strftime
 logger = logging.getLogger("cron.attention")
 
 MAX_SEND_ATTEMPTS = 3
+# Interrupt and digest failures together; past this an item stays in /inbox and is never re-sent.
+MAX_TOTAL_ATTEMPTS = 6
 LAST_DIGEST_SLOT_KEY = "last_digest_slot"
 DIGEST_MAX_CHARS = 3500
 INTERRUPT_MAX_BODY_CHARS = 1500
@@ -284,6 +286,11 @@ def _send_digest_if_due(settings, now, send, adapters, loop, summary) -> None:
                     store.update_item(conn, item["id"], status="sent", delivered_at=store.iso(now))
                     store.log_event(conn, now, item["id"], "digested", safe_strftime(slot, "%H:%M digest"))
                 elif outcome == "failed":
+                    attempts = int(item.get("attempts") or 0) + 1
+                    fields: dict[str, Any] = {"attempts": attempts}
+                    if attempts >= MAX_TOTAL_ATTEMPTS:
+                        fields["route"] = policy.ROUTE_INBOX
+                    store.update_item(conn, item["id"], **fields)
                     store.log_event(conn, now, item["id"], "delivery_failed", str(error or "")[:300])
         if outcome == "sent":
             summary["digested"] += len(group)

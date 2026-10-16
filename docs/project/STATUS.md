@@ -128,4 +128,14 @@ Not verified:
 
 After rebasing onto `main` (Home/dreaming merged): `scripts/run_tests.sh` on `tests/cron`, `tests/hermes_state` and the inbox, open-loop, command, session-authoring, Home/dreams, messaging-onboarding, finalizer and config suites passed **3608 tests, 0 failed, 32 skipped** (374 files). `scripts/check --staged`: all 12 checks ok.
 
+Review follow-up (PR #5, CodeRabbit round 1):
+- Digest failures now count toward a total cap of six attempts; after that the item stays in `/inbox`.
+- Existing watcher jobs pick up skill changes.
+- Unparseable watcher output is dropped and logged instead of stored raw.
+- The attention flush runs after the tick lock is released, under its own `.attention.lock`.
+- Gateway `/inbox` is limited to operator DMs.
+- Loop closure from chat logs `done` events.
+
+Regressions for each fix; `tests/cron` plus the inbox, open-loop, command, session-authoring, login and Home suites: 1695 passed, 0 failed, 2 skipped. `scripts/check`: 12 ok.
+
 Next: a live smoke test on a disposable profile with one MCP server or Google account. When the dreaming PR merges, feed dream notes into each source's "look for" list.

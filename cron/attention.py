@@ -161,10 +161,10 @@ def resolve_item(item: dict[str, Any], status: str, now: Optional[datetime] = No
         if item.get("loop_id"):
             loop_status = "done" if status == "done" else "cancelled"
             if store.set_loop_status(conn, item["loop_id"], loop_status, now):
-                _close_loop_items(conn, item["loop_id"], now, exclude=item["id"])
+                close_loop_items(conn, item["loop_id"], now, exclude=item["id"])
 
 
-def _close_loop_items(conn, loop_id: str, now: datetime, *, exclude: Optional[str] = None) -> None:
+def close_loop_items(conn, loop_id: str, now: datetime, *, exclude: Optional[str] = None) -> None:
     for other in store.select_items(conn, "loop_id=? AND status IN ('pending', 'sent')", (loop_id,)):
         if other["id"] != exclude:
             store.update_item(conn, other["id"], status="done", resolved_at=store.iso(now))
@@ -222,5 +222,5 @@ def close_open_loop(loop_id: str, status: str, now: Optional[datetime] = None) -
         changed = store.set_loop_status(conn, loop_id, status, now)
         if changed:
             store.log_event(conn, now, None, f"loop_{status}", loop_id)
-            _close_loop_items(conn, loop_id, now)
+            close_loop_items(conn, loop_id, now)
     return changed

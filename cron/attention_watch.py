@@ -105,8 +105,9 @@ def _ensure_watcher(row: dict, job: Optional[dict], fields: dict) -> Optional[st
     current_schedule = (job.get("schedule") or {}).get("expr") if isinstance(job.get("schedule"), dict) else None
     if current_schedule != fields["schedule"]:
         jobs.update_job(job["id"], {"schedule": fields["schedule"]})
-    if job.get("deliver") != fields["deliver"] or job.get("enabled_toolsets") != fields["enabled_toolsets"]:
-        jobs.update_job(job["id"], {"deliver": fields["deliver"], "enabled_toolsets": fields["enabled_toolsets"]})
+    synced = ("deliver", "enabled_toolsets", "skills")
+    if any((job.get(name) or None) != (fields[name] or None) for name in synced):
+        jobs.update_job(job["id"], {name: fields[name] for name in synced})
     return job["id"]
 
 
@@ -322,22 +323,24 @@ def _urgency(value: Any) -> int:
 
 def capture_watcher_result(job: dict, source: dict, content: str, *, settings=None,
                            now: Optional[datetime] = None) -> list[dict]:
-    """One attention item per reported item. Unparseable output is kept as a single item."""
+    """One attention item per reported item. Output without an ``items`` list breaks the contract
+    and is dropped (logged), never stored raw: it may be unfiltered source text."""
     from cron import attention
 
     data = parse_json_object(content)
     raw_items = data.get("items") if data else None
+    if not isinstance(raw_items, list):
+        logger.warning("Watcher %s returned output without an items list; dropped", source["key"])
+        from hermes_time import now as hermes_now
+
+        with store.transaction() as conn:
+            store.log_event(conn, now or hermes_now(), None, "watch_unparseable",
+                            f"{source['label']}: output dropped")
+        return []
     common = {"source": "watch", "source_ref": str(job.get("id") or ""),
               "category": f"watch:{source['key']}", "deliver": str(job.get("deliver") or "origin"),
               "origin": job.get("origin") if isinstance(job.get("origin"), dict) else None,
               "settings": settings, "now": now}
-    if not isinstance(raw_items, list):
-        digest = hashlib.sha256(content.encode("utf-8", errors="replace")).hexdigest()[:16]
-        item = attention.capture(kind="inform", title=f"{source['label']}: {_text(content, 100)}",
-                                 body=content.strip()[:2000], urgency=4,
-                                 dedup_key=f"watch:{source['key']}:raw:{digest}",
-                                 why_now=f"new from {source['label']}", **common)
-        return [item] if item else []
     captured = []
     for raw in raw_items[:MAX_ITEMS_PER_RUN]:
         title = _text(raw.get("title"), 140) if isinstance(raw, dict) else ""

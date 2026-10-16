@@ -84,7 +84,7 @@ Interruptions over the budget move to the next digest. An alert during quiet hou
 | `/inbox digest` | Preview what the next digest will contain. |
 | `/inbox status` | Level, quiet hours, digest times, interruptions used today. |
 
-Items are referenced by inbox number or by the short id shown in digests (`[3f2a91]`). `/inbox` works in the CLI, the TUI and Desktop, and on messaging platforms.
+Items are referenced by inbox number or by the short id shown in digests (`[3f2a91]`). `/inbox` works in the CLI, the TUI and Desktop, and on messaging platforms in a direct message (only from an admin when the platform has `allow_admin_from` set), because the inbox holds everything the agent found across your sources. A delivery that keeps failing is retried at most six times in total; the item then stays in `/inbox`. Watcher output that is not the expected structured reply is dropped and noted in `/inbox log`.
 
 ## Where items are delivered
 

@@ -89,13 +89,23 @@ def _pre_dispatch_housekeeping(_sched, headless: bool) -> None:
     _sched._maybe_reap_dead_owners()
 
 
-def _run_attention_flush(adapters, loop) -> None:
-    """Send due attention items for the home this tick serves (``cron/attention_flush.py``)."""
+def _run_attention_flush(_sched, adapters, loop) -> None:
+    """Send due attention items for the home this tick serves (``cron/attention_flush.py``).
+    Runs after the tick lock is released, so slow deliveries never delay due jobs, under its own
+    non-blocking lock so two tickers never send the same interruption or digest."""
+    lock_fd = None
     try:
+        lock_dir, _ = _sched._get_lock_paths()
+        lock_fd = _sched._acquire_tick_lock(lock_dir / ".attention.lock")
+        if lock_fd is None:
+            return  # another ticker is flushing
         from cron.attention_flush import flush
         flush(adapters=adapters, loop=loop)
-    except Exception as exc:  # proactive delivery must never stop due jobs
+    except Exception as exc:  # proactive delivery must never break the ticker
         logger.warning("Attention flush failed: %s", exc, exc_info=True)
+    finally:
+        if lock_fd is not None:
+            _sched._release_tick_lock(lock_fd)
 
 
 def _tick_admitted(
@@ -120,6 +130,7 @@ def _tick_admitted(
     if lock_fd is None:
         return 0
 
+    flush_attention = False
     try:
         # `hermes pause` ESTOP: skip dispatch, never touch in-flight runs; check_paused logs once.
         with contextlib.suppress(ImportError):
@@ -132,9 +143,9 @@ def _tick_admitted(
             return 0
 
         _pre_dispatch_housekeeping(_sched, headless)
-        # Attention interruptions/digests are due on idle ticks too, so this runs before the
-        # due-job scan; held under the tick lock, so two processes never send the same digest.
-        _run_attention_flush(adapters, loop)
+        # Attention interruptions/digests are due on idle ticks too: flushed on every admitted,
+        # unpaused tick, after the tick lock is released (see ``finally``).
+        flush_attention = True
         # Periodic worktree GC (6h, threaded) — the only sweep gateway-only boxes get.
         try:
             _sched._maybe_run_worktree_maintenance()
@@ -214,3 +225,5 @@ def _tick_admitted(
         return sum(_results)
     finally:
         _sched._release_tick_lock(lock_fd)
+        if flush_attention:
+            _run_attention_flush(_sched, adapters, loop)

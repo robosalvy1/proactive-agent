@@ -180,6 +180,18 @@ def test_failed_sends_retry_then_fall_back_to_digest(home):
     assert item["status"] == "pending" and item["route"] == policy.ROUTE_DIGEST
 
 
+def test_digest_that_keeps_failing_stops_after_the_attempt_cap(home):
+    s, send = settings(digest_times=["09:00", "13:00", "18:00"]), Recorder(error="chat revoked")
+    flush_mod.flush(now=at(14, 19), settings=s, send=send)  # baseline
+    capture(s, key="a", now=at(14, 20))
+    slots = [at(day, hour, 1) for day in (15, 16, 17) for hour in (9, 13, 18)]
+    for when in slots:
+        flush_mod.flush(now=when, settings=s, send=send)
+    assert len(send.sent) == flush_mod.MAX_TOTAL_ATTEMPTS
+    [item] = attention.inbox(at(17, 19))
+    assert item["status"] == "pending" and item["route"] == policy.ROUTE_INBOX
+
+
 def test_item_without_target_stays_in_inbox(home):
     s, send = settings(level="balanced"), Recorder()
     capture(s, kind="alert", urgency=8, deliver="local")

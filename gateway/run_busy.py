@@ -1282,7 +1282,16 @@ class GatewayBusySessionMixin:
             return t("gateway.suggestions.failed", error=e)
 
     async def _handle_inbox_command(self, event: MessageEvent) -> str:
-        """/inbox via the shared handler (attention items are profile-wide, not per chat)."""
+        """/inbox via the shared handler. Attention items are profile-wide (watcher findings, open
+        loops), so only a direct message from an operator may read or change them, as for /login."""
+        from gateway.slash_access import policy_for_runner_source
+
+        src = event.source
+        if getattr(src, "chat_type", None) not in {"dm", "direct", "private"} or not getattr(src, "chat_id", None):
+            return "Use /inbox in a direct message with me."
+        policy = policy_for_runner_source(self, src)
+        if policy.enabled and not policy.is_admin(getattr(src, "user_id", None)):
+            return "Only an operator of this agent can use /inbox."
         try:
             from hermes_cli.inbox_cmd import handle_inbox_command
             return handle_inbox_command((event.get_command_args() or "").strip())

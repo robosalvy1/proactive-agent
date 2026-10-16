@@ -112,3 +112,25 @@ def test_idle_tick_flushes_due_alerts(home, monkeypatch):
                       category="test", urgency=9, dedup_key="flight", deliver="telegram")
     assert tick(verbose=False) == 0  # no cron jobs due
     assert sent == [("telegram", sent[0][1])] and sent[0][1].startswith("Flight delayed")
+
+
+def test_attention_flush_runs_after_the_tick_lock_is_released(home, monkeypatch):
+    """Slow attention deliveries must not hold the tick lock that due-job dispatch needs; a second
+    flusher in the meantime is skipped by the attention lock instead."""
+    from cron import attention_flush
+    from cron.scheduler_tick import tick
+
+    enable(home, quiet_hours="''")
+    lock_dir, tick_lock = scheduler._get_lock_paths()
+    observed = []
+
+    def fake_flush(adapters=None, loop=None):
+        tick_fd = scheduler._acquire_tick_lock(tick_lock)
+        observed.append(tick_fd is not None)
+        if tick_fd is not None:
+            scheduler._release_tick_lock(tick_fd)
+        observed.append(scheduler._acquire_tick_lock(lock_dir / ".attention.lock") is None)
+
+    monkeypatch.setattr(attention_flush, "flush", fake_flush)
+    tick(verbose=False)
+    assert observed == [True, True]  # tick lock free; attention lock held by this flush
