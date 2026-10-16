@@ -847,7 +847,8 @@ class CLIAgentSetupMixin:
 
         # role -> (label, label style, body style, continuation indent)
         you_label = f"  {t('cli.resume.label_you')} "
-        assistant_label = f"  {t('cli.resume.label_assistant', agent_name='Hermes')} "
+        from hermes_cli.cli_identity import get_agent_name
+        assistant_label = f"  {t('cli.resume.label_assistant', agent_name=get_agent_name())} "
         role_styles = {
             "user": (you_label, f"dim bold {_session_label_c}", "dim", " " * len(you_label)),
             "assistant": (assistant_label, f"dim bold {_assistant_label_c}", "dim", " " * len(assistant_label)),

@@ -63,16 +63,16 @@ _HERMES_BRANDING: dict[str, str] = _branding(
 _BUILTIN_SKINS: dict[str, dict[str, Any]] = {
     "default": {
         "name": "default", "description": "Classic Hermes — gold and kawaii",
-        # Dark-authored; values match the TUI's DARK_THEME so both render the same gold.
+        # Dark-authored violet-blue accents with a near-white lavender-gray body.
         "colors": {
-            "banner_border": "#CD7F32", "banner_title": "#FFD700", "banner_accent": "#FFBF00",
-            "banner_dim": "#B8860B", "banner_text": "#FFF8DC", "ui_accent": "#FFBF00",
-            "ui_label": "#DAA520", "ui_ok": "#4caf50", "ui_error": "#ef5350", "ui_warn": "#ffa726",
-            "prompt": "#FFF8DC", "input_rule": "#CD7F32", "response_border": "#FFD700",
+            "banner_border": "#7B6CF6", "banner_title": "#E6E3FA", "banner_accent": "#9A8CFF",
+            "banner_dim": "#6B62B5", "banner_text": "#EEEDF5", "ui_accent": "#9A8CFF",
+            "ui_label": "#A79DF0", "ui_ok": "#4caf50", "ui_error": "#ef5350", "ui_warn": "#ffa726",
+            "prompt": "#EEEDF5", "input_rule": "#7B6CF6", "response_border": "#9A8CFF",
             "status_bar_bg": "#1a1a2e", "status_bar_text": "#C0C0C0",
-            "status_bar_strong": "#FFD700", "status_bar_dim": "#8A7A4A",
-            "status_bar_good": "#8FBC8F", "status_bar_warn": "#FFD700", "status_bar_bad": "#FF8C00",
-            "status_bar_critical": "#FF6B6B", "session_label": "#DAA520",
+            "status_bar_strong": "#E6E3FA", "status_bar_dim": "#7A7399",
+            "status_bar_good": "#8FBC8F", "status_bar_warn": "#E6E3FA", "status_bar_bad": "#FF8C00",
+            "status_bar_critical": "#FF6B6B", "session_label": "#A79DF0",
             "session_border": "#8B8682", "completion_menu_bg": "#1a1a2e",
             "completion_menu_current_bg": "#333355", "selection_bg": "#3a3a55",
             "shell_dollar": "#4dabf7", "voice_status_bg": "#1a1a2e"},
@@ -82,12 +82,12 @@ _BUILTIN_SKINS: dict[str, dict[str, Any]] = {
         # Hierarchy on white: ink body 8.9:1 > fade 5.2 > label 3.7 > muted 3.3 > title 2.7 >
         # headers 2.4. Fills (*_bg) flip the dark navy surfaces to light polarity.
         "light_colors": {
-            "banner_title": "#C8961E", "banner_accent": "#D89B04", "banner_dim": "#B8860B",
-            "banner_text": "#5C4718", "ui_accent": "#D89B04", "ui_label": "#A97E10",
-            "ui_ok": "#2E7D32", "ui_error": "#C62828", "ui_warn": "#D97706", "prompt": "#5C4718",
-            "response_border": "#C8961E", "session_label": "#A97E10", "status_bar_text": "#6F6F6F",
-            "status_bar_strong": "#C8961E", "status_bar_dim": "#9A8A5A",
-            "status_bar_good": "#2E7D32", "status_bar_warn": "#C8961E", "status_bar_bad": "#C2410C",
+            "banner_title": "#4B3FB0", "banner_accent": "#5B4DD6", "banner_dim": "#6F66B8",
+            "banner_text": "#2D2A4A", "ui_accent": "#5B4DD6", "ui_label": "#4F46B0",
+            "ui_ok": "#2E7D32", "ui_error": "#C62828", "ui_warn": "#D97706", "prompt": "#2D2A4A",
+            "response_border": "#5B4DD6", "session_label": "#4F46B0", "status_bar_text": "#6F6F6F",
+            "status_bar_strong": "#4B3FB0", "status_bar_dim": "#7A74A8",
+            "status_bar_good": "#2E7D32", "status_bar_warn": "#4B3FB0", "status_bar_bad": "#C2410C",
             "status_bar_critical": "#B91C1C", "shell_dollar": "#1E6FC0",
             "completion_menu_bg": "#F5F5F5", "completion_menu_current_bg": "#E0D1BF",
             "selection_bg": "#D4E4F7", "status_bar_bg": "#F5F5F5", "voice_status_bg": "#F5F5F5"},
