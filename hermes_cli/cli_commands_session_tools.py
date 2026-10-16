@@ -94,6 +94,10 @@ class CLICommandsSessionToolsMixin:
     ``/profile`` handlers (moved from ``CLICommandsMixin``)."""
 
 
+    def _handle_home_command(self, command: str) -> None:
+        from hermes_cli.home import handle_cli_home
+        handle_cli_home(self, command)
+
     # ---- /stop, /agents -------------------------------------------------------------------
     def _handle_stop_command(self):
         """Handle /stop — kill all running background processes and background (async) delegations.

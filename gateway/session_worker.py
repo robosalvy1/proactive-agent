@@ -67,7 +67,8 @@ async def worker_request(connection, ref, params, *, operation):
     if operation == "persist" and isinstance(params.get("operation"), str) and params["operation"].startswith("delegation."):
         from gateway.session_worker_delegation import worker_delegation_request
         return await worker_delegation_request(connection, ref, params)
-    extra = {'register': {'kind'}, 'adopt': set(), 'persist': {'epoch', 'sequence', 'operation', 'payload'}}[operation]
+    extra = {'register': {'kind'}, 'adopt': set(), 'persist': {'epoch', 'sequence', 'operation', 'payload'},
+             'home_recall': {'epoch', 'query', 'overview'}}[operation]
     if set(params) != _SCOPE | extra:
         raise RuntimeStoreError('invalid_params')
     claim = _claim(connection, ref, params)
@@ -86,6 +87,10 @@ async def worker_request(connection, ref, params, *, operation):
     if 'worker:adopt' not in connection.actor.capabilities:
         raise RuntimeStoreError('permission_denied')
     _verify(connection, ref, params, claim)
+    if operation == 'home_recall':
+        from hermes_state_worker_home import read_worker_home
+        return await asyncio.to_thread(read_worker_home, authority.db, epoch=params['epoch'],
+                                       **scope, query=params['query'], overview=params['overview'])
     if operation == 'adopt':
         return await asyncio.to_thread(adopt_worker_execution, authority.db, epoch=authority.epoch,
                                        **scope, adoption_secret=claim)

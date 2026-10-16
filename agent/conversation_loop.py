@@ -1537,8 +1537,12 @@ def _run_api_retry_loop(agent, s: _LoopState) -> Optional[dict[str, Any]]:
 def _codex_app_server_turn(agent: Any, s: Any) -> Optional[dict[str, Any]]:
     """The codex app-server's result for this turn, or None when its failure activated a fallback and the
     generic loop retries the same user turn."""
+    from agent.turn_context import compose_user_api_content
+    # This runtime sends a new turn directly rather than build_api_messages(). Keep
+    # the same current-turn recall while its native thread owns historical replay.
+    user_message = compose_user_api_content(s.user_message, s._ext_prefetch_cache, s._plugin_user_context)
     codex_result = agent._run_codex_app_server_turn(
-        user_message=s.user_message, original_user_message=s.original_user_message,
+        user_message=user_message or s.user_message, original_user_message=s.original_user_message,
         messages=s.messages, effective_task_id=s.effective_task_id,
         should_review_memory=s._should_review_memory,
     )

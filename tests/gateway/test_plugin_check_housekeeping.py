@@ -27,6 +27,6 @@ def test_plugin_cadence_runs_at_startup_and_each_housekeeping_tick(monkeypatch):
     monkeypatch.setattr(stop, "wait", wait)
     monkeypatch.setattr(plugins_cadence, "maybe_run_gateway_check", check)
     monkeypatch.setattr(run, "_housekeeping_deferred_fts_retry", lambda: None)
-    monkeypatch.setattr(run, "_housekeeping_memory_trim", lambda: None)
+    monkeypatch.setattr("gateway.run_memory_trim.housekeeping_memory_trim", lambda: None)
     run._start_gateway_housekeeping(stop)
     assert len(calls) == 2

@@ -459,6 +459,21 @@ canonical_method("worker.persist", params=WorkerPersistParams, result=WorkerPers
                  doc="Sequence-fenced typed persistence write from an adopted worker.")
 
 
+class WorkerHomeRecallParams(WorkerScopeParams):
+    epoch: int
+    query: str
+    overview: bool = False
+
+
+class WorkerHomeRecallResult(Result):
+    context: str
+    count: int
+
+
+canonical_method('worker.home.recall', params=WorkerHomeRecallParams, result=WorkerHomeRecallResult,
+                 doc='Best-effort assignment-fenced Home read without a persistence receipt.')
+
+
 # ── hosted rooms (canonical-only verbs) ───────────────────────────────────────────────────────
 
 

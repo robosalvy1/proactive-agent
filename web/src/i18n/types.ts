@@ -220,6 +220,7 @@ export interface Translations {
     selectedSessionsSkippedActive: string;
     failedToDeleteSelected: string;
     resumeInChat: string;
+    homeChat?: string;
     newChat: string;
     workspace: string;
     workspaceDefault: string;

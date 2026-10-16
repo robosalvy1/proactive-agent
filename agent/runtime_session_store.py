@@ -301,6 +301,12 @@ class RuntimeSessionStore(RuntimeSessionCompressionMixin, RuntimeSessionLifecycl
     def get_session_title(self, session_id):
         return self.get_session(session_id).get('title')
 
+    def home_recall(self, session_id, query, *, overview=False):
+        """Best-effort assigned read; never poison or advance the durable write journal."""
+        with self.lock:
+            self._session(session_id)
+            return self.rpc('worker.home.recall', **self.scope, query=query[:2000], overview=overview)
+
     # Transcript-tail reads the agent core makes on its session_db (failed-turn boundary, in-place
     # compaction coverage); a missing one raised AttributeError inside a best-effort guard.
     def latest_conversation_role(self, session_id):

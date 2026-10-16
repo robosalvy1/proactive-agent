@@ -1882,6 +1882,16 @@ export interface BrowserControllerParams {
 export interface BrowserControllerDetachResult {
   detached?: boolean
 }
+export interface HomeActionParams {
+  session_id?: string | null
+  profile?: string | null
+  action?: '' | 'status' | 'overview' | 'share' | 'exclude' | 'off' | 'on' | 'dream' | 'dream status' | 'dream on' | 'dream off' | 'dream now' | 'dream notes' | 'dream clear'
+  cwd?: string | null
+}
+export interface HomeActionResult {
+  output: string
+  session_id?: string | null
+}
 export interface I18nLanguagesResult {
   languages: LanguageOption[]
 }
@@ -4799,6 +4809,22 @@ export interface WorkerPersistParams {
 }
 /** The operation's durable receipt (``message_id`` for an append, delegation results, …). */
 export type WorkerPersistResult = Record<string, unknown>
+export interface WorkerHomeRecallParams {
+  profile_id: string
+  session_id: string
+  execution_id: string
+  generation: number
+  pid: number
+  birth: number
+  secret: string
+  epoch: number
+  query: string
+  overview?: boolean
+}
+export interface WorkerHomeRecallResult {
+  context: string
+  count: number
+}
 export interface GroupsAttachmentUploadParams {
   profile?: string | null
   room_id: string
@@ -6036,6 +6062,8 @@ export interface RpcMethods {
   'handoff.request': { params: HandoffRequestParams; result: HandoffRequestResult }
   /** Poll the handoff row for this session. */
   'handoff.state': { params: SessionParams; result: HandoffStateResult }
+  /** Resolve the persistent Home conversation or manage profile-owned cross-chat recall. */
+  'home.action': { params: HomeActionParams; result: HomeActionResult }
   /** Pack + overlay messages for one language and surface; the renderer merges them over its bundled catalog. */
   'i18n.catalog': { params: I18nCatalogParams; result: I18nCatalogResult }
   /** Every language some layer supplies (bundled ∪ user overlay ∪ plugin packs), en first. */
@@ -6470,6 +6498,7 @@ export const RPC_METHODS = [
   'handoff.fail',
   'handoff.request',
   'handoff.state',
+  'home.action',
   'i18n.catalog',
   'i18n.languages',
   'image.attach',
@@ -6711,6 +6740,8 @@ export interface CanonicalRpcMethods {
   'shell.exec': { params: CanonicalShellExecParams; result: ShellExecResult }
   /** Adopt a registered execution after verifying the live producer claim. */
   'worker.adopt': { params: WorkerScopeParams; result: WorkerExecution }
+  /** Best-effort assignment-fenced Home read without a persistence receipt. */
+  'worker.home.recall': { params: WorkerHomeRecallParams; result: WorkerHomeRecallResult }
   /** Sequence-fenced typed persistence write from an adopted worker. */
   'worker.persist': { params: WorkerPersistParams; result: WorkerPersistResult }
   /** Register a compute worker execution on an idle session. */
@@ -6758,6 +6789,7 @@ export const CANONICAL_RPC_METHODS = [
   'session.steer',
   'shell.exec',
   'worker.adopt',
+  'worker.home.recall',
   'worker.persist',
   'worker.register'
 ] as const satisfies readonly CanonicalRpcMethod[]

@@ -16,7 +16,13 @@ def worker(tmp_path):
     epoch = begin_runtime_epoch(db, instance_id='fixture')
     scope = dict(epoch=epoch, execution_id='worker', session_id='owned', generation=0)
     register_worker_execution(db, **scope, kind='compute', adoption_secret='secret')
-    store = RuntimeSessionStore(lambda method, **p: mutate_worker_execution(db, **p), scope, tmp_path / 'outbox')
+    def rpc(method, **params):
+        from hermes_state_worker_home import read_worker_home
+        if method == 'worker.home.recall':
+            return read_worker_home(db, **params)
+        return mutate_worker_execution(db, **params)
+
+    store = RuntimeSessionStore(rpc, scope, tmp_path / 'outbox')
     yield db, store
     store.failure = None
     store.journal['pending'] = []
