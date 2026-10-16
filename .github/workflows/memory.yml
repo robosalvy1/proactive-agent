@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      HERMES_HOME: ${{ github.workspace }}/.dev/ci-home
+      HERMES_HOME: ${{ runner.temp }}/hermes-memory-ci-home
       HERMES_TEST_FILE_RETRIES: '0'
       HERMES_TEST_WORKERS: '2'
     steps:
@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: '3.14'
       - name: Build isolated test environment through PM
-        run: python -m pm.build_env --source . --out .venv --group dev --group test
+        run: python -m pm.build_env --source . --out .venv --cache "${{ runner.temp }}/hermes-memory-uv-cache" --group dev --group test
       - name: Repository checks
         run: .venv/bin/python scripts/check
       - name: Memory, continuity, learning and isolation regressions
