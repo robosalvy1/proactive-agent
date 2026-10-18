@@ -11,7 +11,6 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
-import os
 import secrets
 import time
 from datetime import UTC, datetime, timedelta
@@ -71,8 +70,9 @@ def pending_path() -> Path:
 
 
 def _write_private(path: Path, payload: dict) -> None:
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    os.chmod(path, 0o600)
+    from utils import atomic_write_text
+
+    atomic_write_text(path, json.dumps(payload, indent=2), mode=0o600)
 
 
 def _read_json(path: Path) -> dict | None:

@@ -34,7 +34,7 @@ export function ShortcutsTile({ tile, controls, userName, onAsk, onChange }: Sho
   const settings = (
     <div className="flex flex-col gap-2">
       {items.map((item, i) => (
-        <div key={`${item}-${i}`} className="flex items-center gap-2">
+        <div key={i} className="flex items-center gap-2">
           <input
             className={tileInput}
             value={item}

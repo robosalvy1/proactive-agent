@@ -200,8 +200,11 @@ def _read(home: Path) -> dict:
         data = None
     if not isinstance(data, dict):
         return {"exists": False, "rev": 0, "tiles": default_tiles(), "dismissed": []}
-    dismissed = [d for d in data.get("dismissed") or [] if isinstance(d, dict) and d.get("kind") in KINDS]
-    return {"exists": True, "rev": int(data.get("rev") or 0), "tiles": _clean_board(data.get("tiles")),
+    raw_dismissed = data.get("dismissed")
+    dismissed = [d for d in raw_dismissed if isinstance(d, dict) and d.get("kind") in KINDS] if isinstance(raw_dismissed, list) else []
+    rev = data.get("rev")
+    rev = rev if isinstance(rev, int) and not isinstance(rev, bool) and rev >= 0 else 0
+    return {"exists": True, "rev": rev, "tiles": _clean_board(data.get("tiles")),
             "dismissed": dismissed[-MAX_DISMISSED:]}
 
 

@@ -20,7 +20,7 @@ def test_identity_requires_the_dashboard_token():
 
 def test_identity_reads_both_onboarding_name_files(client):
     home = get_hermes_home()
-    (home / "AGENT_NAME.txt").write_text("Juniper\n", encoding="utf-8")
+    (home / "AGENT_NAME.txt").write_text("\n  \nJuniper\n", encoding="utf-8")  # leading blank lines are skipped
     (home / "USER_NAME.txt").write_text("Sam [admin]\nignored\n", encoding="utf-8")
     result = client.get("/api/personal/identity?profile=default")
     assert result.status_code == 200, result.text

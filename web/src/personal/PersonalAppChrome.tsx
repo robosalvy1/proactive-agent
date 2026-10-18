@@ -1,5 +1,5 @@
 import { CheckCircle2, TriangleAlert, X } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 import { ApprovalCard, ClarifyCard } from "./PromptCards";
@@ -51,6 +51,13 @@ export function ConnectionBanner({ chat, agentName }: { chat: Chat; agentName: s
 
 export function TilesSheet({ onClose, children }: { onClose: () => void; children: ReactNode }) {
   const p = usePersonalCopy();
+  const closeButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeButton.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-40">
       <button type="button" aria-label={p.done} className="absolute inset-0 bg-slate-900/25 backdrop-blur-[2px]" onClick={onClose} />
@@ -63,7 +70,7 @@ export function TilesSheet({ onClose, children }: { onClose: () => void; childre
         <div className="sticky top-0 z-10 -mx-3 mb-2 flex items-center justify-between bg-gradient-to-b from-white/30 to-transparent px-4 pb-2 pt-1 sm:-mx-5 sm:px-6">
           <span aria-hidden className="absolute left-1/2 top-1 h-1.5 w-10 -translate-x-1/2 rounded-full bg-neutral-900/20" />
           <span className="pt-3 text-[18px] font-semibold text-neutral-900">{p.tiles}</span>
-          <button type="button" onClick={onClose} aria-label={p.done} className="mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-800">
+          <button ref={closeButton} type="button" onClick={onClose} aria-label={p.done} className="mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-800">
             <X className="h-5 w-5" />
           </button>
         </div>

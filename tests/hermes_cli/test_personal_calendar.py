@@ -1,5 +1,5 @@
 """The calendar tile signs in through Hermes's Google Workspace OAuth and reads the shared token."""
-import ast
+import importlib.util
 import json
 import time
 from pathlib import Path
@@ -77,10 +77,10 @@ def finish(client, query):
 
 
 def test_scopes_match_the_google_workspace_skill():
-    tree = ast.parse(SETUP_PY.read_text(encoding="utf-8"))
-    skill = next(ast.literal_eval(n.value) for n in tree.body
-                 if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", None) == "SCOPES")
-    assert personal_calendar.WORKSPACE_SCOPES == skill
+    spec = importlib.util.spec_from_file_location("google_workspace_setup", SETUP_PY)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert personal_calendar.WORKSPACE_SCOPES == module.SCOPES
 
 
 def test_calendar_requires_the_dashboard_token():
@@ -104,6 +104,7 @@ def test_sign_in_writes_the_shared_workspace_token(client, google):
     assert token["type"] == "authorized_user" and token["refresh_token"] == "rt1" and token["token"] == "at1"
     assert token["client_id"] == "cid.apps.googleusercontent.com" and token["scopes"] == personal_calendar.WORKSPACE_SCOPES
     assert token["expiry"].endswith("Z")
+    assert (get_hermes_home() / "google_token.json").stat().st_mode & 0o777 == 0o600
     assert not personal_calendar.pending_path().exists()
 
     result = client.get("/api/personal/calendar?profile=default&days=3").json()

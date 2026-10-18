@@ -71,7 +71,8 @@ export function useTiles(profile: string) {
       try {
         const board = await fetchJSON<BoardResponse>(`/api/personal/board${path}${q}`, init);
         pending.current -= 1;
-        if (pending.current === 0) apply(board);
+        // Newer edits are still queued; applying this older board would roll back what the person just typed.
+        if (pending.current === 0 && settingsQueue.current.size === 0) apply(board);
       } catch {
         pending.current -= 1;
         setError(true);

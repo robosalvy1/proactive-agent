@@ -154,3 +154,11 @@ def test_board_and_token_files_saved_with_a_bom_still_load():
     token = personal_calendar.token_path()
     token.write_text(token.read_text(encoding="utf-8"), encoding="utf-8-sig")
     assert personal_board._calendar_connected()
+
+
+@pytest.mark.parametrize("data", [{"rev": "x", "dismissed": 5}, {"rev": [1], "dismissed": "note"}, {"rev": True}])
+def test_a_board_file_with_a_bad_rev_or_dismissed_list_still_loads(data):
+    personal_board.board_path().write_text(json.dumps({**data, "tiles": [{"id": "n", "kind": "note"}]}))
+    board = personal_board.load()
+    assert board["rev"] == 0 and [t["id"] for t in board["tiles"]] == ["n"]
+    assert [t["id"] for t in tool(action="list")["tiles"]] == ["n"]

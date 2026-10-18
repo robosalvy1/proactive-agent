@@ -16,9 +16,10 @@ def _plain_name(raw: str) -> str:
 def read_agent_name(path: Path) -> str | None:
     """Read the onboarding name file, accepting only its first non-empty line."""
     try:
-        raw = path.read_text(encoding="utf-8-sig").splitlines()[0]
-    except (OSError, UnicodeError, IndexError):
+        lines = path.read_text(encoding="utf-8-sig").splitlines()
+    except (OSError, UnicodeError):
         return None
+    raw = next((line for line in lines if line.strip()), "")
     return _plain_name(raw) or None
 
 

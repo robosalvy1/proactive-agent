@@ -45,13 +45,31 @@ export function SettingsPanel({ profile, agentName, color, compact, onColor, onC
   const [error, setError] = useState("");
   const saved = useRef(color);
   const timer = useRef<number | undefined>(undefined);
+  // A custom color still waiting out the picker's debounce; saved on close instead of dropped.
+  const pendingColor = useRef<AvatarChoice | null>(null);
+  const latest = useRef({ profile, onColor });
+  useEffect(() => {
+    latest.current = { profile, onColor };
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(timer.current);
+      const next = pendingColor.current;
+      if (!next) return;
+      const { profile: owner, onColor: notify } = latest.current;
+      saveAvatarColor(owner, next).then(
+        () => notify(next),
+        () => {},
+      );
+    },
+    [],
+  );
 
   const commit = async (next: AvatarChoice) => {
     setSaving(true);
@@ -68,6 +86,8 @@ export function SettingsPanel({ profile, agentName, color, compact, onColor, onC
   };
 
   const choose = (next: AvatarChoice) => {
+    window.clearTimeout(timer.current);
+    pendingColor.current = null;
     setPreview(next);
     void commit(next);
   };
@@ -75,8 +95,12 @@ export function SettingsPanel({ profile, agentName, color, compact, onColor, onC
   // The native picker fires continuously while dragging; preview live, save once it settles.
   const pickCustom = (hex: string) => {
     setPreview(hex as AvatarChoice);
+    pendingColor.current = hex as AvatarChoice;
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => void commit(hex as AvatarChoice), 400);
+    timer.current = window.setTimeout(() => {
+      pendingColor.current = null;
+      void commit(hex as AvatarChoice);
+    }, 400);
   };
 
   const custom = preview.startsWith("#") ? preview : null;
