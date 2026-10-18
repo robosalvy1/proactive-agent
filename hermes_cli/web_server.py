@@ -761,6 +761,7 @@ from hermes_cli.web_routers import (
     files as _files_routes,
     git as _git_routes,
     home as _home_routes,
+    personal as _personal_routes,
     local_models as _local_models_routes,
     status as _status_routes,
     actions as _actions_routes,
@@ -788,6 +789,7 @@ from hermes_cli.web_routers import (
 app.include_router(_files_routes.router)
 app.include_router(_git_routes.router)
 app.include_router(_home_routes.router)
+app.include_router(_personal_routes.router)
 app.include_router(_local_models_routes.router)
 app.include_router(_status_routes.router)
 app.include_router(_actions_routes.router)

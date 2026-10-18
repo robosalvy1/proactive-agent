@@ -24,6 +24,17 @@ dashboard surface, mounted by `hermes_cli/web_server.py` (+ `web_server_*.py` si
 added to Ink shows up here automatically. If you are rebuilding the transcript or composer for the
 dashboard, stop and extend Ink (`tui_gateway/AGENTS.md`).
 
+**Exception: the personal home (`/home`, `web/src/personal/`).** At the user's direction this is a
+React chat surface in the style of a consumer assistant. It still owns no agent behavior: it drives the
+existing `/api/ws` JSON-RPC (`session.resume`/`session.create`, `prompt.submit`, `session.interrupt`),
+binds to the Home thread via `/api/home/open`, and answers `approval`/`clarify` server requests with
+cards instead of bypassing them. Its board is stored per profile on the server (`hermes_cli/personal_board.py`); the
+person configures it, and the agent may only add catalog cards through the `home_cards` tool, which the home renders. The
+calendar tile signs in through Hermes's Google Workspace OAuth (`hermes_cli/personal_calendar.py`,
+same files and scopes as the google-workspace skill). Avatar color is saved per profile via
+`PUT /api/personal/preferences`. Keep slash commands, tool detail, and power-user flows in the embedded
+TUI at `/chat`; extend the personal surface only with presentation and gateway calls that already exist.
+
 **Structured React UI around the TUI is fine when it is not a second chat surface.** Sidebar
 widgets, inspectors, summaries, status panels (`ChatSidebar`, `ModelPickerDialog`, `ToolCall`)
 complement the embedded TUI. Keep their state independent of the PTY child's session and surface
