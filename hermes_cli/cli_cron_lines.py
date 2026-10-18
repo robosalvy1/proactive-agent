@@ -5,7 +5,7 @@ same lines to a TUI session (gateway/session_tui_reads.py).
 """
 from __future__ import annotations
 
-from hermes_cli.cli_commands_session_tools import _lines, _t
+from hermes_cli.cli_commands_session_tools import _t
 
 
 def _cron(**kwargs) -> dict:
@@ -15,36 +15,26 @@ def _cron(**kwargs) -> dict:
 
 
 def cron_overview_lines() -> list[str]:
-    """Bare ``/cron``: the command card, then the current jobs. Plain text (the shared gateway serves
-    the same lines to a TUI session, gateway/session_tui_reads.py)."""
-    out = ["", "+" + "-" * 68 + "+", "|" + _t("cron.overview_title").center(68) + "|",
-           "+" + "-" * 68 + "+", "", f"  {_t('cron.overview_commands')}",
-           *_lines(_t("cron.overview_usage"), pad="    "), ""]
-    result = _cron(action="list")
-    jobs = result.get("jobs", []) if result.get("success") else []
-    if not jobs:
-        return [*out, f"  {_t('cron.no_jobs_hint')}", ""]
-    from hermes_cli.cron import _next_run_row
-    out += [f"  {_t('cron.current_jobs')}", "  " + "-" * 63]
-    for job in jobs:
-        out.append(f"    {job['job_id'][:12]:<12} | {job['schedule']:<15} | {job.get('repeat', '?'):<8}")
-        if job.get("skills"):
-            out.append(f"      {_t('cron.skills', skills=', '.join(job['skills']))}")
-        out.append(f"      {job.get('prompt_preview', '')}")
-        if job.get("next_run_at"):
-            # A stamp parked past the scheduler grace must not read as upcoming (#114309).
-            label, value = _next_run_row(job)
-            out.append(f"      {_t('cron.next_short') if label == 'Next run' else label}: {value}")
-        out.append("")
-    return [*out, ""]
+    """Bare ``/cron`` shares the compact list used by the TUI gateway."""
+    return cron_list_lines()
 
 
-def cron_list_lines(*, include_disabled: bool = False) -> list[str]:
-    """``/cron list [--all]``."""
+def cron_list_lines(*, include_disabled: bool = False, details: bool = False) -> list[str]:
+    """``/cron list [--all] [--details]``."""
     result = _cron(action="list", include_disabled=include_disabled)
-    jobs = result.get("jobs", []) if result.get("success") else []
+    if not result.get("success"):
+        return [_t("cron.list_failed", error=result.get("error") or "Unknown error")]
+    jobs = result.get("jobs", [])
     if not jobs:
         return [_t("cron.no_jobs")]
+    if not details:
+        from hermes_cli.cron_presentation import compact_job_lines, scheduler_warning
+        out = [_t("cron.list_header")]
+        for job in jobs:
+            out.extend(compact_job_lines(job))
+        if warning := scheduler_warning(result):
+            out.append(warning)
+        return out
     from hermes_cli.cron import _next_run_row
     out = ["", _t("cron.list_header"), "-" * 80]
     for job in jobs:
@@ -65,4 +55,7 @@ def cron_list_lines(*, include_disabled: bool = False) -> list[str]:
                 status = _t("cron.status_error", error=job["last_error"])
             out.append(f"  {_t('cron.last_run', when=job['last_run_at'], status=status)}")
         out.append("")
+    if result.get("warning"):
+        from hermes_cli.cron_presentation import scheduler_warning
+        out.append(scheduler_warning(result))
     return out

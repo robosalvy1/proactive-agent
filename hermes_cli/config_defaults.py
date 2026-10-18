@@ -148,7 +148,7 @@ DEFAULT_CONFIG = {
         "fast_auto_seconds": 60,
         # Responses API final-answer length (`text.verbosity`): "" = not sent (provider default),
         # or low | medium | high. Responses-family transports only; chat_completions never sends it.
-        "text_verbosity": "",
+        "text_verbosity": "low",
         # System-prompt guidance telling the model to call tools instead of describing actions.
         # "auto" = gpt/codex models; true/false = force for all models; or a list of model-name
         # substrings (e.g. ["gpt", "codex", "gemini", "qwen"]).
@@ -809,11 +809,12 @@ DEFAULT_CONFIG = {
     },
 
     "display": {
-        "compact": False,
-        "personality": "",
-        "resume_display": "full",
+        "compact": True,
+        "tool_progress": "off",
+        "personality": None,  # inherit concise, or preserve a manual agent.system_prompt
+        "resume_display": "brief",
         # Recap tuning for /resume and startup resume.
-        "resume_exchanges": 10,            # max user+assistant pairs to show
+        "resume_exchanges": 1,            # max user+assistant pairs to show
         "resume_max_user_chars": 300,      # truncate user message text
         "resume_max_assistant_chars": 200, # truncate non-last assistant text
         "resume_max_assistant_lines": 3,   # truncate non-last assistant lines
@@ -843,16 +844,15 @@ DEFAULT_CONFIG = {
         "tui_agents_nudge": True,
         "bell_on_complete": False,
         "bell_on_prompt": False,   # bell when a blocking prompt opens (clarify/approval/sudo)
-        # Stream reasoning live before the response; otherwise thinking models show only a spinner
-        # for tens of seconds.
-        "show_reasoning": True,
+        # Opt in to reasoning streams; the default view keeps the activity indicator.
+        "show_reasoning": False,
         # Post-response "Reasoning" recap collapses to 10 lines; true prints it all (live streaming
         # is always full).
         "reasoning_full": False,
         # Background self-improvement notices in chat: "off" (review still runs) | "on" (generic "💾
         # Memory updated") | "verbose" (content preview). Per-platform via
         # display.platforms.<platform>.memory_notifications.
-        "memory_notifications": "on",
+        "memory_notifications": "off",
         # Gateway notices when a terminal(background=true) process finishes: "concise" (one line;
         # failures append an output tail) | "all" (running updates + final raw output) | "result"
         # (final raw only) | "error" (raw only on non-zero exit) | "off".
@@ -888,7 +888,7 @@ DEFAULT_CONFIG = {
         # hidden-line count, pins a "focus" status segment. focus_saved_tool_progress holds the mode
         # /focus off restores. Never affects what the model sees (focus_view.py).
         "focus_view": False,
-        "focus_saved_tool_progress": "all",
+        "focus_saved_tool_progress": "off",
         "skin": "default",
         # UI language for static messages (approval prompts, some gateway slash replies); not agent
         # responses/logs/tool outputs. en, zh, ja, de, es, fr, tr, uk; unknown → en.
@@ -907,27 +907,26 @@ DEFAULT_CONFIG = {
             "first_lines": 2,
             "last_lines": 2,
         },
-        # Gateway: natural mid-turn assistant status messages. Desktop: keep mid-turn narration
-        # between tool calls instead of collapsing to the final message.
-        "interim_assistant_messages": True,
+        # Opt in to mid-turn narration; long-running status and task outcomes remain separate.
+        "interim_assistant_messages": False,
         # Engine warning/failure notifications stay visible unless an operator opts in.
         # Does not suppress task results, manual commands, or existing logs.
         "suppress_warning_notifications": False,
         # Codex Responses commentary channel: true delivers completed commentary as mid-turn interim
         # updates; false routes it to reasoning (visible only with show_reasoning).
-        "show_commentary": True,
+        "show_commentary": False,
         "tool_progress_command": False,  # enable /verbose command in messaging gateway
         # display.tool_progress_overrides is deprecated (use display.platforms); a user-set value is
         # still honored at runtime and folded into platforms by migration.
-        "tool_preview_length": 0,  # max chars for tool call previews (0 = no limit)
+        "tool_preview_length": 120,  # max chars for tool call previews (0 = no limit)
         # Human-phrased status labels for built-in tools ("Reading <file>") in CLI spinner and
         # gateway/desktop tool-progress; custom/plugin/MCP tools use the raw preview.
         "friendly_tool_labels": True,
         # CLI-only post-turn line: "⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3
         # commands". Never in quiet/non-interactive or gateway surfaces (own footer).
-        "turn_summary": True,
+        "turn_summary": False,
         # CLI-only: cumulative turn output tokens on the live spinner ("· ↓ 1.2k tok").
-        "spinner_token_flow": True,
+        "spinner_token_flow": False,
         # Gateway tool-progress grouping where edits are supported: "accumulate" edits one bubble |
         # "separate" one message per tool (noisier). Needs tool_progress enabled. Per-platform:
         # display.platforms.<platform>.tool_progress_grouping.
@@ -1837,9 +1836,8 @@ DEFAULT_CONFIG = {
             # tokens (never an unsigned decode).
             "nas_jwks_url": "",
         },
-        # Wrap delivered cron responses with a task-name header and "The agent cannot see this
-        # message" footer. False = clean output.
-        "wrap_response": True,
+        # Opt in to a task-name/ID header and management footer on delivered cron responses.
+        "wrap_response": False,
         "delivery": {  # Delivery behaviour for cron output sent through a live gateway adapter.
             # Mark cron deliveries FINAL so the platform pushes them (Telegram's "important" mode
             # otherwise sends with disable_notification=True and briefs look undelivered). False =

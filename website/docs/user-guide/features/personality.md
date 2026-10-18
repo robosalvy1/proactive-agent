@@ -158,7 +158,7 @@ A useful rule:
 
 ## SOUL.md vs `/personality`
 
-`SOUL.md` is your durable default personality.
+`SOUL.md` is your durable default personality. When no overlay or manual `agent.system_prompt` is selected, Hermes adds the built-in concise overlay. An explicit `/personality none` disables it.
 
 `/personality` is a session-level overlay that changes or supplements the current system prompt.
 

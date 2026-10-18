@@ -1020,7 +1020,7 @@ class GatewayTurnMixin(GatewayTurnPrepareMixin, GatewayTurnHygieneMixin, Gateway
         adapter = self._delivery_adapter_for(source)
         # Tool preview length (0 = no limit) and friendly tool labels (default on), per-platform.
         for _setter, _setting, _default, _cast in (
-            ("set_tool_preview_max_len", "tool_preview_length", 0, lambda v: int(v) if v else 0),
+            ("set_tool_preview_max_len", "tool_preview_length", 120, lambda v: int(v) if v else 0),
             ("set_friendly_tool_labels", "friendly_tool_labels", True, bool),
         ):
             with suppress(Exception):
@@ -1082,7 +1082,7 @@ class GatewayTurnMixin(GatewayTurnPrepareMixin, GatewayTurnHygieneMixin, Gateway
         # Interim assistant messages and thinking_progress are independent of tool progress (same
         # queue). Mattermost requires a per-platform opt-in: scratch text leaks into public threads.
         interim_assistant_messages_mode = _display_surface_mode(
-            "interim_assistant_messages", default=True, require_platform_override_for={Platform.MATTERMOST},
+            "interim_assistant_messages", default=False, require_platform_override_for={Platform.MATTERMOST},
         )
         interim_assistant_messages_enabled = not is_webhook and interim_assistant_messages_mode != "off"
         _thinking_enabled = _display_surface_mode(

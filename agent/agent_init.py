@@ -1222,7 +1222,10 @@ def _init_session_state(agent, session_id, session_db, parent_session_id, reason
 
 def _apply_display_config(agent, _agent_cfg, platform):
     # show_commentary: Codex phase=commentary → interim path (true) or reasoning channel.
-    agent.show_commentary = bool(_cfg_dict(_agent_cfg, "display").get("show_commentary", True))
+    display = _cfg_dict(_agent_cfg, "display")
+    agent.show_commentary = is_truthy_value(display.get("show_commentary"), default=False)
+    memory_notices = display.get("memory_notifications", "off")
+    agent.memory_notifications = ("on" if memory_notices else "off") if isinstance(memory_notices, bool) else str(memory_notices or "off").lower()
 
     # Window (seconds) for the bounded /fast auto|cold modes (agent.fast_mode).
     agent.fast_auto_seconds = (_agent_cfg.get("agent") or {}).get("fast_auto_seconds", 60)
@@ -1237,8 +1240,7 @@ def _apply_display_config(agent, _agent_cfg, platform):
             _model_section.get("lmstudio_load_mode"),
         )
 
-    # model.streaming=false seeds _disable_streaming (the loop's runtime fallback) for
-    # backends with broken streaming tool calls. Session-scoped; orthogonal to display.streaming.
+    # Provider streaming is session-scoped and independent of display.streaming.
     _streaming = str(_model_section.get("streaming", "true")).strip().lower()
     agent._disable_streaming = _streaming in {"false", "0", "no", "off"}
     if not agent._disable_streaming and _streaming not in {"true", "1", "yes", "on"}:
@@ -1358,8 +1360,7 @@ def _apply_agent_section(agent, _agent_cfg):
     agent.budget_warning_ratio = normalize_budget_warning_ratio(
         _agent_section.get("budget_warning_ratio")
     )
-    # Both: "auto" (model-list match), true, false, or list of model substrings; independent
-    # of each other (gates in agent/system_prompt.py).
+    # Independent gates: auto (model match), bool, or model substrings (agent/system_prompt.py).
     agent._tool_use_enforcement = _agent_section.get("tool_use_enforcement", "auto")
     agent._execution_guidance = _agent_section.get("execution_guidance", "auto")
 
@@ -1379,14 +1380,13 @@ def _apply_agent_section(agent, _agent_cfg):
     agent._intent_ack_continuation = _agent_section.get("intent_ack_continuation", "auto")
 
     # Responses `text.verbosity`: "" / unknown value = not sent (never flips the provider default).
-    _verbosity = str(_agent_section.get("text_verbosity") or "").strip().lower()
+    _verbosity = str(_agent_section.get("text_verbosity", "low") or "").strip().lower()
     if _verbosity and _verbosity not in {"low", "medium", "high"}:
         logger.warning("Unknown agent.text_verbosity %r; expected low, medium or high — ignoring", _verbosity)
         _verbosity = ""
     agent.text_verbosity = _verbosity or None
 
-    # Default-on boolean gates: anti-stall guards (notice-only), universal guidance toggles
-    # (ALL models, unlike enforcement), the local toolchain probe, Bot Mode protocol section.
+    # Default-on guards and guidance apply to all models.
     for _key in (
         "stall_guards", "task_completion_guidance", "parallel_tool_call_guidance",
         "environment_probe", "bot_mode_protocol",
@@ -2304,7 +2304,7 @@ def init_agent(
     # renderer (StdoutProxy would mangle them). None = builtins.print.
     agent._print_fn = None
     agent.background_review_callback = None  # Optional sync callback for gateway delivery
-    agent.memory_notifications = "on"  # Memory update notifications: "off", "on", "verbose"
+    agent.memory_notifications = "off"  # Memory update notifications: "off", "on", "verbose"
     # Skips the end-of-turn review fork (~30K tokens/event); one switch for both review paths.
     agent.skip_background_review = bool(skip_background_review)
     agent.log_prefix = f"{log_prefix} " if log_prefix else ""

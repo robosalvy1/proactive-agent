@@ -15,7 +15,6 @@ const PRIORITY_KEYS = [
   'href',
   'link',
   'status',
-  'id',
   'message',
   'summary',
   'description'
@@ -106,7 +105,9 @@ function orderedKeys(keys: string[]): string[] {
 }
 
 const isWrapperKey = (k: string) => (WRAPPER_KEYS as readonly string[]).includes(k)
-const skipField = (k: string, v: unknown) => isWrapperKey(k) || ((k === 'success' || k === 'ok') && v === true)
+
+const skipField = (k: string, v: unknown) =>
+  isWrapperKey(k) || /(^id$|_id$)/.test(k) || ((k === 'success' || k === 'ok') && v === true)
 
 function summarizeScalar(v: unknown): string {
   if (typeof v === 'string') {
@@ -125,7 +126,7 @@ function summarizeRecordInline(record: Json, depth: number): string {
     return pluralize(Object.keys(record).length, 'field')
   }
 
-  const title = firstString(record, ['title', 'name', 'path', 'file', 'filepath', 'url', 'href', 'link', 'id'])
+  const title = firstString(record, ['title', 'name', 'path', 'file', 'filepath', 'url', 'href', 'link'])
   const status = firstString(record, ['status', 'category', 'type'])
   const message = firstString(record, ['snippet', 'summary', 'description', 'message'])
 

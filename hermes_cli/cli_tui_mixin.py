@@ -63,11 +63,8 @@ def _approval_choice_label(choice: str) -> str:
 
 
 def _agent_name() -> str:
-    try:
-        from hermes_cli.skin_engine import get_active_skin
-        return get_active_skin().get_branding("agent_name", "Hermes")
-    except Exception:
-        return "Hermes"
+    from hermes_cli.cli_identity import get_agent_name
+    return get_agent_name()
 
 
 def _tn(key: str, count: int, **kwargs) -> str:

@@ -170,12 +170,11 @@ class TestRunnerSummaryWiring:
                 evt = _drain_completion_event(res["delegation_id"])
         assert evt is not None, "completion event never reached the queue"
         summary = evt.get("summary") or ""
-        assert "Delivery target: telegram" in summary
-        assert "delivery FAILED" in summary
+        assert "delivery failed" in summary.lower()
         assert "telegram send failed: 400" in summary
         assert "delivered there by the job itself" not in summary
         # The headline must not read "Result: ok" over an undelivered run.
-        assert "Result: FAILED" in summary
+        assert "Finished and delivered" not in summary
         assert "Result: ok" not in summary
 
     def test_empty_deliver_summary_states_local_not_phantom_target(self):
@@ -202,5 +201,5 @@ class TestRunnerSummaryWiring:
                 evt = _drain_completion_event(res["delegation_id"])
         assert evt is not None, "completion event never reached the queue"
         summary = evt.get("summary") or ""
-        assert "Delivery target: local (output saved locally only)" in summary
+        assert "output saved locally" in summary
         assert "delivered there by the job itself" not in summary

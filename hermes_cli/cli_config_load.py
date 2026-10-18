@@ -203,11 +203,14 @@ def _cli_config_defaults():
             "personalities": {},  # user overrides merged by name over hermes_cli.personality builtins
         },
         "display": {
-            "compact": False,
+            "compact": True,
+            "tool_progress": "off",
+            "tool_preview_length": 120,
+            "turn_summary": False, "spinner_token_flow": False,
             # /resume recap tuning and show_reasoning: keep in sync with hermes_cli/config.py DEFAULT_CONFIG
-            "resume_display": "full", "resume_exchanges": 10, "resume_max_user_chars": 300,
+            "resume_display": "brief", "resume_exchanges": 1, "resume_max_user_chars": 300,
             "resume_max_assistant_chars": 200, "resume_max_assistant_lines": 3, "resume_skip_tool_only": True,
-            "show_reasoning": True, "reasoning_full": False, "streaming": True, "busy_input_mode": "interrupt",
+            "show_reasoning": False, "reasoning_full": False, "streaming": True, "busy_input_mode": "interrupt",
             "persistent_output": True, "persistent_output_max_lines": 200,
             # Also clear scrollback on redraw/resize recovery; off because users prefer history.
             "cli_rebuild_scrollback_on_redraw": False,
@@ -308,7 +311,7 @@ def _init_logging_and_display_from_config() -> None:
         lambda: _im("hermes_logging").setup_logging(mode="cli"),
         lambda: _im("hermes_cli.config").print_config_warnings(),
         lambda: _im("hermes_cli.skin_engine").init_skin_from_config(_cli().CLI_CONFIG),
-        lambda: _im("agent.display").set_tool_preview_max_len(int(_display("tool_preview_length", 0) or 0)),
+        lambda: _im("agent.display").set_tool_preview_max_len(int(_display("tool_preview_length", 120) or 0)),
         lambda: _im("agent.display").set_friendly_tool_labels(bool(_display("friendly_tool_labels", True))),
     ):
         try:

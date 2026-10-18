@@ -434,7 +434,7 @@ class TurnRunner(GatewayTurnProgressMixin, GatewaySessionAgentMixin):
         mem_notif = (ctx.user_config.get("display") or {}).get("memory_notifications")
         if isinstance(mem_notif, bool):
             mem_notif = "on" if mem_notif else "off"
-        agent.memory_notifications = str(mem_notif).lower() if mem_notif else "on"
+        agent.memory_notifications = str(mem_notif).lower() if mem_notif else "off"
         agent.clarify_callback = self._clarify_callback_sync
         # Thinking between tool calls is independent of tool_progress mode (Mattermost opts in
         # per platform so global scratch-text doesn't leak into threads).

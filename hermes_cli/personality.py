@@ -18,7 +18,10 @@ NEUTRAL_PERSONALITY_NAMES = frozenset({"", "none", "default", "neutral"})
 #: Built-in personalities, available on every surface without any config.
 BUILTIN_PERSONALITIES: dict[str, str] = {
     "helpful": "You are a helpful, friendly AI assistant.",
-    "concise": "You are a concise assistant. Keep responses brief and to the point.",
+    "concise": ("Keep responses brief and direct. Lead with the answer or outcome. "
+                "Use one sentence for routine confirmations. Omit filler, repeated summaries, "
+                "and internal IDs or tool metadata unless requested or needed to distinguish items. "
+                "Give full detail when requested or necessary for correctness; keep failures and next steps clear."),
     "technical": "You are a technical expert. Provide detailed, accurate technical information.",
     "creative": "You are a creative assistant. Think outside the box and offer innovative solutions.",
     "teacher": "You are a patient teacher. Explain concepts clearly with examples.",
@@ -111,7 +114,10 @@ def resolve_personality(value: Any, cfg: Optional[dict[str, Any]] = None) -> tup
 
 def active_personality_name(cfg: Optional[dict[str, Any]]) -> str:
     """The currently selected personality name ('' when none is active)."""
-    name = normalize_personality_name(_get(cfg, "display", "personality", default=""))
+    selected = _get(cfg, "display", "personality")
+    if selected is None:
+        selected = "" if prompt_text(_get(cfg, "agent", "system_prompt")) else "concise"
+    name = normalize_personality_name(selected)
     return name if name and name in available_personalities(cfg) else ""
 
 

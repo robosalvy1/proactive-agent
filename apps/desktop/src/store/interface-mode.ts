@@ -39,15 +39,14 @@ export type InterfaceMode = 'advanced' | 'simple'
 /** Picker order — the quiet option first. */
 export const INTERFACE_MODES: readonly InterfaceMode[] = ['simple', 'advanced']
 
-export const DEFAULT_INTERFACE_MODE: InterfaceMode = 'advanced'
+export const DEFAULT_INTERFACE_MODE: InterfaceMode = 'simple'
 
 const INTERFACE_MODE_STORAGE_KEY = 'hermes.desktop.interfaceMode.v1'
 
-// Advanced is the ABSENCE of a mode: encoded as "no key" so a user who never
-// touched the picker never gains a record, and clearing the key means Advanced.
+// Store both choices explicitly so an Advanced selection survives restart.
 const modeCodec: Codec<InterfaceMode> = {
-  decode: raw => (raw === 'simple' ? 'simple' : DEFAULT_INTERFACE_MODE),
-  encode: mode => (mode === DEFAULT_INTERFACE_MODE ? null : mode)
+  decode: raw => (raw === 'advanced' || raw === 'simple' ? raw : DEFAULT_INTERFACE_MODE),
+  encode: mode => mode
 }
 
 export const $interfaceMode = persistentAtom<InterfaceMode>(
