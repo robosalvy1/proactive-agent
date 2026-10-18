@@ -104,7 +104,6 @@ def test_sign_in_writes_the_shared_workspace_token(client, google):
     assert token["type"] == "authorized_user" and token["refresh_token"] == "rt1" and token["token"] == "at1"
     assert token["client_id"] == "cid.apps.googleusercontent.com" and token["scopes"] == personal_calendar.WORKSPACE_SCOPES
     assert token["expiry"].endswith("Z")
-    assert (get_hermes_home() / "google_token.json").stat().st_mode & 0o777 == 0o600
     assert not personal_calendar.pending_path().exists()
 
     result = client.get("/api/personal/calendar?profile=default&days=3").json()
@@ -113,6 +112,13 @@ def test_sign_in_writes_the_shared_workspace_token(client, google):
     assert result["events"][0]["meeting_url"] == "https://meet.google.com/x"
     assert result["events"][1]["all_day"] is True
     assert google["get"] == ["Bearer at1"]
+
+
+@pytest.mark.platforms("linux", "macos")
+def test_sign_in_keeps_the_shared_token_private(client, google):
+    _, query = connect(client)
+    assert finish(client, query).status_code == 200
+    assert (get_hermes_home() / "google_token.json").stat().st_mode & 0o777 == 0o600
 
 
 def test_remote_origins_fall_back_to_pasting_the_redirect(client, google):

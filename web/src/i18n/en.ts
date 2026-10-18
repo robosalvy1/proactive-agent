@@ -822,7 +822,7 @@ export const en: Translations = {
     calendarDays3: "3 days",
     calendarDays7: "Week",
     calendarDisconnect: "Sign {agent} out of Google",
-    calendarDisconnectConfirm: "Sign {agent} out of Google? This also removes its Gmail and Drive access.",
+    calendarDisconnectConfirm: "Sign {agent} out of Google? Chat uses the same sign-in, so Gmail, Drive and other Google tools stop working too.",
     calendarAccount: "Uses {agent}'s Google sign-in, the same access {agent} has in chat.",
     calendarNeedsScope: "{agent} is signed in to Google without Calendar access. Sign in again and allow Calendar.",
     calendarSetupIntro: "Calendar uses {agent}'s Google sign-in, the same one {agent} uses for Gmail and Drive. Your token stays on this machine.",
