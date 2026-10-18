@@ -28,6 +28,7 @@ def next_run_label(value: Any) -> str:
 
 
 def job_confirmation(job: dict[str, Any], *, updated: bool = False) -> str:
+    from cron.scheduler_delivery import _normalize_deliver_value
     from hermes_time import get_timezone
     key = "cron.compact_updated" if updated else "cron.compact_created"
     text = _t(key, name=job.get("name") or "Reminder", schedule=schedule_label(job), timezone=str(get_timezone()))
@@ -35,12 +36,12 @@ def job_confirmation(job: dict[str, Any], *, updated: bool = False) -> str:
         text += " " + _t("cron.compact_paused")
     elif job.get("next_run_at"):
         text += " " + _t("cron.compact_next", value=next_run_label(job["next_run_at"]))
-    deliver = job.get("deliver") or "local"
+    deliver = _normalize_deliver_value(job.get("deliver"))
     # A local-only job must never sound like a reminder will arrive in chat.
-    if deliver == "local" or deliver == ["local"]:
+    if deliver == "local":
         text += " " + _t("cron.compact_local")
     elif deliver != "origin":
-        text += " " + _t("cron.compact_destination", target=", ".join(deliver) if isinstance(deliver, list) else deliver)
+        text += " " + _t("cron.compact_destination", target=deliver)
     return text
 
 

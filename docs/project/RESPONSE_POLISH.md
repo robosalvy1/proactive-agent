@@ -18,6 +18,6 @@ The approved response cleanup uses Hermes' existing configuration and presentati
 
 ## Validation
 
-Validation uses synthetic state and mocked delivery only. No live provider, personal profile, external notification, or recurring job is needed. Exact checks and limitations are recorded in the PR and project status after the final validation run.
+Validation uses synthetic state and mocked delivery only. No live provider, personal profile, external notification, or recurring job is needed. Check receipts and limitations are recorded in [PR #1](https://github.com/robosalvy1/proactive-agent/pull/1) and project status.
 
 Presentation choices do not remove job identifiers from storage or APIs, change scheduling semantics, alter model replay records, or bypass approval boundaries. Model-written brevity remains guidance rather than a hard response-length limit. Existing explicit verbose settings remain explicit until changed by the user.
