@@ -1,6 +1,6 @@
 import { useBelowBreakpoint } from "@nous-research/ui/hooks/use-below-breakpoint";
-import { CheckCircle2, LayoutDashboard, LayoutGrid, MessageSquarePlus, Search, Settings, TriangleAlert, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LayoutDashboard, LayoutGrid, MessageSquarePlus, Search, Settings } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { useProfileScope } from "@/contexts/useProfileScope";
@@ -10,7 +10,7 @@ import { AgentBadge } from "./AgentBadge";
 import { Composer } from "./Composer";
 import { Glass } from "./Glass";
 import { MessageList } from "./MessageList";
-import { ApprovalCard, ClarifyCard } from "./PromptCards";
+import { CalendarNotice, ConnectionBanner, PromptSlot, TilesSheet } from "./PersonalAppChrome";
 import { SearchOverlay } from "./SearchOverlay";
 import { SettingsPanel } from "./SettingsPanel";
 import { Sky } from "./Sky";
@@ -19,6 +19,7 @@ import { usePersonalCopy } from "./copy";
 import { isAvatarChoice, type AvatarChoice } from "./lib/avatar";
 import { skyPhase, type SkyPhase } from "./lib/sky";
 import { useCalendarReturn } from "./useCalendarReturn";
+import { useNoticeTimeout, useRefreshAfterTurn, useSearchShortcut } from "./usePersonalAppEffects";
 import { usePersonalChat, type ChatTarget } from "./usePersonalChat";
 import { useRecentSessions } from "./useRecentSessions";
 import { useTiles } from "./useTiles";
@@ -103,6 +104,66 @@ function AccountMenu({ name, onNewChat, onSettings }: { name: string | null; onN
   );
 }
 
+interface HomeHeaderProps {
+  agent: string;
+  userName: string | null;
+  color: AvatarChoice;
+  compact: boolean;
+  thinking: boolean;
+  away: boolean;
+  onHome: () => void;
+  onTiles: () => void;
+  onSearch: () => void;
+  onNewChat: () => void;
+  onSettings: () => void;
+}
+
+function HomeHeader({ agent, userName, color, compact, thinking, away, onHome, onTiles, onSearch, onNewChat, onSettings }: HomeHeaderProps) {
+  const p = usePersonalCopy();
+  return (
+    <header className="personal-safe-top absolute inset-x-0 top-0 z-20 grid grid-cols-[1fr_auto_1fr] items-start gap-2 px-3 sm:px-6 sm:pt-6">
+      <div className="flex items-center">
+        {compact && (
+          <button type="button" onClick={onTiles} aria-label={p.tiles} className={roundButton}>
+            <LayoutGrid className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+      {agent ? (
+        <AgentBadge name={agent} color={color} thinking={thinking} away={away} onHome={onHome} />
+      ) : (
+        <div className="h-[68px] w-24 animate-pulse rounded-[22px] bg-white/40" />
+      )}
+      <div className="flex items-center justify-end gap-2 sm:gap-3">
+        <button
+          type="button"
+          onClick={onSearch}
+          aria-label={p.search}
+          className={cn(roundButton, "sm:w-auto sm:gap-2 sm:px-5 sm:text-[16px] sm:text-neutral-700")}
+        >
+          <Search className="h-[18px] w-[18px]" />
+          <span className="hidden sm:inline">{p.search}</span>
+        </button>
+        <AccountMenu name={userName} onNewChat={onNewChat} onSettings={onSettings} />
+      </div>
+    </header>
+  );
+}
+
+/** The avatar color the person just picked, else the saved one. */
+function useAvatarColor(profile: string, saved: string | undefined) {
+  const [picked, setPicked] = useState<{ profile: string; color: AvatarChoice } | null>(null);
+  const color: AvatarChoice = picked?.profile === profile ? picked.color : isAvatarChoice(saved) ? saved : "auto";
+  const pick = useCallback((next: AvatarChoice) => setPicked({ profile, color: next }), [profile]);
+  return [color, pick] as const;
+}
+
+function targetKey(target: ChatTarget): string | number {
+  if (target.kind === "stored") return target.id;
+  if (target.kind === "new") return target.nonce;
+  return "home";
+}
+
 export default function PersonalApp() {
   const p = usePersonalCopy();
   const { profile: managed, currentProfile } = useProfileScope();
@@ -118,10 +179,7 @@ export default function PersonalApp() {
   const [searching, setSearching] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [pickedColor, setPickedColor] = useState<{ profile: string; color: AvatarChoice } | null>(null);
-  const savedColor = identity?.avatar_color;
-  const avatarColor: AvatarChoice =
-    pickedColor?.profile === profile ? pickedColor.color : isAvatarChoice(savedColor) ? savedColor : "auto";
+  const [avatarColor, pickAvatarColor] = useAvatarColor(profile, identity?.avatar_color);
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
   const chat = usePersonalChat(profile, target);
   const [homeId, setHomeId] = useState<string | null>(null);
@@ -133,32 +191,11 @@ export default function PersonalApp() {
     if (agent) document.title = agent;
   }, [agent]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setSearching(true);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  // The agent may have added or updated a card during that turn.
-  const busy = chat.transcript.busy;
-  const { refresh: refreshBoard } = board;
-  const wasBusy = useRef(false);
-  useEffect(() => {
-    if (wasBusy.current && !busy) void refreshBoard();
-    wasBusy.current = busy;
-  }, [busy, refreshBoard]);
-
+  const openSearch = useCallback(() => setSearching(true), []);
+  useSearchShortcut(openSearch);
+  useRefreshAfterTurn(chat.transcript.busy, board.refresh);
   const { notice, dismiss } = calendar;
-  useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(dismiss, notice.tone === "ok" ? 3500 : 8000);
-    return () => window.clearTimeout(timer);
-  }, [notice, dismiss]);
+  useNoticeTimeout(notice, dismiss);
 
   const intro = useMemo(() => {
     if (!agent) return [];
@@ -183,7 +220,6 @@ export default function PersonalApp() {
     [chat],
   );
 
-  const lost = chat.phase === "error";
   const phase = previewPhase() ?? skyPhase(now);
   const tileBoard = (
     <TileBoard
@@ -198,12 +234,6 @@ export default function PersonalApp() {
       onNewChat={newChat}
     />
   );
-  const promptCard = chat.approval ? (
-    <ApprovalCard prompt={chat.approval} agentName={agent} onAnswer={chat.answerApproval} />
-  ) : chat.clarify ? (
-    <ClarifyCard prompt={chat.clarify} agentName={agent} onAnswer={chat.answerClarify} />
-  ) : null;
-
   return (
     <div data-phase={phase} className="personal-root fixed inset-0 h-dvh overflow-hidden">
       <Sky phase={phase} mood="clear" />
@@ -217,89 +247,37 @@ export default function PersonalApp() {
         )}
 
         <main className="relative flex min-h-0 flex-col items-center">
-          <header className="personal-safe-top absolute inset-x-0 top-0 z-20 grid grid-cols-[1fr_auto_1fr] items-start gap-2 px-3 sm:px-6 sm:pt-6">
-            <div className="flex items-center">
-              {compact && (
-                <button type="button" onClick={() => setSheetOpen(true)} aria-label={p.tiles} className={roundButton}>
-                  <LayoutGrid className="h-5 w-5" />
-                </button>
-              )}
-            </div>
-            {agent ? (
-              <AgentBadge name={agent} color={avatarColor} thinking={chat.transcript.busy} away={target.kind !== "home"} onHome={goHome} />
-            ) : (
-              <div className="h-[68px] w-24 animate-pulse rounded-[22px] bg-white/40" />
-            )}
-            <div className="flex items-center justify-end gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={() => setSearching(true)}
-                aria-label={p.search}
-                className={cn(roundButton, "sm:w-auto sm:gap-2 sm:px-5 sm:text-[16px] sm:text-neutral-700")}
-              >
-                <Search className="h-[18px] w-[18px]" />
-                <span className="hidden sm:inline">{p.search}</span>
-              </button>
-              <AccountMenu name={userName} onNewChat={newChat} onSettings={() => setSettingsOpen(true)} />
-            </div>
-          </header>
+          <HomeHeader
+            agent={agent}
+            userName={userName}
+            color={avatarColor}
+            compact={compact}
+            thinking={chat.transcript.busy}
+            away={target.kind !== "home"}
+            onHome={goHome}
+            onTiles={() => setSheetOpen(true)}
+            onSearch={openSearch}
+            onNewChat={newChat}
+            onSettings={() => setSettingsOpen(true)}
+          />
 
-          {notice && (
-            <div
-              role="status"
-              className={cn(
-                "personal-rise absolute left-1/2 top-[calc(max(1rem,env(safe-area-inset-top))+5.5rem)] z-30 flex max-w-[min(26rem,calc(100%-2rem))] -translate-x-1/2 items-center gap-2.5 rounded-full px-4 py-2.5 text-[14px] shadow-lg backdrop-blur-2xl sm:top-32",
-                notice.tone === "ok" ? "bg-neutral-900 text-white" : "bg-white/90 text-rose-900",
-              )}
-            >
-              {notice.tone === "ok" ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" /> : <TriangleAlert className="h-4 w-4 shrink-0" />}
-              <span className="min-w-0">{notice.tone === "ok" ? p.calendarConnected : notice.text}</span>
-            </div>
-          )}
+          {notice && <CalendarNotice notice={notice} />}
 
           <div className="personal-safe-bottom flex min-h-0 w-full max-w-[44rem] flex-1 flex-col px-3 sm:px-6 sm:pb-6">
             <MessageList
-              key={target.kind === "stored" ? target.id : target.kind === "new" ? target.nonce : "home"}
+              key={targetKey(target)}
               bubbles={chat.transcript.bubbles}
               intro={chat.ready ? intro : []}
               busy={chat.transcript.busy}
-              footer={promptCard}
+              footer={<PromptSlot chat={chat} agentName={agent} />}
             />
-            {(lost || chat.error || !chat.ready) && agent && (
-              <div role="status" className="mb-3 flex items-center justify-between gap-3 rounded-full bg-white/60 px-5 py-2.5 text-[15px] text-neutral-700 backdrop-blur-xl">
-                <span className="min-w-0 truncate">{lost ? p.connectionLost.replace("{agent}", agent) : chat.error || p.connecting.replace("{agent}", agent)}</span>
-                {(lost || chat.error) && (
-                  <button type="button" onClick={() => window.location.reload()} className="shrink-0 font-medium text-neutral-900">
-                    {p.reload}
-                  </button>
-                )}
-              </div>
-            )}
+            <ConnectionBanner chat={chat} agentName={agent} />
             <Composer agentName={agent} disabled={!chat.ready} busy={chat.transcript.busy} onSend={chat.send} onStop={chat.interrupt} />
           </div>
         </main>
       </div>
 
-      {compact && sheetOpen && (
-        <div className="fixed inset-0 z-40">
-          <button type="button" aria-label={p.done} className="absolute inset-0 bg-slate-900/25 backdrop-blur-[2px]" onClick={() => setSheetOpen(false)} />
-          <div
-            role="dialog"
-            aria-modal
-            aria-label={p.tiles}
-            className="personal-sheet personal-safe-bottom absolute inset-x-0 bottom-0 mx-auto max-h-[88dvh] max-w-2xl overflow-y-auto overscroll-contain rounded-t-[32px] border-t border-white/60 bg-white/35 px-3 pt-2 shadow-[0_-20px_60px_-20px_rgba(20,45,90,0.45)] backdrop-blur-2xl sm:px-5"
-          >
-            <div className="sticky top-0 z-10 -mx-3 mb-2 flex items-center justify-between bg-gradient-to-b from-white/30 to-transparent px-4 pb-2 pt-1 sm:-mx-5 sm:px-6">
-              <span aria-hidden className="absolute left-1/2 top-1 h-1.5 w-10 -translate-x-1/2 rounded-full bg-neutral-900/20" />
-              <span className="pt-3 text-[18px] font-semibold text-neutral-900">{p.tiles}</span>
-              <button type="button" onClick={() => setSheetOpen(false)} aria-label={p.done} className="mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-neutral-800">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            {tileBoard}
-          </div>
-        </div>
-      )}
+      {compact && sheetOpen && <TilesSheet onClose={() => setSheetOpen(false)}>{tileBoard}</TilesSheet>}
 
       {settingsOpen && agent && (
         <SettingsPanel
@@ -307,7 +285,7 @@ export default function PersonalApp() {
           agentName={agent}
           color={avatarColor}
           compact={compact}
-          onColor={(color) => setPickedColor({ profile, color })}
+          onColor={pickAvatarColor}
           onClose={closeSettings}
         />
       )}

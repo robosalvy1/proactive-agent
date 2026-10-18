@@ -21,7 +21,7 @@ class Preferences(BaseModel):
 
 def _read_preferences(home) -> dict:
     try:
-        data = json.loads((home / PREFERENCES_FILE).read_text(encoding="utf-8"))
+        data = json.loads((home / PREFERENCES_FILE).read_text(encoding="utf-8-sig"))
     except (OSError, ValueError):
         return {}
     return data if isinstance(data, dict) else {}

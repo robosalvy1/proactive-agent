@@ -144,3 +144,13 @@ def test_a_tampered_board_file_is_sanitized_on_read():
     board = personal_board.load()
     assert board["rev"] == 3 and board["tiles"] == [
         {"id": "a", "kind": "calendar", "settings": {"days": 3}, "added_by": "user"}]
+
+
+def test_board_and_token_files_saved_with_a_bom_still_load():
+    """Windows editors may prefix a UTF-8 BOM; the board and the calendar connection survive it."""
+    personal_board.board_path().write_text(json.dumps({"rev": 2, "tiles": [{"id": "n", "kind": "note"}]}), encoding="utf-8-sig")
+    assert [(t["id"], t["kind"]) for t in personal_board.load()["tiles"]] == [("n", "note")]
+    connect_calendar()
+    token = personal_calendar.token_path()
+    token.write_text(token.read_text(encoding="utf-8"), encoding="utf-8-sig")
+    assert personal_board._calendar_connected()

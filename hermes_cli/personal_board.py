@@ -195,7 +195,7 @@ def default_tiles() -> list[dict]:
 
 def _read(home: Path) -> dict:
     try:
-        data = json.loads((home / BOARD_FILE).read_text(encoding="utf-8"))
+        data = json.loads((home / BOARD_FILE).read_text(encoding="utf-8-sig"))
     except (OSError, ValueError):
         data = None
     if not isinstance(data, dict):
@@ -300,7 +300,7 @@ def _calendar_connected() -> bool:
     from hermes_cli import personal_calendar
 
     try:
-        token = json.loads(personal_calendar.token_path().read_text(encoding="utf-8"))
+        token = json.loads(personal_calendar.token_path().read_text(encoding="utf-8-sig"))
     except (OSError, ValueError):
         return False
     raw = token.get("scopes") or token.get("scope") or []
