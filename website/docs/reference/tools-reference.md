@@ -134,6 +134,12 @@ For local files, a full unredacted read (including all pages of the same file ve
 **Spotify tools** (`spotify_playback`, `spotify_devices`, `spotify_queue`, `spotify_search`, `spotify_playlists`, `spotify_albums`, `spotify_library`, toolset `spotify`) are no longer built-in. They come from the `spotify` catalog plugin (`hermes plugins install spotify`, then `hermes spotify login`). See [Spotify](../user-guide/features/spotify.md).
 :::
 
+## `home` toolset
+
+| Tool | Description | Requires environment |
+|------|-------------|----------------------|
+| `home_cards` | Put cards on the person's web home (`/home`) from a fixed catalog, or update/remove cards the agent added. `action="list"` shows every tile, who added it, what the person removed, and whether Google Calendar is connected. Live kinds bind to what the profile has: `calendar` (refused unless Google Calendar is connected), `scheduled`, `recent`, `clock`. Content kinds hold data the agent fetched with its own tools and must name a `source`: `list`, `stats`, `text`. The home renders every card; the agent cannot set colors, icons, markup or layout, cannot change the person's tiles, and cannot re-add a card the person removed unless `user_requested` is true. | — |
+
 ## `image_gen` toolset
 
 | Tool | Description | Requires environment |

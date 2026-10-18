@@ -1,0 +1,60 @@
+{
+  "description": "Put a card on the person's home screen (the web home beside your chat), or update/remove one you added. The home draws every card itself; you choose only the kind and the data, never its look. Call action='list' first to see what's already there and what the person removed. Live kinds use what this profile already has: 'calendar' (needs Google Calendar connected; settings {days: 1|3|7}), 'scheduled' (scheduled jobs), 'recent' (recent chats; {count: 3|5}), 'clock' ({zones: IANA names, up to 4}). Content kinds hold data you fetched yourself with your other tools and must name it in source: 'list' ({items: [{text, detail?, url? (https), prompt? (tapping asks you this), done?}], up to 8}), 'stats' ({stats: [{value, label, trend?: up|down|flat}], up to 3}), 'text' ({text}, up to 600 chars, plain). Content cards are snapshots: update them when the data changes. Add a card only when it will keep helping the person, give a one-line reason, and don't re-add one they removed unless they ask. You cannot change the person's own tiles.",
+  "name": "home_cards",
+  "parameters": {
+    "properties": {
+      "action": {
+        "enum": [
+          "list",
+          "add",
+          "update",
+          "remove"
+        ],
+        "type": "string"
+      },
+      "card_id": {
+        "description": "For update/remove: an id from action='list'.",
+        "type": "string"
+      },
+      "kind": {
+        "description": "For add.",
+        "enum": [
+          "calendar",
+          "scheduled",
+          "recent",
+          "clock",
+          "list",
+          "stats",
+          "text"
+        ],
+        "type": "string"
+      },
+      "reason": {
+        "description": "Why this helps, shown to the person (up to 160 chars). Required for add.",
+        "type": "string"
+      },
+      "settings": {
+        "description": "The kind's data, as described above.",
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "source": {
+        "description": "Where content-card data came from, e.g. 'Linear', 'GitHub', 'your email'.",
+        "type": "string"
+      },
+      "title": {
+        "description": "Short card title, up to 40 chars. Required for content kinds.",
+        "type": "string"
+      },
+      "user_requested": {
+        "description": "True only when the person asked for this card.",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "action"
+    ],
+    "type": "object"
+  }
+}

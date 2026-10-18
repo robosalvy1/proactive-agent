@@ -34,6 +34,7 @@ import {
   FileText,
   Globe,
   Heart,
+  House,
   KeyRound,
   Menu,
   MessageSquare,
@@ -109,6 +110,7 @@ import { isDashboardEmbeddedChatEnabled } from "@/lib/dashboard-flags";
 import { latchChatActivation } from "@/lib/chat-activation";
 import { sharedGatewayProfiles, sharedGatewayRestartDescription } from "@/lib/shared-gateway";
 import { api } from "@/lib/api";
+import { PERSONAL_HOME_PATH } from "@/personal/lib/route";
 import type { StatusResponse, UpdateCheckResponse } from "@/lib/api";
 
 function RouteFallback({ label = "Loading…" }: { label?: string }) {
@@ -127,7 +129,7 @@ function RouteFallback({ label = "Loading…" }: { label?: string }) {
 }
 
 function RootRedirect() {
-  return <Navigate to="/sessions" replace />;
+  return <Navigate to={PERSONAL_HOME_PATH} replace />;
 }
 
 function UnknownRouteFallback({ pluginsLoading }: { pluginsLoading: boolean }) {
@@ -187,6 +189,7 @@ function ChatRouteSink() {
 }
 
 const BUILTIN_NAV_REST: NavItem[] = [
+  { path: PERSONAL_HOME_PATH, label: "Home", icon: House },
   {
     path: "/sessions",
     labelKey: "sessions",

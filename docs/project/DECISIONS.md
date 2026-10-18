@@ -2,6 +2,24 @@
 
 Record durable decisions with date, context, chosen approach, and consequences. Keep alternatives only when they explain a material tradeoff.
 
+## 2026-10-17 — The agent can add home cards from a fixed catalog; the board moves to the server
+
+The user asked for the agent to add its own cards without designing them, using only what it has. The board now lives per profile in `personal_board.json` (`hermes_cli/personal_board.py`, file-locked, sanitized on every read) so the agent can see it; an older browser board is imported once. The new `home_cards` core tool (toolset `home`) can add live cards bound to existing capabilities (`calendar` only when Google Calendar is connected, `scheduled`, `recent`, `clock`) or content cards (`list`, `stats`, `text`) holding data it fetched itself, with a required `source` and `reason`. The home draws every card. The agent cannot set colors, icons, markup or layout, cannot touch the person's tiles, is capped at 6 cards, and cannot re-add a card the person removed unless they ask. Content cards are snapshots the agent updates; scheduled refresh would use existing cron jobs and is not built in.
+
+## 2026-10-17 — Calendar tile uses Hermes's Google Workspace sign-in; avatar color is a profile preference
+
+Superseding the separate read-only calendar grant below, at the user's request: the tile drives the google-workspace skill's OAuth (same `google_client_secret.json`, scopes, `google_oauth_pending.json`, and authorized-user `google_token.json`), so one sign-in serves both chat and the home. That means connecting from the tile grants the agent its full Workspace scopes, and signing out from the tile revokes the agent's Google access; the tile says so before either happens. A test keeps the scope list in step with `setup.py`. The avatar color (automatic, a named swatch, or any hex) is stored in `personal_home.json` in the profile so every device matches; the agent does not change it.
+
+## 2026-10-16 — Personal home tiles are user-configured; calendar uses a separate read-only grant
+
+The agent's name and avatar replace the Chat/Projects tabs. Tiles are arranged and configured only by the person, in browser storage per profile; the agent does not edit them. Weather is deferred. The calendar tile reuses the profile's Google OAuth client but keeps its own `calendar.readonly` token (`personal_calendar_token.json`), so connecting or disconnecting it cannot narrow or revoke the agent's Workspace grant. An existing Workspace token is read only if it already has a calendar scope. OAuth and Calendar REST use `httpx` with PKCE rather than the optional Google client libraries.
+
+## 2026-10-16 — Add a personal web home beside the embedded TUI
+
+The user asked for a personalized web UI modeled on Hark's layout: panels on the left, a conversational chat in the centre, a time-of-day sky backdrop. Build it as a full-screen `/home` route in the existing dashboard SPA (`/` now lands there) rather than a new app or stack. It is a React chat surface, an explicit exception to `web/AGENTS.md`'s "embed the TUI" rule, but it reimplements no agent behavior: it uses the existing `/api/ws` JSON-RPC protocol and the Home thread, and renders approval/clarify requests as cards. The only backend addition is the read-only `GET /api/personal/identity` for the onboarding names.
+
+Panel layout and coarse location are presentation state kept in browser `localStorage`, scoped per profile. Weather is opt-in: rounded coordinates go to Open-Meteo only after the user shares a location. The dashboard and `/chat` TUI remain available for configuration and power use.
+
 ## 2026-10-16 — Extend Home recall and keep learning selective
 
 Retain canonical transcripts and small native notes. Add explicitly configured embeddings as derived SQLite state with bounded manual indexing, query-time keyword fallback and canonical source/access revalidation. Private messaging participates only through local-owner exact-conversation grants, never inferred cross-service identity. Source-level forgetting and explicit user supersession use stable message identities, including compression copies; they govern future Home recall and reflection, not existing prompt bytes or independent stores. Preserve compression's existing provider hooks without introducing an unmeasured extraction call. Automatic skill/memory review defaults off, with explicit opt-in and manual `/refine` retained. [MEMORY_CONTINUITY.md](MEMORY_CONTINUITY.md) describes controls and evaluation limits.
