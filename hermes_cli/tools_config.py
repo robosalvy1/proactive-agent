@@ -83,6 +83,7 @@ CONFIGURABLE_TOOLSETS = [
     ("memory",          "💾 Memory",                    "persistent memory across sessions"),
     ("context_engine",  "🧩 Context Engine",            "runtime tools from the active context engine"),
     ("session_search",  "🔎 Session Search",            "search past conversations"),
+    ("home",            "🗂️  Home Cards",               "add catalog cards to the web home (/home)"),
     ("connections",     "🔌 Connections",               "remote connector tools and account authorization"),
     ("clarify",         "❓ Clarifying Questions",      "clarify"),
     ("delegation",      "👥 Task Delegation",           "delegate_task"),
