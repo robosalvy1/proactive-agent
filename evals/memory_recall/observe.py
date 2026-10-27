@@ -6,7 +6,6 @@ conflicts between old and new observations are left to recency at read time.
 """
 import hashlib
 import json
-import re
 
 from llm import complete
 
@@ -57,13 +56,24 @@ def _render(sessions):
     return '\n\n'.join(parts)
 
 
+def first_object(text):
+    """The first JSON object in a model reply, or {} if there is none or it is malformed."""
+    start = text.find('{')
+    try:
+        data = json.JSONDecoder().raw_decode(text[start:])[0] if start >= 0 else {}
+    except json.JSONDecodeError:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
 def _parse(text):
-    match = re.search(r'\{.*\}', text, re.DOTALL)
-    data = json.loads(match.group(0)) if match else {}
+    """Malformed replies yield no sessions, so observe_batch retries each session on its own."""
+    entries = first_object(text).get('sessions')
     found = {}
-    for entry in data.get('sessions', []):
-        obs = [o for o in entry.get('observations', []) if isinstance(o, dict) and str(o.get('text', '')).strip()]
-        found[str(entry.get('id'))] = obs
+    for entry in entries if isinstance(entries, list) else []:
+        obs = entry.get('observations') if isinstance(entry, dict) else None
+        if isinstance(obs, list):
+            found[str(entry.get('id'))] = [o for o in obs if isinstance(o, dict) and str(o.get('text', '')).strip()]
     return found
 
 

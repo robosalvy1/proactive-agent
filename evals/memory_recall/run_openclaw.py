@@ -51,7 +51,13 @@ result['status'] = parse_json(p.stdout) if p.returncode == 0 else p.stdout[-2000
 
 def search(text):
     p, secs = oc('memory', 'search', '--query', text, '--max-results', '10', '--json')
-    data = parse_json(p.stdout) or {}
+    try:
+        data = parse_json(p.stdout) if p.returncode == 0 else None
+    except json.JSONDecodeError:
+        data = None
+    if not isinstance(data, dict):
+        # An empty result here would score as "nothing returned": stop instead of recording it.
+        sys.exit(f'memory search failed (exit {p.returncode}) for {text!r}; see driver.log')
     hits, raw = [], []
     for r in data.get('results', []):
         raw.append({k: r.get(k) for k in ('path', 'source', 'score', 'snippet', 'sessionId', 'sessionKey')})

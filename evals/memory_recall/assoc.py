@@ -7,10 +7,10 @@ embedding similarity, and the union of hits is injected. Experimental (Memory v2
 import json
 import math
 import operator
-import re
 import urllib.request
 
 from llm import complete
+from observe import first_object
 
 _dot = getattr(math, 'sumprod', None) or (lambda a, b: sum(map(operator.mul, a, b)))  # 3.11-safe
 
@@ -30,8 +30,8 @@ def probes(request, date, *, profile='', model, provider='openai-codex'):
     block = f'What you already know about the user:\n{profile}\n\n' if profile else ''
     text = complete([{'role': 'user', 'content': PROBES.format(profile=block, date=date, request=request)}],
                     model=model, provider=provider)
-    match = re.search(r'\{.*\}', text, re.DOTALL)
-    return [p for p in (json.loads(match.group(0)).get('probes', []) if match else []) if isinstance(p, str)][:6]
+    found = first_object(text).get('probes')
+    return [p for p in found if isinstance(p, str)][:6] if isinstance(found, list) else []
 
 
 def embed(texts, base_url, model):
