@@ -284,8 +284,9 @@ def judge(scenario, reply, memory=''):
                           request=scenario['request']['text'], reply=reply, memory=memory or '(no memory)')
     def parse(response):
         text = response.choices[0].message.content or ''
-        if not first_object(text):
-            raise ValueError('Judge reply has no JSON object.')  # Retried, never cached.
+        verdict = first_object(text)
+        if not verdict or not isinstance(verdict.get('used', []), list):
+            raise ValueError('Judge reply has no usable verdict.')  # Retried, never cached.
         return text
     text = complete([{'role': 'user', 'content': prompt}], model=ARGS.judge_model, provider=ARGS.provider,
                     _parse=parse)

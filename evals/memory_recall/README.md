@@ -31,8 +31,11 @@ Then, with the test interpreter (`.venv/bin/python`):
 .venv/bin/python evals/memory_recall/run_home.py ours --code-root . --out ours.json \
     --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5
 .venv/bin/python evals/memory_recall/run_home.py upstream --code-root /path/to/upstream-hermes --out upstream.json
+# The scale result below used all-MiniLM-L6-v2 at 0.30: serve that model (embed_server.py 18556
+# sentence-transformers/all-MiniLM-L6-v2) to reproduce it.
 .venv/bin/python evals/memory_recall/run_scale.py --code-root . --out scale.json \
-    --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5 --filler 6000
+    --base-url http://127.0.0.1:18556/v1 --model sentence-transformers/all-MiniLM-L6-v2 \
+    --min-similarity 0.30 --filler 6000
 .venv/bin/python evals/memory_recall/score.py ours.json upstream.json
 ```
 
