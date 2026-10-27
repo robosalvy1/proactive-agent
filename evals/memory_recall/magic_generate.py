@@ -9,6 +9,7 @@ distractors. Output is synthetic and written outside the repository (one JSON pe
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 import json
 import os
 import re
@@ -72,17 +73,24 @@ def generate(category, index, model, provider):
     match = re.search(r'\{.*\}', text, re.DOTALL)
     scenario = json.loads(match.group(0))
     scenario['id'] = f'{category}-{index}'
+    scenario['category'] = category  # Never trust the echoed category.
     return scenario
 
 
 def valid(s):
+    """Reject anything magic_run.py would crash on or score wrongly."""
     try:
-        ok = (len(s['sessions']) >= 4 and s['request']['text'] and all(t['role'] in ('user', 'assistant')
-              for sess in s['sessions'] for t in sess['turns']))
-        if s['category'] != 'negative':
-            ok = ok and s['hidden_facts'] and all(0 <= h['session'] < len(s['sessions']) for h in s['hidden_facts'])
-        return bool(ok)
-    except (KeyError, TypeError):
+        dates = [datetime.fromisoformat(sess['date']) for sess in s['sessions']]
+        ok = (len(s['sessions']) >= 4 and isinstance(s['request']['text'], str) and s['request']['text'].strip()
+              and datetime.fromisoformat(s['request']['date']) >= max(dates)
+              and all(t['role'] in ('user', 'assistant') and isinstance(t['content'], str)
+                      for sess in s['sessions'] for t in sess['turns']))
+        facts = s.get('hidden_facts') or []
+        if s['category'] == 'negative':
+            return bool(ok) and not facts
+        return bool(ok and facts and all(isinstance(h['fact'], str) and isinstance(h['why'], str)
+                                         and 0 <= h['session'] < len(s['sessions']) for h in facts))
+    except (KeyError, TypeError, ValueError):
         return False
 
 

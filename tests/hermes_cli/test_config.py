@@ -122,8 +122,7 @@ class TestLoadConfigDefaults:
             assert "max_turns" not in config
             assert "terminal" in config
             assert config["terminal"]["backend"] == "local"
-            # Mid-turn narration is opt-in since minimal responses became the default.
-            assert config["display"]["interim_assistant_messages"] is False
+            assert config["display"]["interim_assistant_messages"] is False  # Opt-in since minimal responses.
 
     def test_legacy_root_level_max_turns_migrates_to_agent_config(self, tmp_path):
         with patch.dict(os.environ, {"HERMES_HOME": str(tmp_path)}):

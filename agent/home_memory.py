@@ -105,7 +105,12 @@ class HomeMemoryProvider(MemoryProvider):
                 packet = home_context_on(self.db, conn, store.principal_id, session_id, query,
                                          overview=overview, semantic_plan=plan)
             self._last_count = packet['count']
-            connections = self._connections(session_id, principal, fresh, query)
+            try:
+                connections = self._connections(session_id, principal, fresh, query)
+            except (sqlite3.Error, ValueError, TypeError, KeyError, RuntimeError, OSError) as exc:
+                # Optional per-turn step: a bad flag or corrupt observation keeps the recall packet.
+                logger.warning("Home connections skipped (%s)", type(exc).__name__)
+                connections = ''
             if connections:
                 self._last_count += 1
                 return packet['context'] + ('\n\n' if packet['context'] else '') + connections

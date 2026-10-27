@@ -204,7 +204,7 @@ def observe_config(db):
 def connect_config(db):
     """Per-turn connections run with ``observe`` unless ``memory.home_recall.connect: false``. Each
     adds one auxiliary request (median 3.3 s in our eval); reading all observations, it raised
-    proactive recall from 71% to 85% across 112 scenarios, including fresh sets."""
+    proactive recall from 70% to 83% across 138 scenarios, including fresh sets."""
     return observe_config(db) and _home_recall_flag(db, 'connect', True)
 
 

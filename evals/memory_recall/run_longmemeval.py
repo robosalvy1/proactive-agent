@@ -4,9 +4,11 @@ Each question gets a fresh disposable profile holding its haystack sessions at t
 dates; the question is asked from a new Home session. Retrieval is scored against the dataset's
 ``answer_session_ids`` (session level) and ``has_answer`` turns (turn level). Download the MIT
 ``longmemeval_s_cleaned.json`` from huggingface.co/datasets/xiaowu0162/longmemeval-cleaned
-outside the repository; never commit it.
+outside the repository; never commit it, and convert it to JSONL (one question per line):
 
-    python run_longmemeval.py --code-root . --data ~/data/longmemeval_s_cleaned.json --out lme.json \\
+    python -c "import json,sys; [print(json.dumps(q)) for q in json.load(open(sys.argv[1]))]" \\
+        ~/data/longmemeval_s_cleaned.json > ~/data/longmemeval_s.jsonl
+    python run_longmemeval.py --code-root . --data ~/data/longmemeval_s.jsonl --out lme.json \\
         --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5 --limit 100
 """
 import argparse
@@ -178,7 +180,10 @@ def main():
         print(f"[{n + 1}/{len(questions)}] {row['type']:28} kw={row['keyword']['session_any']!s:5} "
               f"sem={row['semantic']['session_any']!s:5} merged={row['merged']['session_any']!s:5} "
               f"{got['ms']:.0f}ms", flush=True)
-        json.dump({'args': vars(ARGS), 'results': results}, open(ARGS.out, 'w'), indent=1)
+        partial = Path(f'{ARGS.out}.tmp')  # Written whole, then swapped in: an interrupted save keeps the old file.
+        with open(partial, 'w') as handle:
+            json.dump({'args': vars(ARGS), 'results': results}, handle, indent=1)
+        os.replace(partial, ARGS.out)
     shutil.rmtree(ROOT, ignore_errors=True)
 
 

@@ -16,11 +16,14 @@ cached eval client.
 """
 import json
 import math
+import operator
 from pathlib import Path
 import re
 import threading
 
 from llm import complete, complete_tools
+
+_dot = getattr(math, 'sumprod', None) or (lambda a, b: sum(map(operator.mul, a, b)))  # 3.11-safe
 
 _TLS = threading.local()
 
@@ -216,7 +219,7 @@ def openclaw(scenario, sessions, *, system, writer_model, answer_model, provider
         for (path, body), vector in zip(chunks, vectors):
             words = set(re.findall(r'[a-z0-9]+', body.lower()))
             text_score = len(terms & words) / len(terms) if terms else 0.0
-            scored.append((0.7 * math.sumprod(q, vector) + 0.3 * text_score, path, body))
+            scored.append((0.7 * _dot(q, vector) + 0.3 * text_score, path, body))
         threshold = min_score if minScore is None else float(minScore)
         hits = [h for h in sorted(scored, key=lambda h: -h[0]) if h[0] >= threshold][:max(1, min(int(maxResults), 20))]
         return json.dumps({'results': [{'path': p, 'score': round(s, 3), 'snippet': b[:700]} for s, p, b in hits]})

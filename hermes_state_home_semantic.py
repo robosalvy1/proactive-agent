@@ -8,6 +8,7 @@ import http.client
 import json
 import logging
 import math
+import operator
 import sqlite3
 import struct
 import threading
@@ -181,8 +182,11 @@ def _sign_code(vector):
     return int(''.join('1' if x > 0 else '0' for x in vector), 2).to_bytes((len(vector) + 7) // 8, 'big')
 
 
+# Exact dot product: math.sumprod on Python 3.12+, the same sum in pure Python on 3.11.
+_dot = getattr(math, 'sumprod', None) or (lambda a, b: sum(map(operator.mul, a, b)))
+
 def _capacity_on(conn, model_key):
-    """Row cap, bounded by vector bytes: about 41k sources at 384 dimensions, 5k at 3072."""
+    """Row cap, bounded by vector bytes: about 43.7k sources at 384 dimensions, 5.4k at 3072."""
     row = conn.execute(f'SELECT dimensions FROM {TABLE} WHERE model_key=? LIMIT 1',
                        (model_key,)).fetchone() if _table_exists(conn) else None
     return min(MAX_INDEX_ROWS, MAX_INDEX_FLOATS // row[0]) if row and row[0] else MAX_INDEX_ROWS
@@ -235,7 +239,7 @@ def _exact_on(conn, plan, rows, requested=None):
         if not isinstance(blob, bytes) or len(blob) != 4 * indexed['dimensions']:
             lost += 1
             continue
-        score = math.sumprod(plan.vector, struct.unpack('<' + 'f' * indexed['dimensions'], blob))
+        score = _dot(plan.vector, struct.unpack('<' + 'f' * indexed['dimensions'], blob))
         if math.isfinite(score) and score >= plan.min_similarity:
             scored.append((score, indexed))
     return scored, lost

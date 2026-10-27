@@ -76,7 +76,7 @@ def load_questions(ids):
 
 def observations_for(question, cache, lock):
     sessions = list(zip(question['haystack_session_ids'], question['haystack_dates'], question['haystack_sessions']))
-    keyed = [(session_key(*s), s) for s in sessions]
+    keyed = [(f'{ARGS.observer_model}:{session_key(*s)}', s) for s in sessions]  # Observations depend on the model.
     with lock:
         todo = [(k, s) for k, s in keyed if k not in cache]
     for start in range(0, len(todo), ARGS.batch):

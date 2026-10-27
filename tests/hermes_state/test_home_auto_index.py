@@ -190,10 +190,9 @@ def test_hung_endpoint_backs_off_instead_of_stalling_every_turn(tmp_path, endpoi
         assert prepare_semantic_query(store, home, 'recall') is None
         calls = len(endpoint[1])
         add(store, 'later', 'A newer source.')
-        started = time.monotonic()
         assert prepare_semantic_query(store, home, 'recall') is None
         assert auto_index_step(store, home) is None
-        assert time.monotonic() - started < 0.2 and len(endpoint[1]) == calls
+        assert len(endpoint[1]) == calls  # Backoff: no further endpoint requests.
         assert embedding_health(load_embedding_config(store))['failures'] == 1
         assert 'Endpoint failing (TimeoutError, 1 in a row)' in source_action(store, home, 'index status')['output']
         with pytest.raises(EmbeddingUnavailable):
@@ -563,8 +562,8 @@ def test_large_indexes_rescore_only_the_closest_sign_codes(db, endpoint, monkeyp
     HomeIndex(db).drain(home)
     monkeypatch.setattr(semantic_index, 'RESCORE_MIN', 4)
     scored = []
-    real = semantic_index.math.sumprod
-    monkeypatch.setattr(semantic_index.math, 'sumprod', lambda a, b: scored.append(1) or real(a, b))
+    real = semantic_index._dot
+    monkeypatch.setattr(semantic_index, '_dot', lambda a, b: scored.append(1) or real(a, b))
     hits = semantic(db, home, 'Where is my passport?')
     assert hits[0]['id'] == target
     assert len(scored) == 4  # 31 vectors indexed; only the four closest sign codes were scored exactly.

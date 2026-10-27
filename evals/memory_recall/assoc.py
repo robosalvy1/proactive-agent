@@ -6,10 +6,13 @@ embedding similarity, and the union of hits is injected. Experimental (Memory v2
 """
 import json
 import math
+import operator
 import re
 import urllib.request
 
 from llm import complete
+
+_dot = getattr(math, 'sumprod', None) or (lambda a, b: sum(map(operator.mul, a, b)))  # 3.11-safe
 
 PROBES = """Before answering the user, a thoughtful personal assistant asks: what from this person's \
 past could change the right answer here, even though they didn't mention it? Think about the people \
@@ -53,7 +56,7 @@ def recall(probe_texts, observations, request, *, base_url, model, per_probe=4, 
     queries = embed([request, *probe_texts], base_url, model)
     best = {}
     for q in queries:
-        scored = sorted(((math.sumprod(q, v), i) for i, v in enumerate(obs_vectors)), reverse=True)[:per_probe]
+        scored = sorted(((_dot(q, v), i) for i, v in enumerate(obs_vectors)), reverse=True)[:per_probe]
         for score, i in scored:
             best[i] = max(best.get(i, -1.0), score)
     ranked = sorted(best, key=lambda i: -best[i])[:limit]

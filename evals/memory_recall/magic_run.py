@@ -156,12 +156,19 @@ def home_context(scenario, sessions, profile):
         if ARGS.base_url:
             semantic.MAX_BATCH = ARGS.embed_batch
             from agent.home_embeddings import load_embedding_config, reset_embedding_health
+            failures = 0
             for _ in range(2000):
                 try:
                     if not semantic.HomeIndex(db).index(home, refresh=False)['more']:
                         break
+                    failures = 0
                 except OSError:
+                    failures += 1
+                    if failures >= 5:
+                        raise
                     reset_embedding_health(load_embedding_config(db))
+            else:
+                raise RuntimeError('Home index did not finish; results would understate Home recall.')
             plan = semantic.prepare_semantic_query(db, home, query)
         with db._read_ctx() as conn:
             context = home_context_on(db, conn, None, home, query, semantic_plan=plan)['context']
@@ -194,17 +201,17 @@ def product_profile(db, scenario):
         all_notes = store.notes_text_on(conn, today=scenario['request']['date'])
     semantic = []
     if ARGS.base_url and current:
-        import math
         vectors = assoc.embed([o['text'] for o in current], ARGS.base_url, ARGS.embed_model)
         query = assoc.embed([scenario['request']['text']], ARGS.base_url, ARGS.embed_model)[0]
-        ranked = sorted(range(len(current)), key=lambda i: -math.sumprod(query, vectors[i]))[:8]
+        ranked = sorted(range(len(current)), key=lambda i: -assoc._dot(query, vectors[i]))[:8]
         semantic = [current[i] for i in sorted(ranked)]
     fmt = lambda rows: '\n'.join(f"- {o['text']}" for o in rows)
     return block, {'kw': fmt(keyword), 'sem': fmt(semantic), 'all': all_notes}
 
 
 def observations(sessions, cache, lock):
-    keyed = [(session_key(sid, date, turns), (sid, date, turns)) for sid, date, turns in sessions]
+    keyed = [(f'{ARGS.observer_model}:{session_key(sid, date, turns)}', (sid, date, turns))
+             for sid, date, turns in sessions]
     with lock:
         todo = [(k, s) for k, s in keyed if k not in cache]
     for start in range(0, len(todo), 6):
@@ -254,7 +261,12 @@ def judge(scenario, reply, memory=''):
     prompt = JUDGE.format(hidden=hidden, distractors='\n'.join('- ' + d for d in scenario.get('distractors', [])),
                           ideal=scenario.get('ideal', ''), date=scenario['request']['date'],
                           request=scenario['request']['text'], reply=reply, memory=memory or '(no memory)')
-    text = complete([{'role': 'user', 'content': prompt}], model=ARGS.judge_model, provider=ARGS.provider)
+    def parse(response):
+        text = response.choices[0].message.content or ''
+        json.loads(re.search(r'\{.*\}', text, re.DOTALL).group(0))  # Raises (and retries, uncached) if malformed.
+        return text
+    text = complete([{'role': 'user', 'content': prompt}], model=ARGS.judge_model, provider=ARGS.provider,
+                    _parse=parse)
     verdict = json.loads(re.search(r'\{.*\}', text, re.DOTALL).group(0))
     used = [bool(u) for u in verdict.get('used', [])][:len(scenario.get('hidden_facts', []))]
     clean = not verdict.get('intrusion') and not verdict.get('invented')
@@ -300,7 +312,8 @@ def main():
         n, scenario = item
         sessions = history(scenario, filler)
         context, (product_text, notes) = home_context(scenario, sessions, ROOT / f'p{n}') \
-            if 'home' in systems or any(x.startswith('product') for x in systems) else ('', ('', {}))
+            if {'home', 'profile+home'} & set(systems) or any(x.startswith('product') for x in systems) \
+            else ('', ('', {}))
         product_text = (product_text, notes)
         return scenario, sessions, context, product_text
 

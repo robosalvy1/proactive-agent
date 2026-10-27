@@ -534,14 +534,14 @@ def test_connections_are_skipped_or_fail_open(warfarin, monkeypatch, query, repl
     db, _, _ = warfarin
     context, calls = _prefetch(db, query, monkeypatch, reply)
     assert 'Remembered facts that change' not in context
-    assert calls == ([] if query == 'thanks!' else calls)
+    assert (calls == []) is (query == 'thanks!')
 
 
 def test_connections_need_the_opt_in(warfarin, monkeypatch):
     db, _, _ = warfarin
     (observations._owner_home(db) / 'config.yaml').write_text('memory:\n  home_recall:\n    observe: false\n')
     context, calls = _prefetch(db, 'Is a beginner boxing class with sparring a good idea for me?', monkeypatch, '- x')
-    assert calls == [] and 'Connections' not in context
+    assert calls == [] and 'Remembered facts' not in context
 
 
 def test_connections_can_be_turned_off_while_keeping_the_profile(warfarin, monkeypatch):
@@ -551,6 +551,14 @@ def test_connections_can_be_turned_off_while_keeping_the_profile(warfarin, monke
     context, calls = _prefetch(db, 'Is a beginner boxing class with sparring a good idea for me?', monkeypatch, '- x')
     assert calls == [] and 'Remembered facts' not in context
     assert 'Takes warfarin.' in _prompt(db)
+
+
+def test_a_broken_connections_step_keeps_the_recall_packet(warfarin, monkeypatch):
+    db, _, _ = warfarin
+    (observations._owner_home(db) / 'config.yaml').write_text(
+        'memory:\n  home_recall:\n    observe: true\n    connect: "yes"\n')
+    context, calls = _prefetch(db, 'Remind me about warfarin', monkeypatch, '- x')
+    assert calls == [] and 'warfarin' in context and 'Remembered facts' not in context
 
 
 def test_profile_dates_are_marked_relative_to_today():
