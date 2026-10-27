@@ -14,7 +14,9 @@ import tempfile
 import threading
 import time
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # Hermes checkout root.
+_ROOT = str(Path(__file__).resolve().parents[2])  # This Hermes checkout: a fallback, so an explicit --code-root wins.
+if _ROOT not in sys.path:
+    sys.path.append(_ROOT)
 
 _LOCK = threading.Lock()
 _DB = None

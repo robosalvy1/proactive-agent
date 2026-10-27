@@ -23,6 +23,8 @@ Embeddings come from `embed_server.py`, a loopback OpenAI-compatible server. Run
 ```bash
 python -m venv /tmp/emb && /tmp/emb/bin/pip install fastembed
 /tmp/emb/bin/python evals/memory_recall/embed_server.py 18555 BAAI/bge-small-en-v1.5
+# In a second terminal, for the scale benchmark (the reported result used this model):
+/tmp/emb/bin/python evals/memory_recall/embed_server.py 18556 sentence-transformers/all-MiniLM-L6-v2
 ```
 
 Then, with the test interpreter (`.venv/bin/python`):
@@ -31,8 +33,6 @@ Then, with the test interpreter (`.venv/bin/python`):
 .venv/bin/python evals/memory_recall/run_home.py ours --code-root . --out ours.json \
     --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5
 .venv/bin/python evals/memory_recall/run_home.py upstream --code-root /path/to/upstream-hermes --out upstream.json
-# The scale result below used all-MiniLM-L6-v2 at 0.30: serve that model (embed_server.py 18556
-# sentence-transformers/all-MiniLM-L6-v2) to reproduce it.
 .venv/bin/python evals/memory_recall/run_scale.py --code-root . --out scale.json \
     --base-url http://127.0.0.1:18556/v1 --model sentence-transformers/all-MiniLM-L6-v2 \
     --min-similarity 0.30 --filler 6000
@@ -64,7 +64,7 @@ Small synthetic set, single runs, session-level scoring. The `kw` strings are ha
 
 ## Proactive recall ("magic") eval
 
-`magic_generate.py` asks a model from a different family (GPT-6.1 Sol in our runs) to write scenarios in ten categories: a fact mentioned in passing in one of several dated past conversations (an allergy, a conflicting commitment, a medication, an expiring lease, a person described indirectly, a friend's birthday and wish…) and a later request that never mentions it, plus distractors and negatives where nothing personal should be raised. `magic_run.py` hides each scenario among 20 generic LongMemEval chats (ShareGPT/UltraChat only; personal haystack sessions belong to other personas) in a disposable Home profile and has the same answer model reply under each memory system. A judge (GPT-6 Sol), shown the memory the assistant had, scores each hidden fact as used or not and flags irrelevant personal details and invented memories. "Magic" means every hidden fact used with no intrusion or invention. `product` runs the shipped observer → profile pipeline on the real database with only the model call swapped for a cached client. Run with `HERMES_HOME` pointing at a disposable eval profile that holds the model credential; scenario files stay outside the repository.
+`magic_generate.py` asks a model from a different family (GPT-6.1 Sol in our runs) to write scenarios in ten categories: a fact mentioned in passing in one of several dated past conversations (an allergy, a conflicting commitment, a medication, an expiring lease, a person described indirectly, a friend's birthday and wish…) and a later request that never mentions it, plus distractors and negatives where nothing personal should be raised. The generator is prompted to keep hidden facts out of the request; `valid()` does not enforce it. An audit of v6 and v7 for hidden-fact names and numbers in the request found six overlaps, all shared context (the trip dates, or the person the request is about) rather than the fact itself. `magic_run.py` hides each scenario among 20 generic LongMemEval chats (ShareGPT/UltraChat only; personal haystack sessions belong to other personas) in a disposable Home profile and has the same answer model reply under each memory system. A judge (GPT-6 Sol), shown the memory the assistant had, scores each hidden fact as used or not and flags irrelevant personal details and invented memories. "Magic" means every hidden fact used with no intrusion or invention. `product` runs the shipped observer → profile pipeline on the real database with only the model call swapped for a cached client. Run with `HERMES_HOME` pointing at a disposable eval profile that holds the model credential; scenario files stay outside the repository.
 
 Results (GPT-6 Luna answering; generated sets of 26–38 scenarios with hidden facts, 3–4 negatives each; v3–v5 were generated after the design they test was fixed):
 
