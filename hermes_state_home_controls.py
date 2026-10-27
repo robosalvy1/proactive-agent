@@ -11,7 +11,7 @@ def _origin_uid_on(conn, row):
     """An assistant message answers the latest user message before it in its chat. Compaction can
     copy a reply into another chat, so the answer is resolved from the ORIGINAL row of that message
     identity (its earliest copy), never from wherever a copy landed."""
-    if 'role' not in row.keys() or row['role'] != 'assistant':
+    if row['role'] != 'assistant':  # Callers must select role: a missing column fails closed.
         return None
     reference = None
     if row['message_uid']:

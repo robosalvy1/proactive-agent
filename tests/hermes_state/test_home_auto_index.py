@@ -108,6 +108,17 @@ def test_read_only_profile_does_not_select_the_indexing_provider(tmp_path):
         assert _auto_indexing(store) is False
 
 
+@pytest.mark.parametrize('config', ['enabled: true\n    observe: true', 'observe: maybe\n    enabled: true\n    auto_index: true'])
+def test_one_broken_opt_in_does_not_disable_the_other(tmp_path, config):
+    """An embedding config missing its endpoint must not stop observation, and vice versa."""
+    from agent.home_memory import _auto_indexing
+
+    base = '' if 'observe: true' in config else "\n    base_url: http://127.0.0.1:9/v1\n    model: m"
+    (tmp_path / 'config.yaml').write_text(f'memory:\n  home_recall:\n    {config}{base}\n')
+    with SessionDB(tmp_path / 'state.db') as store:
+        assert _auto_indexing(store) is True
+
+
 def test_auto_step_is_single_flight_and_fails_open(db, endpoint):
     home = HomeStore(db).ensure_home()
     add(db, 'topic', 'A source.')

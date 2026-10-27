@@ -183,12 +183,13 @@ def _auto_indexing(db) -> bool:
 
     if not isinstance(db, SessionDB):
         return False
-    try:
-        cfg = load_embedding_config(db)
-        observe = observe_config(db)
-    except (ValueError, OSError):
-        return False  # Misconfiguration surfaces through /home index and recall warnings.
-    return observe or (cfg is not None and cfg.auto_index)
+    def setting(read):
+        try:
+            return read(db)
+        except (ValueError, OSError):
+            return None  # Misconfiguration surfaces through /home index and recall warnings.
+    cfg = setting(load_embedding_config)  # Each opt-in stands alone: a bad one never disables the other.
+    return bool(setting(observe_config)) or (cfg is not None and cfg.auto_index)
 
 
 def attach_home_memory(agent, *, skip_memory: bool, platform: str | None) -> None:

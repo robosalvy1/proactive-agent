@@ -3,7 +3,9 @@
 Sessions are ingested in list order (oldest first). Each query names its gold
 session; `stale` names an older, superseded session that should rank below gold.
 `kw` is the search string a model would plausibly write when calling a search
-tool, derived from the question only (never from the answer text).
+tool, written from the question. Three paraphrase strings (p_lens, p_allergy,
+p_wifi) include plausible expansions (lens, allergy, birthday, guest network)
+that also appear in the gold chat, which favors the tool-based baselines there.
 """
 
 SESSIONS = [

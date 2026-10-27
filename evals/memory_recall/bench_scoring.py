@@ -44,9 +44,10 @@ def build(size, rng):
     from agent.home_embeddings import load_embedding_config
     cfg = load_embedding_config(db)
     per = 50
-    for s in range(size // per):
+    for s in range(-(-size // per)):  # Exactly ``size`` vectors: the last session takes the remainder.
         db.create_session(f's{s}', 'cli')
-        db.append_messages_batch(f's{s}', [{'role': 'user', 'content': f'note {s}-{i}'} for i in range(per)])
+        db.append_messages_batch(f's{s}', [{'role': 'user', 'content': f'note {s}-{i}'}
+                                            for i in range(min(per, size - s * per))])
 
     def fill(conn):
         hs._ensure_table_on(conn, cfg)

@@ -666,6 +666,10 @@ class Observations:
                 logger.warning('Home profile refresh failed (%s)', type(exc).__name__)
                 self.db._execute_write(lambda conn: self._release_on(conn, token, 'failed'))
                 return False
+            if not isinstance(text, str) or not text.strip():
+                # An empty profile never validates: saving it would rebuild and re-spend budget forever.
+                self.db._execute_write(lambda conn: self._release_on(conn, token, 'empty profile'))
+                return False
             built = record['observations'] + [o['id'] for o, _ in page]
             saved = {'text': text.strip()[:12000], 'through': page[-1][0]['id'], 'as_of': now, 'observations': built}
 

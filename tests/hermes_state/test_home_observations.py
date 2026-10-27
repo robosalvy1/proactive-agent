@@ -613,6 +613,16 @@ def test_connections_redact_registered_secrets(warfarin, monkeypatch):
     assert calls and secret not in calls[0]
 
 
+@pytest.mark.parametrize('reply', ['', '   \n'])
+def test_an_empty_profile_reply_is_not_saved(db, reply):
+    HomeStore(db).ensure_home()
+    chat(db, 'source', ('user', 'I take warfarin.'), ('assistant', 'Noted.'))
+    store = _observe(db)
+    assert store.refresh_profile(model=lambda *a: reply, now=LATER, min_new=1) is False
+    with db._read_ctx() as conn:
+        assert store._profile_record_on(conn) is None
+
+
 def test_observer_batches_redact_registered_profile_secrets(db):
     secret = 'plainsecretvalue-no-known-prefix-4412'
     (observations._owner_home(db) / '.env').write_text(f'MY_SERVICE_TOKEN={secret}\n')

@@ -4,7 +4,7 @@ Retrieval benchmark for Home memory (Memory v2 Phase 0). It seeds identical synt
 
 ## Dataset (`dataset.py`)
 
-31 synthetic chats (gold facts, later corrections, distractors with overlapping vocabulary, chit-chat, and one secret to forget) and 34 queries:
+31 synthetic chats (gold facts, later corrections, distractors with overlapping vocabulary, chit-chat, and one secret to forget) and 35 queries:
 
 | kind | n | passes when |
 |---|---|---|
@@ -14,7 +14,7 @@ Retrieval benchmark for Home memory (Memory v2 Phase 0). It seeds identical synt
 | forget | 2 | after forgetting, nothing from the forgotten chat is returned |
 | negative | 6 | never discussed; ideally nothing is returned or injected |
 
-Each query also has `kw`: the search string a model would plausibly write when calling a search tool, derived from the question only. Tool-based systems are scored on both forms.
+Each query also has `kw`: the search string a model would plausibly write when calling a search tool, written from the question. Three paraphrase strings (`p_lens`, `p_allergy`, `p_wifi`) include plausible expansions that also appear in the gold chat (lens, allergy, birthday, guest network), which favors the tool-based baselines on those queries. Tool-based systems are scored on both forms.
 
 ## Running
 
