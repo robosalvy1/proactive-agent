@@ -33,6 +33,14 @@ ap.add_argument('--batch', type=int, default=6, help='sessions per observer call
 ap.add_argument('--workers', type=int, default=3)
 ap.add_argument('--limit', type=int, default=0)
 ARGS = ap.parse_args()
+
+
+def save_json(path, data, **kw):
+    """Written whole, then swapped in: an interrupted save keeps the previous file."""
+    partial = Path(f'{path}.tmp')
+    with open(partial, 'w') as handle:
+        json.dump(data, handle, **kw)
+    os.replace(partial, path)
 sys.path.insert(0, str(Path(ARGS.code_root).resolve()))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -138,8 +146,8 @@ def main():
                            'memory_chars': len(memory)}
         with lock:
             results.append(row)
-            json.dump(cache, open(obs_path, 'w'))
-            json.dump({'args': vars(ARGS), 'results': results}, open(out_path, 'w'), indent=1)
+            save_json(obs_path, cache)
+            save_json(out_path, {'args': vars(ARGS), 'results': results}, indent=1)
             marks = ' '.join(f"{s}={'Y' if row[s]['correct'] else 'n'}" for s in systems)
             print(f"[{len(results)}/{len(questions)}] {row['type']:26} obs={row['observations']:4} {marks}", flush=True)
 

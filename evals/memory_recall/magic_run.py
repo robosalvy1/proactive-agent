@@ -45,6 +45,14 @@ ap.add_argument('--embed-batch', type=int, default=8)
 ap.add_argument('--rejudge', action='store_true', help='re-grade stored replies (needs stored memory)')
 ARGS = ap.parse_args()
 
+
+def save_json(path, data, **kw):
+    """Written whole, then swapped in: an interrupted save keeps the previous file."""
+    partial = Path(f'{path}.tmp')
+    with open(partial, 'w') as handle:
+        json.dump(data, handle, **kw)
+    os.replace(partial, path)
+
 ROOT = Path(tempfile.mkdtemp(prefix='magic-'))
 os.environ.setdefault('HERMES_HOME', str(ROOT / 'home'))
 sys.path.insert(0, str(Path(ARGS.code_root).resolve()))
@@ -293,7 +301,7 @@ def rejudge():
             entry.update(judge(scenarios[row['id']], entry['reply'], memory), memory=memory)
     with ThreadPoolExecutor(ARGS.workers) as pool:
         list(pool.map(one, data['results']))
-    json.dump(data, open(out, 'w'), indent=1)
+    save_json(out, data, indent=1)
 
 
 def main():
@@ -362,8 +370,8 @@ def main():
             row[system] = {'reply': reply, 'memory': memory, **judge(scenario, reply, memory)}
         with lock:
             results.append(row)
-            json.dump(cache, open(obs_path, 'w'))
-            json.dump({'args': vars(ARGS), 'results': results}, open(out, 'w'), indent=1)
+            save_json(obs_path, cache)
+            save_json(out, {'args': vars(ARGS), 'results': results}, indent=1)
             marks = ' '.join(f"{s}={'M' if row[s]['magic'] else ('i' if row[s]['intrusion'] else '-')}"
                              f"{sum(row[s]['used'])}/{len(row[s]['used'])}" for s in systems)
             print(f"[{len(results)}] {row['id']:14} {marks}", flush=True)
