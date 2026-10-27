@@ -48,7 +48,7 @@ def tool_loop(messages, tools, handlers, *, model, provider, max_rounds=6):
                 args = json.loads(call['arguments'] or '{}')
                 output = handlers[call['name']](**args) if call['name'] in handlers else \
                     json.dumps({'error': f"unknown tool {call['name']}"})
-            except Exception as exc:  # A bad call is reported to the model, as the real loops do.
+            except Exception as exc:  # health: allow BLE001 -- eval tool loop: the error goes back to the model, as in the real loops
                 output = json.dumps({'error': f'{type(exc).__name__}: {exc}'})
             output = output[:12000]
             results.append(f"{call['name']}({call['arguments']}) ->\n{output}")
