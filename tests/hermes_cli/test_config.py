@@ -122,7 +122,7 @@ class TestLoadConfigDefaults:
             assert "max_turns" not in config
             assert "terminal" in config
             assert config["terminal"]["backend"] == "local"
-            assert config["display"]["interim_assistant_messages"] is True
+            assert config["display"]["interim_assistant_messages"] is False  # Opt-in since minimal responses.
 
     def test_legacy_root_level_max_turns_migrates_to_agent_config(self, tmp_path):
         with patch.dict(os.environ, {"HERMES_HOME": str(tmp_path)}):
@@ -1205,11 +1205,11 @@ class TestInterimAssistantMessageConfig:
         assert raw["_config_version"] == DEFAULT_CONFIG["_config_version"]
         # The user's explicit non-default value is preserved on disk.
         assert raw["display"]["tool_progress"] == "off"
-        # interim_assistant_messages defaults to True and merges in transparently
-        # at read time, so the migration must NOT materialise it to disk (that
-        # was the config-bloat bug). It is still effective via load_config().
+        # interim_assistant_messages has a default (opt-in, False) that merges in
+        # transparently at read time, so the migration must NOT materialise it to
+        # disk (that was the config-bloat bug). It is still effective via load_config().
         assert "interim_assistant_messages" not in raw.get("display", {})
-        assert loaded["display"]["interim_assistant_messages"] is True
+        assert loaded["display"]["interim_assistant_messages"] is False
         assert not any(
             "interim_assistant_messages" in item
             for item in results["config_added"]

@@ -114,6 +114,11 @@ class HomeStore:
             conn.execute("INSERT INTO state_meta(key,value) VALUES (?,?) "
                          "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
                          (SHARING_PREFIX + anchor, "shared" if shared else "excluded"))
+            if shared:
+                from hermes_state_home_observations import reset_profiles_on
+                from hermes_state_home_semantic import invalidate_coverage_on
+                invalidate_coverage_on(conn)  # Older history may now be eligible for indexing.
+                reset_profiles_on(conn)
         self.db._execute_write(update)
 
     def _personal_on(self, conn, row) -> bool:

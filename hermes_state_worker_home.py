@@ -26,7 +26,7 @@ def read_worker_home(db, *, epoch, execution_id, session_id, generation, query, 
         access = authorize(conn)
     if access is None:
         return {'context': '', 'count': 0}
-    from hermes_state_home_semantic import prepare_semantic_query
+    from hermes_state_home_semantic import prepare_semantic_query, schedule_auto_index_step
     plan = None if overview else prepare_semantic_query(db, session_id, query, principal_id=access[0])
     # Network never holds a read transaction, and a revoked worker/grant cannot use
     # a result prepared under its former authority.
@@ -34,7 +34,11 @@ def read_worker_home(db, *, epoch, execution_id, session_id, generation, query, 
         final_access = authorize(conn)
         if final_access is None or final_access != access:
             return {'context': '', 'count': 0}
-        return worker_home_recall(db, conn, session_id, payload, semantic_plan=plan)
+        result = worker_home_recall(db, conn, session_id, payload, semantic_plan=plan)
+    # Workers have no database access; the authorized owner advances the index for them, after
+    # this turn's query is embedded so the two never compete for the endpoint's recovery probe.
+    schedule_auto_index_step(db, session_id, principal_id=access[0])
+    return result
 
 
 def _validate_payload(payload):

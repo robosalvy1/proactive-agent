@@ -101,3 +101,25 @@ def test_forget_invalidates_dreams_and_prevents_reextraction(setup):
     assert dreams.status()['notes'] == []
     assert dreams.reserve(manual=True) is None
     assert HomeStore(db).recall(home, 'Lisbon') == []
+
+
+def test_forgetting_a_message_also_removes_the_assistants_echo(setup):
+    db, home, old = setup
+    db.append_message('travel', 'assistant', 'Noted: your Lisbon budget is 1200 euros.')
+    db.append_message('travel', 'user', 'What museums are in Lisbon?')
+    db.append_message('travel', 'assistant', 'The Gulbenkian and MAAT are popular in Lisbon.')
+    HomeSourceControls(db).forget(old)
+    packet = render_recall(HomeStore(db).recall(home, 'Lisbon budget euros'))
+    assert '1200' not in packet
+    assert 'Gulbenkian' in render_recall(HomeStore(db).recall(home, 'Lisbon museums'))  # Later exchange stays.
+
+
+def test_a_correction_also_wins_over_the_assistants_restatement(setup):
+    db, home, old = setup
+    db.append_message('travel', 'assistant', 'Noted: your Lisbon budget is 1200 euros.')
+    db.create_session('correction', 'cli')
+    db.append_message('correction', 'user', 'Actually, make the Lisbon budget 1500 euros.')
+    new = db._read_one("SELECT id FROM messages WHERE session_id='correction'")['id']
+    HomeSourceControls(db).supersede(old, new)
+    packet = render_recall(HomeStore(db).recall(home, 'Noted Lisbon budget euros'))
+    assert '1500' in packet and '1200' not in packet

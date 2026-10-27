@@ -799,6 +799,8 @@ CREATE INDEX IF NOT EXISTS idx_messages_active_null
 -- Logical-identity recovery (agent.transcript_repair._active_logical_message_row) runs inside the write lock.
 CREATE INDEX IF NOT EXISTS idx_messages_session_uid
     ON messages(session_id, message_uid) WHERE active = 1;
+-- Home source revalidation resolves a message identity across chats (compaction copies keep it).
+CREATE INDEX IF NOT EXISTS idx_messages_uid ON messages(message_uid, id);
 CREATE INDEX IF NOT EXISTS idx_sessions_session_key
     ON sessions(session_key, started_at DESC);
 CREATE INDEX IF NOT EXISTS idx_sessions_gateway_peer

@@ -39,6 +39,21 @@ def test_worker_uses_the_same_owner_semantic_index(worker, endpoint):
     assert endpoint[1][-1][1]['Authorization'] == 'Bearer worker-profile-key'
 
 
+def test_worker_schedules_indexing_only_after_its_query_is_embedded(worker, endpoint, monkeypatch):
+    """Indexing must not race this turn's query embedding for the endpoint's recovery probe."""
+    import hermes_state_home_semantic as semantic
+
+    db, remote = worker
+    configure(db, endpoint)
+    order = []
+    real_prepare = semantic.prepare_semantic_query
+    monkeypatch.setattr(semantic, 'prepare_semantic_query',
+                        lambda *a, **k: order.append('query') or real_prepare(*a, **k))
+    monkeypatch.setattr(semantic, 'schedule_auto_index_step', lambda *a, **k: order.append('index'))
+    remote.home_recall('owned', 'What dietary restrictions do I have?')
+    assert order == ['query', 'index']
+
+
 def test_worker_rechecks_assignment_after_embedding_http(worker, endpoint):
     """A stale epoch during HTTP is fenced again before any context is returned."""
     from hermes_state_runtime import begin_runtime_epoch
