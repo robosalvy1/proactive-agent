@@ -85,7 +85,11 @@ def valid(s):
               and datetime.fromisoformat(s['request']['date']) >= max(dates)
               and all(t['role'] in ('user', 'assistant') and isinstance(t['content'], str)
                       for sess in s['sessions'] for t in sess['turns']))
-        facts = s.get('hidden_facts') or []
+        facts = s.get('hidden_facts', [])
+        distractors = s.get('distractors', [])
+        if not (isinstance(facts, list) and isinstance(distractors, list)
+                and all(isinstance(d, str) for d in distractors)):
+            return False  # judge() iterates both and joins distractors as text.
         if s['category'] == 'negative':
             return bool(ok) and not facts
         return bool(ok and facts and all(isinstance(h['fact'], str) and isinstance(h['why'], str)

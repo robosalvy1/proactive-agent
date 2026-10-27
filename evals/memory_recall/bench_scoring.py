@@ -34,6 +34,9 @@ def unit(rng):
     return [x / n for x in v]
 
 
+DEFAULT_RESCORE_MIN = hs.RESCORE_MIN  # The product default, restored after every size.
+
+
 def build(size, rng):
     profile = ROOT / f'p{size}'
     profile.mkdir()
@@ -68,7 +71,7 @@ def main():
     for size in map(int, ARGS.sizes.split(',')):
         db, home, cfg = build(size, rng)
         plans = [hs.SemanticQuery(cfg.identity, tuple(unit(rng)), 0.0) for _ in range(ARGS.queries)]
-        for label, minimum in (('fast', hs.RESCORE_MIN), ('exact', 10 ** 9)):
+        for label, minimum in (('fast', DEFAULT_RESCORE_MIN), ('exact', 10 ** 9)):
             hs.RESCORE_MIN = minimum
             hs._CODE_CACHE.clear()
             with db._read_ctx() as conn:
@@ -83,7 +86,7 @@ def main():
             print(f'{size:6} vectors x {ARGS.dims}d  {label:5}  first query {cold:7.0f} ms   '
                   f'median {statistics.median(times):6.0f} ms   p90 {sorted(times)[int(len(times) * 0.9)]:6.0f} ms',
                   flush=True)
-        hs.RESCORE_MIN = 256
+        hs.RESCORE_MIN = DEFAULT_RESCORE_MIN
         db.close()
 
 
