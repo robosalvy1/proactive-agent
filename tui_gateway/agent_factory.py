@@ -289,8 +289,8 @@ def _load_provider_routing() -> dict:
 
 
 def _load_show_reasoning() -> bool:
-    # Fallback True — keep in sync with DEFAULT_CONFIG display.show_reasoning (no DEFAULT_CONFIG merge here).
-    return bool(_display_cfg().get("show_reasoning", True))
+    # Fallback False — keep in sync with DEFAULT_CONFIG display.show_reasoning (no DEFAULT_CONFIG merge here).
+    return bool(_display_cfg().get("show_reasoning", False))
 
 
 def _load_memory_notifications() -> str:
@@ -299,7 +299,7 @@ def _load_memory_notifications() -> str:
     raw = _display_cfg().get("memory_notifications")
     if isinstance(raw, bool):
         return "on" if raw else "off"
-    return str(raw).lower() if raw else "on"
+    return str(raw).lower() if raw else "off"
 
 
 _TOOL_PROGRESS_MODES = frozenset({"off", "new", "all", "verbose"})
@@ -309,11 +309,11 @@ def _load_tool_progress_mode() -> str:
     env = os.environ.get("HERMES_TUI_TOOL_PROGRESS", "").strip().lower()
     if env in _TOOL_PROGRESS_MODES:
         return env
-    raw = _display_cfg().get("tool_progress", "all")
+    raw = _display_cfg().get("tool_progress", "off")
     if isinstance(raw, bool):
         return "all" if raw else "off"
-    mode = str(raw or "all").strip().lower()
-    return mode if mode in _TOOL_PROGRESS_MODES else "all"
+    mode = str(raw or "off").strip().lower()
+    return mode if mode in _TOOL_PROGRESS_MODES else "off"
 
 
 def _gui_surface_toolsets(platform: str) -> set[str]:

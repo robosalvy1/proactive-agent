@@ -56,7 +56,7 @@ def test_help_section_titles_localize_known_categories_and_pass_unknown_through(
 
 
 def test_chat_error_copy_uses_catalog_lead_and_details():
-    text = chat_error_response("upstream said no", provider="openrouter", model="m", failure_reason="rate_limit")
+    text = chat_error_response("upstream said no", provider="openrouter", model="m", failure_reason="rate_limit", include_details=True)
     assert text == t("cli.error.with_details",
                      lead=t("cli.error.rate_limit", provider="openrouter", model="m"),
                      details="upstream said no")

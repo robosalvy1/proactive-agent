@@ -65,9 +65,9 @@ class CLIInitMixin:
         self.console = Console()
         self.config = CLI_CONFIG
         display = CLI_CONFIG["display"]
-        self.compact = compact if compact is not None else display.get("compact", False)
+        self.compact = compact if compact is not None else display.get("compact", True)
         # tool_progress: "off" | "new" | "all" | "verbose"; YAML 1.1 parses bare `off` as False.
-        _raw_tp = display.get("tool_progress", "all")
+        _raw_tp = display.get("tool_progress", "off")
         self.tool_progress_mode = "off" if _raw_tp is False else str(_raw_tp)
         # focus_view (/focus) is display-only: snaps tool_progress to "off" (stashing the
         # pre-focus mode for /focus off); never changes what is sent to the model.
@@ -79,10 +79,10 @@ class CLIInitMixin:
 
             self._focus_saved_tool_progress = normalize_tool_progress_mode(self.tool_progress_mode)
             self.tool_progress_mode = FOCUS_TOOL_PROGRESS_MODE
-        self.resume_display = display.get("resume_display", "full")  # "full" | "minimal"
+        self.resume_display = display.get("resume_display", "brief")  # "brief" | "full" | "minimal"
         self.bell_on_complete = display.get("bell_on_complete", False)
         self.bell_on_prompt = display.get("bell_on_prompt", False)  # bell when a blocking modal opens
-        self.show_reasoning = display.get("show_reasoning", True)
+        self.show_reasoning = display.get("show_reasoning", False)
         self.reasoning_full = display.get("reasoning_full", False)
         _configure_output_history(
             enabled=display.get("persistent_output", True),
@@ -105,8 +105,8 @@ class CLIInitMixin:
         self._inline_diffs_enabled = display.get("inline_diffs", True)
 
         # Per-turn accounting: CLI-only chrome riding the tool-progress feed.
-        self._turn_summary_enabled = bool(display.get("turn_summary", True))
-        self._spinner_token_flow_enabled = bool(display.get("spinner_token_flow", True))
+        self._turn_summary_enabled = bool(display.get("turn_summary", False))
+        self._spinner_token_flow_enabled = bool(display.get("spinner_token_flow", False))
         self._turn_summary_collector = None
         self._turn_summary_start = 0.0
         self._turn_token_baseline = 0

@@ -71,8 +71,8 @@ Repository-wide `scripts/check` was not green: it flagged an ignored dependency 
 ## Not implemented or verified yet
 
 - No project-specific context engine, proactive workflow, or UI redesign has shipped.
-- Dependencies have not been provisioned; no provider has been configured and no live agent has been launched as part of the foundation setup.
-- The Hermes runtime test suite and full lint suite have not been run for this initial import.
+- Development dependencies are now provisioned in isolated state for response-polish validation; no provider has been configured and no live agent has been launched as part of this work.
+- The full Hermes runtime test suite has not been run. Focused runtime and lint validation is recorded below.
 - Upstream update/install/distribution routes still exist in the source; project-specific distribution is not ready.
 
 ## Next action
@@ -169,3 +169,9 @@ Round 2: on the gateway ticker the flush runs on one thread per home, so a slow 
 Regressions for each fix; `tests/cron` plus the inbox, open-loop, command, session-authoring, login, one-shot and Home suites: 1727 passed, 0 failed, 2 skipped (round 2). `scripts/check`: 12 ok.
 
 Next: a live smoke test on a disposable profile with one MCP server or Google account. When the dreaming PR merges, feed dream notes into each source's "look for" list.
+
+## Minimal response cleanup
+
+Implemented the approved response-polish changes on the feature branch: concise defaults, clean scheduled deliveries, name-first cron summaries with explicit details, quieter UI defaults, bounded resume output, and actionable errors. [RESPONSE_POLISH.md](RESPONSE_POLISH.md) records the behavior and controls.
+
+Provisioned an isolated PM-managed Python test environment and JS workspace dependencies. Passed focused Python acceptance (150 tests), history projection (26), isolated Python checks (59), cron review regressions (24), TUI rendering (22), focused desktop checks (48), TUI type/build checks, and lint for changed JS files. CodeRabbit review fixes normalize cron delivery destinations, redact/bound manual-run errors, and preserve supported explicit reasoning settings. [PR #1](https://github.com/robosalvy1/proactive-agent/pull/1) records final desktop validation, repository gates, and review/merge status. No live provider, personal profile, external delivery, or recurring test job was used; the full runtime suite was not run.

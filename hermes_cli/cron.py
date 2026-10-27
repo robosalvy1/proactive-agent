@@ -80,11 +80,8 @@ def _warn_if_gateway_not_running() -> None:
     from hermes_cli.profiles import get_active_profile_name
     # Name the inspected profile: the shared gateway may well be running and ticking ANOTHER
     # profile's jobs, so a bare "not running" reads as a system claim it cannot make (#99579).
-    print(color(f"  ⚠  Scheduler is not ready for profile '{get_active_profile_name()}': "
-                "no gateway serves it and no fresh ticker heartbeat.", Colors.YELLOW))
-    print(color("     If no gateway is running: hermes gateway install\n"
-                "                    sudo hermes gateway install --system  # Linux servers\n"
-                "     Check status:  hermes cron status", Colors.DIM))
+    print(color(f"⚠ Scheduler is not ready for profile '{get_active_profile_name()}'; jobs are saved but inactive.", Colors.YELLOW))
+    print(color("Check: hermes cron status. Start: hermes gateway start.", Colors.DIM))
 
 
 def _format_lateness(seconds: float) -> str:
@@ -174,7 +171,7 @@ def _unverified_targets(unverified) -> str:
 _STATE_BADGES = {"paused": ("[paused]", Colors.YELLOW), "completed": ("[completed]", Colors.BLUE)}
 
 
-def cron_list(show_all: bool = False):
+def cron_list(show_all: bool = False, details: bool = False):
     """List all scheduled jobs."""
     from cron.jobs import effective_job_state
     _store_report, jobs = _probe_then_list_jobs(include_disabled=True, brief=True)
@@ -195,6 +192,11 @@ def cron_list(show_all: bool = False):
     _print_banner(f"Scheduled Jobs (profile: {get_active_profile_name()})")
 
     for job in jobs:
+        if not details:
+            from hermes_cli.cron_presentation import compact_job_lines
+            for line in compact_job_lines(job):
+                print(line)
+            continue
         # effective_job_state honours the scheduler flag — never [paused] when enabled=true.
         badge = _STATE_BADGES.get(effective_job_state(job)) or (
             ("[active]", Colors.GREEN) if job.get("enabled", True) else ("[disabled]", Colors.RED))
@@ -239,6 +241,10 @@ def _job_rows(job: dict[str, Any]) -> list[tuple[str, str]]:
     mon_state = job.get("monitor_state") or {}
     latest_execution = job.get("latest_execution") or {}
     optional = [
+        ("Prompt", job.get("prompt")),
+        ("Model", job.get("model")),
+        ("Provider", job.get("provider")),
+        ("Continuity", "on" if job.get("continuity") or "self" in (job.get("context_from") or []) else ""),
         ("Skills", ", ".join(skills) if skills else ""),
         ("Script", job.get("script")),
         ("Monitor", f"{monitor_source} (agent runs only on output change)" if monitor_source
@@ -770,23 +776,6 @@ def _job_api_kwargs(args) -> dict[str, Any]:
     return {api_key: getattr(args, attr, None) for api_key, attr in _JOB_ARG_FIELDS}
 
 
-_JOB_DETAIL_LINES = (
-    ("script", "  Script: {}"),
-    ("monitor_script", "  Monitor: {} (agent runs only on output change)"),
-    ("monitor_url", "  Monitor: {} (agent runs only on output change)"),
-    ("no_agent", "  Mode: no-agent (script stdout delivered directly)"),
-    ("continuity", "  Continuity: on (each run sees the previous run's output)"),
-    ("workdir", "  Workdir: {}"),
-    ("interpreter", "  Python: {}"))
-
-
-def _print_job_details(job_data: dict[str, Any]) -> None:
-    """Print the optional Script/Monitor/Mode/Continuity/Workdir lines of a job record."""
-    for key, template in _JOB_DETAIL_LINES:
-        if job_data.get(key):
-            print(template.format(job_data[key]))
-
-
 def cron_create(args):
     # The gateway-lifecycle guard lives in cron.jobs.create_job (every creation path); a block
     # surfaces as result["error"].
@@ -801,15 +790,8 @@ def cron_create(args):
     if not result.get("success"):
         print(color(f"Failed to create job: {result.get('error', 'unknown error')}", Colors.RED))
         return 1
-    print(color(f"Created job: {result['job_id']}", Colors.GREEN))
-    print(f"  Name: {result['name']}\n  Schedule: {result['schedule']}")
-    if result.get("skills"):
-        print(f"  Skills: {', '.join(result['skills'])}")
-    _print_job_details(result.get("job", {}))
-    if not result.get("job", {}).get("enabled", True):
-        print("  Created PAUSED — resume to schedule, or explicitly run now.")
-    else:
-        print(f"  Next run: {result['next_run_at']}")
+    from hermes_cli.cron_presentation import job_confirmation
+    print(color(job_confirmation(result.get("job") or result), Colors.GREEN))
     _warn_if_gateway_not_running()
     return 0
 
@@ -847,11 +829,8 @@ def cron_edit(args):
         print(color(f"Failed to update job: {result.get('error', 'unknown error')}", Colors.RED))
         return 1
     updated = result["job"]
-    print(color(f"Updated job: {updated['job_id']}", Colors.GREEN))
-    print(f"  Name: {updated['name']}\n  Schedule: {updated['schedule']}")
-    print(f"  Skills: {', '.join(updated['skills'])}" if updated.get("skills") else
-          "  Skills: none")
-    _print_job_details(updated)
+    from hermes_cli.cron_presentation import job_confirmation
+    print(color(job_confirmation(updated, updated=True), Colors.GREEN))
     return 0
 
 
@@ -878,7 +857,7 @@ def _job_action(action: str, job_id: str, success_verb: str) -> int:
         print(color(f"Failed to {action} job: {result.get('error', 'unknown error')}", Colors.RED))
         return 1
     job = result.get("job") or result.get("removed_job") or {}
-    print(color(f"{success_verb} job: {job.get('name', job_id)} ({job_id})", Colors.GREEN))
+    print(color(f"{success_verb} job: {job.get('name', job_id)}", Colors.GREEN))
     if action in {"resume", "run"} and result.get("job", {}).get("next_run_at"):
         print(f"  Next run: {result['job']['next_run_at']}")
     if action == "run":
@@ -896,7 +875,7 @@ def _run_outcome(job: dict[str, Any]) -> str:
     after this CLI exits, so report the dispatch rather than a success/failure verdict.
     """
     if job.get("delegation_id"):
-        return f"Running in background (delegation {job['delegation_id']})."
+        return "Running in background."
     if job.get("execution_mode") == "background":
         return "Running in background."
     if job.get("executed"):
@@ -922,7 +901,7 @@ def cron_resume(args) -> int:
     if not job:
         print(color(f"Job not found: {args.job_id}", Colors.RED))
         return 1
-    print(color(f"Re-armed job: {job.get('name', args.job_id)} ({args.job_id})", Colors.GREEN)
+    print(color(f"Re-armed job: {job.get('name', args.job_id)}", Colors.GREEN)
           + f"\n  Next run: {job.get('next_run_at')}")
     return 0
 
@@ -975,7 +954,7 @@ def cron_notepad(args) -> int:
 
 # Late-bound lambdas keep module-level monkeypatching working; list/status/runs return None -> 0.
 _CRON_SUBCOMMANDS = {
-    "list": lambda a: cron_list(getattr(a, "all", False)) or 0,
+    "list": lambda a: cron_list(getattr(a, "all", False), getattr(a, "details", False)) or 0,
     "status": lambda a: cron_status() or 0,
     "doctor": lambda a: cron_doctor(),
     "tick": lambda a: cron_tick(),

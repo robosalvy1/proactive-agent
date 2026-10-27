@@ -2174,33 +2174,34 @@ This controls both the `text_to_speech` tool and spoken replies in voice mode (`
 
 ```yaml
 display:
-  tool_progress: all      # off | new | all | verbose
+  tool_progress: "off"    # off | new | all | verbose
   tool_progress_command: false  # Enable /verbose slash command in messaging gateway
   focus_view: false       # CLI focus view (/focus) — reduced output, display-only
   platforms: {}           # Per-platform display overrides (see below)
-  interim_assistant_messages: true  # Gateway: send natural mid-turn assistant updates as separate messages
+  interim_assistant_messages: false # Gateway: send natural mid-turn assistant updates as separate messages
   suppress_warning_notifications: false  # Opt-in: hide automatic warning/diagnostic notices (see messaging guide)
-  show_commentary: true   # Codex models: deliver commentary-channel progress narration as visible mid-turn updates
+  show_commentary: false  # Codex models: deliver commentary-channel progress narration as visible mid-turn updates
   skin: default           # Built-in or custom CLI skin (see user-guide/features/skins)
-  personality: ""         # Legacy cosmetic field still surfaced in some summaries
-  compact: false          # Compact output mode (less whitespace)
+  personality: null       # Inherit concise (or manual agent.system_prompt); "" explicitly disables overlays
+  compact: true           # One-line startup banner; false restores the capability banner
   cli_multiline_shortcuts: true  # CLI: Ctrl+J, \ + Enter, and supported Shift+Enter insert newlines (false = legacy c-j submit fallback)
-  resume_display: full    # full (show previous messages on resume) | minimal (one-liner only)
+  resume_display: brief   # brief (bounded recap) | full (expand last answer) | minimal (no recap)
+  resume_exchanges: 1      # Number of recent exchanges in the recap
   bell_on_complete: false # Play terminal bell when agent finishes (great for long tasks)
   bell_on_prompt: false   # Play terminal bell when a blocking prompt opens (clarify, approval, sudo password, secret capture) — works over SSH
   # Both bell flags also emit an OSC 9 desktop notification (Ghostty, iTerm2, Kitty, WezTerm raise an OS
   # notification; other terminals ignore it) and, inside Warp (TERM_PROGRAM=WarpTerminal with the CLI-agent
   # protocol advertised), a warp://cli-agent OSC 777 event (`stop` on completion, `permission_request` on
   # blocking prompts) so Warp's tab status and notification mailbox track Hermes. No extra keys needed.
-  show_reasoning: true    # Show model reasoning/thinking above each response (default: true; toggle with /reasoning show|hide)
+  show_reasoning: false   # Show model reasoning/thinking above each response (default: false; toggle with /reasoning show|hide)
   streaming: false        # Stream tokens to terminal as they arrive (real-time output)
   show_cost: false        # Show estimated $ cost in the CLI status bar
   vim_mode: false         # CLI only: vi/vim keybindings in the input composer (Esc → NORMAL, i → INSERT). The live NORMAL/INSERT/REPLACE mode shows at the right of the status bar. Config-only, read at startup.
   timestamps: false       # When true, prefixes user and assistant labels with timestamps in the CLI / TUI transcript
   timestamp_format: "%H:%M"  # strftime format for those timestamps (e.g. "%b-%d %H:%M" for month-day)
-  tool_preview_length: 0  # Max chars for tool call previews (0 = no limit, show full paths/commands)
-  turn_summary: true      # CLI only: print a one-line post-turn accounting footer after each interactive turn
-  spinner_token_flow: true # CLI only: append live cumulative turn tokens to the spinner timer
+  tool_preview_length: 120 # Max chars for tool call previews (0 = no limit, show full paths/commands)
+  turn_summary: false     # CLI only: print a one-line post-turn accounting footer after each interactive turn
+  spinner_token_flow: false # CLI only: append live cumulative turn tokens to the spinner timer
   runtime_footer:         # Gateway: append a runtime-context footer to final replies
     enabled: false
     fields: ["model", "context_pct", "cwd"]
@@ -2214,7 +2215,7 @@ display:
 
 ### Per-turn summary and spinner token flow
 
-`display.turn_summary` (default `true`) prints one dim accounting line after each **interactive CLI** turn, summarising what that turn actually did:
+`display.turn_summary` (default `false`) prints one dim accounting line after each **interactive CLI** turn, summarising what that turn actually did:
 
 ```
 ⋯ 12.4s · edited 2 files +18 -3 · read 4 files · ran 3 commands
@@ -2229,7 +2230,7 @@ The tally is observed from the tool-progress feed the CLI already receives, so i
 - Long turns cap at four verb segments plus a `+N more` tail so the line never wraps.
 - A fast turn with no tool calls prints nothing at all.
 
-`display.spinner_token_flow` (default `true`) appends the running turn's cumulative output tokens to the CLI spinner's live timer:
+`display.spinner_token_flow` (default `false`) appends the running turn's cumulative output tokens to the CLI spinner's live timer:
 
 ```
   ⚡ Reading cli.py  (  2.3s · ↓ 1.2k tok)
@@ -2389,7 +2390,7 @@ Signal is listed as a valid platform key because the setting can be saved per pl
 
 `interim_assistant_messages` is gateway-only. When enabled, Hermes sends completed mid-turn assistant updates as separate chat messages. This is independent from `tool_progress` and does not require gateway streaming.
 
-`show_commentary` (default `true`) controls Codex Responses models' commentary channel — the polished progress narration these models produce alongside their private reasoning. When enabled, each completed commentary message is delivered as a visible mid-turn update (on the gateway this also requires `interim_assistant_messages`). Set it to `false` if the extra narration annoys you: commentary then falls back to the reasoning channel and is only shown when `show_reasoning` is enabled.
+`show_commentary` (default `false`) controls Codex Responses models' commentary channel — the polished progress narration these models produce alongside their private reasoning. When enabled, each completed commentary message is delivered as a visible mid-turn update (on the gateway this also requires `interim_assistant_messages`). Set it to `false` if the extra narration annoys you: commentary then falls back to the reasoning channel and is only shown when `show_reasoning` is enabled.
 
 ## Privacy
 
