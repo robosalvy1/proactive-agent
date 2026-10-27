@@ -636,6 +636,25 @@ def test_observer_batches_redact_registered_profile_secrets(db):
     assert sent and not any(secret in text for text in sent)
 
 
+def test_a_secret_straddling_the_turn_cut_is_not_sent_in_part(db):
+    secret = 'straddling-secret-value-no-prefix-9931'
+    (observations._owner_home(db) / '.env').write_text(f'MY_SERVICE_TOKEN={secret}\n')
+    HomeStore(db).ensure_home()
+    padding = 'x' * (observations.MAX_TURN_CHARS - 10)  # The secret starts 10 characters before the cut.
+    chat(db, 'source', ('user', padding + secret), ('assistant', 'Okay.'))
+    sent = []
+    Observations(db).observe_once(model=lambda b: sent.extend(i['text'] for i in b) or '{"observations": []}', now=LATER)
+    assert sent and not any(secret[:10] in text for text in sent)
+
+
+def test_identity_lookups_use_an_index_not_a_table_scan(db):
+    with db._read_ctx() as conn:
+        for query in ('SELECT id,session_id FROM messages WHERE message_uid=? ORDER BY id LIMIT 1',
+                      'SELECT id FROM messages WHERE message_uid=? ORDER BY id DESC'):
+            plan = ' '.join(str(tuple(r)[-1]) for r in conn.execute('EXPLAIN QUERY PLAN ' + query, ('u',)))
+            assert 'idx_messages_uid' in plan, plan
+
+
 def test_per_turn_reads_validate_only_the_newest_pages(db, monkeypatch):
     HomeStore(db).ensure_home()
     chat(db, 'source', *[('user', f'I like fruit number {n}.') for n in range(6)])

@@ -31,6 +31,7 @@ KINDS = ('fact', 'preference', 'event', 'plan', 'update', 'assistant')
 USER_KINDS = {'fact', 'preference', 'event', 'plan', 'update'}  # Must cite a user message.
 MAX_BATCH_CHARS = 24000
 MAX_TURN_CHARS = 2500
+MAX_SECRET_CHARS = 4096  # Longest registered secret value redacted.
 MAX_OBSERVATIONS = 40  # Per call.
 MAX_TEXT = 400
 MAX_PROFILE_WORDS = 700
@@ -343,7 +344,9 @@ class Observations:
         batch, used = [], 0
         for meta, rows in pending:
             for row in rows:
-                text = _redacted(row['content'][:MAX_TURN_CHARS])
+                # Redact with headroom for the longest registered secret, then cut: a secret that
+                # straddles the cut must not leave a partial value behind.
+                text = _redacted(row['content'][:MAX_TURN_CHARS + MAX_SECRET_CHARS])[:MAX_TURN_CHARS]
                 if batch and used + len(text) > MAX_BATCH_CHARS:
                     return batch
                 batch.append({'id': row['id'], 'chat': meta['id'], 'role': row['role'], 'uid': row['message_uid'],
@@ -710,7 +713,7 @@ def _redacted(text):
     from agent.redact import redact_sensitive_text
     from agent.secret_scope import current_secret_scope
 
-    for secret in sorted({v for v in (current_secret_scope() or {}).values() if isinstance(v, str) and 8 <= len(v) <= 4096},
+    for secret in sorted({v for v in (current_secret_scope() or {}).values() if isinstance(v, str) and 8 <= len(v) <= MAX_SECRET_CHARS},
                          key=len, reverse=True):
         text = text.replace(secret, '[REDACTED]')
     return redact_sensitive_text(text, force=True, redact_url_credentials=True)
