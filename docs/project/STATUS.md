@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-20.
+Last updated: 2026-10-27.
 
 ## Memory v2 (in progress, branch `feature/memory-v2`)
 

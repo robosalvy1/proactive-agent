@@ -17,7 +17,6 @@ from datetime import datetime
 import json
 import os
 from pathlib import Path
-import re
 import shutil
 import sys
 import tempfile
@@ -59,7 +58,7 @@ sys.path.insert(0, str(Path(ARGS.code_root).resolve()))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from llm import complete
-from observe import observe_batch, render_log, session_key
+from observe import first_object, observe_batch, render_log, session_key
 from reflect import reflect
 from hermes_state_home_observations import profile_block
 import assoc
@@ -271,11 +270,12 @@ def judge(scenario, reply, memory=''):
                           request=scenario['request']['text'], reply=reply, memory=memory or '(no memory)')
     def parse(response):
         text = response.choices[0].message.content or ''
-        json.loads(re.search(r'\{.*\}', text, re.DOTALL).group(0))  # Raises (and retries, uncached) if malformed.
+        if not first_object(text):
+            raise ValueError('Judge reply has no JSON object.')  # Retried, never cached.
         return text
     text = complete([{'role': 'user', 'content': prompt}], model=ARGS.judge_model, provider=ARGS.provider,
                     _parse=parse)
-    verdict = json.loads(re.search(r'\{.*\}', text, re.DOTALL).group(0))
+    verdict = first_object(text)
     used = [bool(u) for u in verdict.get('used', [])][:len(scenario.get('hidden_facts', []))]
     clean = not verdict.get('intrusion') and not verdict.get('invented')
     magic = clean and (all(used) and len(used) == len(scenario.get('hidden_facts', [])))
