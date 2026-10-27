@@ -655,6 +655,17 @@ def test_identity_lookups_use_an_index_not_a_table_scan(db):
             assert 'idx_messages_uid' in plan, plan
 
 
+@pytest.mark.parametrize('state', [{'attempts': 'budget'}, {'lease': {'token': 't', 'until': LATER + 60}}])
+def test_a_spent_budget_or_held_lease_skips_the_pending_scan(db, monkeypatch, state):
+    HomeStore(db).ensure_home()
+    chat(db, 'source', ('user', 'I like rye bread.'), ('assistant', 'Okay.'))
+    if state.get('attempts') == 'budget':
+        state = {'day': int(LATER // 86400), 'attempts': observations.DAILY_CALLS}
+    db._execute_write(lambda conn: observations._save_on(conn, state))
+    monkeypatch.setattr(Observations, '_pending_on', lambda *a: pytest.fail('scanned with no request possible'))
+    assert Observations(db).observe_once(model=lambda b: pytest.fail('model called'), now=LATER) is None
+
+
 def test_per_turn_reads_validate_only_the_newest_pages(db, monkeypatch):
     HomeStore(db).ensure_home()
     chat(db, 'source', *[('user', f'I like fruit number {n}.') for n in range(6)])

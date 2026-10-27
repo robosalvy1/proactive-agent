@@ -28,8 +28,12 @@ def oc(*args, timeout=600):
 
 
 def parse_json(text):
+    """The first JSON value in CLI output (trailing text ignored), or None."""
     start = min((i for i in (text.find('{'), text.find('[')) if i >= 0), default=-1)
-    return json.loads(text[start:]) if start >= 0 else None
+    try:
+        return json.JSONDecoder().raw_decode(text[start:])[0] if start >= 0 else None
+    except json.JSONDecodeError:
+        return None
 
 
 if '--skip-seed' not in sys.argv:
@@ -51,10 +55,7 @@ result['status'] = parse_json(p.stdout) if p.returncode == 0 else p.stdout[-2000
 
 def search(text):
     p, secs = oc('memory', 'search', '--query', text, '--max-results', '10', '--json')
-    try:
-        data = parse_json(p.stdout) if p.returncode == 0 else None
-    except json.JSONDecodeError:
-        data = None
+    data = parse_json(p.stdout) if p.returncode == 0 else None
     if not isinstance(data, dict):
         # An empty result here would score as "nothing returned": stop instead of recording it.
         sys.exit(f'memory search failed (exit {p.returncode}) for {text!r}; see driver.log')

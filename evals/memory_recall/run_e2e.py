@@ -118,9 +118,9 @@ def memory_for(system, question, context, observations):
 
 def main():
     saved = json.load(open(os.path.expanduser(ARGS.contexts)))['results']
-    if any('context' not in row for row in saved):
+    if {'home', 'obs+home'} & set(ARGS.systems.split(',')) and any('context' not in row for row in saved):
         sys.exit(f'{ARGS.contexts} has no saved Home context; rerun run_longmemeval.py with --save-context.')
-    contexts = {row['id']: row['context'] for row in saved}
+    contexts = {row['id']: row.get('context', '') for row in saved}  # Also defines the sample.
     questions = load_questions(set(contexts))
     if ARGS.limit:
         questions = questions[:ARGS.limit]

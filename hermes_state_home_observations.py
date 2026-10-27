@@ -234,6 +234,14 @@ def _eligible(row):
 _MESSAGE_COLUMNS = 'id,session_id,message_uid,role,active,compacted,_compressed_summary,display_kind,content'
 
 
+def _reservable(state, now, manual):
+    """No lease is held and, unless manual, today's request budget is not spent."""
+    if state.get('lease', {}).get('until', 0) > now:
+        return False
+    attempts = state.get('attempts', 0) if state.get('day') == int(now // 86400) else 0
+    return manual or attempts < DAILY_CALLS
+
+
 class _Sources:
     """Bulk revalidation of cited messages for one read: each must still exist with the exact text
     the observer read (fingerprint), be an eligible visible message, carry no source control (its
@@ -360,12 +368,10 @@ class Observations:
 
     def _reserve_on(self, conn, now, manual, purpose):
         state = _load_on(conn)
-        if state.get('lease', {}).get('until', 0) > now:
+        if not _reservable(state, now, manual):
             return None
         day = int(now // 86400)
         attempts = state.get('attempts', 0) if state.get('day') == day else 0
-        if attempts >= DAILY_CALLS and not manual:
-            return None
         token = uuid.uuid4().hex
         state.update(lease={'token': token, 'until': now + LEASE_SECONDS, 'purpose': purpose},
                      day=day, attempts=attempts + 1)
@@ -411,8 +417,8 @@ class Observations:
 
     def _claim_on(self, conn, now, manual):
         home = self.home._state_on(conn)
-        if not home.get('enabled'):
-            return None
+        if not home.get('enabled') or not _reservable(_load_on(conn), now, manual):
+            return None  # No request can follow: skip the pending scan while holding the writer.
         pending, skips = self._pending_on(conn, home, now)
         for key, message_id in skips.items():
             _set_meta(conn, key, str(message_id))

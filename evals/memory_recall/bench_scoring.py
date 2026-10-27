@@ -68,10 +68,14 @@ def build(size, rng):
 
 def main():
     rng = random.Random(5)
-    for size in map(int, ARGS.sizes.split(',')):
+    for position, size in enumerate(map(int, ARGS.sizes.split(','))):
         db, home, cfg = build(size, rng)
         plans = [hs.SemanticQuery(cfg.identity, tuple(unit(rng)), 0.0) for _ in range(ARGS.queries)]
-        for label, minimum in (('fast', DEFAULT_RESCORE_MIN), ('exact', 10 ** 9)):
+        modes = [('fast', DEFAULT_RESCORE_MIN), ('exact', 10 ** 9)]
+        if position % 2:
+            modes.reverse()  # Alternate so page-cache warm-up does not always favor the same mode.
+        order = ' -> '.join(name for name, _ in modes)
+        for label, minimum in modes:
             hs.RESCORE_MIN = minimum
             hs._CODE_CACHE.clear()
             with db._read_ctx() as conn:
@@ -84,7 +88,8 @@ def main():
                     hs.semantic_rows_on(db, conn, None, home, plan)
                     times.append((time.perf_counter() - t0) * 1000)
             print(f'{size:6} vectors x {ARGS.dims}d  {label:5}  first query {cold:7.0f} ms   '
-                  f'median {statistics.median(times):6.0f} ms   p90 {sorted(times)[int(len(times) * 0.9)]:6.0f} ms',
+                  f'median {statistics.median(times):6.0f} ms   p90 {sorted(times)[int(len(times) * 0.9)]:6.0f} ms   '
+                  f'(order {order})',
                   flush=True)
         hs.RESCORE_MIN = DEFAULT_RESCORE_MIN
         db.close()

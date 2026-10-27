@@ -192,12 +192,12 @@ def test_hung_endpoint_backs_off_instead_of_stalling_every_turn(tmp_path, endpoi
     from agent.home_embeddings import EmbeddingUnavailable, embedding_health, load_embedding_config
     from hermes_cli.home_controls import source_action
 
-    with make_db(tmp_path, endpoint, '    timeout_seconds: 0.3\n') as store:
+    with make_db(tmp_path, endpoint, '    timeout_seconds: 2\n') as store:  # Room for a loaded runner.
         home = HomeStore(store).ensure_home()
         add(store, 'topic', 'A source.')
         HomeIndex(store).index(home)
         hung = threading.Event()
-        endpoint[2]['callback'] = lambda: hung.wait(1)
+        endpoint[2]['callback'] = lambda: hung.wait(30)  # Outlasts the timeout; released below.
         assert prepare_semantic_query(store, home, 'recall') is None
         calls = len(endpoint[1])
         add(store, 'later', 'A newer source.')
