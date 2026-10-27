@@ -75,12 +75,13 @@ def index(db, home):
         else:
             result = HomeIndex(db).index(home)
         error = None
-    except ValueError as exc:
-        result, error = {}, str(exc)
+    except (ValueError, OSError) as exc:  # Bad config, or the endpoint timed out / is backing off.
+        result, error = {}, f'{type(exc).__name__}: {exc}'
     with db._read_ctx() as conn:
+        exists = conn.execute("SELECT 1 FROM sqlite_master WHERE name='home_recall_vectors'").fetchone()
         sessions = {row[0] for row in conn.execute(
-            'SELECT m.session_id FROM home_recall_vectors v JOIN messages m ON m.id=v.message_id')}
-        vectors = conn.execute('SELECT COUNT(*) FROM home_recall_vectors').fetchone()[0]
+            'SELECT m.session_id FROM home_recall_vectors v JOIN messages m ON m.id=v.message_id')} if exists else set()
+        vectors = conn.execute('SELECT COUNT(*) FROM home_recall_vectors').fetchone()[0] if exists else 0
     gold = {sid for sid, _ in SESSIONS}
     return {'seconds': time.perf_counter() - t0, 'error': error, 'vectors': vectors,
             'dataset_sessions_indexed': len(sessions & gold), 'dataset_sessions': len(gold),

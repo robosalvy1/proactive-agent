@@ -73,7 +73,8 @@ def _parse(text):
     for entry in entries if isinstance(entries, list) else []:
         obs = entry.get('observations') if isinstance(entry, dict) else None
         if isinstance(obs, list):
-            found[str(entry.get('id'))] = [o for o in obs if isinstance(o, dict) and str(o.get('text', '')).strip()]
+            found[str(entry.get('id'))] = [{**o, 'kind': str(o.get('kind') or 'fact')} for o in obs  # render_log needs kind.
+                                           if isinstance(o, dict) and str(o.get('text', '')).strip()]
     return found
 
 
