@@ -158,6 +158,19 @@ def test_sweep_removes_vectors_of_excluded_or_forgotten_sources(db, endpoint, re
     assert indexed_ids(db) == {keep}
 
 
+@pytest.mark.parametrize('auto', ['true', 'false'])
+def test_index_promises_turn_indexing_only_when_auto_index_is_on(tmp_path, endpoint, monkeypatch, auto):
+    from hermes_cli.home_controls import source_action
+
+    with make_db(tmp_path, endpoint, auto=auto) as store:
+        home = HomeStore(store).ensure_home()
+        add(store, 'topic', 'A source.')
+        real = HomeIndex.drain
+        monkeypatch.setattr(HomeIndex, 'drain', lambda self, *a, **k: {**real(self, *a, **k), 'more': True})
+        output = source_action(store, home, 'index')['output']
+    assert ('after each turn' in output) is (auto == 'true') and 'run /home index again' in output
+
+
 def test_a_reply_to_a_forgotten_message_is_never_embedded_or_kept(db, endpoint):
     """Forgetting a user message also covers the assistant's restatement, even one written later."""
     home = HomeStore(db).ensure_home()

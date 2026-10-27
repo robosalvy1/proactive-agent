@@ -29,8 +29,9 @@ def source_action(db, session_id, action, *, principal_id=None):
         if result['capacity_reached']:
             tail = ' The index is full and keeps the newest sources; older history stays keyword-searchable.'
         elif result['more']:
-            tail = (f" About {result['remaining']} older messages remain; indexing continues after each turn"
-                    ' (or run /home index again).')
+            then = ('indexing continues after each turn (or run /home index again)' if result.get('auto_index')
+                    else 'run /home index again to continue')  # Without auto_index nothing runs after turns.
+            tail = f" About {result['remaining']} older messages remain; {then}."
         else:
             tail = ' Indexing is up to date.'
         if result['evicted']:

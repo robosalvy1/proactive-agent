@@ -28,12 +28,12 @@ python -m venv /tmp/emb && /tmp/emb/bin/pip install fastembed
 Then, with the test interpreter (`.venv/bin/python`):
 
 ```bash
-python evals/memory_recall/run_home.py ours --code-root . --out ours.json \
+.venv/bin/python evals/memory_recall/run_home.py ours --code-root . --out ours.json \
     --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5
-python evals/memory_recall/run_home.py upstream --code-root /path/to/upstream-hermes --out upstream.json
-python evals/memory_recall/run_scale.py --code-root . --out scale.json \
+.venv/bin/python evals/memory_recall/run_home.py upstream --code-root /path/to/upstream-hermes --out upstream.json
+.venv/bin/python evals/memory_recall/run_scale.py --code-root . --out scale.json \
     --base-url http://127.0.0.1:18555/v1 --model BAAI/bge-small-en-v1.5 --filler 6000
-python evals/memory_recall/score.py ours.json upstream.json
+.venv/bin/python evals/memory_recall/score.py ours.json upstream.json
 ```
 
 `run_openclaw.py` drives a real, isolated OpenClaw gateway whose model provider is the same server's scripted chat endpoint, so OpenClaw records the history through its own turn loop. It is slow (about 10–80 s per turn). Set `OPENCLAW_BIN`, `OPENCLAW_STATE_DIR`, `OPENCLAW_CONFIG_PATH` and `OPENCLAW_GATEWAY_TOKEN`; the config needs `memory.search.provider: "openai-compatible"` pointing at the server, `experimental.sessionMemory: true` and `sources: ["memory", "sessions"]`.

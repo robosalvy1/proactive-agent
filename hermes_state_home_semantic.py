@@ -639,7 +639,7 @@ class HomeIndex:
         cfg = load_embedding_config(self.db)
         with self.db._read_ctx() as conn:
             remaining = self.remaining_on(conn, cfg) if cfg else 0
-        return {**total, 'more': step['more'], 'remaining': remaining}
+        return {**total, 'more': step['more'], 'remaining': remaining, 'auto_index': bool(cfg and cfg.auto_index)}
 
 
 def _acquire_lease_on(conn, owner, cfg):

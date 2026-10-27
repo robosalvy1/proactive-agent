@@ -197,7 +197,7 @@ def openclaw(scenario, sessions, *, system, writer_model, answer_model, provider
                          {'role': 'user', 'content': OPENCLAW_WRITE.replace('<today>', date)}],
                         model=writer_model, provider=provider)
         update = first_object(text)  # Only the first JSON object: trailing braces cannot drop the write.
-        if update.get('daily_note_append'):
+        if isinstance(update.get('daily_note_append'), str) and update['daily_note_append']:
             files[daily] = (files.get(daily, '') + '\n' + update['daily_note_append']).strip()
         for key, name in (('user_md', 'USER.md'), ('memory_md', 'MEMORY.md')):
             if isinstance(update.get(key), str):
