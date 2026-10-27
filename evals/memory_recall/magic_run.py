@@ -195,11 +195,25 @@ def product_profile(db, scenario):
 
     later = time.time() + 86400
     store = product.Observations(db)
-    observe = lambda batch: complete(product.observe_messages(batch), model=ARGS.observer_model, provider=ARGS.provider)
+    failures = []  # Consecutive provider failures; a batch with no observations also returns 0, so count these.
+
+    def observe(batch):
+        try:
+            text = complete(product.observe_messages(batch), model=ARGS.observer_model, provider=ARGS.provider)
+        except Exception:
+            failures.append(1)
+            raise  # observe_once logs and releases; the loop below decides whether to give up.
+        failures.clear()
+        return text
     fold = lambda previous, notes, today: complete(product.profile_messages(previous, notes, today),
                                                   model=ARGS.reflect_model, provider=ARGS.provider)
-    while store.observe_once(model=observe, now=later, manual=True) is not None:
-        pass
+    for _ in range(1000):
+        if store.observe_once(model=observe, now=later, manual=True) is None:
+            break
+        if len(failures) >= 3:
+            raise RuntimeError('Observer provider keeps failing; results would rest on a partial profile.')
+    else:
+        raise RuntimeError('Observation did not finish; results would rest on a partial profile.')
     store.refresh_profile(model=fold, now=later, min_new=1, today=scenario['request']['date'])
     with db._read_ctx() as conn:  # Exactly what the product injects at session start, on the request's date.
         block = store.session_block_on(conn, today=scenario['request']['date'])
