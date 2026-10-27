@@ -13,6 +13,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from datetime import UTC, datetime
 import hashlib
+from itertools import islice
 import json
 import logging
 from pathlib import Path
@@ -43,6 +44,8 @@ LEASE_SECONDS = 600
 MIN_PENDING = 8  # Messages before an active chat is observed; idle chats are observed earlier.
 IDLE_SECONDS = 600
 SCAN_PAGES = 5  # Pages of 200 rows scanned past ineligible messages per chat and step.
+NEWEST_PAGE_ROWS = 200  # Per-turn reads validate observations newest first, a page at a time,
+NEWEST_PAGES = 10  # so their cost tracks what fits the prompt, not the whole history.
 MAX_FAILURES = 3  # Consecutive failures of the same batch before it is skipped.
 logger = logging.getLogger(__name__)
 
@@ -335,13 +338,12 @@ class Observations:
 
     @staticmethod
     def _batch(pending):
-        """Messages from one or more due chats, whole oldest-first, within MAX_BATCH_CHARS."""
-        from agent.redact import redact_sensitive_text
-
+        """Messages from one or more due chats, whole oldest-first, within MAX_BATCH_CHARS. Called in
+        the owner's scope, so the profile's registered secrets are redacted with credentials."""
         batch, used = [], 0
         for meta, rows in pending:
             for row in rows:
-                text = redact_sensitive_text(row['content'][:MAX_TURN_CHARS], force=True, redact_url_credentials=True)
+                text = _redacted(row['content'][:MAX_TURN_CHARS])
                 if batch and used + len(text) > MAX_BATCH_CHARS:
                     return batch
                 batch.append({'id': row['id'], 'chat': meta['id'], 'role': row['role'], 'uid': row['message_uid'],
@@ -583,10 +585,26 @@ class Observations:
             return None  # Something it was built from was forgotten, excluded or deleted.
         return record
 
+    def _newest_on(self, conn, *, after_id=0):
+        """Valid observations newer than ``after_id``, newest first, validated one page at a time
+        (at most NEWEST_PAGES pages), so callers stop as soon as they have what they need."""
+        if not _table_exists(conn):
+            return
+        before = None
+        for _ in range(NEWEST_PAGES):
+            ids = [r[0] for r in conn.execute(
+                f'SELECT id FROM {TABLE} WHERE principal_id IS ? AND invalid_at IS NULL AND id>?'
+                + ('' if before is None else ' AND id<?') + ' ORDER BY id DESC LIMIT ?',
+                (self.principal_id, after_id, *(() if before is None else (before,)), NEWEST_PAGE_ROWS))]
+            yield from reversed(self.current_on(conn, ids=ids))
+            if len(ids) < NEWEST_PAGE_ROWS:
+                return
+            before = ids[-1]
+
     def session_block_on(self, conn, today=None):
         """Profile plus the newest unfolded observations, or '' when there is nothing valid."""
         record = self.profile_on(conn)
-        recent = self.current_on(conn, after_id=record['through'] if record else 0)[-MAX_RECENT:]
+        recent = list(islice(self._newest_on(conn, after_id=record['through'] if record else 0), MAX_RECENT))[::-1]
         if not record and not recent:
             return ''
         as_of = datetime.fromtimestamp(record['as_of'], UTC).date().isoformat() if record else ''
@@ -594,12 +612,12 @@ class Observations:
         return profile_block(record['text'] if record else '(No profile yet.)', as_of, recent, today)
 
     def notes_text_on(self, conn, *, max_chars=MAX_NOTES_CHARS, today=None):
-        """Every valid observation as dated lines, newest kept when over budget: the full memory a
-        per-turn connections request can search, including details the profile compressed away."""
-        lines = [f"- [{datetime.fromtimestamp(o['observed_at'], UTC).date()}] {o['text']}"
-                 + (f" (event: {o['event_date']})" if o['event_date'] else '') for o in self.current_on(conn)]
+        """Valid observations as dated lines, the newest that fit ``max_chars``: the memory a per-turn
+        connections request can search, including details the profile compressed away."""
         kept, used = [], 0
-        for line in reversed(lines):
+        for o in self._newest_on(conn):
+            line = (f"- [{datetime.fromtimestamp(o['observed_at'], UTC).date()}] {o['text']}"
+                    + (f" (event: {o['event_date']})" if o['event_date'] else ''))
             if used + len(line) > max_chars:
                 break
             kept.append(line)

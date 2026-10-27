@@ -613,6 +613,36 @@ def test_connections_redact_registered_secrets(warfarin, monkeypatch):
     assert calls and secret not in calls[0]
 
 
+def test_observer_batches_redact_registered_profile_secrets(db):
+    secret = 'plainsecretvalue-no-known-prefix-4412'
+    (observations._owner_home(db) / '.env').write_text(f'MY_SERVICE_TOKEN={secret}\n')
+    HomeStore(db).ensure_home()
+    chat(db, 'source', ('user', f'My service token is {secret}, keep it handy.'), ('assistant', 'Okay.'))
+    sent = []
+    def model(batch):
+        sent.extend(item['text'] for item in batch)
+        return json.dumps({'observations': []})
+    Observations(db).observe_once(model=model, now=LATER)
+    assert sent and not any(secret in text for text in sent)
+
+
+def test_per_turn_reads_validate_only_the_newest_pages(db, monkeypatch):
+    HomeStore(db).ensure_home()
+    chat(db, 'source', *[('user', f'I like fruit number {n}.') for n in range(6)])
+    store = Observations(db)
+    found = lambda batch: json.dumps({'observations': [
+        {'text': f'The user likes fruit number {n}.', 'kind': 'preference', 'sources': [batch[n]['id']]} for n in range(6)]})
+    assert store.observe_once(model=found, now=LATER) == 6
+    monkeypatch.setattr(observations, 'NEWEST_PAGE_ROWS', 2)
+    pages = []
+    real = Observations.current_on
+    monkeypatch.setattr(Observations, 'current_on', lambda self, conn, **kw: pages.append(kw.get('ids')) or real(self, conn, **kw))
+    with db._read_ctx() as conn:
+        one = store.notes_text_on(conn, max_chars=60)
+        assert 'fruit number 5' in one and 'fruit number 4' not in one and len(pages) == 1 and len(pages[0]) == 2
+        assert all(f'fruit number {n}.' in store.notes_text_on(conn) for n in range(6))  # Pages until done.
+
+
 def test_opting_out_while_connections_load_sends_nothing(warfarin, monkeypatch):
     from agent.home_memory import HomeMemoryProvider
 
