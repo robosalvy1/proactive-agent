@@ -22,6 +22,7 @@ import re
 import threading
 
 from llm import complete, complete_tools
+from observe import first_object
 
 _dot = getattr(math, 'sumprod', None) or (lambda a, b: sum(map(operator.mul, a, b)))  # 3.11-safe
 
@@ -195,11 +196,7 @@ def openclaw(scenario, sessions, *, system, writer_model, answer_model, provider
         text = complete([{'role': 'system', 'content': head}, *_turns(turns),
                          {'role': 'user', 'content': OPENCLAW_WRITE.replace('<today>', date)}],
                         model=writer_model, provider=provider)
-        match = re.search(r'\{.*\}', text, re.DOTALL)
-        try:
-            update = json.loads(match.group(0)) if match else {}
-        except json.JSONDecodeError:
-            update = {}
+        update = first_object(text)  # Only the first JSON object: trailing braces cannot drop the write.
         if update.get('daily_note_append'):
             files[daily] = (files.get(daily, '') + '\n' + update['daily_note_append']).strip()
         for key, name in (('user_md', 'USER.md'), ('memory_md', 'MEMORY.md')):
