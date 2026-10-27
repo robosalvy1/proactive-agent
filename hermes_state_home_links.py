@@ -127,6 +127,10 @@ def set_link(store, session_id: str, enabled: bool, *, caller_session_id: str = 
         from hermes_state_home import SHARING_PREFIX
         conn.execute('INSERT INTO state_meta(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',
                      (SHARING_PREFIX + anchor, 'shared'))
+        from hermes_state_home_observations import reset_profiles_on
+        from hermes_state_home_semantic import invalidate_coverage_on
+        invalidate_coverage_on(conn)
+        reset_profiles_on(conn)
     store.db._execute_write(write)
 
 

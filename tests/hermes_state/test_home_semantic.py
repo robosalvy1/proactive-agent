@@ -180,7 +180,7 @@ def test_redaction_expansion_cannot_exceed_the_egress_budget(db, endpoint):
     assert endpoint[1] == []
 
 
-def test_redaction_expansion_batches_keep_advancing_to_later_sources(db, endpoint):
+def test_redaction_expansion_batches_keep_advancing_to_older_sources(db, endpoint):
     """Near-limit raw batches split before HTTP using the owning profile's redacted size."""
     from pathlib import Path
 
@@ -199,7 +199,9 @@ def test_redaction_expansion_batches_keep_advancing_to_later_sources(db, endpoin
     for _, _, payload in endpoint[1]:
         assert sum(map(len, payload['input'])) <= 16000
         assert all('abc12345' not in text for text in payload['input'])
-    assert endpoint[1][-1][2]['input'][-1].startswith('19 ')
+    # Newest history is embedded first; backfill reaches the oldest source last.
+    assert endpoint[1][0][2]['input'][0].startswith('19 ')
+    assert endpoint[1][-1][2]['input'][-1].startswith('00 ')
 
 
 def test_unindexable_redacted_source_does_not_block_later_rows(db, endpoint, monkeypatch):

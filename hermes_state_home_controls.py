@@ -7,11 +7,40 @@ MAX_CONTROLS = 10000
 MAX_CHAIN = 16
 
 
+def _origin_uid_on(conn, row):
+    """An assistant message answers the latest user message before it in its chat. Compaction can
+    copy a reply into another chat, so the answer is resolved from the ORIGINAL row of that message
+    identity (its earliest copy), never from wherever a copy landed."""
+    if 'role' not in row.keys() or row['role'] != 'assistant':
+        return None
+    reference = None
+    if row['message_uid']:
+        reference = conn.execute('SELECT id,session_id FROM messages WHERE message_uid=? ORDER BY id LIMIT 1',
+                                 (row['message_uid'],)).fetchone()
+    if reference is None:
+        reference = conn.execute('SELECT id,session_id FROM messages WHERE id=?', (row['id'],)).fetchone()
+    if reference is None:
+        return None
+    origin = conn.execute("SELECT message_uid FROM messages WHERE session_id=? AND id<? AND role='user' "
+                          'ORDER BY id DESC LIMIT 1', (reference['session_id'], reference['id'])).fetchone()
+    return origin[0] if origin else None
+
+
+def _rule_on(conn, row):
+    """The control that governs ``row``: its own, else (for an assistant reply) the control of the
+    user message it answers. Enforced on every read, so the assistant's restatement of a forgotten
+    or corrected message is covered however long the tool loop was and even when written later."""
+    for uid in (row['message_uid'], _origin_uid_on(conn, row)):
+        if uid:
+            rule = conn.execute('SELECT * FROM home_source_controls WHERE message_uid=?', (uid,)).fetchone()
+            if rule is not None:
+                return rule
+    return None
+
+
 def source_allowed_on(conn, row) -> bool:
-    """Suppressed source identities must not be indexed, injected or reflected on."""
-    uid = row['message_uid']
-    return not uid or conn.execute(
-        'SELECT 1 FROM home_source_controls WHERE message_uid=?', (uid,)).fetchone() is None
+    """Suppressed source identities, and replies to them, must not be indexed, injected or reflected on."""
+    return _rule_on(conn, row) is None
 
 
 def resolve_source_on(db, conn, row, principal_id):
@@ -28,7 +57,7 @@ def resolve_source_on(db, conn, row, principal_id):
         if uid in seen:
             return None
         seen.add(uid)
-        rule = conn.execute('SELECT * FROM home_source_controls WHERE message_uid=?', (uid,)).fetchone()
+        rule = _rule_on(conn, row)
         if rule is None:
             return row
         # Any owner's revocation suppresses the source. A different owner cannot
@@ -92,12 +121,18 @@ class HomeSourceControls:
                     raise ValueError('Replacement must be a newer, unsuppressed user message.')
             if not existing and conn.execute('SELECT COUNT(*) FROM home_source_controls').fetchone()[0] >= MAX_CONTROLS:
                 raise ValueError('Home source-control limit reached; existing revocations are retained.')
+            now = time.time()
             conn.execute(
                 'INSERT INTO home_source_controls VALUES(?,?,?,?,?,?,?) ON CONFLICT(message_uid) DO UPDATE SET '
                 'action=excluded.action,replacement_uid=excluded.replacement_uid,created_at=excluded.created_at',
                 (old['message_uid'], old['session_id'], old['id'], self.principal_id,
                  'superseded' if replacement is not None else 'forgotten',
-                 replacement['message_uid'] if replacement is not None else None, time.time()))
+                 replacement['message_uid'] if replacement is not None else None, now))
+            # Observations citing the source are stale (forgotten) or outdated (corrected). Those citing
+            # the assistant's replies to it fail revalidation through the same inherited control.
+            from hermes_state_home_observations import Observations
+            Observations(self.db, principal_id=self.principal_id).invalidate_sources_on(
+                conn, [old['message_uid']], now)
         self.db._execute_write(update)
 
     def list(self) -> list[dict]:

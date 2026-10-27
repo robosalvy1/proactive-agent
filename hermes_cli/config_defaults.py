@@ -1302,9 +1302,9 @@ DEFAULT_CONFIG = {
         },
     },
     "memory": {  # Persistent memory — bounded curated memory injected into the system prompt
-        # Explicit /home index builds a bounded derived index; recall embeds only the query.
+        # auto_index: true (opt-in) embeds participating messages after each turn; recall embeds only the query.
         "home_recall": {
-            "enabled": False,
+            "enabled": False, "auto_index": False, "observe": False, "connect": True,
             "base_url": "",
             "model": "",
             "api_key_env": "HOME_EMBEDDING_API_KEY",
