@@ -595,6 +595,22 @@ def test_connections_never_run_for_chats_outside_home(warfarin, monkeypatch, kin
     assert calls == [] and 'warfarin' not in context
 
 
+def test_an_unlinked_messaging_dm_runs_no_background_steps(warfarin, monkeypatch):
+    """Without a link grant, a DM must not run the owner's steps under the remote sender's ID."""
+    from agent.home_memory import IndexingHomeMemoryProvider
+    import hermes_state_home_semantic as semantic
+
+    db, _, _ = warfarin
+    db.create_session('dm', 'telegram', user_id='remote-123', chat_id='remote-123', chat_type='dm')
+    steps = []
+    monkeypatch.setattr(semantic, 'auto_index_step', lambda *a, **k: steps.append('index'))
+    monkeypatch.setattr(observations, 'observe_step', lambda *a, **k: steps.append(('observe', k.get('principal_id'))))
+    IndexingHomeMemoryProvider(db).sync_turn('hi', 'hello', session_id='dm')
+    assert steps == []
+    IndexingHomeMemoryProvider(db).sync_turn('hi', 'hello', session_id='source')  # Local chats still run them.
+    assert steps == ['index', ('observe', None)]
+
+
 def test_connections_redact_registered_secrets(warfarin, monkeypatch):
     from agent.home_embeddings import embedding_profile_scope
     from agent.redact import clear_vault_redaction_values, register_vault_redaction_value

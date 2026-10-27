@@ -158,6 +158,23 @@ def test_sweep_removes_vectors_of_excluded_or_forgotten_sources(db, endpoint, re
     assert indexed_ids(db) == {keep}
 
 
+def test_a_reply_to_a_forgotten_message_is_never_embedded_or_kept(db, endpoint):
+    """Forgetting a user message also covers the assistant's restatement, even one written later."""
+    home = HomeStore(db).ensure_home()
+    mid = add(db, 'door', 'My door code is 4417.')
+    db.append_message('door', 'assistant', 'Noted: your door code is 4417.')
+    echo = db._read_one("SELECT id FROM messages WHERE session_id='door' AND role='assistant'")[0]
+    HomeIndex(db).index(home)
+    assert {mid, echo} <= indexed_ids(db)
+    HomeSourceControls(db).forget(mid)
+    HomeIndex(db).index(home)
+    assert not indexed_ids(db) & {mid, echo}  # The sweep drops the inherited echo too.
+    sent = len(endpoint[1])
+    db.append_message('door', 'assistant', 'Reminder saved: door code 4417.')
+    HomeIndex(db).index(home)
+    assert not any('4417' in str(request[2]) for request in endpoint[1][sent:])
+
+
 def test_source_superseded_before_indexing_still_points_to_its_correction(db, endpoint):
     """Indexing order no longer decides whether a paraphrase reaches the correction."""
     home = HomeStore(db).ensure_home()

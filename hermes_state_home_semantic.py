@@ -288,9 +288,12 @@ def merge_recall(keyword, semantic):
 
 
 def _forgotten_on(conn, row):
-    uid = row['message_uid']
-    return bool(uid) and conn.execute(
-        "SELECT 1 FROM home_source_controls WHERE message_uid=? AND action='forgotten'", (uid,)).fetchone() is not None
+    """Forgotten itself, or an assistant reply to a forgotten user message (never embedded or kept).
+    Superseded rows stay indexable: recall resolves them to their correction."""
+    from hermes_state_home_controls import _rule_on
+
+    rule = _rule_on(conn, row)
+    return rule is not None and rule['action'] == 'forgotten'
 
 
 def _indexable_on(store, conn, row, state):

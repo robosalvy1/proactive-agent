@@ -162,12 +162,23 @@ class IndexingHomeMemoryProvider(HomeMemoryProvider):
         on the background sync worker."""
         if not session_id:
             return
-        from hermes_state_home_links import recall_principal_on
+        from hermes_state_home import PERSONAL_SOURCES
+        from hermes_state_home_links import link_on, recall_principal_on
         from hermes_state_home_semantic import auto_index_step
 
         try:
             with self.db._read_ctx() as conn:
-                principal = recall_principal_on(HomeStore(self.db), conn, session_id)
+                store = HomeStore(self.db)
+                row = conn.execute('SELECT source FROM sessions WHERE id=?', (session_id,)).fetchone()
+                if row is None:
+                    return
+                if row['source'] not in PERSONAL_SOURCES:
+                    # As in prefetch: only a linked chat acts for its owner. An unlinked DM would
+                    # otherwise run the owner's background steps under the remote sender's ID.
+                    grant = link_on(store, conn, session_id)
+                    if not grant or not self._matches_runtime(grant['identity']):
+                        return
+                principal = recall_principal_on(store, conn, session_id)
         except sqlite3.Error:
             return
         auto_index_step(self.db, session_id, principal_id=principal)
