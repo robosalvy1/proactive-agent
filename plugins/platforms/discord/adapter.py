@@ -236,7 +236,7 @@ _DISCORD_NONCONVERSATIONAL_HISTORY_MESSAGE_PATTERNS = (
         re.IGNORECASE,
     ),
     re.compile(
-        r"^\s*(?:✅|❌)\s+Tandem update\s+"
+        r"^\s*(?:✅|❌)\s+(?:Hermes|Tandem) update\s+"  # brand-compat
         r"(?:finished|failed|timed out)[\s\S]*$",
         re.IGNORECASE,
     ),
