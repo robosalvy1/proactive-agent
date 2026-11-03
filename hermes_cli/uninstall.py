@@ -166,9 +166,11 @@ def remove_wrapper_script():
     """Remove the hermes wrapper script if it exists."""
     wrapper_paths = [
         Path.home() / ".local" / "bin" / "hermes",
+        Path.home() / ".local" / "bin" / "tandem",
         Path.home() / ".local" / "bin" / "hermes-acp",
         Path.home() / ".local" / "bin" / "hermes-agent",
         Path("/usr/local/bin/hermes"),
+        Path("/usr/local/bin/tandem"),
         Path("/usr/local/bin/hermes-acp"),
         Path("/usr/local/bin/hermes-agent"),
     ]

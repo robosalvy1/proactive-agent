@@ -89,55 +89,55 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
-    hermes chat -q "Hello"        Single query mode
-    hermes --tui                  Launch the modern TUI (or set display.interface: tui)
-    hermes --cli                  Force the classic REPL (overrides display.interface: tui)
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
-    hermes --resume latest        Resume the most recent session (same as -c)
-    hermes --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
-    hermes setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
-    hermes auth add <provider>    Add a pooled credential
-    hermes auth list              List pooled credentials
-    hermes auth remove <p> <t>    Remove pooled credential by index, id, or label
-    hermes auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
-    hermes auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
-    hermes auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
-    hermes model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `hermes model`)
-    hermes fallback remove        Remove a fallback provider from the chain
-    hermes config                 View configuration
-    hermes config edit            Edit config in $EDITOR
-    hermes config set model gpt-4 Set a config value
-    hermes gateway                Run messaging gateway
-    hermes gateway install        Install gateway background service
-    hermes gateway start          Start the installed gateway service
-    hermes gateway stop           Stop the gateway service
-    hermes gateway status         Show gateway status
-    hermes -p <profile> <cmd>     Run any command against a named profile's
-                                  home (also --profile) — e.g. hermes -p coder gateway stop
-    hermes -s hermes-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
-    hermes sessions list          List past sessions
-    hermes sessions browse        Interactive session picker
-    hermes sessions rename ID T   Rename/title a session
-    hermes logs                   View agent.log (last 50 lines)
-    hermes logs -f                Follow agent.log in real time
-    hermes logs errors            View errors.log
-    hermes logs --since 1h        Lines from the last hour
-    hermes debug share             Upload debug report for support
-    hermes console                Open the safe Hermes command console
-    hermes update                 Update to latest version
-    hermes dashboard              Start web UI dashboard (port 9119)
-    hermes dashboard --stop       Stop running dashboard processes
-    hermes dashboard --status     List running dashboard processes
+    tandem                        Start interactive chat
+    tandem chat -q "Hello"        Single query mode
+    tandem --tui                  Launch the modern TUI (or set display.interface: tui)
+    tandem --cli                  Force the classic REPL (overrides display.interface: tui)
+    tandem -c                     Resume the most recent session
+    tandem -c "my project"        Resume a session by name (latest in lineage)
+    tandem --resume <session_id>  Resume a specific session by ID
+    tandem --resume latest        Resume the most recent session (same as -c)
+    tandem --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
+    tandem setup                  Run setup wizard
+    tandem logout                 Clear stored authentication
+    tandem auth add <provider>    Add a pooled credential
+    tandem auth list              List pooled credentials
+    tandem auth remove <p> <t>    Remove pooled credential by index, id, or label
+    tandem auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
+    tandem auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
+    tandem auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
+    tandem model                  Select default model
+    tandem fallback [list]        Show fallback provider chain
+    tandem fallback add           Add a fallback provider (same picker as `tandem model`)
+    tandem fallback remove        Remove a fallback provider from the chain
+    tandem config                 View configuration
+    tandem config edit            Edit config in $EDITOR
+    tandem config set model gpt-4 Set a config value
+    tandem gateway                Run messaging gateway
+    tandem gateway install        Install gateway background service
+    tandem gateway start          Start the installed gateway service
+    tandem gateway stop           Stop the gateway service
+    tandem gateway status         Show gateway status
+    tandem -p <profile> <cmd>     Run any command against a named profile's
+                                  home (also --profile) — e.g. tandem -p coder gateway stop
+    tandem -s hermes-agent-dev,github-auth
+    tandem -w                     Start in isolated git worktree
+    tandem sessions list          List past sessions
+    tandem sessions browse        Interactive session picker
+    tandem sessions rename ID T   Rename/title a session
+    tandem logs                   View agent.log (last 50 lines)
+    tandem logs -f                Follow agent.log in real time
+    tandem logs errors            View errors.log
+    tandem logs --since 1h        Lines from the last hour
+    tandem debug share             Upload debug report for support
+    tandem console                Open the safe Hermes command console
+    tandem update                 Update to latest version
+    tandem dashboard              Start web UI dashboard (port 9119)
+    tandem dashboard --stop       Stop running dashboard processes
+    tandem dashboard --status     List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    tandem <command> --help
 """
 
 
@@ -164,7 +164,7 @@ def _add_top_level_flags(parser: argparse.ArgumentParser) -> None:
     inherited(parser, "--provider", default=None, help=(
         "Provider override for this invocation (e.g. openrouter, anthropic). "
         "Applies to -z/--oneshot and --tui. The persistent provider lives in config.yaml "
-        "under model.provider — use `hermes setup` or edit the file to change it."))
+        "under model.provider — use `tandem setup` or edit the file to change it."))
     inherited(parser, "--reasoning", default=None, metavar="LEVEL", help=(
         "Reasoning effort for this invocation: none, minimal, low, medium, "
         "high, xhigh, max, or ultra. Overrides agent.reasoning_effort in "
@@ -330,7 +330,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
 def _plugin_command_install_hint(prog: str, value: str):
     """Install command when *value* names a catalog memory plugin that resolves nowhere: its
     ``hermes <name>`` command exists only once the plugin is installed. Top level only; never raises."""
-    if prog != "hermes" or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
+    if prog not in {"hermes", "tandem"} or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
         return None
     try:
         from plugins.memory import find_provider_dir
@@ -345,7 +345,7 @@ def _plugin_command_install_hint(prog: str, value: str):
 def _moved_command_hint(prog: str, value: str) -> str:
     """``hermes auth spotify`` / ``hermes spotify`` after Spotify left core: where the command went."""
     from hermes_cli.left_core_migration import moved_command_hint
-    return moved_command_hint(prog, value)
+    return moved_command_hint("hermes" + prog[len("tandem"):] if prog.startswith("tandem") else prog, value)
 
 
 class HermesArgumentParser(argparse.ArgumentParser):
@@ -385,7 +385,7 @@ def build_top_level_parser():
     ``subparsers.add_parser(...)``.
     """
     parser = HermesArgumentParser(
-        prog="hermes", description="Hermes Agent - AI assistant with tool-calling capabilities",
+        prog="tandem", description="Tandem Agent - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter, epilog=_EPILOGUE)
     _add_top_level_flags(parser)
     # metavar keeps the usage line to ``hermes [...] <command>`` instead of the brace list of

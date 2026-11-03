@@ -9,7 +9,7 @@
 # Applies the composed pm env (PATH + tool vars) to the CURRENT shell, with
 # save/restore: `deactivate` undoes exactly what activation changed.
 #
-# `hermes` becomes a shell function for this checkout. It runs only while the
+# `tandem` becomes a shell function for this checkout. It runs only while the
 # shell is inside this worktree and refuses outside it, so a sibling worktree
 # keeps its own command. A prompt prefix names the worktree.
 #
@@ -100,28 +100,30 @@ _hermes_worktree_here() {
     [ "$(cd "$_hermes_top" && pwd -P)" = "$(cd "$__HERMES_WORKTREE" && pwd -P)" ]
 }
 
-hermes() {
+tandem() {
     _hermes_worktree_here || {
-        printf '%s\n' "hermes: $(pwd) is outside $__HERMES_WORKTREE; refusing (the installed command is hidden while this checkout is active)" >&2
+        printf '%s\n' "tandem: $(pwd) is outside $__HERMES_WORKTREE; refusing (the installed command is hidden while this checkout is active)" >&2
         return 1
     }
     (
         cd "$__HERMES_WORKTREE" || exit 1
         if [ -n "${PYTHON-}" ]; then
-            exec "$PYTHON" hermes "$@"
+            exec "$PYTHON" tandem "$@"
         elif [ -x .venv/Scripts/python.exe ]; then
-            exec .venv/Scripts/python.exe hermes "$@"
+            exec .venv/Scripts/python.exe tandem "$@"
         elif [ -x .venv/bin/python ]; then
-            exec .venv/bin/python hermes "$@"
+            exec .venv/bin/python tandem "$@"
         elif [ -x venv/Scripts/python.exe ]; then
-            exec venv/Scripts/python.exe hermes "$@"
+            exec venv/Scripts/python.exe tandem "$@"
         elif [ -x venv/bin/python ]; then
-            exec venv/bin/python hermes "$@"
+            exec venv/bin/python tandem "$@"
         else
-            exec python hermes "$@"
+            exec python tandem "$@"
         fi
     )
 }
+
+hermes() { tandem "$@"; }
 
 _hermes_prompt() {
     if [ "$__HERMES_SAVED_PS1" = "__HERMES_UNSET__" ]; then
@@ -168,7 +170,7 @@ deactivate() {
     unset __HERMES_SAVED_PATH __HERMES_KEY_LIST __HERMES_ACTIVATED \
           __HERMES_WORKTREE __HERMES_WORKTREE_NAME \
           __HERMES_SAVED_PS1 __HERMES_SAVED_PROMPT_COMMAND
-    unset -f deactivate hermes _hermes_worktree_here _hermes_prompt
+    unset -f deactivate tandem hermes _hermes_worktree_here _hermes_prompt
     unset _hermes_k _hermes_was _hermes_old _hermes_top
 }
 

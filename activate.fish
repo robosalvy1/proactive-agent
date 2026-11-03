@@ -4,7 +4,7 @@
 #
 # The fish counterpart of ./activate: applies the composed pm env to the
 # CURRENT shell, with save/restore (`deactivate` undoes exactly what activation
-# changed), makes `hermes` a function for this checkout, and prefixes the prompt
+# changed), makes `tandem` a function for this checkout, and prefixes the prompt
 # with the worktree name. Scripts and other processes run under
 # `scripts/run-in-hermes-env` instead.
 #
@@ -64,9 +64,9 @@ function __hermes_worktree_here
     test (path resolve $top) = (path resolve $__hermes_worktree)
 end
 
-function hermes --description 'hermes of the activated checkout'
+function tandem --description 'tandem of the activated checkout'
     if not __hermes_worktree_here
-        echo "hermes: $PWD is outside $__hermes_worktree; refusing (the installed command is hidden while this checkout is active)" >&2
+        echo "tandem: $PWD is outside $__hermes_worktree; refusing (the installed command is hidden while this checkout is active)" >&2
         return 1
     end
     set -l python python
@@ -78,10 +78,14 @@ function hermes --description 'hermes of the activated checkout'
         set python $__hermes_worktree/venv/bin/python
     end
     pushd $__hermes_worktree >/dev/null
-    $python hermes $argv
+    $python tandem $argv
     set -l code $status
     popd >/dev/null
     return $code
+end
+
+function hermes
+    tandem $argv
 end
 
 functions -c fish_prompt __hermes_saved_fish_prompt
@@ -107,5 +111,5 @@ function deactivate --description 'undo activate.fish'
     functions -c __hermes_saved_fish_prompt fish_prompt
     functions -e __hermes_saved_fish_prompt
     set -eg __hermes_keys __hermes_worktree __hermes_worktree_name
-    functions -e deactivate hermes __hermes_worktree_here
+    functions -e deactivate tandem hermes __hermes_worktree_here
 end

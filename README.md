@@ -13,7 +13,7 @@ A personal agent harness focused on polished interactions, accessible capabiliti
 - [Status](docs/project/STATUS.md) and [decisions](docs/project/DECISIONS.md): verified progress and durable choices.
 - [Contributing](CONTRIBUTING.md): development and review workflow.
 
-The runtime foundation is present. Project-specific context, proactive, and UI improvements are planned in the roadmap; they are not yet shipped. Existing commands and package names retain `hermes` for compatibility.
+The runtime foundation is present. Project-specific context, proactive, and UI improvements are planned in the roadmap; they are not yet shipped. The terminal command is `tandem` (`tandem --help`, `tandem setup`). After `source ./activate`, it runs this checkout. Source installation publishes it on PATH; `hermes` remains a compatibility alias. Package names, Python imports, environment variables, and profile paths retain their Hermes names. See [local setup](docs/project/DEVELOPMENT.md) for isolated installation.
 
 ## Attribution
 

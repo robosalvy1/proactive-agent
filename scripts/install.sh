@@ -935,11 +935,11 @@ stage_products() {
     if [ "$INCLUDE_DESKTOP" = true ] || desktop_product_present; then
         args+=(--desktop)
     fi
-    (cd "$INSTALL_DIR" && run_logged "Building the hermes command and apps" \
+    (cd "$INSTALL_DIR" && run_logged "Building the tandem command and apps" \
         "$boot_py" -I -B -X utf8 hermes_cli/source_completion.py "${args[@]}") \
         || fail "app products or command publication failed" products_build_failed
     wire_shell_path
-    log_success "app products and hermes command ready"
+    log_success "app products and tandem command ready"
 }
 
 stage_desktop() {
@@ -997,7 +997,7 @@ stage_complete() {
             "$commit" "$BRANCH" "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" > "$INSTALL_DIR/.hermes-bootstrap-complete.tmp"
         mv -f "$INSTALL_DIR/.hermes-bootstrap-complete.tmp" "$INSTALL_DIR/.hermes-bootstrap-complete"
     fi
-    log_success "Hermes Agent install complete. Run: hermes"
+    log_success "Tandem Agent install complete. Run: tandem"
 }
 
 print_path_reload_hint() {
@@ -1014,7 +1014,7 @@ print_path_reload_hint() {
         bash|"") rc="source ~/.bashrc" ;;
         *) rc=". ~/.profile" ;;
     esac
-    log "Reload your shell to use hermes: open a new terminal, or run: $rc"
+    log "Reload your shell to use tandem: open a new terminal, or run: $rc"
 }
 
 run_stage() (
