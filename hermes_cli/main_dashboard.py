@@ -391,7 +391,8 @@ def _respawnable_command_for_current_install(argv: list[str]) -> list[str]:
     """
     root = Path(__file__).resolve().parents[1]
     if (len(argv) > 2 and os.path.basename(argv[0]).startswith("python")
-            and os.path.basename(argv[1]) == "hermes" and Path(argv[1]) != root / "hermes"):
+            and os.path.basename(argv[1]) in ("hermes", "tandem")
+            and Path(argv[1]) not in (root / "hermes", root / "tandem")):
         from hermes_cli._launchers import runtime_command
         return runtime_command(root, argv[2:])
     return list(argv)

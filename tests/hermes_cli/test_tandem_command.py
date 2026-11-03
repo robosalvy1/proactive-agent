@@ -150,3 +150,14 @@ def test_container_boot_strips_either_command(argv, expected):
 def test_dangerous_command_approval_covers_both_commands(command):
     from tools.approval_detection import detect_dangerous_command
     assert detect_dangerous_command(command)[0]
+
+
+@pytest.mark.parametrize('name', ['tandem', 'hermes'])
+def test_dashboard_respawn_rebuilds_stale_console_script_for_either_command(name):
+    from hermes_cli import main_dashboard
+    root = Path(main_dashboard.__file__).resolve().parents[1]
+    stale = ['/old/venv/bin/python', f'/home/u/.local/bin/{name}', 'dashboard', '--port', '9119']
+    rebuilt = main_dashboard._respawnable_command_for_current_install(stale)
+    assert rebuilt != stale and rebuilt[-3:] == ['dashboard', '--port', '9119']
+    checkout = ['/old/venv/bin/python', str(root / name), 'dashboard']
+    assert main_dashboard._respawnable_command_for_current_install(checkout) == checkout
