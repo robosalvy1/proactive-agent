@@ -320,7 +320,7 @@ def test_zip_gate_refuses_and_keeps_a_user_file_named_like_an_update_artifact(tm
 
 
 def test_zip_gate_refuses_on_a_user_file_at_the_old_fixed_journal_temp_name(tmp_path, monkeypatch):
-    """The gate exempted ``.hermes-update-zip-swap.tmp`` as Tandem' own before any journal existed, and
+    """The gate exempted ``.hermes-update-zip-swap.tmp`` as Tandem's own before any journal existed, and
     the journal writer then deleted it (review Z5). Only the writer's unpredictable temp is exempt now."""
     _git_install(tmp_path)
     user = tmp_path / ".hermes-update-zip-swap.tmp"

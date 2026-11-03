@@ -1,4 +1,4 @@
-"""The ``bot_mode_dm.py`` runner entry boots Tandem' dependency environment itself.
+"""The ``bot_mode_dm.py`` runner entry boots Tandem's dependency environment itself.
 
 ``message_agent`` spawns ``<sys.executable> tools/bot_mode_dm.py --run-delivery …`` and the relay
 spawns ``… --wait-reply …`` (``bot_relay.waiter_command``). Under a PM-managed install
@@ -76,7 +76,7 @@ def _run(argv, env):
 
 
 def test_delivery_runner_admits_through_dependencies_it_activates(tmp_path, committed_home):
-    """Live admission (``_admit_live_dm``) imports Tandem' third-party graph. Launched bare, the
+    """Live admission (``_admit_live_dm``) imports Tandem's third-party graph. Launched bare, the
     runner must activate the committed environment and find no live owner — never report an
     ``ambiguous`` import failure. With no owner the local CLI transport fallback is retired: the
     runner answers the typed not-ready refusal and retains the DM, never handing it to the

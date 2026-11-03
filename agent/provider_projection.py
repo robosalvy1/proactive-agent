@@ -1,4 +1,4 @@
-"""Fold an agent-as-provider's own activity back into Tandem' turn state.
+"""Fold an agent-as-provider's own activity back into Tandem's turn state.
 
 Agent providers (ACP CLI shims, the codex app-server) run their own tools, so that
 work must never come back as pending ``tool_calls`` (Tandem would re-run it) — but

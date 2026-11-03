@@ -96,7 +96,7 @@ def _format_missing_scopes(missing_scopes: list[str]) -> str:
 
 
 def install_deps():
-    """Sync Tandem' declared Google extra, ready for the next process."""
+    """Sync Tandem's declared Google extra, ready for the next process."""
     if pm is None:
         print("ERROR: Run this script in the Tandem environment; use tandem setup first.")
         return False

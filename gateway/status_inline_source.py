@@ -1,7 +1,7 @@
 """Inline-source (``python -c <src> …``) command-line parsing for gateway process identity.
 
 Everything after ``-c`` is data for the inline program, not the process's own identity -- except
-Tandem' own bootstraps, which run an entry point in-process and are mapped back to the equivalent
+Tandem's own bootstraps, which run an entry point in-process and are mapped back to the equivalent
 ``python -m <module> <argv…>`` (see #107002).
 """
 

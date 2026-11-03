@@ -1,6 +1,6 @@
 # Minimal responses
 
-The approved response cleanup uses Tandem' existing configuration and presentation paths. Explicit saved settings take precedence; there is no migration that rewrites a user's profile.
+The approved response cleanup uses Tandem's existing configuration and presentation paths. Explicit saved settings take precedence; there is no migration that rewrites a user's profile.
 
 ## Behavior
 

@@ -102,7 +102,7 @@ def test_self_heals_missing_singleton_access_token_from_codex_cli(tmp_path, monk
 
 def test_opt_out_never_adopts_codex_cli_login(tmp_path, monkeypatch):
     """``auth.adopt_external_logins: false`` (#113023): the Codex CLI pair is a single-use refresh-token
-    family the user did not hand to Tandem. Both automatic recovery paths must leave it (and Tandem' own
+    family the user did not hand to Tandem. Both automatic recovery paths must leave it (and Tandem's own
     auth.json) untouched and surface the real error instead."""
     hermes_home = tmp_path / "hermes"
     codex_home = tmp_path / "codex"

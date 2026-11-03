@@ -156,9 +156,9 @@ def is_router_timeout_shim(response: Any) -> bool:
 
 
 def _reasoning_config_for_model(model: str, reasoning_config: dict | None) -> dict | None:
-    """Clamp Tandem' extended effort set (``ultra``) to the OpenAI-compat wire vocabulary.
+    """Clamp Tandem's extended effort set (``ultra``) to the OpenAI-compat wire vocabulary.
 
-    Tandem' internal effort set extends the wire vocabulary with ``ultra`` (the /reasoning command documents
+    Tandem's internal effort set extends the wire vocabulary with ``ultra`` (the /reasoning command documents
     none..xhigh|max|ultra). OpenAI- compatible wires — OpenRouter chief among them — accept exactly
     max|xhigh|high|medium|low|minimal|none and reject the extension with HTTP 400 (#89503). Clamp against
     the declared wire vocabulary via the shared policy in ``agent.reasoning_effort``; provider profiles with

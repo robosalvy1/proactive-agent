@@ -110,7 +110,7 @@ class AcpFake:
         self.launcher.chmod(0o755)
 
     def env(self) -> dict[str, str]:
-        """Env vars that point Tandem' copilot-acp client at this fake."""
+        """Env vars that point Tandem's copilot-acp client at this fake."""
         return {"HERMES_COPILOT_ACP_COMMAND": str(self.launcher),
                 "HERMES_COPILOT_ACP_ARGS": f"--acp --stdio --state {self.state_dir}"}
 
@@ -125,7 +125,7 @@ class AcpFake:
         return [r for r in self.records() if r["dir"] == "in" and (method is None or r["msg"].get("method") == method)]
 
     def main_prompts(self) -> list[dict[str, Any]]:
-        """Main-turn ``session/prompt`` records (those carrying Tandem' tool bridge)."""
+        """Main-turn ``session/prompt`` records (those carrying Tandem's tool bridge)."""
         return [r for r in self.inbound("session/prompt") if r.get("main")]
 
     def aux_prompts(self) -> list[dict[str, Any]]:

@@ -540,7 +540,7 @@ def _start_codex_thread(agent) -> str:
 
 def _codex_model_provider(agent) -> str | None:
     """codex's ``[model_providers.<id>]`` for a named custom provider (``providers.<name>``); None means codex's
-    own provider. Only the stable id is sent and codex resolves base_url/env_key itself, so Tandem' credential
+    own provider. Only the stable id is sent and codex resolves base_url/env_key itself, so Tandem's credential
     never enters the JSON-RPC payload (#75186)."""
     if str(getattr(agent, "provider", "") or "").strip().lower() != "custom":
         return None
@@ -589,7 +589,7 @@ def _codex_turn_effort(agent, model: str | None) -> str | None:
 
 
 def _codex_turn_service_tier(agent) -> str | None:
-    """``turn/start.serviceTier``: the tier Tandem' own Responses path would request this turn (a static
+    """``turn/start.serviceTier``: the tier Tandem's own Responses path would request this turn (a static
     ``/fast`` tier pinned in request_overrides, or an open ``auto``/``cold`` window), in codex's words: the
     OpenAI ``priority`` tier is codex's ``fast``. A tier codex has no word for (``ultrafast``) is not sent."""
     from agent.fast_mode import CODEX_TIER_WORDS, effective_request_overrides

@@ -41,7 +41,7 @@ Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Tandem-managed OA
 ## Scripts
 
 - `scripts/setup.py` — OAuth2 setup (run once to authorize)
-- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Tandem' existing JSON output contract.
+- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Tandem's existing JSON output contract.
 
 ## First-Time Setup
 
@@ -49,7 +49,7 @@ The setup is fully non-interactive — you drive it step by step so it works
 on CLI, Telegram, Discord, or any platform.
 
 Run the setup script with Python from the Tandem environment, not an unrelated
-system Python. `--install-deps` syncs Tandem' declared Google extra through PM;
+system Python. `--install-deps` syncs Tandem's declared Google extra through PM;
 after syncing, restart Tandem and rerun the OAuth command. If Tandem is not
 importable, use `tandem setup` first rather than installing packages with pip.
 

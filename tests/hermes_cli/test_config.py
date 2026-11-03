@@ -68,7 +68,7 @@ class TestEnsureHermesHome:
     # module) so this fixture keeps testing the OLD text regardless of any
     # future change to _LEGACY_TEMPLATE_SOULS's length or ordering.
     _PRE_REWRITE_DEFAULT_SOUL = (
-        "You are Tandem Agent, an intelligent AI assistant created by Nous "
+        "You are Hermes Agent, an intelligent AI assistant created by Nous "
         "Research. You are helpful, knowledgeable, and direct. You assist "
         "users with a wide range of tasks including answering questions, "
         "writing and editing code, analyzing information, creative work, "
@@ -445,7 +445,7 @@ class TestSaveAndLoadRoundtrip:
 class TestLoadEnvInlineComments:
     def test_unquoted_hash_is_a_comment_quoted_hash_is_data(self, tmp_path):
         """load_env is the one dotenv reader (agent.secret_scope.load_env_file): an unquoted ` #...` tail
-        is a comment, a quoted value keeps its hash. Tandem' own writer (_quote_env_value) always quotes
+        is a comment, a quoted value keeps its hash. Tandem's own writer (_quote_env_value) always quotes
         values containing `#`, so a saved secret round-trips."""
         from hermes_cli.config import invalidate_env_cache
 

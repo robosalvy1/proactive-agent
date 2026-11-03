@@ -78,7 +78,7 @@ mutilated.
 
 ## Kanban: artifacts ride completion notifications
 
-If you use Tandem' kanban multi-agent workflow, workers can attach
+If you use Tandem's kanban multi-agent workflow, workers can attach
 deliverable files to their `kanban_complete` call:
 
 ```python

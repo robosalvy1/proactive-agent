@@ -1,6 +1,6 @@
-"""Wire translation for Tandem' extended reasoning-effort vocabulary (#89503).
+"""Wire translation for Tandem's extended reasoning-effort vocabulary (#89503).
 
-Tandem' internal effort set extends the wire vocabulary with ``ultra`` (the
+Tandem's internal effort set extends the wire vocabulary with ``ultra`` (the
 /reasoning command documents none..xhigh|max|ultra). OpenAI-compatible wires —
 OpenRouter chief among them — accept exactly max|xhigh|high|medium|low|minimal|
 none and reject the extension with HTTP 400:

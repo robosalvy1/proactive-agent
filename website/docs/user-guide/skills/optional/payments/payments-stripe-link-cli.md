@@ -176,7 +176,7 @@ rm -f ~/.hermes/cache/scratch/link-card.json
 
 ## Optional: run as an MCP server instead
 
-`@stripe/link-cli --mcp` exposes the same commands as MCP tools over stdio. To register it with Tandem' native MCP:
+`@stripe/link-cli --mcp` exposes the same commands as MCP tools over stdio. To register it with Tandem's native MCP:
 
 ```
 tandem mcp add stripe-link --command "npx" --args "@stripe/link-cli --mcp"

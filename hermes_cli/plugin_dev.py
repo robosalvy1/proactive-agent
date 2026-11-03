@@ -368,7 +368,7 @@ def _check_desktop_half_copy(report: DoctorReport, path: Path) -> None:
 
 
 def doctor_plugin(target: str | os.PathLike[str] | None = None) -> DoctorReport:
-    """Validate one plugin through Tandem' real scanner and registration path."""
+    """Validate one plugin through Tandem's real scanner and registration path."""
     try:
         path = resolve_plugin_path(target)
     except FileNotFoundError as exc:

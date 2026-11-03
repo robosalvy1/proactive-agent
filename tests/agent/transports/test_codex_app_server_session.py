@@ -180,7 +180,7 @@ class TestLifecycle:
         assert len(method_calls) == 1
 
     def test_thread_start_carries_hermes_prompt_and_disables_codex_personality(self):
-        """thread/start carries cwd, Tandem' composed prompt as developerInstructions and
+        """thread/start carries cwd, Tandem's composed prompt as developerInstructions and
         personality "none" (#74712, #72104, #26035). We intentionally do NOT pass `permissions`
         (experimentalApi-gated + requires a matching config.toml [permissions] table)."""
         client = FakeClient()
@@ -433,7 +433,7 @@ class TestRunTurn:
 
     def test_resumed_thread_receives_the_hermes_tier_even_when_it_is_null(self):
         """CLI ``/fast`` rebuilds the agent, so ``/fast off`` reaches a resumed thread that may still carry the
-        earlier tier: its first turn sends Tandem' tier, a clearing null included."""
+        earlier tier: its first turn sends Tandem's tier, a clearing null included."""
         client = FakeClient()
         client.queue_notification("turn/completed", threadId="t",
                                   turn={"id": "turn-fake-001", "status": "completed", "error": None})

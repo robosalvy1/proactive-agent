@@ -164,7 +164,7 @@ We intentionally do NOT honour `#!/...` shebangs — keeping the interpreter set
 
 ### Using your own Python environment
 
-By default a Python cron script runs under Tandem' own Python environment, which only carries Tandem' own dependencies — so a script that imports `openpyxl`, a database driver, or any other package you installed would fail with `ModuleNotFoundError`.
+By default a Python cron script runs under Tandem's own Python environment, which only carries Tandem's own dependencies — so a script that imports `openpyxl`, a database driver, or any other package you installed would fail with `ModuleNotFoundError`.
 
 You can point the job at a **user-managed venv** instead with `--interpreter`:
 
@@ -264,7 +264,7 @@ Silent when both filesystems are under 90%; fires exactly one line per over-thre
 
 | Approach | What runs | When to use |
 |----------|-----------|-------------|
-| `cronjob --no-agent` (this page) | Your script on Tandem' schedule | Recurring watchdogs / alerts / metrics that don't need reasoning |
+| `cronjob --no-agent` (this page) | Your script on Tandem's schedule | Recurring watchdogs / alerts / metrics that don't need reasoning |
 | `cronjob_manage` (default, LLM) | Agent with optional pre-check script | When the message content requires reasoning over data |
 | OS cron + `curl` to a [webhook subscription](../user-guide/messaging/webhooks.md) | Your script on the OS schedule | When Tandem might be unhealthy (the thing you're monitoring) |
 

@@ -91,7 +91,7 @@ class TestCredentialExclusion:
         assert not any(".env" in n for n in names), ".env must NOT be in export"
 
     def test_named_export_ships_no_credential_store_or_copy_of_one(self, tmp_path, monkeypatch):
-        """No credential store (any case spelling) and no copy Tandem' own writers leave of one
+        """No credential store (any case spelling) and no copy Tandem's own writers leave of one
         (pre-update zip, update snapshot, config backup, migration .bak, corrupt auth.json) reaches a
         named-profile export. .op.env, npmrc, home/ CLI stores and the .bak copies have no suffix the
         scrub edits, so exclusion is their only guard; a hand-named config copy is the user's and

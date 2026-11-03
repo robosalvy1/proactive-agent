@@ -333,7 +333,7 @@ class FakeAppServer:
                 self._pending_cv.notify_all()
 
     def server_request(self, method: str, params: dict, timeout: float = 60.0) -> dict:
-        """Issue a server-initiated request and block for Tandem' reply."""
+        """Issue a server-initiated request and block for Tandem's reply."""
         with self._pending_cv:
             self._next_server_id += 1
             rid = self._next_server_id

@@ -83,7 +83,7 @@ def _normalize_for_echo_compare(text: str) -> str:
 def is_tts_echo(transcript: str, spoken_text: str,
                 threshold: float = DEFAULT_TTS_ECHO_SIMILARITY_THRESHOLD) -> bool:
     """True when *transcript* looks like a self-capture of *spoken_text*. Character-level similarity
-    (language-agnostic): a genuine interjection rarely matches Tandem' own words, so a high ratio signals
+    (language-agnostic): a genuine interjection rarely matches Tandem's own words, so a high ratio signals
     speaker-bleed (fail-closed guard for the playback-phase listener). Playback capture spans only pre-roll
     plus time-to-silence, so for long replies the transcript is a FRAGMENT and the whole-string ratio dilutes
     toward 0; when it misses, a transcript-sized window slides across `spoken_text`. Transcripts shorter than

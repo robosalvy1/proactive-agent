@@ -48,7 +48,7 @@ _CRON_STORE_REL = ("cron", "jobs.json")
 
 
 def _is_installer_owned_path(parts: tuple[str, ...]) -> bool:
-    """Entries a distribution never writes: credential stores (and Tandem' copies of them) at any
+    """Entries a distribution never writes: credential stores (and Tandem's copies of them) at any
     depth, and runtime-owned entries nested under otherwise distribution-owned roots."""
     if profile_path_is_private(parts):
         return True

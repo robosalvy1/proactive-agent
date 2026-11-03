@@ -155,7 +155,7 @@ def test_personality_persists_to_the_profile_and_drives_the_next_turn(tmp_path):
                 await settled(home)
                 systems = [' '.join(str(m.get('content')) for m in body['messages'] if m['role'] == 'system')
                            for body in peer.requests]
-                assert 'Captain Tandem' not in systems[0] and 'Captain Tandem' in systems[-1], systems
+                assert 'Captain Tandem's not in systems[0] and 'Captain Tandem's in systems[-1], systems
                 assert (await rpc(ws, 'config.set', key='personality', value='nobody', session_id=sid)
                         ).get('error', {}).get('message') == 'unknown_personality'
                 result = await rpc(ws, 'config.set', key='personality', value='none', session_id=sid)

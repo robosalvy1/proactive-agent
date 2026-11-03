@@ -2402,7 +2402,7 @@ class CLICommandsMixin(CLICommandsSessionToolsMixin):
             _cp(_t("voice.unknown_subcommand", subcommand=subcommand), _t("voice.usage"))
 
     def _handle_wake_command(self, command: str):
-        """Handle /wake [on|off|status] — the 'Hey Tandem' hotword listener. The toggle IS the
+        """Handle /wake [on|off|status] — the 'Hey Tandem's hotword listener. The toggle IS the
         config: on/off also writes ``wake_word.enabled`` so the choice persists; startup
         auto-arm only reads it."""
         subcommand = _command_arg(command, lower=True) or (

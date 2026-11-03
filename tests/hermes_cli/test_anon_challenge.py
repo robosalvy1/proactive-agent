@@ -1,6 +1,6 @@
 """Nous free tier: the browser challenge in front of a token exchange (``hermes_cli.anon_challenge``).
 
-Driven through the fake NAS with Tandem' real client code: the exchange hits a 428, the challenge is
+Driven through the fake NAS with Tandem's real client code: the exchange hits a 428, the challenge is
 presented and polled OUTSIDE the auth locks, and the exchange runs once more.
 """
 
