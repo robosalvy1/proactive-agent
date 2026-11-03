@@ -1584,7 +1584,7 @@ def _is_hermes_argv(argv: list) -> bool:
     or a python interpreter directly exec'ing a known ``hermes`` console-script shim."""
     joined = " ".join(argv)
     exe_name = os.path.basename(argv[0]).lower()
-    if any(marker in joined for marker in _HERMES_ARGV_MARKERS) or exe_name.startswith(("hermes", "tandem")):
+    if any(marker in joined for marker in _HERMES_ARGV_MARKERS) or exe_name.startswith("hermes") or exe_name in ("tandem", "tandem.exe"):
         return True
     if len(argv) >= 2 and _PYTHON_INTERPRETER_RE.match(exe_name):
         script_name = os.path.basename(str(argv[1])).lower()

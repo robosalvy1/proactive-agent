@@ -51,6 +51,12 @@ def test_uninstall_removes_owned_tandem_wrapper_only(tmp_path, monkeypatch):
     wrapper.write_text('#!/bin/sh\nexec another-tool "$@"\n', encoding='utf-8')
     assert uninstall.remove_wrapper_script() == []
     assert wrapper.exists()
+    # The published launcher names only the checkout's store launcher, not hermes_cli.
+    wrapper.write_text(f'#!/bin/sh\nexec {tmp_path}/work/.hermes/bin/tandem "$@"\n', encoding='utf-8')
+    assert uninstall.remove_wrapper_script() == [wrapper]
+    wrapper.write_text('#!/bin/sh\nexec another-tool "$@"\n', encoding='utf-8')
+    assert uninstall.remove_wrapper_script() == []
+    assert wrapper.exists()
 
 
 def test_completion_scripts_register_tandem_and_hermes():
@@ -75,6 +81,7 @@ def test_tandem_processes_are_recognised_as_hermes(argv):
     from hermes_cli.profiles import _is_hermes_argv
     assert _is_hermes_argv(argv)
     assert not _is_hermes_argv(['python3', '/v/bin/tandem-notes.py'])
+    assert not _is_hermes_argv(['tandem-notes', 'gateway', '-p', 'work'])
 
 
 def test_published_tandem_launcher_is_owned(tmp_path):
