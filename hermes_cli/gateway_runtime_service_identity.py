@@ -69,7 +69,7 @@ def verify_gateway_argv(argv: list[str], home: Path) -> None:
         if argv[1:3] != ["-m", "hermes_cli.main"]:
             _unverified()
         args = argv[3:]
-    elif executable in {"hermes", "hermes.exe"}:
+    elif executable in {"hermes", "hermes.exe", "tandem", "tandem.exe"}:
         args = argv[1:]
     else:
         _unverified()

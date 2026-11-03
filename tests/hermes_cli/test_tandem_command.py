@@ -85,3 +85,16 @@ def test_published_tandem_launcher_is_owned(tmp_path):
         assert _owns_launcher(target, tmp_path), name
     target.write_text('#!/bin/sh\nexec another-tool "$@"\n', encoding='utf-8')
     assert not _owns_launcher(target, tmp_path)
+
+
+@pytest.mark.parametrize('command', [
+    'tandem gateway run',
+    'tandem.exe gateway run',
+    '/usr/bin/python3 /repo/tandem gateway run',
+    'tandem -p work gateway',
+    'hermes gateway run',
+])
+def test_tandem_gateway_is_recognised_as_running_gateway(command):
+    from gateway.status import looks_like_gateway_command_line
+    assert looks_like_gateway_command_line(command)
+    assert not looks_like_gateway_command_line('tandem chat')
