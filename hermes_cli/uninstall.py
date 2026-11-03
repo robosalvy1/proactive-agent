@@ -926,7 +926,7 @@ def _macos_cache_leftover_dirs() -> list[Path]:
     (``Application Support/Hermes``) but never these (#62209)."""
     caches = Path.home() / "Library" / "Caches"
     return [
-        caches / "Tandem",
+        caches / "Hermes",
         caches / "com.nousresearch.hermes",
         caches / "hermes-setup",
         caches / "com.nousresearch.hermes.setup",

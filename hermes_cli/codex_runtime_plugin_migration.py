@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # Marker comments wrapping the managed section so re-runs can detect what's ours and what's
 # user-edited. Both must appear or strip is a no-op.
 MIGRATION_MARKER = (
-    "# managed by hermes-agent — `tandem codex-runtime migrate` regenerates this section")
+    "# managed by hermes-agent — `hermes codex-runtime migrate` regenerates this section")  # brand-compat: persisted marker
 MIGRATION_END_MARKER = "# end hermes-agent managed section"
 
 

@@ -237,7 +237,7 @@ def moved_command_hint(prog: str, value: str, action: str = "") -> str:
     how to get it for the active home, else ``""``."""
     from hermes_constants import get_hermes_home
     feature = next((f for f in LEFT_CORE if f.cli and f.cli == value), None)
-    if feature is None or prog not in {"hermes", "tandem", "tandem auth", "tandem auth"}:
+    if feature is None or prog not in {"hermes", "tandem", "hermes auth", "tandem auth"}:  # brand-compat
         return ""
     home = Path(get_hermes_home())
     install = _install_command(feature.plugin, home)
@@ -245,8 +245,8 @@ def moved_command_hint(prog: str, value: str, action: str = "") -> str:
         get = f" Install it with: `{install}`."
     else:
         get = f" Enable it with: `{install.replace(' install ', ' enable ')}`." if prog in ("hermes", "tandem") else ""
-    if prog in ("tandem auth", "tandem auth"):
-        old = " ".join(p for p in (prog, action, value) if p)
+    if prog in ("hermes auth", "tandem auth"):  # brand-compat
+        old = " ".join(p for p in ("tandem auth", action, value) if p)
         return (f"{feature.label} moved out of core into the '{feature.plugin}' plugin: `{old}` is now "
                 f"`tandem {value} {action or 'login'}`.{get}")
     return f"{feature.label} moved out of core into the '{feature.plugin}' plugin, which is not loaded.{get}"

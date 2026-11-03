@@ -160,7 +160,7 @@ def _desktop_argv_tail(project_root: Optional[Path]) -> list[str]:
     packaged = any(
         (release / dist / name).exists()
         for dist in ("linux-unpacked", "linux-arm64-unpacked")
-        for name in ("hermes", "Tandem")
+        for name in ("hermes", "Hermes")
     )
     return ["desktop", "--skip-build"] if packaged else ["desktop"]
 

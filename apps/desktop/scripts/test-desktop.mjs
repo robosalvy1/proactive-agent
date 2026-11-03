@@ -118,10 +118,10 @@ function ensurePackagedApp() {
 
 function resolveDmgPath() {
   if (!exists(RELEASE_ROOT)) {
-    return path.join(RELEASE_ROOT, `Tandem-${PACKAGE_JSON.version}-${ARCH}.dmg`)
+    return path.join(RELEASE_ROOT, `Hermes-${PACKAGE_JSON.version}-${ARCH}.dmg`)
   }
 
-  const prefix = `Tandem-${PACKAGE_JSON.version}`
+  const prefix = `Hermes-${PACKAGE_JSON.version}`
   const candidates = fs
     .readdirSync(RELEASE_ROOT)
     .filter(name => name.endsWith('.dmg'))
@@ -135,7 +135,7 @@ function resolveDmgPath() {
 
   return candidates.length > 0
     ? path.join(RELEASE_ROOT, candidates[0])
-    : path.join(RELEASE_ROOT, `Tandem-${PACKAGE_JSON.version}-${ARCH}.dmg`)
+    : path.join(RELEASE_ROOT, `Hermes-${PACKAGE_JSON.version}-${ARCH}.dmg`)
 }
 
 function resolveMsixPath() {

@@ -64,7 +64,7 @@ def packaged_gui_app_paths() -> list[Path]:
         # NSIS per-user install (perMachine=false), an older/alternate layout, NSIS per-machine (needs admin).
         program_files = os.environ.get("ProgramFiles")
         return [local_base / "Programs" / "Hermes", local_base / "hermes-desktop"] + (
-            [Path(program_files) / "Tandem"] if program_files else [])
+            [Path(program_files) / "Hermes"] if program_files else [])
     # Linux: an AppImage lives wherever the user put it and deb/rpm files belong to the package manager
     # (see the hint in ``uninstall_gui``), so only the desktop entry + hicolor icons are cleaned here.
     from hermes_cli.linux_desktop_entry import LEGACY_DESKTOP_ENTRY_NAME, desktop_entry_path
