@@ -1189,13 +1189,13 @@ function Invoke-SourceCompletion([bool]$Desktop) {
     if ($Desktop) { $completionArgs += '--desktop' }
     Push-Location $InstallDir
     try {
-        Invoke-Logged "Building the hermes command and apps" { & $bootPy @completionArgs }
+        Invoke-Logged "Building the tandem command and apps" { & $bootPy @completionArgs }
         $code = $LASTEXITCODE
     } finally {
         Pop-Location
     }
     if ($code) { Fail "app products or command publication failed (exit $code)" products_build_failed }
-    Write-Ok "app products and hermes command ready"
+    Write-Ok "app products and tandem command ready"
 }
 
 function Publish-UserCommand {
@@ -1206,14 +1206,14 @@ function Publish-UserCommand {
     $bootPy = Get-BootstrapPython
     Push-Location $InstallDir
     try {
-        Invoke-Logged "Publishing the hermes command" { & $bootPy -I -X utf8 hermes_cli/_launchers.py $binDir }
+        Invoke-Logged "Publishing the tandem command" { & $bootPy -I -X utf8 hermes_cli/_launchers.py $binDir }
         $code = $LASTEXITCODE
     } finally {
         Pop-Location
     }
     if ($code) { Fail "launcher staging failed" products_build_failed }
     Set-LauncherUserPath $binDir
-    Write-Ok "hermes command installed at $binDir"
+    Write-Ok "tandem command installed at $binDir"
 }
 
 function Test-DesktopProductPresent {
@@ -1263,7 +1263,7 @@ function Write-PathReloadHint {
     # iex'd text always runs in the caller's process, where the prepend in
     # Set-LauncherUserPath already made `hermes` resolvable.
     if (-not $script:RunAsFile -or $script:BinDirOnCallerPath -ne $false) { return }
-    Log 'Restart your terminal to use hermes, or run: $env:Path = [Environment]::GetEnvironmentVariable(''Path'',''User'') + '';'' + [Environment]::GetEnvironmentVariable(''Path'',''Machine'')'
+    Log 'Restart your terminal to use tandem, or run: $env:Path = [Environment]::GetEnvironmentVariable(''Path'',''User'') + '';'' + [Environment]::GetEnvironmentVariable(''Path'',''Machine'')'
 }
 
 function Stage-Config {
@@ -1375,7 +1375,7 @@ function Stage-Complete {
             completedAt = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
         }
         $marker | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $InstallDir ".hermes-bootstrap-complete") -Encoding UTF8
-        Write-Ok "Hermes Agent install complete (pinned $commit). Run: hermes"
+        Write-Ok "Tandem Agent install complete (pinned $commit). Run: tandem"
     }
 }
 

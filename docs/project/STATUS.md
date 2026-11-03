@@ -175,3 +175,35 @@ Next: a live smoke test on a disposable profile with one MCP server or Google ac
 Implemented the approved response-polish changes on the feature branch: concise defaults, clean scheduled deliveries, name-first cron summaries with explicit details, quieter UI defaults, bounded resume output, and actionable errors. [RESPONSE_POLISH.md](RESPONSE_POLISH.md) records the behavior and controls.
 
 Provisioned an isolated PM-managed Python test environment and JS workspace dependencies. Passed focused Python acceptance (150 tests), history projection (26), isolated Python checks (59), cron review regressions (24), TUI rendering (22), focused desktop checks (48), TUI type/build checks, and lint for changed JS files. CodeRabbit review fixes normalize cron delivery destinations, redact/bound manual-run errors, and preserve supported explicit reasoning settings. [PR #1](https://github.com/robosalvy1/proactive-agent/pull/1) records final desktop validation, repository gates, and review/merge status. No live provider, personal profile, external delivery, or recurring test job was used; the full runtime suite was not run.
+
+## Tandem CLI invocation (2026-11-03)
+
+Added `tandem` as the preferred terminal invocation in Python console metadata,
+checkout launcher, PM/source launcher publication, Windows launcher repair,
+Bash/fish/PowerShell activation, installer completion guidance and top-level
+help/examples. `hermes` remains an alias; no interim `proactive` entry point ships.
+Package identity, imports, profile paths, environment variables and internal service
+commands are preserved. The wider rebrand, including the inherited Hermes version
+banner and remaining upstream guidance, is separate work.
+
+Validation: the canonical no-retry runner on `tests/hermes_cli/test_tandem_command.py`,
+`test_source_launcher_publication.py`, `test_ensure_windows_bin_launchers.py`,
+`test_hermes_home_shared_launchers.py`, `test_uninstall_windows_bin_launchers.py`,
+and `tests/pm/{test_activation_runtime,test_activate_fish}.py` passed 49 tests
+with 34 skips (native Windows, PowerShell/fish unavailable). A follow-up rerun of
+the command file passed all 10 tests, including the added owned/foreign
+uninstall-wrapper regression.
+Actual PATH-based `tandem --help`, `tandem chat --help`, `tandem --version` and an
+invalid-option exit-2 check passed with a temporary published launcher, prepared
+`.venv` interpreter and disposable home. Launcher fixtures also execute PM-published
+commands against selected synthetic runtime generations and verify argument/home
+preservation. Focused Ruff and Bash syntax checks passed. `tandem pm lock` found
+`uv.lock` already current.
+
+The existing managed installation lacks committed runtime dependencies: its store
+launcher fails on missing `ruamel.yaml`. Publication alone cannot repair that; no
+global launcher was left installed by the probe. The prepared `.venv` runs the real
+CLI. Full `scripts/check` failed on unrelated BOM reads in personal-home code, an
+ignored dependency archive, a history-test Ruff finding, and PersonalApp complexity.
+No full runtime suite, live provider, native Windows/fish/PowerShell validation,
+merge, deployment or external installer was run.

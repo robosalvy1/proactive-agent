@@ -102,10 +102,10 @@ function global:_hermesWorktreeHere {
     return $here.Equals($root, [System.StringComparison]::OrdinalIgnoreCase)
 }
 
-function global:hermes {
+function global:tandem {
     if (-not (_hermesWorktreeHere)) {
         $here = (Get-Location).Path
-        Write-Error "hermes: $here is outside $($global:_hermesWorktree); refusing (the installed command is hidden while this checkout is active)" -ErrorAction Continue
+        Write-Error "tandem: $here is outside $($global:_hermesWorktree); refusing (the installed command is hidden while this checkout is active)" -ErrorAction Continue
         $global:LASTEXITCODE = 1
         return
     }
@@ -121,11 +121,13 @@ function global:hermes {
             }
         }
         if (-not $py) { $py = 'python' }
-        & $py hermes @args
+        & $py tandem @args
     } finally {
         Pop-Location
     }
 }
+
+function global:hermes { tandem @args }
 
 function global:prompt {
     $prefix = ''
@@ -152,5 +154,5 @@ function global:deactivate {
     $global:_hermesWorktree = $null
     $global:_hermesWorktreeName = $null
     $global:_hermesSavedPrompt = $null
-    Remove-Item function:deactivate, function:hermes, function:_hermesWorktreeHere -ErrorAction SilentlyContinue
+    Remove-Item function:deactivate, function:tandem, function:hermes, function:_hermesWorktreeHere -ErrorAction SilentlyContinue
 }

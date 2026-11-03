@@ -166,9 +166,11 @@ def remove_wrapper_script():
     """Remove the hermes wrapper script if it exists."""
     wrapper_paths = [
         Path.home() / ".local" / "bin" / "hermes",
+        Path.home() / ".local" / "bin" / "tandem",
         Path.home() / ".local" / "bin" / "hermes-acp",
         Path.home() / ".local" / "bin" / "hermes-agent",
         Path("/usr/local/bin/hermes"),
+        Path("/usr/local/bin/tandem"),
         Path("/usr/local/bin/hermes-acp"),
         Path("/usr/local/bin/hermes-agent"),
     ]
@@ -177,9 +179,10 @@ def remove_wrapper_script():
     for wrapper in wrapper_paths:
         if wrapper.exists():
             try:
-                # Check if it's our wrapper (contains hermes_cli reference)
+                # Check if it's our wrapper: a hermes_cli reference, or the published
+                # launcher that forwards to <checkout>/.hermes/bin/<command>.
                 content = wrapper.read_text(encoding="utf-8-sig")
-                if 'hermes_cli' in content or 'hermes-agent' in content:
+                if 'hermes_cli' in content or 'hermes-agent' in content or '/.hermes/bin/' in content:
                     wrapper.unlink()
                     removed.append(wrapper)
             except Exception as e:

@@ -92,3 +92,12 @@ The feature is one opt-in (`memory.home_recall.observe`) because it sends conver
 Update (2026-10-22): the connections request now reads every validated observation (up to 30,000 characters), not only the profile, because profile compression drops details that matter. Across 138 scenarios in five sets (two generated after the design was fixed) it raised proactive recall from 70% (profile) to 83%, with fewer intrusions and no invented memories; on the last fresh set 69% → 77%. It is therefore on by default once `observe` is opted into, at one auxiliary request per turn (median 3.3 s); `connect: false` keeps the profile only. Prompt-only variants that won on their tuning sets but not on fresh sets were dropped.
 
 Update (2026-10-24): the model behind the auxiliary route is the largest lever. With GPT-6 Sol as observer, reflector and check, fresh sets v6 and v7 reached 89% and 96% (93% of 54 scenarios; one invented detail, no intrusions) versus 74% on v6 with GPT-5.6 Luna; a strong model is recommended in the docs rather than hard-coded, because the route stays user-configurable.
+
+## 2026-11-03 — Tandem terminal invocation
+
+Use `tandem` as the preferred public command for Tandem Agent. Retain `hermes` as
+a compatibility alias into the same CLI, plus existing `hermes-agent`/`hermes-acp`
+compatibility entry points. Do not ship the superseded interim `proactive` command.
+Source/PM launcher publication and shell activation expose `tandem`; package
+identity, Python imports, profile paths, environment variables and internal service
+commands remain unchanged. Broader product branding is a separate workstream.

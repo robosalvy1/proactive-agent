@@ -69,7 +69,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
     cases_str = "\n".join(cases)
     return f"""# Hermes Agent bash completion
 # Add to ~/.bashrc:
-#   eval "$(hermes completion bash)"
+#   eval "$(tandem completion bash)"
 
 _hermes_profiles() {{
     local profiles_dir="$HOME/.hermes/profiles"
@@ -105,7 +105,7 @@ _hermes_completion() {{
     fi
 }}
 
-complete -F _hermes_completion hermes
+complete -F _hermes_completion hermes tandem
 """
 
 
@@ -152,10 +152,10 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
                 f"                    _describe '{cmd} command' {safe}_cmds\n"
                 f"                    ;;")
     sub_cases_str = "\n".join(sub_cases)
-    return f"""#compdef hermes
+    return f"""#compdef hermes tandem
 # Hermes Agent zsh completion
 # Add to ~/.zshrc:
-#   eval "$(hermes completion zsh)"
+#   eval "$(tandem completion zsh)"
 
 _hermes_profiles() {{
     local -a profiles
@@ -193,7 +193,7 @@ _hermes() {{
     esac
 }}
 
-compdef _hermes hermes
+compdef _hermes hermes tandem
 """
 
 
@@ -203,7 +203,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
     lines: list[str] = [
         "# Hermes Agent fish completion",
         "# Add to your config:",
-        "#   hermes completion fish | source",
+        "#   tandem completion fish | source",
         "",
         "# Helper: list available profiles",
         "function __hermes_profiles",
@@ -245,5 +245,8 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
                     f"-n '__fish_seen_subcommand_from {action}; "
                     f"and __fish_seen_subcommand_from profile' "
                     f"-a '(__hermes_profiles)' -d 'Profile name'")
+    # The same registrations for the preferred command; ``hermes`` stays an alias.
+    lines += [line.replace("complete -c hermes ", "complete -c tandem ", 1)
+              for line in lines if line.startswith("complete -c hermes ")]
     lines.append("")
     return "\n".join(lines)

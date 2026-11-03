@@ -640,7 +640,7 @@ def _resolve_hermes_bin_dir() -> str | None:
     shim = "hermes.exe" if _IS_WINDOWS else "hermes"
     if which:
         candidate = os.path.dirname(which)
-    elif (os.path.isabs(argv0) and (base == "hermes" or base.startswith("hermes."))
+    elif (os.path.isabs(argv0) and (base in ("hermes", "tandem") or base.startswith(("hermes.", "tandem.")))
             and os.path.isfile(argv0)):
         candidate = os.path.dirname(argv0)
     else:
