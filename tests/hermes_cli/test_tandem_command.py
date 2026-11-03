@@ -51,3 +51,37 @@ def test_uninstall_removes_owned_tandem_wrapper_only(tmp_path, monkeypatch):
     wrapper.write_text('#!/bin/sh\nexec another-tool "$@"\n', encoding='utf-8')
     assert uninstall.remove_wrapper_script() == []
     assert wrapper.exists()
+
+
+def test_completion_scripts_register_tandem_and_hermes():
+    import argparse
+    from hermes_cli.completion import generate_bash, generate_fish, generate_zsh
+    parser = argparse.ArgumentParser(prog='tandem')
+    parser.add_subparsers(dest='command').add_parser('chat', help='Chat')
+    assert 'complete -F _hermes_completion hermes tandem' in generate_bash(parser)
+    assert 'compdef _hermes hermes tandem' in generate_zsh(parser)
+    fish = generate_fish(parser).splitlines()
+    for command in ('hermes', 'tandem'):
+        assert f"complete -c {command} -f -n 'not __fish_seen_subcommand_from chat' -a chat -d 'Chat'" in fish
+
+
+@pytest.mark.parametrize('argv', [
+    ['tandem', 'gateway', 'run'],
+    ['tandem.exe', 'gateway'],
+    ['python3', '/v/bin/tandem', 'gateway', 'run'],
+    ['hermes', 'gateway', 'run'],
+])
+def test_tandem_processes_are_recognised_as_hermes(argv):
+    from hermes_cli.profiles import _is_hermes_argv
+    assert _is_hermes_argv(argv)
+    assert not _is_hermes_argv(['python3', '/v/bin/tandem-notes.py'])
+
+
+def test_published_tandem_launcher_is_owned(tmp_path):
+    from hermes_cli._launchers import _owns_launcher
+    target = tmp_path / 'tandem'
+    for name in ('tandem', 'hermes'):
+        target.write_text(f'#!/bin/sh\nexec {tmp_path}/.hermes/bin/{name} "$@"\n', encoding='utf-8')
+        assert _owns_launcher(target, tmp_path), name
+    target.write_text('#!/bin/sh\nexec another-tool "$@"\n', encoding='utf-8')
+    assert not _owns_launcher(target, tmp_path)

@@ -516,7 +516,7 @@ def _owns_launcher(target: Path, root: Path) -> bool:
     paths = {str(root / p) for p in (
         "hermes", "run_agent.py", "venv/bin/python", "venv/bin/python3",
         "venv/bin/hermes",
-        ".hermes/bin/hermes", ".hermes/bin/hermes-acp",
+        ".hermes/bin/hermes", ".hermes/bin/hermes-acp", ".hermes/bin/tandem",
     )}
     # Current store launchers pass this Python bootstrap as one shell argument.
     bootstrap = f"sys.path.insert(0, {str(root)!r})"
