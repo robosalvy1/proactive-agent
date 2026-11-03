@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Scoránaigh mód gutha"
   wake:
-    description: "Scoránaigh éisteoir an fhocail dúisithe 'Hey Tandem'"
+    description: "Scoránaigh éisteoir an fhocail dúisithe 'Hey Hermes'"
   busy:
     description: "Rialaigh conas a iompraíonn teachtaireachtaí fad atá Tandem ag obair"
   tools:

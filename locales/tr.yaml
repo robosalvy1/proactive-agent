@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Ses modunu aç/kapat"
   wake:
-    description: "'Hey Tandem's uyandırma sözcüğü dinleyicisini aç/kapat"
+    description: "'Hey Hermes' uyandırma sözcüğü dinleyicisini aç/kapat"
   busy:
     description: "Tandem çalışırken mesajların nasıl işleneceğini denetle"
   tools:

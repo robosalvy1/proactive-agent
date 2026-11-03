@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "开关语音模式"
   wake:
-    description: "开关 'Hey Tandem' 唤醒词监听"
+    description: "开关 'Hey Hermes' 唤醒词监听"
   busy:
     description: "控制 Tandem 工作期间收到消息时的处理方式"
   tools:

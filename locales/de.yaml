@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Sprachmodus umschalten"
   wake:
-    description: "Aktivierungswort-Erkennung für 'Hey Tandem's umschalten"
+    description: "Aktivierungswort-Erkennung für 'Hey Hermes' umschalten"
   busy:
     description: "Steuern, wie Nachrichten behandelt werden, während Tandem arbeitet"
   tools:

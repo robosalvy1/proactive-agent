@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Wissel stemmodus"
   wake:
-    description: "Wissel die 'Hey Tandem'-wekwoordluisteraar"
+    description: "Wissel die 'Hey Hermes'-wekwoordluisteraar"
   busy:
     description: "Beheer hoe boodskappe hanteer word terwyl Tandem werk"
   tools:

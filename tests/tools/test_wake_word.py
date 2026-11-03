@@ -1,4 +1,4 @@
-"""Tests for tools.wake_word — the "Hey Tandem" hotword detector.
+"""Tests for tools.wake_word — the "Hey Hermes" hotword detector.
 
 No live audio or network: the sounddevice import is faked, engines are stubbed,
 and lazy-dep availability is monkeypatched. Covers config resolution, engine

@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "音声モードを切り替え"
   wake:
-    description: "'Hey Tandem' ウェイクワードのリスナーを切り替え"
+    description: "'Hey Hermes' ウェイクワードのリスナーを切り替え"
   busy:
     description: "Tandem の作業中にメッセージをどう扱うかを制御"
   tools:

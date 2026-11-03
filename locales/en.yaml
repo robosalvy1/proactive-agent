@@ -1678,7 +1678,7 @@ slash:
   voice:
     description: "Toggle voice mode"
   wake:
-    description: "Toggle the 'Hey Tandem's wake word listener"
+    description: "Toggle the 'Hey Hermes' wake word listener"
   busy:
     description: "Control how messages behave while Tandem is working"
   tools:

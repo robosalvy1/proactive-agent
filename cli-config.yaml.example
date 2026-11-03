@@ -1733,7 +1733,7 @@ stt:
 #     model: ""
 #     voice: "default"
 
-# "Hey Tandem" hands-free wake word (off by default; toggle with /wake).
+# "Hey Hermes" hands-free wake word (off by default; toggle with /wake).
 # Full engine/provider options inherit from DEFAULT_CONFIG in
 # hermes_cli/config_defaults.py — only capture placement is documented here.
 # wake_word:

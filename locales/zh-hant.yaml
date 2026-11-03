@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "切換語音模式"
   wake:
-    description: "切換「Hey Tandem」喚醒詞監聽"
+    description: "切換「Hey Hermes」喚醒詞監聽"
   busy:
     description: "控制 Tandem 工作中時訊息的處理方式"
   tools:

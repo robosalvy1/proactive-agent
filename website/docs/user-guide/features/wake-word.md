@@ -1,10 +1,10 @@
 ---
 sidebar_position: 11
 title: "Wake Word"
-description: "Hands-free 'Hey Tandem's wake word — start a voice session by speaking, the 'Hey Siri' way"
+description: "Hands-free 'Hey Hermes' wake word — start a voice session by speaking, the 'Hey Siri' way"
 ---
 
-# Wake Word ("Hey Tandem")
+# Wake Word ("Hey Hermes")
 
 The wake word turns Tandem into a hands-free assistant across the CLI, TUI, and
 desktop app: with one setting on, Tandem listens in the background for a spoken
@@ -223,7 +223,7 @@ command records.
 
 ## Using a different phrase
 
-"Hey Tandem" is the default detection phrase with openWakeWord and sherpa.
+"Hey Hermes" is the default detection phrase with openWakeWord and sherpa.
 Porcupine uses its configured keyword instead ("jarvis" by default).
 To wake on something else, the easiest path on supported platforms is the
 open-vocabulary engine:
@@ -293,7 +293,7 @@ syllables with an uncommon word ("hermes" qualifies) beat common words like
 
 ### Option C — Porcupine (custom keyword in seconds)
 
-Create a "Hey Tandem" keyword in the [Picovoice Console](https://console.picovoice.ai/),
+Create a "Hey Hermes" keyword in the [Picovoice Console](https://console.picovoice.ai/),
 download the `.ppn`, and:
 
 ```yaml

@@ -1624,7 +1624,7 @@ slash:
   voice:
     description: "Hangmód be-/kikapcsolása"
   wake:
-    description: "A 'Hey Tandem' ébresztőszó-figyelő be-/kikapcsolása"
+    description: "A 'Hey Hermes' ébresztőszó-figyelő be-/kikapcsolása"
   busy:
     description: "Az üzenetek viselkedésének beállítása, amíg a Tandem dolgozik"
   tools:

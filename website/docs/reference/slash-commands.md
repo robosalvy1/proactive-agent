@@ -96,7 +96,7 @@ Type `/` in the CLI to open the autocomplete menu. Built-in commands are case-in
 | `/busy [queue\|steer\|interrupt\|status]` | Control what happens when you message while Tandem is working — queue the new message, steer mid-turn, or interrupt immediately. Works in the CLI and messaging gateway. |
 | `/indicator [kaomoji\|emoji\|unicode\|ascii]` | CLI-only: pick the TUI busy-indicator style. |
 | `/timestamps [on\|off\|status]` | CLI-only: toggle `[HH:MM]` timestamps on messages and in `/history`. |
-| `/wake [on\|off\|status]` | CLI-only: toggle the "Hey Tandem" wake word listener. |
+| `/wake [on\|off\|status]` | CLI-only: toggle the "Hey Hermes" wake word listener. |
 
 ### Tools & Skills
 

@@ -1,4 +1,4 @@
-"""Wake-word ("Hey Tandem") detection — hands-free session trigger.
+"""Wake-word ("Hey Hermes") detection — hands-free session trigger.
 
 One always-on hotword listener shared by CLI, TUI and desktop GUI (a single owner,
 gated by ``wake_surface_enabled``). Engines live in :mod:`tools.wake_word_engines`;

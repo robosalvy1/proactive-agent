@@ -52,7 +52,7 @@ def test_an_older_release_delete_of_a_ledgered_session_is_refused_with_the_way_b
     with pytest.raises(sqlite3.IntegrityError) as refused:
         _older_release_delete(path, 'ledgered')
     message = str(refused.value)
-    assert 'newer Tandem's in message and 'Downgrading is unsupported' in message
+    assert 'newer Tandem' in message and 'Downgrading is unsupported' in message
     assert 'tandem update' in message and 'pre-update snapshot' in message
     # The older release buckets by phrase; this must not read as damage, contention or a full disk.
     assert classify_persistence_error(refused.value) == 'unknown'

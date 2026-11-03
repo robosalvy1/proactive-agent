@@ -107,7 +107,7 @@ function Get-ResolvedPaths {
   }
   else {
     $appData = if ($env:APPDATA) { $env:APPDATA } else { Join-Path $userProfile 'AppData\Roaming' }
-    $userData = Join-Path $appData "Tandem$suffix"
+    $userData = Join-Path $appData "Hermes$suffix"
     $userDataSource = 'default'
   }
   return [pscustomobject]@{
@@ -310,7 +310,7 @@ function Invoke-Pre {
   $volumes = @($volumes | Select-Object -Unique)
 
   Step 'before we start (nothing here is pass/fail, just read it)'
-  $procs = @(Get-Process -Name 'Tandem', 'hermes' -ErrorAction SilentlyContinue)
+  $procs = @(Get-Process -Name 'Hermes', 'hermes' -ErrorAction SilentlyContinue)
   if ($procs.Count) {
     Warn 'Tandem looks like it is running -- close the desktop app and the gateway'
     Warn "before you run 'hermes update', or the dependency sync may fail:"
@@ -515,7 +515,7 @@ function Invoke-Post {
   Confirm-Action "Put everything back from $($script:Snap)?"
 
   Step 'stopping Tandem'
-  foreach ($name in @('Tandem', 'hermes')) {
+  foreach ($name in @('Hermes', 'hermes')) {
     Get-Process -Name $name -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
   }
   Ok 'asked Tandem to stop (if anything was running)'

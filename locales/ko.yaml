@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "음성 모드 전환"
   wake:
-    description: "'Hey Tandem' 웨이크 워드 감지 전환"
+    description: "'Hey Hermes' 웨이크 워드 감지 전환"
   busy:
     description: "Hermes가 작업 중일 때 메시지 처리 방식 제어"
   tools:

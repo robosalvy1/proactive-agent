@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Перемкнути голосовий режим"
   wake:
-    description: "Перемкнути слухач слова активації 'Hey Tandem'"
+    description: "Перемкнути слухач слова активації 'Hey Hermes'"
   busy:
     description: "Керувати поведінкою повідомлень, поки Tandem працює"
   tools:

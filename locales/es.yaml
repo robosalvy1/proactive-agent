@@ -1607,7 +1607,7 @@ slash:
   voice:
     description: "Activar/desactivar el modo de voz"
   wake:
-    description: "Alternar la escucha de la palabra de activación 'Hey Tandem'"
+    description: "Alternar la escucha de la palabra de activación 'Hey Hermes'"
   busy:
     description: "Controlar cómo se tratan los mensajes mientras Tandem está trabajando"
   tools:
