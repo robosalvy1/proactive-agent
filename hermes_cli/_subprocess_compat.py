@@ -688,7 +688,7 @@ def _text_names_hermes(text: str) -> bool:
     A bare ``"hermes" in text`` substring test would also match unrelated processes whose paths
     merely contain the letters (``...\shermesa\...``) — the false-positive class this prevents.
     """
-    return any(token.startswith(("hermes", ".hermes"))
+    return any(token.startswith(("hermes", ".hermes")) or token in ("tandem", "tandem.exe")
                for token in re.split(r"[\\/\s=,;\"']+", text.lower()))
 
 

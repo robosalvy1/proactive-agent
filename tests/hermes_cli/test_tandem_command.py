@@ -161,3 +161,27 @@ def test_dashboard_respawn_rebuilds_stale_console_script_for_either_command(name
     assert rebuilt != stale and rebuilt[-3:] == ['dashboard', '--port', '9119']
     checkout = ['/old/venv/bin/python', str(root / name), 'dashboard']
     assert main_dashboard._respawnable_command_for_current_install(checkout) == checkout
+
+
+@pytest.mark.parametrize('text, expected', [
+    (r'C:\work\app\venv\Scripts\tandem.exe dashboard', True),
+    ('/opt/app/venv/bin/tandem dashboard', True),
+    (r'C:\work\app\venv\Scripts\hermes.exe dashboard', True),
+    ('/usr/bin/tandem-notes dashboard', False),
+])
+def test_process_identity_recognises_tandem(text, expected):
+    from hermes_cli._subprocess_compat import _text_names_hermes
+    assert _text_names_hermes(text) is expected
+
+
+def test_terminal_path_repair_finds_checkout_tandem_launcher(tmp_path, monkeypatch):
+    from tools.environments import local
+    launcher = tmp_path / 'tandem'
+    launcher.write_text('#!/bin/sh\n', encoding='utf-8')
+    monkeypatch.setattr(local, '_HERMES_BIN_DIR', local._SENTINEL)
+    monkeypatch.setattr(local, '_HERMES_BIN_DIR_IS_PAYLOAD', False)
+    monkeypatch.setattr(local.shutil, 'which', lambda name: None)
+    monkeypatch.setattr(local.sys, 'argv', [str(launcher)])
+    monkeypatch.setattr(local.sys, 'executable', str(tmp_path / 'nowhere' / 'python'))
+    monkeypatch.setattr('pm.environments.payload_command_dir', lambda root: None)
+    assert local._resolve_hermes_bin_dir() == str(tmp_path)
