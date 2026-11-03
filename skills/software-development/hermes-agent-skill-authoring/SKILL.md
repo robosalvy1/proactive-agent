@@ -83,7 +83,7 @@ Bad: `Use when a user asks to monitor named competitors or companies for product
 
 - Credit the **human first**, then "Tandem Agent" as secondary collaborator: `Ben Barclay (benbarclay), Tandem Agent`.
 - Never `author: Tandem Agent` alone for contributed skills — credit the human, not the tool, even (especially) when an agent drafted the text.
-- Maintainer-authored skills: `Teknium (teknium1), Tandem Agent`.
+- Maintainer-authored skills: `Teknium (teknium1), Hermes Agent`.
 
 ### `related_skills` rules
 

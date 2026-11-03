@@ -17,7 +17,7 @@ description: "4阶段根因调试：先理解缺陷再修复"
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/software-development/systematic-debugging` |
 | 版本 | `1.1.0` |
-| 作者 | Tandem Agent（改编自 obra/superpowers） |
+| 作者 | Hermes Agent（改编自 obra/superpowers） |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `debugging`, `troubleshooting`, `problem-solving`, `root-cause`, `investigation` |

@@ -17,7 +17,7 @@ Configure and troubleshoot Honcho memory for Tandem.
 | Source | Optional — install with `tandem skills install official/autonomous-ai-agents/honcho` |
 | Path | `optional-skills/autonomous-ai-agents/honcho` |
 | Version | `2.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Honcho`, `Memory`, `Profiles`, `Observation`, `Dialectic`, `User-Modeling`, `Session-Summary` |

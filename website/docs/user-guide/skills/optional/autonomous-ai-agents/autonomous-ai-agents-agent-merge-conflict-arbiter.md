@@ -17,7 +17,7 @@ Neutral arbiter for merge conflicts between two agents.
 | Source | Optional — install with `tandem skills install official/autonomous-ai-agents/agent-merge-conflict-arbiter` |
 | Path | `optional-skills/autonomous-ai-agents/agent-merge-conflict-arbiter` |
 | Version | `1.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Multi-Agent`, `Git`, `Merge-Conflict`, `Kanban`, `Arbitration` |

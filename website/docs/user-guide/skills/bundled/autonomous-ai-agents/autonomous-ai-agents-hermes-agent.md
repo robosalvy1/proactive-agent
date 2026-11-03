@@ -17,7 +17,7 @@ Use, configure, theme, extend, and orchestrate Tandem Agent.
 | Source | Bundled (installed by default) |
 | Path | `skills/autonomous-ai-agents/hermes-agent` |
 | Version | `3.2.0` |
-| Author | Tandem Agent + Teknium |
+| Author | Hermes Agent + Teknium |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `tandem`, `setup`, `configuration`, `multi-agent`, `spawning`, `cli`, `gateway`, `bots`, `bot-mode`, `features`, `themes`, `skins`, `desktop-plugins`, `tui-widgets`, `petdex`, `development` |

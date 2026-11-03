@@ -17,7 +17,7 @@ description: "在仓库中编写 SKILL.md"
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/software-development/hermes-agent-skill-authoring` |
 | 版本 | `1.0.0` |
-| 作者 | Tandem Agent |
+| 作者 | Hermes Agent |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `skills`, `authoring`, `hermes-agent`, `conventions`, `skill-md` |

@@ -17,7 +17,7 @@ OBLITERATUS: abliterate LLM refusals (diff-in-means).
 | Source | Optional — install with `tandem skills install official/mlops/obliteratus` |
 | Path | `optional-skills/mlops/obliteratus` |
 | Version | `2.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Dependencies | `obliteratus`, `torch`, `transformers`, `bitsandbytes`, `accelerate`, `safetensors` |
 | Platforms | linux, macos |

@@ -17,7 +17,7 @@ Author in-repo SKILL.md files: frontmatter and structure.
 | Source | Bundled (installed by default) |
 | Path | `skills/software-development/hermes-agent-skill-authoring` |
 | Version | `2.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `skills`, `authoring`, `hermes-agent`, `conventions`, `skill-md` |
@@ -101,7 +101,7 @@ Bad: `Use when a user asks to monitor named competitors or companies for product
 
 - Credit the **human first**, then "Tandem Agent" as secondary collaborator: `Ben Barclay (benbarclay), Tandem Agent`.
 - Never `author: Tandem Agent` alone for contributed skills — credit the human, not the tool, even (especially) when an agent drafted the text.
-- Maintainer-authored skills: `Teknium (teknium1), Tandem Agent`.
+- Maintainer-authored skills: `Teknium (teknium1), Hermes Agent`.
 
 ### `related_skills` rules
 

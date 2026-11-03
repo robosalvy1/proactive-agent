@@ -1,5 +1,5 @@
 #!/usr/bin/env -S bash -c 'exec "$BASH" "$(dirname "$0")/run-in-hermes-env" python3 "$0" "$@"'
-"""Build the Tandem Model Catalog — a centralized JSON manifest of curated models.
+"""Build the Hermes Model Catalog — a centralized JSON manifest of curated models.
 
 This script reads the in-repo hardcoded curated lists (``OPENROUTER_MODELS``,
 ``_PROVIDER_MODELS["nous"]``) and writes them to a JSON manifest that the

@@ -17,7 +17,7 @@ Set up Actual Computer (actual.inc) inference in Tandem.
 | Source | Optional — install with `tandem skills install official/devops/actual-setup` |
 | Path | `optional-skills/devops/actual-setup` |
 | Version | `2.0.0` |
-| Author | shl0ms + Tandem Agent |
+| Author | shl0ms + Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `actual`, `actual-inc`, `provider`, `local-inference`, `relay`, `gguf`, `setup` |

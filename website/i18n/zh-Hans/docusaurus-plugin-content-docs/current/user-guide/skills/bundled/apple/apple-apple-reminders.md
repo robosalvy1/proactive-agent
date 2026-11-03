@@ -17,7 +17,7 @@ description: "通过 remindctl 管理 Apple Reminders：添加、列出、完成
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/apple/apple-reminders` |
 | 版本 | `1.0.0` |
-| 作者 | Tandem Agent |
+| 作者 | Hermes Agent |
 | 许可证 | MIT |
 | 平台 | macos |
 | 标签 | `Reminders`, `tasks`, `todo`, `macOS`, `Apple` |

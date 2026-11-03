@@ -17,7 +17,7 @@ Record a site's XHR into a HAR, derive an HTTP client.
 | Source | Optional — install with `tandem skills install official/web-development/har-derived-api-client` |
 | Path | `optional-skills/web-development/har-derived-api-client` |
 | Version | `0.1.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Browser`, `HAR`, `API`, `Reverse-Engineering`, `Playwright` |

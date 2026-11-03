@@ -17,7 +17,7 @@ Poll RSS, JSON APIs, and GitHub with watermark dedup.
 | Source | Optional — install with `tandem skills install official/devops/watchers` |
 | Path | `optional-skills/devops/watchers` |
 | Version | `1.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos |
 | Tags | `cron`, `polling`, `rss`, `github`, `http`, `automation`, `monitoring` |

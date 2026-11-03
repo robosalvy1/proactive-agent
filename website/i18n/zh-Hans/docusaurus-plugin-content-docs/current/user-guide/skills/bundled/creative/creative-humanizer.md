@@ -17,7 +17,7 @@ description: "人性化文本：去除 AI 腔调，注入真实声音"
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/creative/humanizer` |
 | 版本 | `2.5.1` |
-| 作者 | Siqi Chen (@blader, https://github.com/blader/humanizer)，由 Tandem Agent 移植 |
+| 作者 | Siqi Chen (@blader, https://github.com/blader/humanizer)，由 Hermes Agent 移植 |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `writing`, `editing`, `humanize`, `anti-ai-slop`, `voice`, `prose`, `text` |

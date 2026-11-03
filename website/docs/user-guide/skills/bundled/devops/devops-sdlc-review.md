@@ -17,7 +17,7 @@ Review Kanban handoffs and route verified outcomes.
 | Source | Bundled (installed by default) |
 | Path | `skills/devops/sdlc-review` |
 | Version | `1.1.0` |
-| Author | Jakub Wolniewicz (@frizikk) + Tandem Agent |
+| Author | Jakub Wolniewicz (@frizikk) + Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `kanban`, `review`, `quality`, `verification` |

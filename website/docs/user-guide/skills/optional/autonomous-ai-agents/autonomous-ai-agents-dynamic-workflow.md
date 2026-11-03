@@ -17,7 +17,7 @@ Plan-in-code fan-outs, adversarial verification, waves.
 | Source | Optional — install with `tandem skills install official/autonomous-ai-agents/dynamic-workflow` |
 | Path | `optional-skills/autonomous-ai-agents/dynamic-workflow` |
 | Version | `2.0.0` |
-| Author | Teknium + Tandem Agent |
+| Author | Teknium + Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `orchestration`, `fan-out`, `subagents`, `delegation`, `verification`, `migration`, `audit`, `research`, `campaign` |

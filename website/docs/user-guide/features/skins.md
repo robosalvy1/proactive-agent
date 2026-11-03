@@ -239,11 +239,11 @@ customCSS: |
 
 The field is capped at 32 KiB and applies to GUI surfaces only — the CLI and TUI ignore it. Because it lives in your skin YAML under `~/.hermes/skins/`, it survives app updates (no more hacking `app.asar`).
 
-## Tandem Mod — Visual Skin Editor
+## Hermes Mod — Visual Skin Editor
 
-[Tandem Mod](https://github.com/cocktailpeanut/hermes-mod) is a community-built web UI for creating and managing skins visually. Instead of writing YAML by hand, you get a point-and-click editor with live preview.
+[Hermes Mod](https://github.com/cocktailpeanut/hermes-mod) is a community-built web UI for creating and managing skins visually. Instead of writing YAML by hand, you get a point-and-click editor with live preview.
 
-![Tandem Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/hermes-mod/master/nous.png)
+![Hermes Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/hermes-mod/master/nous.png)
 
 **What it does:**
 
@@ -286,7 +286,7 @@ npm start
 6. Click **Save** to write the skin YAML to `~/.hermes/skins/`.
 7. Click **Activate** to set it as the current skin (updates `display.skin` in `config.yaml`).
 
-Tandem Mod respects the `HERMES_HOME` environment variable, so it works with [profiles](../profiles.md) too.
+Hermes Mod respects the `HERMES_HOME` environment variable, so it works with [profiles](../profiles.md) too.
 
 ## Operational notes
 

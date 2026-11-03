@@ -17,7 +17,7 @@ Generate wiki docs + Mermaid diagrams for any codebase.
 | Source | Optional — install with `tandem skills install official/software-development/code-wiki` |
 | Path | `optional-skills/software-development/code-wiki` |
 | Version | `0.1.0` |
-| Author | Teknium (teknium1), Tandem Agent |
+| Author | Teknium (teknium1), Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Documentation`, `Mermaid`, `Architecture`, `Diagrams`, `Wiki`, `Code-Analysis` |

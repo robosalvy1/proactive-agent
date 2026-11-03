@@ -17,7 +17,7 @@ Embed an in-page natural-language GUI copilot in web apps.
 | Source | Optional — install with `tandem skills install official/web-development/page-agent` |
 | Path | `optional-skills/web-development/page-agent` |
 | Version | `1.0.0` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `web`, `javascript`, `agent`, `browser`, `gui`, `alibaba`, `embed`, `copilot`, `saas` |

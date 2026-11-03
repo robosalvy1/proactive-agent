@@ -529,15 +529,15 @@ def _case_preserving_replacement(replacement: str):
     """Return a re.sub replacement fn that lowercases the result when the
     matched text was all-lowercase.
 
-    Keeps ``OpenClaw`` → ``Tandem`` but maps ``openclaw`` → ``tandem`` so a
-    filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.hermes/config.yaml`` (the real Tandem home) instead of the broken
-    ``~/.Hermes/config.yaml``.
+    Keeps ``OpenClaw`` → ``Tandem`` but maps all-lowercase ``openclaw`` → ``hermes`` (the
+    stable home directory name, not the product name) so a filesystem path like
+    ``~/.openclaw/config.yaml`` rewrites to ``~/.hermes/config.yaml`` (the real home)
+    instead of a directory that does not exist.
     """
     def _sub(match: re.Match[str]) -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            return "hermes"  # brand-compat: the home directory is still ~/.hermes
         return replacement
     return _sub
 

@@ -17,7 +17,7 @@ description: "使用 GitNexus 为代码库建立索引，并通过 Web UI + Clou
 | 来源 | 可选 — 使用 `tandem skills install official/research/gitnexus-explorer` 安装 |
 | 路径 | `optional-skills/research/gitnexus-explorer` |
 | 版本 | `1.0.0` |
-| 作者 | Tandem Agent + Teknium |
+| 作者 | Hermes Agent + Teknium |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `gitnexus`, `code-intelligence`, `knowledge-graph`, `visualization` |

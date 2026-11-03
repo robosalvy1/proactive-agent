@@ -212,11 +212,11 @@ branding:
 tool_prefix: "▏"
 ```
 
-## Tandem Mod — 可视化皮肤编辑器
+## Hermes Mod — 可视化皮肤编辑器
 
-[Tandem Mod](https://github.com/cocktailpeanut/hermes-mod) 是一个社区构建的 Web UI，用于可视化创建和管理皮肤。无需手写 YAML，提供带实时预览的点击式编辑器。
+[Hermes Mod](https://github.com/cocktailpeanut/hermes-mod) 是一个社区构建的 Web UI，用于可视化创建和管理皮肤。无需手写 YAML，提供带实时预览的点击式编辑器。
 
-![Tandem Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/hermes-mod/master/nous.png)
+![Hermes Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/hermes-mod/master/nous.png)
 
 **功能说明：**
 
@@ -259,7 +259,7 @@ npm start
 6. 点击 **Save** 将皮肤 YAML 写入 `~/.hermes/skins/`。
 7. 点击 **Activate** 将其设为当前皮肤（更新 `config.yaml` 中的 `display.skin`）。
 
-Tandem Mod 遵循 `HERMES_HOME` 环境变量，因此也适用于[配置文件](../profiles.md)。
+Hermes Mod 遵循 `HERMES_HOME` 环境变量，因此也适用于[配置文件](../profiles.md)。
 
 ## 操作说明
 

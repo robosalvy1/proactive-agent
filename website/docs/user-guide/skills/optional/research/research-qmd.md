@@ -17,7 +17,7 @@ Hybrid local search over notes, docs, and transcripts.
 | Source | Optional — install with `tandem skills install official/research/qmd` |
 | Path | `optional-skills/research/qmd` |
 | Version | `1.0.0` |
-| Author | Tandem Agent + Teknium |
+| Author | Hermes Agent + Teknium |
 | License | MIT |
 | Platforms | macos, linux |
 | Tags | `Search`, `Knowledge-Base`, `RAG`, `Notes`, `MCP`, `Local-AI` |

@@ -17,7 +17,7 @@ description: "将编码任务委托给 Claude Code CLI（功能、PR）"
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/autonomous-ai-agents/claude-code` |
 | 版本 | `2.2.0` |
-| 作者 | Tandem Agent + Teknium |
+| 作者 | Hermes Agent + Teknium |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `Coding-Agent`, `Claude`, `Anthropic`, `Code-Review`, `Refactoring`, `PTY`, `Automation` |

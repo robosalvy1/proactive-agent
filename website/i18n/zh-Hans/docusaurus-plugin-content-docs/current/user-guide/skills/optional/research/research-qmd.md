@@ -17,7 +17,7 @@ description: "使用 qmd 在本地搜索个人知识库、笔记、文档和会�
 | 来源 | 可选 — 通过 `tandem skills install official/research/qmd` 安装 |
 | 路径 | `optional-skills/research/qmd` |
 | 版本 | `1.0.0` |
-| 作者 | Tandem Agent + Teknium |
+| 作者 | Hermes Agent + Teknium |
 | 许可证 | MIT |
 | 平台 | macos, linux |
 | 标签 | `Search`, `Knowledge-Base`, `RAG`, `Notes`, `MCP`, `Local-AI` |

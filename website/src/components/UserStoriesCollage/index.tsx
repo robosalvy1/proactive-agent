@@ -174,9 +174,9 @@ export default function UserStoriesCollage(): React.JSX.Element {
       <div className={styles.hero}>
         <h1>User Stories &amp; Use Cases</h1>
         <p>
-          What the Tandem Agent community is actually building. Every tile
+          What the upstream Hermes Agent community is actually building. Every tile
           below links to a real post, issue, video, or gist where someone
-          describes how they use Tandem &mdash; scraped from X, GitHub, Reddit,
+          describes how they use Hermes Agent &mdash; scraped from X, GitHub, Reddit,
           Hacker News, YouTube, blogs, and podcasts.
         </p>
         <div className={styles.meta}>

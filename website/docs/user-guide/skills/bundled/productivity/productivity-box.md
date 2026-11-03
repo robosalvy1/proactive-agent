@@ -17,7 +17,7 @@ Box manages cloud files, sharing, search, and metadata.
 | Source | Bundled (installed by default) |
 | Path | `skills/productivity/box` |
 | Version | `1.0.0` |
-| Author | Chris Kim (iskysun96), Tandem Agent |
+| Author | Chris Kim (iskysun96), Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Box`, `Productivity`, `Cloud Storage`, `Collaboration`, `Metadata`, `Content Extraction`, `CLI`, `SDK` |

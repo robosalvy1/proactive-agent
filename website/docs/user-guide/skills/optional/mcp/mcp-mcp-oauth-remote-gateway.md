@@ -17,7 +17,7 @@ Manual OAuth for remote MCP servers on headless gateways.
 | Source | Optional — install with `tandem skills install official/mcp/mcp-oauth-remote-gateway` |
 | Path | `optional-skills/mcp/mcp-oauth-remote-gateway` |
 | Version | `1.0.0` |
-| Author | Ben Barclay (benbarclay), Tandem Agent |
+| Author | Ben Barclay (benbarclay), Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos |
 | Tags | `MCP`, `OAuth`, `PKCE`, `Remote-Deployment` |

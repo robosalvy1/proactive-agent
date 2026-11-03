@@ -17,7 +17,7 @@ Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).
 | Source | Optional — install with `tandem skills install official/creative/excalidraw` |
 | Path | `optional-skills/creative/excalidraw` |
 | Version | `1.0.1` |
-| Author | Tandem Agent |
+| Author | Hermes Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Excalidraw`, `Diagrams`, `Flowcharts`, `Architecture`, `Visualization`, `JSON` |

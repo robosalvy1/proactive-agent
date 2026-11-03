@@ -17,7 +17,7 @@ TDD：强制执行 RED-GREEN-REFACTOR，测试先于代码。
 | 来源 | 内置（默认安装） |
 | 路径 | `skills/software-development/test-driven-development` |
 | 版本 | `1.1.0` |
-| 作者 | Tandem Agent（改编自 obra/superpowers） |
+| 作者 | Hermes Agent（改编自 obra/superpowers） |
 | 许可证 | MIT |
 | 平台 | linux, macos, windows |
 | 标签 | `testing`, `tdd`, `development`, `quality`, `red-green-refactor` |
