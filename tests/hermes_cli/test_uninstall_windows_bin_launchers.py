@@ -1,8 +1,8 @@
-"""Uninstall must not leave a dangling ``hermes`` command on Windows.
+"""Uninstall must not leave a dangling ``tandem`` command on Windows.
 
 Every uninstall mode deletes the code checkout, but the launcher copies
-staged onto PATH in the managed binary dir (the default Hermes root's
-``bin``) live outside it. A surviving launcher makes ``hermes`` in a new
+staged onto PATH in the managed binary dir (the default Tandem root's
+``bin``) live outside it. A surviving launcher makes ``tandem`` in a new
 terminal resolve and then error on its missing venv target — worse than
 command-not-found. The dir is wholly hermes-owned (pm keeps uv in its own
 store entry), so the sweep takes everything in it.

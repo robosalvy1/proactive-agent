@@ -223,11 +223,11 @@ def _spawn_bash_ls(root: str, ctx: ServerContext) -> Optional[SpawnSpec]:
 
 _VUE_REINSTALL = (
     "delete <HERMES_HOME>/lsp/node_modules/@vue and <HERMES_HOME>/lsp/bin/vue-language-server*, "
-    "then run: hermes lsp install vue-language-server"
+    "then run: tandem lsp install vue-language-server"
 )
 _VUE_TUNNEL_MSG = (
     "vue-language-server: the installed @vue/language-server is 3.x, which only works behind a client-hosted "
-    f"tsserver tunnel Hermes does not run — no diagnostics will arrive. Reinstall the self-hosting 2.x line: {_VUE_REINSTALL}"
+    f"tsserver tunnel Tandem does not run — no diagnostics will arrive. Reinstall the self-hosting 2.x line: {_VUE_REINSTALL}"
 )
 _VUE_TSDK_MSG = (
     "vue-language-server: no JavaScript TypeScript SDK (typescript/lib/typescript.js) next to the server or under "
@@ -237,7 +237,7 @@ _VUE_TSDK_MSG = (
 
 def _node_modules_trees(bin_path: str, root: Optional[str]) -> list[str]:
     """``node_modules`` trees that may hold a server and its TypeScript SDK: the launcher's own tree
-    (symlinks resolved), Hermes staging, then the project's (``root`` None: Hermes's trees only, for
+    (symlinks resolved), Tandem staging, then the project's (``root`` None: Tandem's trees only, for
     TypeScript's SDK pin in an untrusted workspace, whose own JavaScript must not load)."""
     from agent.lsp.install import hermes_lsp_bin_dir
     trees = [str(hermes_lsp_bin_dir().parent / "node_modules")] + ([os.path.join(root, "node_modules")] if root else [])
@@ -285,14 +285,14 @@ def _spawn_vue(root: str, ctx: ServerContext) -> Optional[SpawnSpec]:
 
 _TS_UNTRUSTED_MSG = (
     "typescript-language-server: no TypeScript SDK next to the server, and this workspace is untrusted so its "
-    "own node_modules/typescript is not loaded — diagnostics are skipped. Reinstall: hermes lsp install "
+    "own node_modules/typescript is not loaded — diagnostics are skipped. Reinstall: tandem lsp install "
     "typescript-language-server, or list the workspace under lsp.trusted_workspaces."
 )
 
 
 def _spawn_typescript(root: str, ctx: ServerContext) -> Optional[SpawnSpec]:
     """typescript-language-server loads the workspace's own ``node_modules/typescript`` unless
-    ``tsserver.path`` names another, so an untrusted workspace is pinned to Hermes's copy."""
+    ``tsserver.path`` names another, so an untrusted workspace is pinned to Tandem's copy."""
     bin_path = _find_binary(ctx, "typescript", ("typescript-language-server",), "typescript-language-server")
     if bin_path is None:
         return None
@@ -352,7 +352,7 @@ def _spawn_powershell_es(root: str, ctx: ServerContext) -> Optional[SpawnSpec]:
         f"-LogPath '{os.path.join(session_dir, 'pses.log')}' "
         f"-SessionDetailsPath '{os.path.join(session_dir, f'pses-session-{os.getpid()}.json')}' "
         f"-FeatureFlags @() -AdditionalModules @() "
-        f"-HostName Hermes -HostProfileId hermes -HostVersion 1.0.0 -Stdio -LogLevel Normal"
+        f"-HostName Tandem -HostProfileId hermes -HostVersion 1.0.0 -Stdio -LogLevel Normal"
     )
     return SpawnSpec(
         [pwsh, "-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", inner],

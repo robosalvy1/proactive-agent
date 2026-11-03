@@ -80,7 +80,7 @@ def _refresh_declared_dependencies(target: Path, staged: Path, manifest: dict, *
     if not interactive:
         raise pc.PluginOperationError(
             f"The update declares new Python dependencies ({', '.join(added) or 'in its pyproject.toml'}); "
-            f"run `hermes plugins update {target.name}` in a terminal to review them.")
+            f"run `tandem plugins update {target.name}` in a terminal to review them.")
     consented, reason = pc._consent_python_deps(manifest.get("name", target.name), added, pc._console())
     if not consented:
         raise pc.PluginOperationError(

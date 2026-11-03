@@ -157,7 +157,7 @@ def _hard_exit(exit_code: int) -> None:
 def _mark_exited_quietly(exit_code: int, reason: str) -> None:
     """Best-effort terminal stamp on BOTH lifecycle records before ``os._exit`` skips teardown:
     the lifecycle ledger (so the next boot names the watchdog, not SIGKILL/OOM) and
-    ``gateway_state.json`` (so ``hermes gateway status`` and every other reader of that file stop
+    ``gateway_state.json`` (so ``tandem gateway status`` and every other reader of that file stop
     seeing ``running`` for a process the watchdog killed — #113372). The runtime-status write goes
     LAST: it is the record housekeeping refreshes, so nothing may overwrite it after we stamp it."""
     with contextlib.suppress(Exception):

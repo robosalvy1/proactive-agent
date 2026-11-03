@@ -148,7 +148,7 @@ def _without_release_age(text: str) -> str:
     """Drop ``[tool.uv] exclude-newer`` from a generated root's pyproject text.
 
     The lock already holds checked versions; on the user's machine the cutoff only gates the
-    build tools uv fetches for source builds (setuptools for Hermes itself), and a mirror that
+    build tools uv fetches for source builds (setuptools for Tandem itself), and a mirror that
     serves no upload times rejects all of them (#135589). Text-level so the pre-3.11 bootstrap
     python, which has no tomllib, can run it.
     """
@@ -317,7 +317,7 @@ def install_node_sidecar(
 
     # Tool availability does not authorize mutation of the sidecar itself.
     if not explicit and not lazy_installs_allowed():
-        return "lazy installs are disabled — run `hermes plugins install` and approve Node dependencies"
+        return "lazy installs are disabled — run `tandem plugins install` and approve Node dependencies"
 
     # a lockfile means reproducible `npm ci`; plain `npm install` otherwise
     install_cmd = ["ci"] if (plugin_dir / "package-lock.json").is_file() else ["install"]

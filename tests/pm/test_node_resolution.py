@@ -48,7 +48,7 @@ def node_store(tmp_path, monkeypatch):
     # The fixture hashes its input. Never read the developer's live PM store to
     # fabricate a temporary one; CI's external Node still exercises this path.
     if Path(node).absolute().is_relative_to(_REAL_HERMES_HOME):
-        pytest.skip("requires a Node binary outside the real Hermes home")
+        pytest.skip("requires a Node binary outside the real Tandem home")
     monkeypatch.setenv("PATH", str(Path(node).parent))
     home = tmp_path / "home"
     home.mkdir()

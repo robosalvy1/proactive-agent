@@ -5,7 +5,7 @@
 ## 前提条件
 
 - 已安装并以守护进程方式运行的 **simplex-chat** CLI
-- Python 包 **websockets**（`hermes pm repair`）
+- Python 包 **websockets**（`tandem pm repair`）
 
 ## 安装 simplex-chat
 
@@ -27,12 +27,12 @@ simplex-chat -p 5225
 
 守护进程默认在 `ws://127.0.0.1:5225` 上监听 WebSocket 连接。
 
-## 配置 Hermes
+## 配置 Tandem
 
 ### 通过设置向导
 
 ```bash
-hermes gateway setup
+tandem gateway setup
 ```
 
 选择 **SimpleX Chat** 并按提示操作。
@@ -64,7 +64,7 @@ SIMPLEX_HOME_CHANNEL=<contact-id>
 默认情况下**所有联系人均被拒绝访问**。你必须选择以下方式之一：
 
 1. 将 `SIMPLEX_ALLOWED_USERS` 设置为以逗号分隔的联系人 ID 列表，或
-2. 使用 **DM 配对**——向 Bot 发送任意消息，Bot 将回复一个配对码。通过 `hermes pairing approve simplex <CODE>` 输入该配对码。
+2. 使用 **DM 配对**——向 Bot 发送任意消息，Bot 将回复一个配对码。通过 `tandem pairing approve simplex <CODE>` 输入该配对码。
 
 ## 在 cron 任务中使用 SimpleX
 
@@ -86,13 +86,13 @@ send_message(target="simplex:<contact-id>", message="Done!")
 ## 隐私说明
 
 - SimpleX 从不暴露手机号或电子邮件地址——联系人使用不透明 ID 标识
-- Hermes 与守护进程之间的连接为本地 WebSocket（`ws://127.0.0.1:5225`）——数据不会离开你的机器
+- Tandem 与守护进程之间的连接为本地 WebSocket（`ws://127.0.0.1:5225`）——数据不会离开你的机器
 - 消息在到达守护进程之前已由 SimpleX 协议进行端到端加密
 
 ## 故障排查
 
 **"Cannot reach daemon"** — 确保 `simplex-chat -p 5225` 正在运行，且端口与 `SIMPLEX_WS_URL` 一致。
 
-**"websockets not installed"** — 运行 `hermes pm repair`。
+**"websockets not installed"** — 运行 `tandem pm repair`。
 
 **消息未收到** — 检查该联系人的 ID 是否已加入 `SIMPLEX_ALLOWED_USERS`，或通过 DM 配对方式批准该联系人。

@@ -6,7 +6,7 @@ description: "Security model, dangerous command approval, user authorization, co
 
 # Security
 
-Hermes Agent is designed with a defense-in-depth security model. This page covers every security boundary — from command approval to container isolation to user authorization on messaging platforms.
+Tandem Agent is designed with a defense-in-depth security model. This page covers every security boundary — from command approval to container isolation to user authorization on messaging platforms.
 
 ## Overview
 
@@ -23,7 +23,7 @@ The security model has eight layers:
 
 ## Dangerous Command Approval
 
-Before executing any command, Hermes checks it against a curated list of dangerous patterns. If a match is found, the user must explicitly approve it.
+Before executing any command, Tandem checks it against a curated list of dangerous patterns. If a match is found, the user must explicitly approve it.
 
 ### Approval Modes
 
@@ -45,9 +45,9 @@ The full set of keys:
 | Key | Default | What it controls |
 |---|---|---|
 | `mode` | `smart` | Approval policy for dangerous shell commands — see the table below. |
-| `timeout` | `300` | Seconds Hermes waits for an approval reply before timing out. |
+| `timeout` | `300` | Seconds Tandem waits for an approval reply before timing out. |
 | `cron_mode` | `deny` | How [cron jobs](./features/cron.md) behave headlessly when they trigger a dangerous-command prompt. `deny` blocks the command (the agent must find another path); `approve` auto-approves everything in cron context. |
-| `single_query_mode` | `deny` | How one-shot [`hermes chat -q`](./cli.md) sessions behave when they trigger a dangerous-command prompt. A `-q` session runs a single turn and exits with no user waiting to answer prompts; `deny` blocks the command (the agent must find another path), `approve` auto-approves everything in single-query context. Mirrors `cron_mode`. |
+| `single_query_mode` | `deny` | How one-shot [`tandem chat -q`](./cli.md) sessions behave when they trigger a dangerous-command prompt. A `-q` session runs a single turn and exits with no user waiting to answer prompts; `deny` blocks the command (the agent must find another path), `approve` auto-approves everything in single-query context. Mirrors `cron_mode`. |
 | `unattended_mode` | `deny` | How sessions on unattended programmatic platforms (webhook, msgraph_webhook, api_server) behave when they trigger a dangerous-command prompt. These surfaces have no human who can answer `/approve`, so instead of blocking for the full approval timeout, `deny` blocks the command instantly (the agent must find another path) and `approve` auto-approves everything in unattended context. Exception: an api_server session whose client can answer the card (`/v1/runs` and streaming chat completions, via `POST /v1/runs/{id}/approval`) still gets the approval request. Mirrors `cron_mode`. |
 | `mcp_reload_confirm` | `true` | When true, `/reload-mcp` asks before rebuilding the MCP tool set. Rebuilding invalidates the provider prompt cache (tool schemas live in the system prompt), so the next message re-sends full input tokens. Users who click **Always Approve** flip this key to `false`. |
 | `destructive_slash_confirm` | `true` | When true, destructive session slash commands (`/clear`, `/new`, `/reset`, `/undo`) prompt before discarding conversation state. Three-option dialog (Approve Once / Always Approve / Cancel) routed through native yes/no buttons on Telegram, Discord, and Slack; text fallback elsewhere. Users who click **Always Approve** flip this key to `false`. The TUI also honors this setting for its `/clear`, `/new`, and `/reset` modal; `HERMES_TUI_NO_CONFIRM=1` force-skips that modal regardless of the configured value. |
@@ -66,7 +66,7 @@ Setting `approvals.mode: off` disables all safety prompts. Use only in trusted e
 
 YOLO mode bypasses **all** dangerous command approval prompts for the current session. It can be activated three ways:
 
-1. **CLI flag**: Start a session with `hermes --yolo` or `hermes chat --yolo`
+1. **CLI flag**: Start a session with `tandem --yolo` or `tandem chat --yolo`
 2. **Slash command**: Type `/yolo` during a session to toggle it on/off
 3. **Environment variable**: Set `HERMES_YOLO_MODE=1`
 
@@ -82,7 +82,7 @@ The `/yolo` command is a **toggle** — each use flips the mode on or off:
 
 YOLO mode is available in both CLI and gateway sessions. `/yolo` applies only to the session it was typed in. It is saved with the session, so it survives a restart: a messaging chat keeps it across gateway restarts, and the TUI and the Desktop app keep it when you reopen or resume the session. On a messaging platform, `/new` and `/resume` start the next conversation with approvals back on.
 
-When YOLO is active, Hermes shows two persistent visual reminders so it's hard to forget that approval prompts are bypassed:
+When YOLO is active, Tandem shows two persistent visual reminders so it's hard to forget that approval prompts are bypassed:
 
 - A red banner line at session start when YOLO is already active: `⚠ YOLO mode — all approval prompts bypassed`. Hidden when YOLO is off so the default banner stays uncluttered.
 - A `⚠ YOLO` fragment in the status bar across all width tiers, updated live as you toggle YOLO on or off (rich-text renderer and plain-text fallback).
@@ -117,7 +117,7 @@ restricted **regardless of the job label**. This is a conservative registration
 restriction intended to catch indirect restart helpers with neutral labels, not
 an inspection of the target plist. It also rejects independent scheduled jobs
 with `RunAtLoad=false` and no `KeepAlive` key; rejection does **not** establish that
-the job uses KeepAlive or controls Hermes.
+the job uses KeepAlive or controls Tandem.
 
 For authorized LaunchAgent maintenance, use a separate shell outside the running
 gateway. Some independent `load`/`unload` commands currently pass the label-based
@@ -132,7 +132,7 @@ does not change the terminal guard's policy.
 
 ### Hardline Blocklist (Always-On Floor)
 
-Some commands are so catastrophic — irreversible filesystem wipes, fork bombs, direct block-device writes — that Hermes refuses to run them **regardless** of:
+Some commands are so catastrophic — irreversible filesystem wipes, fork bombs, direct block-device writes — that Tandem refuses to run them **regardless** of:
 
 - `--yolo` / `/yolo` toggled on
 - `approvals.mode: off`
@@ -284,36 +284,36 @@ These patterns are loaded at startup and silently approved in all future session
 Entries can be exact command text, a shell-style glob (`podman *`), or a
 dangerous-pattern rule key such as `script execution via heredoc` (the key shown
 in the approval prompt). Rule keys are honored on every surface, including
-unattended ones: a cron job, `hermes chat -q` run or webhook session under
+unattended ones: a cron job, `tandem chat -q` run or webhook session under
 `cron_mode`/`single_query_mode`/`unattended_mode: deny` still runs a command whose
 detected rule key is in `command_allowlist`.
 
 The setting must be a list of strings. Legacy installs that stored a list as a
 quoted YAML/JSON string recover that list at load time and log a warning to
-re-save it with `hermes config edit`. Other malformed values are ignored with
+re-save it with `tandem config edit`. Other malformed values are ignored with
 a warning; they never become per-character approvals. Loading does not rewrite
 your configuration file.
 
 :::tip
-Use `hermes config edit` to review or remove patterns from your permanent allowlist.
+Use `tandem config edit` to review or remove patterns from your permanent allowlist.
 :::
 
 :::caution
-The list is read when Hermes starts. A pattern you remove while a session is
+The list is read when Tandem starts. A pattern you remove while a session is
 already running stays approved in that session until it next writes the file
-(the next time you answer `always` to a prompt) or you restart Hermes. If you
+(the next time you answer `always` to a prompt) or you restart Tandem. If you
 removed it for safety reasons, restart.
 :::
 
-### Mining Approval History (`hermes approvals suggest`)
+### Mining Approval History (`tandem approvals suggest`)
 
 Instead of answering the same prompt session after session, you can mine your
 past approval decisions into allowlist proposals:
 
 ```bash
-hermes approvals suggest            # dry run — prints a numbered proposal
-hermes approvals suggest --apply 1,3  # merge picks into command_allowlist
-hermes approvals suggest --json     # machine-readable output
+tandem approvals suggest            # dry run — prints a numbered proposal
+tandem approvals suggest --apply 1,3  # merge picks into command_allowlist
+tandem approvals suggest --json     # machine-readable output
 ```
 
 The command scans the session database (`~/.hermes/state.db`) for
@@ -351,7 +351,7 @@ Useful flags: `--days N` (history window, default 90), `--min-count N`
 
 ## File Write Safety {#file-write-safety}
 
-Before `write_file` or `patch` touches disk, Hermes checks the target path against a denylist and an optional sandbox. Blocked writes return an error to the agent immediately — **there is no approval prompt** and no way to override from the chat UI. The model may still claim the edit succeeded; when `display.file_mutation_verifier` is on (default), trust the [file-mutation verifier footer](./configuration.md#file-mutation-verifier) over the assistant's closing summary.
+Before `write_file` or `patch` touches disk, Tandem checks the target path against a denylist and an optional sandbox. Blocked writes return an error to the agent immediately — **there is no approval prompt** and no way to override from the chat UI. The model may still claim the edit succeeded; when `display.file_mutation_verifier` is on (default), trust the [file-mutation verifier footer](./configuration.md#file-mutation-verifier) over the assistant's closing summary.
 
 ### Protected paths (always blocked)
 
@@ -360,7 +360,7 @@ These categories are always denied, even when `HERMES_WRITE_SAFE_ROOT` is unset:
 | Category | Examples |
 |----------|----------|
 | OS credential stores | `~/.ssh/` (keys, `authorized_keys`), `~/.aws/`, `~/.kube/`, `/etc/sudoers`, `~/.netrc` |
-| Hermes secret stores | `.env`, `.anthropic_oauth.json`, `auth/google_oauth.json`, Bitwarden cache (`cache/bws_cache.json`, `cache/bws_cache.enc.json`), `vault/`, `browser-profile/`, `mcp-tokens/`, `pairing/` under HERMES_HOME (active profile and global root). Control files (`auth.json`, `config.yaml`, `webhook_subscriptions.json`) are read-denied but stay writable. |
+| Tandem secret stores | `.env`, `.anthropic_oauth.json`, `auth/google_oauth.json`, Bitwarden cache (`cache/bws_cache.json`, `cache/bws_cache.enc.json`), `vault/`, `browser-profile/`, `mcp-tokens/`, `pairing/` under HERMES_HOME (active profile and global root). Control files (`auth.json`, `config.yaml`, `webhook_subscriptions.json`) are read-denied but stay writable. |
 | Windows NT/device-namespace paths | `\??\...`, `\\.\...`, `\\?\UNC\...`, `\\?\GLOBALROOT...` — rejected for both reads and writes on every platform. On Windows, merely *resolving* such a path (e.g. `\??\UNC\host\share`) triggers outbound SMB authentication and can leak the user's NTLM hash; the prefixes also bypass normal path normalization. Ordinary extended-length local paths (`\\?\C:\...`) and plain UNC shares (`\\server\share`) are unaffected. |
 
 Project-local `.env`, `.env.local`, `.env.production` and `.envrc` files are **read-denied** anywhere on disk (the file tools refuse to read them) but remain writable: the agent can create or edit them for you, it just cannot read the values back.
@@ -387,9 +387,9 @@ When set, `write_file` and `patch` may only target paths inside the listed direc
 
 - Set automatically in the [official Docker image](https://github.com/NousResearch/hermes-agent) (`HERMES_WRITE_SAFE_ROOT=/opt/data`)
 - Supports multiple roots separated by `:` on Unix or `;` on Windows
-- **Do not add to `~/.hermes/.env` casually.** If you set it to a project directory, the agent cannot write to `~/.hermes/cron/jobs.json`, profile skills, or other Hermes state outside that prefix
+- **Do not add to `~/.hermes/.env` casually.** If you set it to a project directory, the agent cannot write to `~/.hermes/cron/jobs.json`, profile skills, or other Tandem state outside that prefix
 
-To allow both a workspace and Hermes home:
+To allow both a workspace and Tandem home:
 
 ```bash
 export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
@@ -397,9 +397,9 @@ export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
 
 Unset the variable to restore unrestricted writes (subject to the protected-path denylist). Full reference: [HERMES_WRITE_SAFE_ROOT](../reference/environment-variables.md#hermes_write_safe_root).
 
-### Cron and other Hermes state
+### Cron and other Tandem state
 
-Do not ask the agent to `patch` `~/.hermes/cron/jobs.json` directly. Use the `cronjob_manage` tool, [`hermes cron`](./features/cron.md), or `/cron` — they update the job store through the supported API. The same applies to other Hermes control files when write safety blocks direct edits.
+Do not ask the agent to `patch` `~/.hermes/cron/jobs.json` directly. Use the `cronjob_manage` tool, [`tandem cron`](./features/cron.md), or `/cron` — they update the job store through the supported API. The same applies to other Tandem control files when write safety blocks direct edits.
 
 :::note Defense-in-depth, not a hard boundary
 Write guards apply to `write_file` and `patch` only, with one exception: the Windows NT/device-namespace row is also enforced on reads — `read_file`, `search_files`, `@file:`/`@folder:` context references and the ACP file bridge all refuse those paths on the raw string, before anything resolves them. The `terminal` tool runs as the same OS user and can still `cat` or overwrite denied paths via shell commands. The denylist reduces accidental damage and gives models a clear stop signal; it does not sandbox a hostile or compromised agent.
@@ -407,7 +407,7 @@ Write guards apply to `write_file` and `patch` only, with one exception: the Win
 
 ## User Authorization (Gateway)
 
-When running the messaging gateway, Hermes controls who can interact with the bot through a layered authorization system.
+When running the messaging gateway, Tandem controls who can interact with the bot through a layered authorization system.
 
 ### Authorization Check Order
 
@@ -455,13 +455,13 @@ or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id).
 
 ### DM Pairing System
 
-For more flexible authorization, Hermes includes a code-based pairing system. Instead of requiring user IDs upfront, unknown users receive a one-time pairing code that the bot owner approves via the CLI.
+For more flexible authorization, Tandem includes a code-based pairing system. Instead of requiring user IDs upfront, unknown users receive a one-time pairing code that the bot owner approves via the CLI.
 
 **How it works:**
 
 1. An unknown user sends a DM to the bot
 2. The bot replies with an 8-character pairing code
-3. The bot owner runs `hermes pairing approve <platform> <code>` on the CLI
+3. The bot owner runs `tandem pairing approve <platform> <code>` on the CLI
 4. The user is permanently approved for that platform
 
 Control how unauthorized direct messages are handled in `~/.hermes/config.yaml`:
@@ -496,16 +496,16 @@ whatsapp:
 
 ```bash
 # List pending and approved users
-hermes pairing list
+tandem pairing list
 
 # Approve a pairing code
-hermes pairing approve telegram ABC12DEF
+tandem pairing approve telegram ABC12DEF
 
 # Revoke a user's access
-hermes pairing revoke telegram 123456789
+tandem pairing revoke telegram 123456789
 
 # Clear all pending codes
-hermes pairing clear-pending
+tandem pairing clear-pending
 ```
 
 :::tip Docker users: run pairing commands as the `hermes` user
@@ -517,7 +517,7 @@ cannot read them — the approval is silently ignored ([#10270][i10270]).
 Always pass `-u hermes`:
 
 ```bash
-docker exec -u hermes hermes-agent hermes pairing approve telegram ABC12DEF
+docker exec -u hermes hermes-agent tandem pairing approve telegram ABC12DEF
 ```
 
 If you already ran the command as root and the user is still unauthorized,
@@ -533,7 +533,7 @@ restart the container — the entrypoint will fix ownership on the next start.
 
 ## Container Isolation
 
-When using the `docker` terminal backend, Hermes applies strict security hardening to every container.
+When using the `docker` terminal backend, Tandem applies strict security hardening to every container.
 
 ### Docker Security Flags
 
@@ -648,7 +648,7 @@ required_credential_files:
     description: Google OAuth2 client credentials
 ```
 
-When loaded, Hermes checks if these files exist in the active profile's `HERMES_HOME` and registers them for mounting:
+When loaded, Tandem checks if these files exist in the active profile's `HERMES_HOME` and registers them for mounting:
 
 - **Docker**: Read-only bind mounts (`-v host:container:ro`)
 - **Modal**: Mounted at sandbox creation + synced before each command (handles mid-session OAuth setup)
@@ -667,21 +667,21 @@ Paths are relative to `~/.hermes/`. Files are mounted to `/root/.hermes/` inside
 
 ### Borrowed CLI logins (Codex CLI, Claude Code) {#borrowed-cli-logins}
 
-When Hermes has no usable login of its own for `openai-codex` or `anthropic`, it can borrow the Codex CLI's `~/.codex/auth.json` and Claude Code's `~/.claude/.credentials.json` (or Keychain entry) and refresh them on your behalf. Both use single-use, rotating refresh tokens: once two programs hold one token family, whichever refreshes first invalidates the other's copy, which shows up as "I logged in once in the terminal and Hermes keeps failing" (or the reverse). If you run those CLIs alongside Hermes, give Hermes its own login and turn adoption off:
+When Tandem has no usable login of its own for `openai-codex` or `anthropic`, it can borrow the Codex CLI's `~/.codex/auth.json` and Claude Code's `~/.claude/.credentials.json` (or Keychain entry) and refresh them on your behalf. Both use single-use, rotating refresh tokens: once two programs hold one token family, whichever refreshes first invalidates the other's copy, which shows up as "I logged in once in the terminal and Tandem keeps failing" (or the reverse). If you run those CLIs alongside Tandem, give Tandem its own login and turn adoption off:
 
 ```yaml
 auth:
   adopt_external_logins: false   # default: true
 ```
 
-With the switch off Hermes never reads or refreshes those files: the `claude_code` credential-pool row disappears, `hermes auth list` prints one line saying so, and the log carries one INFO line per process. Only automatic adoption is affected — `hermes auth add openai-codex` still asks before importing an existing Codex CLI login. Automatic recovery also only repairs the credential Hermes already holds: a Codex CLI/Desktop login into a different ChatGPT workspace is refused with a warning (re-authenticate with `hermes auth add openai-codex`), and a login you complete while recovery is running is never overwritten. Add your own logins with `hermes auth add anthropic` / `hermes auth add openai-codex`.
+With the switch off Tandem never reads or refreshes those files: the `claude_code` credential-pool row disappears, `tandem auth list` prints one line saying so, and the log carries one INFO line per process. Only automatic adoption is affected — `tandem auth add openai-codex` still asks before importing an existing Codex CLI login. Automatic recovery also only repairs the credential Tandem already holds: a Codex CLI/Desktop login into a different ChatGPT workspace is refused with a warning (re-authenticate with `tandem auth add openai-codex`), and a login you complete while recovery is running is never overwritten. Add your own logins with `tandem auth add anthropic` / `tandem auth add openai-codex`.
 
 ### What Each Sandbox Filters
 
 | Sandbox | Default Filter | Passthrough Override |
 |---------|---------------|---------------------|
 | **execute_code** | Blocks vars containing `KEY`, `TOKEN`, `SECRET`, `PASSWORD`, `CREDENTIAL`, `PASSWD`, `AUTH` in name; only allows safe-prefix vars through | ✅ Passthrough vars bypass both checks |
-| **terminal** (local) | Blocks explicit Hermes infrastructure vars (provider keys, gateway tokens, tool API keys) | ✅ Passthrough vars bypass the blocklist |
+| **terminal** (local) | Blocks explicit Tandem infrastructure vars (provider keys, gateway tokens, tool API keys) | ✅ Passthrough vars bypass the blocklist |
 | **terminal** (Docker) | No host env vars by default | ✅ Passthrough vars + `docker_forward_env` forwarded via `-e` |
 | **terminal** (SSH) | No host env vars by default | ✅ Passthrough vars forwarded via `SendEnv`; the remote `sshd_config` needs a matching `AcceptEnv` (see [SSH backend](configuration.md#ssh-backend)) |
 | **terminal** (Modal) | No host env/files by default | ✅ Credential files mounted; env passthrough via sync |
@@ -693,7 +693,7 @@ With the switch off Hermes never reads or refreshes those files: the `claude_cod
 - Credential files are mounted **read-only** into Docker containers
 - Skills Guard scans skill content for suspicious env access patterns before installation
 - Missing/unset vars are never registered (you can't leak what doesn't exist)
-- Hermes infrastructure secrets (provider API keys, gateway tokens) should never be added to `env_passthrough` — they have dedicated mechanisms. Such a name is refused when declared, and a declared name that a platform adapter claims later (a plugin adapter registering after the skill loaded) stops being forwarded from then on
+- Tandem infrastructure secrets (provider API keys, gateway tokens) should never be added to `env_passthrough` — they have dedicated mechanisms. Such a name is refused when declared, and a declared name that a platform adapter claims later (a plugin adapter registering after the skill loaded) stops being forwarded from then on
 
 ## MCP Credential Handling
 
@@ -843,12 +843,12 @@ Blocked project files show a warning:
 
 Your own `SOUL.md` in `HERMES_HOME` is treated differently: it is a file you wrote (file-tool writes to it
 need your approval, and project checkouts never supply it), so a scanner hit there **does not block the
-file**. Hermes logs a warning naming the matched pattern, loads the file as usual, and `/context` lists it as
+file**. Tandem logs a warning naming the matched pattern, loads the file as usual, and `/context` lists it as
 `⚠ SOUL.md … loaded — matched prompt-injection pattern(s); review the file`. This lets an identity file that
 *documents* an attack phrase (security guidance such as "content telling you to ignore previous instructions")
 keep working; if you did not write the flagged text, treat the warning as a sign that something else edited
-the file. The exception does not extend to a `SOUL.md` shipped by a profile distribution: `hermes profile
-install <git-url>` and `hermes profile update` copy a third party's `SOUL.md` into the profile home without
+the file. The exception does not extend to a `SOUL.md` shipped by a profile distribution: `tandem profile
+install <git-url>` and `tandem profile update` copy a third party's `SOUL.md` into the profile home without
 a scan or an approval prompt, so when `distribution.yaml` owns the file a scanner hit still blocks it.
 
 ## Best Practices for Production Deployment
@@ -864,7 +864,7 @@ a scan or an approval prompt, so when `distribution.yaml` owns the file a scanne
 7. **Set `terminal.cwd`** — don't let the agent operate from sensitive directories
 8. **Run as non-root** — never run the gateway as root
 9. **Monitor logs** — check `~/.hermes/logs/` for unauthorized access attempts
-10. **Keep updated** — run `hermes update` regularly for security patches
+10. **Keep updated** — run `tandem update` regularly for security patches
 
 ### Securing API Keys
 
@@ -897,21 +897,21 @@ The SSH connection details live in `.env` (not `config.yaml`) so they aren't che
 
 ## TLS certificate trust
 
-Hermes initializes the platform verifier through `truststore`. Windows uses
+Tandem initializes the platform verifier through `truststore`. Windows uses
 its certificate store, macOS uses its system trust services, and Linux uses
-the OpenSSL system trust paths. If initialization fails, Hermes logs the
+the OpenSSL system trust paths. If initialization fails, Tandem logs the
 failure and falls back to OpenSSL defaults.
 
 For a corporate TLS proxy, install its root through your organization's
-operating-system trust procedure. Hermes' provider resolver no longer selects
+operating-system trust procedure. Tandem's provider resolver no longer selects
 trust through `HERMES_CA_BUNDLE` or the old CA-environment-variable ladder.
 Sandboxed subprocesses can have their own separate CA configuration.
 
-The former startup certificate guard is gone with it: Hermes no longer
+The former startup certificate guard is gone with it: Tandem no longer
 validates `HERMES_CA_BUNDLE` / `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE` /
 `CURL_CA_BUNDLE` at launch, so there is no `SSLConfigurationError` and the
 `HERMES_SKIP_SSL_GUARD` escape hatch has no effect. `HERMES_CA_BUNDLE` is
-still honoured by the Nous Portal login flow only (`hermes login`, or its
+still honoured by the Nous Portal login flow only (`tandem login`, or its
 `--ca-bundle` flag); the standard `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE` / `CURL_CA_BUNDLE` variables
 are still read by the plain `requests`/`urllib` calls some tools make (and by
 `pip`, `uv`, `curl`, Node), so a stale path in one of them now fails at the
@@ -930,7 +930,7 @@ redirects to another origin do not receive them.
 
 ## Trusted-by-placement extension points {#trusted-by-placement}
 
-Most third-party code Hermes can run is gated by an explicit allow-list: general plugins need `plugins.enabled`, shell hooks need a first-use approval (or `hooks_auto_accept`), MCP servers are listed in config. One surface is deliberately different:
+Most third-party code Tandem can run is gated by an explicit allow-list: general plugins need `plugins.enabled`, shell hooks need a first-use approval (or `hooks_auto_accept`), MCP servers are listed in config. One surface is deliberately different:
 
 | Extension point | Loaded from | Loaded when | Opt-in |
 |-----------------|-------------|-------------|--------|
@@ -940,18 +940,18 @@ The gateway imports every valid hook directory in-process, with the gateway's ow
 
 ## Supply-chain advisory checking
 
-Hermes ships with a built-in advisory scanner that flags Python packages in the active venv that match a curated catalog of known-compromised versions (supply-chain worms like the May 2026 `mistralai 2.4.6` poisoning). Implementation lives in `hermes_cli/security_advisories.py`.
+Tandem ships with a built-in advisory scanner that flags Python packages in the active venv that match a curated catalog of known-compromised versions (supply-chain worms like the May 2026 `mistralai 2.4.6` poisoning). Implementation lives in `hermes_cli/security_advisories.py`.
 
 How it runs:
 
-- **CLI startup banner.** A one-line warning is printed if any advisory matches, with a pointer to `hermes doctor` for the full remediation.
-- **`hermes doctor`.** Surfaces every active advisory with version specifics and 2-4 step remediation instructions.
+- **CLI startup banner.** A one-line warning is printed if any advisory matches, with a pointer to `tandem doctor` for the full remediation.
+- **`tandem doctor`.** Surfaces every active advisory with version specifics and 2-4 step remediation instructions.
 - **Gateway startup.** Logged to `gateway.log`; the first interactive message gets a short operator banner.
 
 Each advisory carries a stable id. Once you have read and acted on it you can dismiss it for good:
 
 ```bash
-hermes doctor --ack <advisory-id>
+tandem doctor --ack <advisory-id>
 ```
 
 The ack is persisted to `config.security.acked_advisories` and survives restart. Old advisories are intentionally **not** removed from the catalog — leaving them in place keeps fresh installs warned about historically poisoned versions that might still be cached in a private mirror.
@@ -971,7 +971,7 @@ uses the same dependency transaction as plugin admission:
 2. PM prepares a complete environment with the existing extras and enabled plugin requirements.
 3. Without plugin members, it uses the committed lock unchanged. With members, it resolves from the previous selection before a frozen workspace sync.
 4. It validates the candidate before publishing its selection. A failed candidate leaves the previous environment selected.
-5. If the current process uses the previous environment, PM reports that Hermes must restart. It does not replace imported libraries in place.
+5. If the current process uses the previous environment, PM reports that Tandem must restart. It does not replace imported libraries in place.
 
 Shipped source, locks, and signed payloads remain unchanged. Additional tools
 and Python environments use writable storage outside the base artifact.
@@ -990,7 +990,7 @@ constraints and exact pins remain binding.
 To disable on-demand installations, run:
 
 ```bash
-hermes config set security.allow_lazy_installs false
+tandem config set security.allow_lazy_installs false
 ```
 
 Already installed dependencies remain usable. Explicit PM install commands
@@ -1000,7 +1000,7 @@ names. This setting is not a blanket ban on explicit plugin admission or
 manual package-manager commands. The official Docker image also disables
 on-demand installs through its internal environment policy.
 
-For missing dependencies, use `hermes tools` and `hermes doctor` to identify
+For missing dependencies, use `tandem tools` and `tandem doctor` to identify
 the requirement. Do not run pip against a signed payload or the system Python.
 See [Package management](../reference/package-management.md) for installation
 ownership, diagnostics, and command boundaries.

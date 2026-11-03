@@ -1,14 +1,14 @@
 """Install, update, gateway and a turn in a home whose path has spaces and non-ASCII bytes.
 
-Failure class: path handling. Users run Hermes from homes like ``/home/José Müller`` or a
+Failure class: path handling. Users run Tandem from homes like ``/home/José Müller`` or a
 CJK-named directory. Every path the installer and updater write (clone target, uv/python/node
 store, PM generation, the ``~/.local/bin/hermes`` launcher, the rc-file PATH line, sys.path) must
 survive a space and non-ASCII bytes.
 
 One real install through HEAD's ``scripts/install.sh`` with the whole sandbox (HOME, HERMES_HOME,
 TMPDIR) under ``José Müller 漢字 dir``; then a one-shot turn, a new login shell resolving
-``hermes``, an upstream release and ``hermes update``, a turn on the new commit and
-``hermes gateway run``. The symlinked-home shapes live in ``test_paths_symlinked.py`` so the two
+``tandem``, an upstream release and ``tandem update``, a turn on the new commit and
+``tandem gateway run``. The symlinked-home shapes live in ``test_paths_symlinked.py`` so the two
 installs run in parallel.
 """
 
@@ -77,7 +77,7 @@ def test_install_update_gateway_and_turn_under_a_non_ascii_spaced_home(odd_home,
                               {"docs/e2e-host-paths-marker.txt": "release 1\n"})
     up = sb.cli("update", "--yes", "--branch", "main", timeout=X.UPDATE_TIMEOUT)
     assert up.returncode == 0 and I.TRACEBACK not in up.stdout + up.stderr, (
-        "hermes update failed under a non-ASCII, spaced HOME:\n" + I.describe(up))
+        "tandem update failed under a non-ASCII, spaced HOME:\n" + I.describe(up))
     assert I.git("rev-parse", "HEAD", cwd=sb.checkout) == target, "update exited 0 but HEAD is not the new release"
     t2 = X.turn(sb, provider, "turn after updating under a non-ASCII home")
     assert not X.reran_completion(t2), "the first launch after a finished update re-ran the completion:\n" + I.describe(t2)

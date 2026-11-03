@@ -1,10 +1,10 @@
 """Signed-in provider requests that core makes FOR plugins; the token never reaches plugin code.
 
 A plugin that needs the user's subscription sign-in (today: Codex / ChatGPT) must not read, refresh
-or rewrite Hermes's auth store or ``~/.codex/auth.json``. Codex refresh tokens are single-use, so a
-second refresher races Hermes's locked refresh and can sign the user out. Instead the plugin declares
+or rewrite Tandem's auth store or ``~/.codex/auth.json``. Codex refresh tokens are single-use, so a
+second refresher races Tandem's locked refresh and can sign the user out. Instead the plugin declares
 ``requires_auth: [openai-codex]`` in its ``plugin.yaml`` and calls :func:`credentialed_provider_request`.
-Hermes resolves the credential through its own locked-refresh path, attaches ``Authorization``
+Tandem resolves the credential through its own locked-refresh path, attaches ``Authorization``
 itself, sends only to that provider's origins, never follows a redirect, and hands back
 status, headers and body.
 
@@ -25,7 +25,7 @@ from hermes_cli.urllib_security import url_origin
 
 
 class ProviderNotSignedIn(RuntimeError):
-    """The user has no usable sign-in for the provider in this Hermes profile."""
+    """The user has no usable sign-in for the provider in this Tandem profile."""
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,7 @@ class ProviderResponse:
 
 
 def _codex_auth(url: str) -> tuple[dict[str, str], str]:
-    """``(auth headers, credential base URL)`` from Hermes's own locked-refresh resolver."""
+    """``(auth headers, credential base URL)`` from Tandem's own locked-refresh resolver."""
     from agent.codex_headers import codex_account_headers
     from agent.turn_failure_copy import oauth_relogin_command
     from hermes_cli.auth_codex import resolve_codex_runtime_credentials
@@ -58,8 +58,8 @@ def _codex_auth(url: str) -> tuple[dict[str, str], str]:
     token = str(creds.get("api_key") or "").strip()
     if not token:
         raise ProviderNotSignedIn(
-            f"Not signed in to Codex in Hermes. Run `{oauth_relogin_command('openai-codex')}` "
-            "or sign in to OpenAI Codex under Providers in the Hermes desktop app.")
+            f"Not signed in to Codex in Tandem. Run `{oauth_relogin_command('openai-codex')}` "
+            "or sign in to OpenAI Codex under Providers in the Tandem desktop app.")
     headers = codex_account_headers(token) if url_origin(url)[1] == "chatgpt.com" else {}
     headers["Authorization"] = f"Bearer {token}"
     return headers, str(creds.get("base_url") or "")
@@ -106,7 +106,7 @@ def declared_auth_providers(manifest: Mapping[str, Any]) -> list[str]:
 def requires_auth_notice(manifest: Mapping[str, Any]) -> str:
     """One line for install/show surfaces; empty when the plugin declares no sign-in use."""
     providers = declared_auth_providers(manifest)
-    return (f"Uses your sign-in for: {', '.join(providers)} (Hermes sends the requests; "
+    return (f"Uses your sign-in for: {', '.join(providers)} (Tandem sends the requests; "
             "the plugin never receives the token)") if providers else ""
 
 
@@ -121,7 +121,7 @@ def credentialed_provider_request(
     provider: str, method: str, url: str, *, json: Any = None,
     headers: Optional[Mapping[str, str]] = None, timeout: float = 30.0,
 ) -> ProviderResponse:
-    """Send ``method url`` with the user's *provider* sign-in attached by Hermes.
+    """Send ``method url`` with the user's *provider* sign-in attached by Tandem.
 
     Refuses (``PermissionError``) a caller outside an installed plugin, a plugin whose ``plugin.yaml``
     does not list *provider* under ``requires_auth``, and any origin outside the provider's

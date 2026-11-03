@@ -1,6 +1,6 @@
 """A launch never runs the completion tail beside a live update tree whose marker is gone.
 
-A killed ``hermes update`` leaves its completion child holding the checkout lock; its marker is
+A killed ``tandem update`` leaves its completion child holding the checkout lock; its marker is
 dead (and any reader deletes it). ``prepare_launch`` must read the checkout lock, not just the
 marker, or it claims the free marker and runs a second tail beside the live one.
 """

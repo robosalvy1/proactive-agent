@@ -103,7 +103,7 @@ def activation_predicate(
 
     *yaml_cfg* is the loaded config.yaml layer (read from *home* when omitted), *platform_names*
     any already-merged platform keys (``GatewayConfig.platforms``). *home* defaults to the active
-    Hermes home.
+    Tandem home.
     """
     if home is None:
         from hermes_constants import get_hermes_home

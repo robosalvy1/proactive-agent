@@ -115,7 +115,7 @@ class TestCheckLintBracePaths:
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX sh stand-ins for node")
 def test_local_js_lint_runs_pm_node_never_the_users(tmp_path, monkeypatch):
-    """Hermes's own post-write lint uses PM's Node even when the user's node sorts first on
+    """Tandem's own post-write lint uses PM's Node even when the user's node sorts first on
     PATH, and skips (never falls back to the user's) when PM has no Node."""
     import hermes_constants
     from tools.environments.local import LocalEnvironment
@@ -141,7 +141,7 @@ def test_local_js_lint_runs_pm_node_never_the_users(tmp_path, monkeypatch):
 
     store_dirs.clear()
     result = ops._check_lint(str(target))
-    assert result.skipped and "Hermes-managed Node" in result.message
+    assert result.skipped and "Tandem-managed Node" in result.message
 
 
 class TestCheckLintInproc:

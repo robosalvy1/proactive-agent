@@ -3,12 +3,12 @@ title: "Streaming TTS Internals"
 description: "Sentence chunker, streaming provider ABC, capability matrix and how to add a streaming TTS provider"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Streaming TTS
 
-Hermes can stream TTS audio as it arrives from the provider, instead of waiting
+Tandem can stream TTS audio as it arrives from the provider, instead of waiting
 for the full audio before playing. This is used by voice mode (CLI/TUI live
 conversation), the dashboard speak-stream WebSocket, and — via the gateway
 `StreamingTTSConsumer` — any platform adapter that opts into streaming audio.
@@ -100,7 +100,7 @@ same `tts.voice` / `tts.model` / `tts.speed` as `synthesize()`. A configured
 plugin streams first. Under `tts.streaming.provider: auto` it is tried only after
 the built-in priority list. `streams_pcm`, `stream_sample_rate` and
 `is_available()` are read every time a streamer is resolved. If the rate is
-missing or the provider reports unavailable, Hermes keeps per-sentence synthesis.
+missing or the provider reports unavailable, Tandem keeps per-sentence synthesis.
 As with the built-in streamers, the speaker pipeline prefetches up to three
 sentences, so a plugin's `stream()` must tolerate concurrent calls (the sync
 path serializes `synthesize()`; this path does not).

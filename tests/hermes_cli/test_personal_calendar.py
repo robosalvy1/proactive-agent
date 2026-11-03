@@ -1,4 +1,4 @@
-"""The calendar tile signs in through Hermes's Google Workspace OAuth and reads the shared token."""
+"""The calendar tile signs in through Tandem's Google Workspace OAuth and reads the shared token."""
 import importlib.util
 import json
 import time

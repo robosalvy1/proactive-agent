@@ -55,7 +55,7 @@ def run_tool_round(
 ) -> ToolRoundVerdict:
     """Execute one tool round in the exact original order. Persist-before-execute is a
     durability invariant: resume must see the executed block if a destructive tool restarts
-    Hermes; a failed canonical append ends the turn rather than running tools from
+    Tandem; a failed canonical append ends the turn rather than running tools from
     process-only state."""
     from agent.conversation_loop import _invalid_tool_name_error_content
 

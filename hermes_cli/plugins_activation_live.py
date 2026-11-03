@@ -113,7 +113,7 @@ def live_notice(activation: dict[str, Any]) -> str:
     if not servers and not skills:
         return ""
     name = activation.get("name") or activation.get("key")
-    lines = [f"[System note: plugin {name} was installed and is live in this chat now (a Hermes note, "
+    lines = [f"[System note: plugin {name} was installed and is live in this chat now (a Tandem note, "
              "not tool output)."]
     lines.extend(f"- Skill {skill['name']}: load it with skill_view." for skill in skills)
     for server in servers:

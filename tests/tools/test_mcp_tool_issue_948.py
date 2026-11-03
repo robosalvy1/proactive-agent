@@ -222,7 +222,7 @@ def _pm_ships(monkeypatch, *, node_dirs=(), uv=None):
 
 
 def test_bare_node_launchers_resolve_pm_node_ahead_of_the_users(tmp_path, monkeypatch):
-    """The packaged-toolchain rule: a bare ``npx`` runs Hermes's PM npx, with PM's npm and node
+    """The packaged-toolchain rule: a bare ``npx`` runs Tandem's PM npx, with PM's npm and node
     dirs first on the child PATH (npx's ``env node``), even when the user's Node sorts first."""
     user_bin = _toolchain_bin(tmp_path / "user-node", "npx", "node")
     npm_bin = _toolchain_bin(tmp_path / "store" / "npm" / "bin", "npx", "npm")
@@ -252,7 +252,7 @@ def _sealed_npx(tmp_path, monkeypatch):
 
 
 def test_packaged_npx_runs_the_package_bin_on_the_packaged_node(tmp_path, monkeypatch):
-    """With only the payload's Node, npx's cmd.exe hop always dies, so Hermes installs the
+    """With only the payload's Node, npx's cmd.exe hop always dies, so Tandem installs the
     package (scripts off) and runs its bin script on the packaged node instead."""
     import subprocess
 
@@ -374,7 +374,7 @@ def test_bare_python3_steps_past_the_managed_runtime_to_the_user_hit(tmp_path, m
     """Two PATH hits for a bare non-launcher command: the managed runtime's and the
     user's. The user's wins; the resolved env prepends the user's dir (helpers the
     server spawns resolve against the same interpreter). The user dir must sit OUTSIDE
-    the hermes home — everything under it counts as managed."""
+    the tandem home — everything under it counts as managed."""
     from hermes_constants import reset_hermes_home_override, set_hermes_home_override
     home = tmp_path / "home"
     managed_bin = home / "bin"  # <HERMES_HOME>/bin — a managed dir by definition

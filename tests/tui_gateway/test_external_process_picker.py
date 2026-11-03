@@ -2,7 +2,7 @@
 
 Drives a fake process profile (registered like a ``$HERMES_HOME/plugins/<name>`` model-provider plugin
 would) through ``list_available_providers``, ``provider_model_ids``, the TUI/Desktop ``model.options``
-RPC, the ``hermes model`` setup picker and a session-scoped ``config.set model`` switch.
+RPC, the ``tandem model`` setup picker and a session-scoped ``config.set model`` switch.
 """
 import shutil
 import sys

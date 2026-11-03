@@ -3,7 +3,7 @@
 Hardware facts come from ``hermes_platform.host``. Account facts (full name, locale) come from OS
 user records through ``pwd`` or Win32/CoreFoundation calls, never from environment variables such
 as HOME or LANG, and never from a subprocess or the network. They describe the machine that runs
-the Hermes backend; when the desktop app drives a remote backend, that is not the user's laptop.
+the Tandem backend; when the desktop app drives a remote backend, that is not the user's laptop.
 """
 
 from __future__ import annotations

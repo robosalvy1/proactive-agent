@@ -18,7 +18,7 @@ def test_recommended_update_command_defaults_to_hermes_update(monkeypatch):
     # detect_install_method().
     with patch("hermes_cli.config.get_managed_update_command", return_value=None), \
          patch("hermes_cli.config.detect_install_method", return_value="git"):
-        assert recommended_update_command() == "hermes update"
+        assert recommended_update_command() == "tandem update"
 
 
 @pytest.mark.parametrize("false_value", ["false", "0", "no", "off", "FALSE"])
@@ -29,7 +29,7 @@ def test_get_managed_system_false_values(monkeypatch, false_value):
     assert get_managed_system() is None
     assert not is_managed()
     with patch("hermes_cli.config.detect_install_method", return_value="git"):
-        assert recommended_update_command() == "hermes update"
+        assert recommended_update_command() == "tandem update"
 
 
 def test_optional_skill_source_honors_env_override(monkeypatch, tmp_path):

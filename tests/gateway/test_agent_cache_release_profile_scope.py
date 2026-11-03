@@ -113,7 +113,7 @@ def test_in_turn_cap_eviction_of_a_default_profile_agent_leaves_the_secondarys_s
 
 
 def test_default_profile_owner_is_the_root_even_when_launched_under_a_named_profile(tmp_path, monkeypatch):
-    """``hermes -p x gateway`` sets HERMES_HOME to x's home and serves the default profile as a
+    """``tandem -p x gateway`` sets HERMES_HOME to x's home and serves the default profile as a
     secondary. An ``agent:main:`` session still belongs to the default profile at the ROOT, not to
     the launch profile x — otherwise x's turn would commit default's transcript under x."""
     from hermes_constants import reset_hermes_home_override, set_hermes_home_override

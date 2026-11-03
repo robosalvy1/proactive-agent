@@ -2,8 +2,8 @@
 
 When the gateway is launched by the Desktop/Dashboard app it can inherit a
 minimal PATH (/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin)
-that omits the Hermes venv bin dir and ~/.local/bin. The spawned
-tui_gateway.slash_worker then cannot resolve Hermes-managed CLIs such as
+that omits the Tandem venv bin dir and ~/.local/bin. The spawned
+tui_gateway.slash_worker then cannot resolve Tandem-managed CLIs such as
 browser-use/uvx via shutil.which, breaking browser_exec.
 
 `tui_gateway.server._prepend_tool_paths` prepends those two directories to
@@ -41,7 +41,7 @@ class TestPrependToolPaths:
         assert str(Path.home() / ".local" / "bin") in parts
 
     def test_pm_store_dirs_go_ahead_of_user_local_bin(self, monkeypatch, tmp_path):
-        """A user's node/uv in ~/.local/bin must never shadow Hermes's PM toolchain."""
+        """A user's node/uv in ~/.local/bin must never shadow Tandem's PM toolchain."""
         store_dir = str(tmp_path / "store" / "node" / "bin")
         monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hh"))
         monkeypatch.setattr("pm.install._store_path_dirs", lambda: [store_dir])

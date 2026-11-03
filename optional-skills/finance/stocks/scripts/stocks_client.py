@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-stocks_client.py - Stock market data CLI tool for the Hermes Agent project.
+stocks_client.py - Stock market data CLI tool for the Tandem Agent project.
 Zero external dependencies - Python stdlib only.
 """
 
@@ -668,7 +668,7 @@ def cmd_crypto(symbol: str, vs: str = "USD") -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="stocks_client",
-        description="Stock & crypto market data CLI — Hermes Agent",
+        description="Stock & crypto market data CLI — Tandem Agent",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

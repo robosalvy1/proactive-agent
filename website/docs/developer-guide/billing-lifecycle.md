@@ -3,7 +3,7 @@ title: "Billing Lifecycle (TUI)"
 description: "Map from every billing/subscription state and typed refusal to the exact TUI copy and recovery action"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Billing lifecycle: client-side state, errors, and recovery
@@ -38,7 +38,7 @@ Source: `ui-tui/src/components/billingOverlay.tsx` (`OverviewScreen`,
 | `monthly_cap` present, `limit_usd != null` | `{spent_display} of {limit_display} used this month` (+ ` (default ceiling)` iff `is_default_ceiling`). |
 | `monthly_cap` absent or `limit_usd == null` | `No monthly cap visible (managed on the portal).` |
 | Role without billing capability (`!is_admin`, menu collapses) | Note: `Billing actions need someone with billing permissions (owner, admin, or finance admin).` Menu collapses to `Manage on portal` / `Cancel`. |
-| Org kill-switch off (`is_admin` but `!cli_billing_enabled`) | Note: `Remote spending is off for this org — a billing admin can turn it on from the portal's Hermes Agent page.` Same collapsed menu. |
+| Org kill-switch off (`is_admin` but `!cli_billing_enabled`) | Note: `Remote spending is off for this org — a billing admin can turn it on from the portal's Tandem Agent page.` Same collapsed menu. |
 
 Note: `full = s.is_admin && s.cli_billing_enabled` gates the **org-level**
 switch, not the per-terminal `billing:manage` scope — that's discovered
@@ -55,7 +55,7 @@ Source: `renderBillingError` in `ui-tui/src/app/slash/commands/topup.ts:37-149`.
 | `insufficient_scope` | `This needs Remote Spending allowed. Start a top-up to allow it, then retry.` | if present | — |
 | `remote_spending_revoked` (CF-4) | `{An admin stopped remote spending for this terminal. \| You stopped remote spending for this terminal.}` (by `actor`) `Reconnect to restore — run /portal to re-authorize this terminal.` Also clears `billing` overlay state immediately (doesn't wait for token refresh). | if present | — |
 | `session_revoked` | `Your session was logged out. Run /portal to log in again.` Also clears `billing` overlay state. | if present | — |
-| `cli_billing_disabled` / `remote_spending_disabled` (dual-emitted) | `Remote spending is off for this account — a billing admin can turn it on from the portal's Hermes Agent page.` | if present | — |
+| `cli_billing_disabled` / `remote_spending_disabled` (dual-emitted) | `Remote spending is off for this account — a billing admin can turn it on from the portal's Tandem Agent page.` | if present | — |
 | `role_required` | `Adding funds needs someone with billing permissions (owner, admin, or finance admin), or manage this on the portal.` | if present | — |
 | `consent_required` | `This action needs a one-time card confirmation and consent step on the portal before it can proceed.` | if present | — |
 | `org_access_denied` | `This token isn't bound to an org you can manage. Sign in with the right org, or manage this on the portal.` | if present | — |

@@ -1,4 +1,4 @@
-"""Tests for the legacy-desktop-checkout report in hermes doctor."""
+"""Tests for the legacy-desktop-checkout report in tandem doctor."""
 
 import json
 import subprocess

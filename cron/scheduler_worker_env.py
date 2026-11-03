@@ -7,8 +7,8 @@ cwd entry. That entry is gone under ``PYTHONSAFEPATH`` and useless when the venv
 editable install maps a moved/deleted checkout -- the worker then dies with
 "No module named 'cron'" before its ownership ack (#112729, hypothesised cause).
 
-The shared subprocess sanitizer strips Hermes-owned PYTHONPATH entries because user
-children must not see our tree. This child IS Hermes, so the pin is applied *after* the
+The shared subprocess sanitizer strips Tandem-owned PYTHONPATH entries because user
+children must not see our tree. This child IS Tandem, so the pin is applied *after* the
 env is built, on the sanitized env. On a self-managed (shell-installer / PM) install the
 sanitizer's drop of the runtime site-packages cannot stand this time: the worker inherits
 this process's interpreter, which is PM's store Python and owns no third-party

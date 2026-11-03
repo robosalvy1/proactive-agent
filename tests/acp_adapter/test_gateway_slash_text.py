@@ -1,4 +1,4 @@
-"""Only registered Hermes commands are slash commands; other text starting with '/' is a prompt."""
+"""Only registered Tandem commands are slash commands; other text starting with '/' is a prompt."""
 import asyncio
 from unittest.mock import AsyncMock
 

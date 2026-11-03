@@ -3,10 +3,10 @@
 Failure class: interpreter. Real Windows machines carry two traps the managed runtime
 must ignore:
 
-* a different, standalone Python on PATH ahead of anything Hermes installed (#123185);
+* a different, standalone Python on PATH ahead of anything Tandem installed (#123185);
 * the pre-PM in-tree ``hermes-agent\\venv`` an older install left behind (#123965, #123972).
 
-After ``hermes update`` neither the gateway the user starts through ``hermes.exe`` nor a
+After ``tandem update`` neither the gateway the user starts through ``hermes.exe`` nor a
 CLI turn may add the stale venv to ``sys.path`` or publish it to its children, with the
 standalone Python first on PATH. The stale venv carries a ``.pth`` hook that
 drops a ``<pid>`` marker whenever any process adds its site dir, so "loaded the stale
@@ -91,7 +91,7 @@ def journey(tmp_path_factory):
                 update = j.step("update", machine.update)
                 if j.ok("update"):
                     j.step("update_ok", lambda: j.require("update", update.returncode == 0,
-                                                           f"hermes update exited {update.returncode}", update))
+                                                           f"tandem update exited {update.returncode}", update))
                 if j.ok("update_ok"):
                     with machine.gateway_phase():
                         j.results["probe_present"] = (machine.install_dir / _PROBE).is_file()

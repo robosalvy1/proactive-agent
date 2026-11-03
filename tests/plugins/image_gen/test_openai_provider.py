@@ -262,7 +262,7 @@ class TestGenerate:
     @pytest.mark.parametrize("has_image", [True, False])
     def test_token_usage_reaches_session_accounting(self, provider, has_image):
         """gpt-image bills per token: the Images API ``usage`` block lands as one
-        ``image_generation`` row keyed on the API model, not the Hermes tier label — also
+        ``image_generation`` row keyed on the API model, not the Tandem tier label — also
         when the billed HTTP 200 carries no image data."""
         from agent import aux_accounting
 

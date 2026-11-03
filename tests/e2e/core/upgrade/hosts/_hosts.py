@@ -3,7 +3,7 @@
 Everything runs through ``tests/e2e/core/upgrade/_helpers.py`` (bwrap sandbox, allowlisted env)
 and ``_install_helpers.py`` (local bare origin + URL rewrite, git wrapper). This module only adds
 what a host shape needs on top: a sandbox rooted at an arbitrary path, the configured fake
-provider, a one-shot turn, a background ``hermes gateway run`` and a login-shell probe.
+provider, a one-shot turn, a background ``tandem gateway run`` and a login-shell probe.
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ def configure(sb: I.Sandbox, provider: FakeLLMServer) -> None:
 
 
 def turn(sb: I.Sandbox, provider: FakeLLMServer, marker: str, *, env: dict | None = None) -> subprocess.CompletedProcess:
-    """One ``hermes -z`` turn that must reach the provider exactly once and print its reply."""
+    """One ``tandem -z`` turn that must reach the provider exactly once and print its reply."""
     n = len(provider.main_requests())
     cp = H.run([sb.hermes, "-z", marker], env=env or sb.env, cwd=sb.root, writable=[sb.root], timeout=900)
     assert cp.returncode == 0 and I.TRACEBACK not in cp.stdout + cp.stderr, I.describe(cp)
@@ -103,7 +103,7 @@ def missing_entries(entries: list[str]) -> list[str]:
 
 
 class Gateway:
-    """``hermes gateway run`` in the foreground of its own sandbox, as a user starts it by hand."""
+    """``tandem gateway run`` in the foreground of its own sandbox, as a user starts it by hand."""
 
     def __init__(self, sb: I.Sandbox):
         self.sb = sb

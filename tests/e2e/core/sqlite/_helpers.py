@@ -1,6 +1,6 @@
 """Harness for the multi-process SQLite torture chamber (issue class C1: state.db integrity).
 
-One real ``state.db`` under ``tmp_path``, in either journal mode Hermes deploys (see ``JOURNAL_MODES``); every
+One real ``state.db`` under ``tmp_path``, in either journal mode Tandem deploys (see ``JOURNAL_MODES``); every
 role is a separate OS process running ``_roles.py`` against it (see that module for the journal/report
 protocol). This module owns:
 
@@ -56,11 +56,11 @@ def linked_sqlite_is_wal_capable() -> bool:
 
 
 def skip_unless_deployable(journal: str) -> None:
-    """WAL is not what Hermes runs on a vulnerable SQLite, so that arm is not deployable there; DELETE always is."""
+    """WAL is not what Tandem runs on a vulnerable SQLite, so that arm is not deployable there; DELETE always is."""
     if journal == "wal" and not linked_sqlite_is_wal_capable():
         import pytest
 
-        pytest.skip(f"linked SQLite {sqlite3.sqlite_version} runs Hermes in DELETE mode; the delete arm covers it")
+        pytest.skip(f"linked SQLite {sqlite3.sqlite_version} runs Tandem in DELETE mode; the delete arm covers it")
 
 
 def base_seed() -> int:

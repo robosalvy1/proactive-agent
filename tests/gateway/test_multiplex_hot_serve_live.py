@@ -2,7 +2,7 @@
 
 A profile created under the running multiplexer is served by it without a restart: ``identify``
 lists the new home, a ticket minted for it opens a session owned by this process, and ``profiles/``
-(not the boot-time reservation) is what the next restart reserves — so ``hermes -p new`` finds an
+(not the boot-time reservation) is what the next restart reserves — so ``tandem -p new`` finds an
 owner instead of spawning a stray per-profile daemon that would later collide with the
 multiplexer's all-or-nothing reserve. A secondary whose ``state.db`` is unusable parks only itself.
 """
@@ -85,7 +85,7 @@ def mux(tmp_path, peer):
 
 
 def start_daemon(mux, timeout=90):
-    """Boot the multiplexer the way ``hermes gateway run`` does; the canonical gateway command-line
+    """Boot the multiplexer the way ``tandem gateway run`` does; the canonical gateway command-line
     matcher (``gateway.status.looks_like_gateway_command_line``) is what the CLI's liveness probes
     apply to the recorded PID, so the fixture must spawn a recognisable launcher."""
     log = mux['log'].open('a+', encoding='utf-8', errors='replace')
@@ -216,7 +216,7 @@ def kill_recorded_gateway(root, timeout=45):
 
 @pytest.mark.live_system_guard_bypass
 def test_named_profile_ensure_during_multiplexer_downtime_starts_the_multiplexer(mux):
-    """The multiplexer is down (restart/update) and ``hermes -p boot gateway ensure`` runs: the client
+    """The multiplexer is down (restart/update) and ``tandem -p boot gateway ensure`` runs: the client
     must start the MULTIPLEXER, never a per-profile daemon (which would answer this client and then
     block the multiplexer's next all-or-nothing reserve with ``Cannot reserve gateway profiles``)."""
     root, env, boot = mux['root'], mux['env'], mux['boot']

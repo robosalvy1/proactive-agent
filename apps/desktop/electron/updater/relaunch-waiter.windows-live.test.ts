@@ -65,7 +65,7 @@ exit $LASTEXITCODE
         expect(fs.existsSync(activation)).toBe(!unavailable)
 
         if (!unavailable) {
-          expect(fs.readFileSync(activation, 'utf8').trim()).toBe('shell:AppsFolder\\audit-only!Hermes')
+          expect(fs.readFileSync(activation, 'utf8').trim()).toBe('shell:AppsFolder\\audit-only!Tandem')
         }
       } finally {
         fs.rmSync(root, { recursive: true, force: true })

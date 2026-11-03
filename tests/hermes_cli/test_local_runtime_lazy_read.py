@@ -6,7 +6,7 @@ only for a marked tensor larger than 4 GiB, and never on an integrated GPU, wher
 table in full. Qwen3.8 Flash Next's 26.8 GiB per-layer embedding table is one: priced as loaded,
 the IQ4_XS build needs ~87 GiB; read on demand, it holds ~60 GiB. On a DGX Spark (GB10) the table
 took 27.2 GiB of resident memory under ``auto`` and 0.4 GiB under ``--lazy-mode on``, at the same
-decode speed and within 2% of the prefill speed, so Hermes passes ``on`` wherever it prices the
+decode speed and within 2% of the prefill speed, so Tandem passes ``on`` wherever it prices the
 table as left on disk. AMD/Intel integrated GPUs keep the engine's default (reading on demand
 halved their prefill, llama.cpp #28160) and pay for the table.
 """

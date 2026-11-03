@@ -151,13 +151,13 @@ def test_task_xml_binds_actual_action_and_principal(case, reason, tmp_path):
     configured = str(home if case != 'wrong_home' else tmp_path / 'other')
     # The current installed launcher grammar; no script is executed.
     script.write_text("\n".join([
-        "' Hermes Agent Gateway", "Option Explicit", "Dim sh, env, existing_pp",
+        "' Tandem Agent Gateway", "Option Explicit", "Dim sh, env, existing_pp",
         'Set sh = CreateObject("WScript.Shell")', 'Set env = sh.Environment("PROCESS")',
         f'env.Item("HERMES_HOME") = "{configured}"',
         'env.Item("HERMES_SUPERVISED_CHILD") = "1"',
         'env.Item("VIRTUAL_ENV") = "C:\\Hermes"',
         'existing_pp = env.Item("PYTHONPATH")', 'If Len(existing_pp) > 0 Then',
-        '  env.Item("PYTHONPATH") = "C:\\Hermes;" & existing_pp', 'Else',
+        '  env.Item("PYTHONPATH") = "C:\\Tandem;" & existing_pp', 'Else',
         '  env.Item("PYTHONPATH") = "C:\\Hermes"', 'End If',
         f'sh.CurrentDirectory = "{home}"',
         f'sh.Run "{sys.executable} -m hermes_cli.main gateway run", 0, False',
@@ -318,7 +318,7 @@ def test_android_python_reaches_the_unmanaged_start(tmp_path, monkeypatch):
 def test_windows_startup_folder_entry_still_restarts_a_stopped_owner(tmp_path, monkeypatch):
     """The Startup-folder fallback is login persistence only (no start verb, no identity): with it
     present and no Scheduled Task registered, ensure takes the same detached direct spawn manual
-    `hermes gateway start` uses instead of refusing until the next login."""
+    `tandem gateway start` uses instead of refusing until the next login."""
     from types import SimpleNamespace
     from hermes_cli import gateway_runtime as runtime, gateway_runtime_service as service, gateway_runtime_start as start
     from hermes_cli import gateway_windows

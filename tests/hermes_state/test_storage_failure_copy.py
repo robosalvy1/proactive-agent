@@ -15,10 +15,10 @@ from hermes_state_user_copy import describe_storage_failure, storage_failure_det
     ("exc", "code", "command"),
     [
         (sqlite3.OperationalError("database is locked"), "storage_locked", "try again"),
-        (sqlite3.OperationalError("attempt to write a readonly database"), "storage_readonly", "hermes doctor --fix"),
-        (sqlite3.DatabaseError("database disk image is malformed"), "storage_corrupt", "hermes doctor --fix"),
+        (sqlite3.OperationalError("attempt to write a readonly database"), "storage_readonly", "tandem doctor --fix"),
+        (sqlite3.DatabaseError("database disk image is malformed"), "storage_corrupt", "tandem doctor --fix"),
         (OSError(28, "No space left on device"), "disk_full", "Free some disk space"),
-        (None, "storage_unavailable", "hermes doctor --fix"),
+        (None, "storage_unavailable", "tandem doctor --fix"),
     ],
 )
 def test_each_cause_has_a_stable_code_and_an_action(exc, code, command):
@@ -37,7 +37,7 @@ def test_details_line_is_flattened_and_bounded():
 
 def test_action_command_is_pinned_to_the_failing_profile(monkeypatch, tmp_path):
     """The action names the profile whose store failed (multi-profile backends serve sessions
-    whose state.db is not the process default; a bare ``hermes`` follows active_profile)."""
+    whose state.db is not the process default; a bare ``tandem`` follows active_profile)."""
     from hermes_constants import profile_cli_selector
 
     monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes" / "profiles" / "research"))
@@ -46,4 +46,4 @@ def test_action_command_is_pinned_to_the_failing_profile(monkeypatch, tmp_path):
     for exc in (sqlite3.OperationalError("database is locked"), sqlite3.DatabaseError("malformed"), None):
         action = describe_storage_failure(exc).action
         assert "{profile_arg}" not in action
-        assert f"`hermes {selector}" in action and "`hermes doctor" not in action and "`hermes gateway" not in action
+        assert f"`tandem {selector}" in action and "`tandem doctor" not in action and "`tandem gateway" not in action

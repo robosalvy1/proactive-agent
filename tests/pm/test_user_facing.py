@@ -1,4 +1,4 @@
-"""The terminal runs the user's own tools first and Hermes's after them (pm.user_facing)."""
+"""The terminal runs the user's own tools first and Tandem's after them (pm.user_facing)."""
 from __future__ import annotations
 
 import os

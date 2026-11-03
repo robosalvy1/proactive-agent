@@ -52,7 +52,7 @@ save_config = late("save_config", "hermes_cli.config")
 
 def _spawn_action(argv: list[str], name: str, *, log_msg: str, prefix: str,
                   profile: Optional[str] = None) -> dict:
-    """Spawn a ``hermes -p <profile> <argv>`` action; spawn failure -> 500.
+    """Spawn a ``tandem -p <profile> <argv>`` action; spawn failure -> 500.
 
     The profile reaches the child as argv (``_profile_cli_args``) — the only mechanism
     that retargets a fresh process's import-time home bindings.
@@ -435,7 +435,7 @@ async def remove_credential_pool_entry(provider: str, index: int, profile: Optio
     Removal must be sticky: ``load_pool()`` re-seeds entries from their backing
     source (.env var, OAuth file, custom-provider config) on every call, so
     deleting only the row silently reverts on the next refresh. Dispatch through
-    the same RemovalStep registry as ``hermes auth remove``: each source cleans
+    the same RemovalStep registry as ``tandem auth remove``: each source cleans
     its external state and suppresses ``(provider, source)`` so seeders skip it.
     Manual entries have no step — nothing external, and they aren't re-seeded.
 

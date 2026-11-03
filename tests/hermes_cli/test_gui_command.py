@@ -1,4 +1,4 @@
-"""Tests for ``hermes gui`` desktop launcher wiring."""
+"""Tests for ``tandem gui`` desktop launcher wiring."""
 
 from __future__ import annotations
 
@@ -132,7 +132,7 @@ def _packaged_exe_rel() -> Path:
 
 
 def _npm_argv(cmd) -> list:
-    """The npm command line inside a build call. A direct ``hermes desktop`` build holds the
+    """The npm command line inside a build call. A direct ``tandem desktop`` build holds the
     checkout lock (review C5), so on POSIX it runs under the custody launcher
     (``python -I -S -c <reaper> <fds> npm ...``)."""
     cmd = list(cmd)
@@ -197,7 +197,7 @@ def _stamped_macos_bundle(app: Path, asar: bytes) -> Path:
 
 @pytest.mark.platforms("macos")
 def test_packaged_launch_opens_the_refreshed_installed_app(tmp_path, monkeypatch):
-    """#52339: Finder and the Dock open the installed Hermes.app, so ``hermes desktop`` must launch
+    """#52339: Finder and the Dock open the installed Hermes.app, so ``tandem desktop`` must launch
     that copy (brought up to the checkout build) instead of a second bundle under release/."""
     import shutil
 
@@ -305,7 +305,7 @@ def test_gui_brew_install_launches_installed_app_when_present(tmp_path, monkeypa
 
 
 def test_gui_close_preview_flag_forwards_to_packaged_exe(tmp_path, monkeypatch):
-    """`hermes desktop --close-preview` must reach the Electron binary so the
+    """`tandem desktop --close-preview` must reach the Electron binary so the
     running instance's single-instance handler can close a fullscreened
     preview pane the user cannot otherwise escape (#97213)."""
     root = _make_desktop_tree(tmp_path)
@@ -673,7 +673,7 @@ def test_setup_tcc_identity_untrusted_existing_cert_is_repaired(tmp_path, monkey
 
 
 def test_cmd_gui_setup_tcc_identity_exits_before_build(tmp_path, monkeypatch):
-    """`hermes desktop --setup-tcc-identity` calls the setup and exits 0/1
+    """`tandem desktop --setup-tcc-identity` calls the setup and exits 0/1
     without building or launching the app."""
     root = _make_desktop_tree(tmp_path)
     monkeypatch.setattr(cli_main, "PROJECT_ROOT", root)
@@ -1677,7 +1677,7 @@ def test_stop_desktop_processes_locking_build_posix_swap_bypasses_early_return(t
 
 def _stop_spares_the_desktop_driving_this_update(tmp_path, monkeypatch, *, also_posix):
     """A Desktop's own process tree runs this update (a historical Desktop's piped
-    `hermes update` child, or the launch-time tail its backend runs). Stopping that
+    `tandem update` child, or the launch-time tail its backend runs). Stopping that
     Desktop kills the update with it. Its renderer/GPU/zygote helpers run the same
     exe but are not our ancestors; stopping them leaves a main process that can
     neither draw nor quit. Only an unrelated Desktop from the same release tree is
@@ -1732,7 +1732,7 @@ def _stop_spares_the_desktop_driving_this_update(tmp_path, monkeypatch, *, also_
 
 @pytest.mark.platforms("posix")
 def test_posix_swap_spares_the_desktop_driving_this_update(tmp_path, monkeypatch):
-    """A historical Desktop runs `hermes update` as a piped child and relaunches
+    """A historical Desktop runs `tandem update` as a piped child and relaunches
     itself afterwards; stopping it breaks the update's stdout (EPIPE)."""
     _stop_spares_the_desktop_driving_this_update(tmp_path, monkeypatch, also_posix=True)
 

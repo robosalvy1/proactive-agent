@@ -1,4 +1,4 @@
-"""`hermes chat --safe-mode` is an owner-frozen policy executed out of process, not client env.
+"""`tandem chat --safe-mode` is an owner-frozen policy executed out of process, not client env.
 
 Contract recipe D-F: sentinels seeded in a disposable profile fire on an ordinary turn
 (positive control); the canonical safe launch through the real CLI gets a loopback reply from

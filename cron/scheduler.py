@@ -114,7 +114,7 @@ def _fallback_chain_phrase(job: Optional[dict] = None) -> str:
     if job is not None and _job_route_pinned(job):
         return (
             "This job is pinned to its own provider/model, so it does not fall back to "
-            f"`fallback_providers`; `hermes cron edit {job.get('id')} --unpin` lets it follow the "
+            f"`fallback_providers`; `tandem cron edit {job.get('id')} --unpin` lets it follow the "
             "main model and its fallback chain."
         )
     try:
@@ -125,7 +125,7 @@ def _fallback_chain_phrase(job: Optional[dict] = None) -> str:
     if chain:
         return "No backup provider succeeded either."
     return (
-        "No backup provider is configured — add one with `hermes fallback add`, "
+        "No backup provider is configured — add one with `tandem fallback add`, "
         "or set a cron-wide default via `cron.model` + `cron.model_provider` in config.yaml."
     )
 
@@ -154,7 +154,7 @@ def _failure_streak_nudge(job: dict) -> str:
     job_ref = job.get("name") or job.get("id") or "this job"
     return (
         f"\nThis job has failed {streak} runs in a row — worth a review. "
-        f"Fix its prompt/config, or pause it with `hermes cron pause {job_ref}` "
+        f"Fix its prompt/config, or pause it with `tandem cron pause {job_ref}` "
         "(resume/remove also available) to stop the noise."
     )
 
@@ -186,7 +186,7 @@ class CronTickYielded(RuntimeError):
     Raised by ``tick()`` BEFORE the tick lock when boot fingerprint ≠ disk, this process does NOT
     own the runtime lock and its live holder reports the disk revision — the stale process must
     stay out of the dispatch race (contention would starve the fresh ticker). Skew ``None`` never
-    yields (fail open). Raised, not returned, so ``record_ticker_error`` sees it and ``hermes cron
+    yields (fail open). Raised, not returned, so ``record_ticker_error`` sees it and ``tandem cron
     status`` isn't green.
     """
 
@@ -205,7 +205,7 @@ _STALE_YIELD_RE = re.compile(r"stale code: booted on (\S+), disk is at (\S+)\)")
 def stale_code_yield_labels(recorded_error: str | None) -> tuple[str, str] | None:
     """``(boot_rev, disk_rev)`` when a persisted ``ticker_last_error`` is a ``CronTickYielded``.
 
-    ``hermes cron status`` runs in another process and only sees the marker text; a yielding
+    ``tandem cron status`` runs in another process and only sees the marker text; a yielding
     ticker still refreshes its heartbeat, so this is the one signal that separates "stale code,
     firing nothing" from a healthy loop (#117275).
     """
@@ -316,7 +316,7 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
             message += (
                 f" Likely cause: the gateway is running stale code (booted "
                 f"on {boot_rev}, disk is at {disk_rev}) — run "
-                "`hermes gateway restart` to fix it."
+                "`tandem gateway restart` to fix it."
             )
 
     return message
@@ -483,7 +483,7 @@ def _resolve_cron_enabled_toolsets(job: dict, cfg: dict) -> list[str]:
     except Exception as exc:
         raise RuntimeError(
             "Cron toolset resolution failed, so this run was refused rather than given every "
-            f"tool. Check `platform_toolsets.cron` in config.yaml (`hermes cron doctor`): {exc}"
+            f"tool. Check `platform_toolsets.cron` in config.yaml (`tandem cron doctor`): {exc}"
         ) from exc
 
 
@@ -686,7 +686,7 @@ def get_running_job_ids() -> frozenset[str]:
 def get_running_job_details() -> list[dict]:
     """Per in-flight job: ``{"job_id", "elapsed_s", "worker_pid", "restart_safe"}`` (``worker_pid``
     None for in-process runs; ``restart_safe`` True when the worker owns its own systemd scope). The
-    drain wait publishes this so ``hermes update`` can say WHICH job it is waiting on."""
+    drain wait publishes this so ``tandem update`` can say WHICH job it is waiting on."""
     now = time.time()
     with _running_lock:
         return [
@@ -1280,7 +1280,7 @@ def _interpreter_shutting_down(exc: Optional[BaseException] = None) -> bool:
     futures/asyncio refuse new work, so delivery attempts only pollute errors.log — callers skip
     with a warning. ``exc`` lets an already-raised scheduling error count as a shutdown signal.
 
-    A cron tick can fire while the gateway is tearing down — SIGTERM from ``hermes update`` / ``hermes
+    A cron tick can fire while the gateway is tearing down — SIGTERM from ``tandem update`` / ``hermes
     gateway stop`` / systemd restart, or an OOM-kill. Once finalization starts, ``concurrent.futures``
     refuses new work with ``RuntimeError: cannot schedule new futures after interpreter shutdown`` and
     asyncio's default executor is gone, so *any* attempt to schedule delivery (live-adapter,
@@ -1297,7 +1297,7 @@ _hermes_home: Path | None = None
 
 
 def _get_hermes_home() -> Path:
-    """Hermes home at call time (honouring the test override). Cron is per-profile: never freeze
+    """Tandem home at call time (honouring the test override). Cron is per-profile: never freeze
     this at import or anchor it at the shared default root — either breaks profile isolation.
 
     Cron is per-profile by design (#4707): the in-process ticker runs inside a profile-scoped gateway, so
@@ -1625,7 +1625,7 @@ class _CronJobConfig:
 def _load_cron_job_config(job: dict, job_id: str, job_name: str) -> _CronJobConfig:
     """Load config.yaml and resolve the run's model: per-job pin > cron.model (fleet default) >
     the main agent model (config ``model:``, then HERMES_MODEL). Re-read every tick (no cache) so
-    ``hermes cron edit --model`` and ``hermes model`` both apply next tick."""
+    ``tandem cron edit --model`` and ``tandem model`` both apply next tick."""
     model = job.get("model") or cron_env_setting("HERMES_MODEL") or ""
     _cron_default_provider = ""
     _cfg: dict = {}
@@ -1663,8 +1663,8 @@ def _load_cron_job_config(job: dict, job_id: str, job_name: str) -> _CronJobConf
             f"HERMES_MODEL={cron_env_setting('HERMES_MODEL')!r}, "
             "config.yaml model.default missing or empty). "
             f"Set a per-job model via "
-            f"`hermes cron edit {job_id} --model <name>` or set a "
-            "default with `hermes model <name>`."
+            f"`tandem cron edit {job_id} --model <name>` or set a "
+            "default with `tandem model <name>`."
         )
 
     with contextlib.suppress(Exception):
@@ -1750,8 +1750,8 @@ def _blocked_config_result(job_id: str, job_name: str, _pf_reason: str) -> tuple
         "The pre-run configuration check found a problem, so the agent did not run "
         "(nothing was charged).\n\n"
         f"**Reason:** {_pf_reason}\n\n"
-        "Hermes tries again at the next scheduled time and clears this state on the first healthy "
-        "run; this alert is not repeated. Check with `hermes cron doctor`. Set `cron.preflight: "
+        "Tandem tries again at the next scheduled time and clears this state on the first healthy "
+        "run; this alert is not repeated. Check with `tandem cron doctor`. Set `cron.preflight: "
         "false` in config.yaml to disable this check."
     )
     return False, blocked_doc, "", f"{marker} {_pf_reason}"
@@ -4066,7 +4066,7 @@ def _worktree_maintenance_repos() -> list[str]:
 
 def _maybe_run_worktree_maintenance() -> None:
     """Throttled worktree prune from the cron tick, on a daemon thread so the tick never waits on
-    git. Same conservative pruner as ``hermes -w`` startup (dirty/unpushed/locked trees untouched).
+    git. Same conservative pruner as ``tandem -w`` startup (dirty/unpushed/locked trees untouched).
     Errors never propagate: GC is hygiene, not scheduling."""
     global _last_worktree_maintenance_at
     now = time.monotonic()

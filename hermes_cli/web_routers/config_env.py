@@ -177,7 +177,7 @@ def _catalog_provider_env_metadata() -> dict:
 
     Returns ``{env_var: {provider, provider_label, description, url, is_password,
     advanced}}`` for every API-key provider in the unified ``provider_catalog()``
-    (the ``hermes model`` universe). When multiple providers intentionally share
+    (the ``tandem model`` universe). When multiple providers intentionally share
     one env var, ``provider_profiles`` preserves every provider identity while
     the legacy singular fields keep describing the first provider. Hand
     ``OPTIONAL_ENV_VARS`` prose is layered on top in the endpoint; this only

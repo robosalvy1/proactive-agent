@@ -9,14 +9,14 @@ sidebar_position: 6
 
 Python dependency commands on this page use a
 [PM-prepared source checkout](../../reference/package-management.md#developer-workflow).
-After a dependency change, reactivate the checkout and restart Hermes.
+After a dependency change, reactivate the checkout and restart Tandem.
 
-Hermes Agent includes two model-callable web tools backed by multiple providers:
+Tandem Agent includes two model-callable web tools backed by multiple providers:
 
 - **`web_search`** — search the web and return ranked results
 - **`web_extract`** — fetch and extract readable content from one or more URLs
 
-Both are configured through a single backend selection. Providers are chosen via `hermes tools` or set directly in `config.yaml`.
+Both are configured through a single backend selection. Providers are chosen via `tandem tools` or set directly in `config.yaml`.
 
 ## Backends
 
@@ -31,10 +31,10 @@ Both are configured through a single backend selection. Providers are chosen via
 | **Tavily** | `TAVILY_API_KEY` (optional) | ✔ | ✔ | ✔ Opt-in keyless when selected |
 | **Perplexity** | `PERPLEXITY_API_KEY` | ✔ | ✔ (query-relevant snippets) | Paid (per-request Search API pricing) |
 | **Keenable** | `KEENABLE_API_KEY` (optional) | ✔ | ✔ | ✔ Keyless ring member · paid with key |
-| **xAI (Grok)** | `XAI_API_KEY` or `hermes auth add xai-oauth` | ✔ | — | Paid (SuperGrok or per-token) |
-| **OpenAI Native (Codex)** | `hermes auth add openai-codex` | ✔ | — | Requires a ChatGPT/Codex subscription |
+| **xAI (Grok)** | `XAI_API_KEY` or `tandem auth add xai-oauth` | ✔ | — | Paid (SuperGrok or per-token) |
+| **OpenAI Native (Codex)** | `tandem auth add openai-codex` | ✔ | — | Requires a ChatGPT/Codex subscription |
 
-Brave Search, DDGS, xAI, and OpenAI Native are **search-only** — pair any of them with Firecrawl/Tavily/Perplexity/Keenable/Exa/Parallel when you also need `web_extract`. DDGS uses the [`ddgs` Python package](https://pypi.org/project/ddgs/) under the hood; if it isn't already installed, run `python -c "import pm; pm.sync_venv(['ddgs'], explicit=True)"` (or let Hermes lazy-install it on first use). xAI runs Grok's server-side `web_search` tool on the Responses API — results are LLM-generated rather than index-backed, so titles, descriptions, and URL choice are all model output (see the [trust-model caveat](#xai-grok) below). OpenAI Native declares the same kind of provider-executed tool on the Codex Responses endpoint (see [below](#openai-native)).
+Brave Search, DDGS, xAI, and OpenAI Native are **search-only** — pair any of them with Firecrawl/Tavily/Perplexity/Keenable/Exa/Parallel when you also need `web_extract`. DDGS uses the [`ddgs` Python package](https://pypi.org/project/ddgs/) under the hood; if it isn't already installed, run `python -c "import pm; pm.sync_venv(['ddgs'], explicit=True)"` (or let Tandem lazy-install it on first use). xAI runs Grok's server-side `web_search` tool on the Responses API — results are LLM-generated rather than index-backed, so titles, descriptions, and URL choice are all model output (see the [trust-model caveat](#xai-grok) below). OpenAI Native declares the same kind of provider-executed tool on the Codex Responses endpoint (see [below](#openai-native)).
 
 **Per-capability split:** you can use different providers for search and extract independently — for example SearXNG (free) for search and Firecrawl for extract. See [Per-capability configuration](#per-capability-configuration) below.
 
@@ -42,10 +42,10 @@ Brave Search, DDGS, xAI, and OpenAI Native are **search-only** — pair any of t
 A fresh install with **no web credentials at all** gets working `web_search` and `web_extract` out of the box: requests rotate round-robin across the ring vendors' public free tiers — **Exa, Parallel, Firecrawl, and Keenable** — spreading load evenly, and a rate-limited request automatically retries on the next vendor in the ring (multi-hop, until one serves or all fail). A search that a vendor refuses (a 401/402/403 access gate or a 5xx) retries the same way. No signup, no key. This tier is strictly last-resort — any configured backend or present API key always wins — and requests carry no user identifiers (only a random per-process session id, rotated on restart). For guaranteed, unthrottled service, set up a keyed provider. Disable the keyless tier entirely with `web.keyless_fallback: false`.
 :::
 
-**Choosing free vs paid explicitly:** in `hermes tools`, Exa, Parallel, and Keenable each appear as two rows — **Free (keyless)** and **Paid (API key)**. Picking Free pins that vendor's anonymous endpoint (even if you later add a key); picking Paid pins the keyed path (a missing key then errors instead of silently downgrading to the free tier). The selection is stored as `web.provider_tier.<name>: free|paid`; leave it unset for auto (key present → paid, otherwise the keyless ring).
+**Choosing free vs paid explicitly:** in `tandem tools`, Exa, Parallel, and Keenable each appear as two rows — **Free (keyless)** and **Paid (API key)**. Picking Free pins that vendor's anonymous endpoint (even if you later add a key); picking Paid pins the keyed path (a missing key then errors instead of silently downgrading to the free tier). The selection is stored as `web.provider_tier.<name>: free|paid`; leave it unset for auto (key present → paid, otherwise the keyless ring).
 
 :::tip Nous Subscribers
-If you have a paid [Nous Portal](https://portal.nousresearch.com) subscription, web search and extract are available through the **[Tool Gateway](tool-gateway.md)** as managed web search — no API key needed. New installs can run `hermes setup --portal` to log in and turn on all gateway tools at once; existing installs can flip just web via `hermes tools`.
+If you have a paid [Nous Portal](https://portal.nousresearch.com) subscription, web search and extract are available through the **[Tool Gateway](tool-gateway.md)** as managed web search — no API key needed. New installs can run `tandem setup --portal` to log in and turn on all gateway tools at once; existing installs can flip just web via `tandem tools`.
 :::
 
 ---
@@ -108,12 +108,12 @@ If you're researching genuinely live data (scores, prices, breaking news) and ne
 
 ## Setup
 
-### Quick setup via `hermes tools`
+### Quick setup via `tandem tools`
 
-Run `hermes tools`, navigate to **Web Search & Extract**, and pick a provider. The wizard prompts for the required URL or API key and writes it to your config.
+Run `tandem tools`, navigate to **Web Search & Extract**, and pick a provider. The wizard prompts for the required URL or API key and writes it to your config.
 
 ```bash
-hermes tools
+tandem tools
 ```
 
 ---
@@ -142,7 +142,7 @@ When `FIRECRAWL_API_URL` is set, the API key is optional (disable server auth wi
 
 ### SearXNG (free, self-hosted)
 
-SearXNG is a privacy-respecting, open-source metasearch engine that aggregates results from 70+ search engines. **No API key required** — just point Hermes at a running SearXNG instance.
+SearXNG is a privacy-respecting, open-source metasearch engine that aggregates results from 70+ search engines. **No API key required** — just point Tandem at a running SearXNG instance.
 
 SearXNG is **search-only** — `web_extract` requires a separate extract provider.
 
@@ -191,7 +191,7 @@ docker cp searxng:/etc/searxng/settings.yml ~/searxng/searxng/settings.yml
 
 Open `~/searxng/searxng/settings.yml`.
 If `use_default_settings: true` is present, the file only contains your overrides. All other settings are inherited from the built-in defaults.
-To enable JSON responses for Hermes, add the following override:
+To enable JSON responses for Tandem, add the following override:
 
 ```yaml
 search:
@@ -234,7 +234,7 @@ curl -s "http://localhost:8888/search?q=test&format=json" | python3 -c \
 
 You should see something like `10 results`. If you get a `403 Forbidden`, JSON format is still disabled — recheck step 4.
 
-**7. Configure Hermes:**
+**7. Configure Tandem:**
 
 ```bash
 # ~/.hermes/.env
@@ -248,7 +248,7 @@ web:
   search_backend: "searxng"
 ```
 
-Or set via `hermes tools` → Web Search & Extract → SearXNG.
+Or set via `tandem tools` → Web Search & Extract → SearXNG.
 
 ---
 
@@ -278,13 +278,13 @@ web:
   extract_backend: "firecrawl"   # or tavily, perplexity, keenable, exa, parallel
 ```
 
-With this config, Hermes uses SearXNG for all search queries and Firecrawl for URL extraction — combining free search with high-quality extraction.
+With this config, Tandem uses SearXNG for all search queries and Firecrawl for URL extraction — combining free search with high-quality extraction.
 
 ---
 
 ### Tavily
 
-AI-optimised search and extract. Select Tavily in `hermes tools` (or set `web.backend: tavily`) to use it **keyless** with no account (rate-limited). Set an API key when you want higher limits.
+AI-optimised search and extract. Select Tavily in `tandem tools` (or set `web.backend: tavily`) to use it **keyless** with no account (rate-limited). Set an API key when you want higher limits.
 
 ```bash
 # optional — skip this for keyless access after selecting Tavily
@@ -349,7 +349,7 @@ XAI_API_KEY=sk-xai-your-key-here
 or for SuperGrok subscribers:
 
 ```bash
-hermes auth add xai-oauth
+tandem auth add xai-oauth
 ```
 
 Then select xAI as the search backend:
@@ -382,7 +382,7 @@ Unlike index-backed providers (Brave, Tavily, Exa) which return verbatim search-
 
 ### OpenAI Native (Codex Responses) {#openai-native}
 
-Declares OpenAI's provider-executed `web_search` tool on the Codex Responses endpoint (ChatGPT/Codex subscriptions). The model drives search server-side and folds the results into its own answer — Hermes never runs a client-side search in this mode.
+Declares OpenAI's provider-executed `web_search` tool on the Codex Responses endpoint (ChatGPT/Codex subscriptions). The model drives search server-side and folds the results into its own answer — Tandem never runs a client-side search in this mode.
 
 ```yaml
 # ~/.hermes/config.yaml
@@ -392,7 +392,7 @@ web:
 
 Requirements and scope:
 
-- **Credentials**: an openai-codex OAuth login (`hermes auth add openai-codex`). This backend has no API key of its own; without a login it is simply unavailable.
+- **Credentials**: an openai-codex OAuth login (`tandem auth add openai-codex`). This backend has no API key of its own; without a login it is simply unavailable.
 - **Transport**: only the Codex Responses endpoint exposes the built-in. On any other transport — a custom OpenAI-compatible `base_url`, or a non-OpenAI model — the client-side `web_search` function is left untouched, because the endpoint cannot be relied on to host the tool. Point `web.search_backend` at an ordinary provider for those.
 - **Search only**: the built-in covers search, not extraction. Pair it with Firecrawl (or another extract-capable backend) through `web.extract_backend` when you also need `web_extract`.
 
@@ -423,7 +423,7 @@ web:
   extract_backend: "firecrawl"  # used by web_extract
 ```
 
-When a per-capability key is empty, that capability falls through to `web.backend`. Only when no **shared** web selection has ever been written (`web.backend` or the managed `hermes tools` row) is the backend auto-detected from whichever API key/URL is present — once a shared selection exists, the runtime always uses it, and adding a key to `.env` does not reroute web traffic. A per-capability key affects only its own capability: setting `web.extract_backend` alone leaves `web_search` on its auto-detected backend.
+When a per-capability key is empty, that capability falls through to `web.backend`. Only when no **shared** web selection has ever been written (`web.backend` or the managed `tandem tools` row) is the backend auto-detected from whichever API key/URL is present — once a shared selection exists, the runtime always uses it, and adding a key to `.env` does not reroute web traffic. A per-capability key affects only its own capability: setting `web.extract_backend` alone leaves `web_search` on its auto-detected backend.
 
 **Priority order (per capability):**
 1. `web.search_backend` / `web.extract_backend` (explicit per-capability; `nous` = managed Tool Gateway for that capability only, see [Tool Gateway](./tool-gateway.md#mixing-your-own-key-and-the-gateway-web-only))
@@ -432,7 +432,7 @@ When a per-capability key is empty, that capability falls through to `web.backen
 
 ### Auto-detection
 
-If no shared backend has **ever** been selected (no `web.backend` written by you or `hermes tools`), Hermes picks the first available one based on which credentials are set:
+If no shared backend has **ever** been selected (no `web.backend` written by you or `tandem tools`), Tandem picks the first available one based on which credentials are set:
 
 | Credential present | Auto-selected backend |
 |--------------------|-----------------------|
@@ -448,7 +448,7 @@ If no shared backend has **ever** been selected (no `web.backend` written by you
 | Nous identity present (any account, including the free tier and anonymous guests) | managed web search (`web_search` only); extract and the keyless ring below are unchanged |
 | *(nothing set at all)* | keyless ring: exa / parallel / firecrawl / keenable (round-robin) |
 
-**Keyless free-tier ring:** when *no* credential above is present, requests rotate across the ring vendors' public free tiers (Exa, Parallel, Firecrawl, Keenable) so web tools work on a fresh install with zero setup — and a rate-limited request, or a search the vendor refuses, fails over to the next vendor in the ring automatically. Pin one vendor in `hermes tools` to stop the rotation (the ring is then only used as failover succession on throttles). All free tiers are vendor-rate-limited under burst load; sustained normal usage goes through fine. Set `web.keyless_fallback: false` to turn the tier off — with it off and no credentials, web tools are unavailable until a provider is configured. A Nous identity (guest included) is unaffected by that switch: managed `web_search` still applies, though `web_extract` needs a configured provider.
+**Keyless free-tier ring:** when *no* credential above is present, requests rotate across the ring vendors' public free tiers (Exa, Parallel, Firecrawl, Keenable) so web tools work on a fresh install with zero setup — and a rate-limited request, or a search the vendor refuses, fails over to the next vendor in the ring automatically. Pin one vendor in `tandem tools` to stop the rotation (the ring is then only used as failover succession on throttles). All free tiers are vendor-rate-limited under burst load; sustained normal usage goes through fine. Set `web.keyless_fallback: false` to turn the tier off — with it off and no credentials, web tools are unavailable until a provider is configured. A Nous identity (guest included) is unaffected by that switch: managed `web_search` still applies, though `web_extract` needs a configured provider.
 
 **One-shot keyless rescue for keyed backends:** when your chosen/keyed backend — including the Nous Tool Gateway route (`web.backend: nous`) — fails a call (bad key, outage, unreachable gateway, upstream 5xx), that single call automatically retries on the keyless free-tier ring instead of erroring — the result notes which vendor served it and why (`rescued_from` / `backend_error`). The failover is never sticky: the very next `web_search`/`web_extract` call attempts your chosen backend again. Disable with `web.keyless_rescue: false` (also off whenever `keyless_fallback` is off).
 
@@ -458,7 +458,7 @@ xAI Web Search is **not** in the auto-detection chain — having `XAI_API_KEY` s
 
 ## Verify your setup
 
-Run `hermes setup` to see which web backend is detected:
+Run `tandem setup` to see which web backend is detected:
 
 ```
 ✅ Web Search & Extract (searxng)
@@ -469,7 +469,7 @@ For a source checkout, you can also check the module after
 whose web configuration you intend to inspect:
 
 ```bash
-# From the Hermes source checkout, in a clean shell
+# From the Tandem source checkout, in a clean shell
 source ./activate
 python -m tools.web_tools
 ```
@@ -523,7 +523,7 @@ That's expected for pages over the character budget. The footer names the on-dis
 For agents that need to use SearXNG via `curl` directly (e.g. as a fallback when the web toolset isn't available), install the `searxng-search` optional skill:
 
 ```bash
-hermes skills install official/research/searxng-search
+tandem skills install official/research/searxng-search
 ```
 
 This adds a skill that teaches the agent how to:

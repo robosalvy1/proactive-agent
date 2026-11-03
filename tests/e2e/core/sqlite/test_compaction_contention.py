@@ -2,7 +2,7 @@
 compaction").
 
 Real ``AIAgent`` processes drive real turns (user -> terminal tool call -> answer) through the loopback fake
-provider on ONE shared ``state.db`` — once per journal mode Hermes deploys (WAL, and the DELETE mode the
+provider on ONE shared ``state.db`` — once per journal mode Tandem deploys (WAL, and the DELETE mode the
 production ``apply_wal_with_fallback`` picks on a WAL-reset-vulnerable SQLite, see ``_helpers``) — while other
 processes write to, read and open/close the same file:
 

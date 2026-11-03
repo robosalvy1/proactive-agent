@@ -224,7 +224,7 @@ class TelegramStandin(StandinServer):
 
     # Bot API methods ---------------------------------------------------------------------------
     def _bot_user(self) -> dict[str, Any]:
-        return {"id": BOT_ID, "is_bot": True, "first_name": "Hermes", "username": BOT_USERNAME,
+        return {"id": BOT_ID, "is_bot": True, "first_name": "Tandem", "username": BOT_USERNAME,
                 "can_join_groups": True, "can_read_all_group_messages": True, "supports_inline_queries": False}
 
     def _chat(self, chat_id: Any) -> dict[str, Any]:

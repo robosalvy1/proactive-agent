@@ -9,7 +9,7 @@ Root TypeScript style rules apply.
 
 Electron + React + nanostores (`@assistant-ui/react`) talks JSON-RPC over the existing
 `@hermes/shared` client. Normal local primary and pooled launches invoke
-`hermes gateway ensure --json`, consume its credential-free endpoint, and authenticate
+`tandem gateway ensure --json`, consume its credential-free endpoint, and authenticate
 WebSockets with fresh private control tickets. The app never acquires the gateway PID as
 an owned child. Closing, switching or evicting a Desktop connection disconnects the viewer;
 only explicit gateway lifecycle commands stop the owner.
@@ -21,7 +21,7 @@ scraped or added to the public connection descriptor. SSH/URL intent retains its
 remote resolution and exposure lifecycle; a remote failure must never start a local owner.
 
 The gateway `gateway ensure` attaches to is **one multiplexing owner per home**: `HERMES_DESKTOP=1`
-is not how the app finds it, and no per-profile `hermes serve --port 0` child is spawned. One
+is not how the app finds it, and no per-profile `tandem serve --port 0` child is spawned. One
 gateway process serves sessions from several homes (`tui_gateway/AGENTS.md` § Profile scope); a
 served secondary answers through the multiplexer's control socket (`GatewayEndpoint.multiplex_home`).
 Remote connections (SSH, URL+token, Cloud) likewise reach a backend that may serve several profiles
@@ -64,7 +64,7 @@ user-activated extensions. If you tighten `desktop-slash-commands.ts`, keep
 
 ## Bot Mode (`src/plugins/hermes-bots/`) — one bot = ONE canonical forever-chat, identified by NAME
 
-Each bot is a Hermes **profile** with a persistent identity. This invariant regressed repeatedly,
+Each bot is a Tandem **profile** with a persistent identity. This invariant regressed repeatedly,
 cost users conversation history each time, and is not open for re-litigation in a routine PR.
 
 The chat's only identity is **(profile, session titled exactly "Bot Chat")**; the state DB's

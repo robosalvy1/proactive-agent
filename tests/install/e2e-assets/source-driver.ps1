@@ -15,7 +15,7 @@ function Get-SourceHermes([string]$Root) {
     }
     $legacy = Join-Path $Root 'venv/Scripts/hermes.exe'
     if (Test-Path -LiteralPath $legacy -PathType Leaf) { return $legacy }
-    throw "No installed Hermes command under $Root"
+    throw "No installed Tandem command under $Root"
 }
 
 # Hand out a command to DRIVE the next ordinary startup, even when the
@@ -37,7 +37,7 @@ function Get-SourceHermesForStartup([string]$Root) {
     }
     $legacy = Join-Path $Root 'venv/Scripts/hermes.exe'
     if (Test-Path -LiteralPath $legacy -PathType Leaf) { return $legacy }
-    throw "No installed Hermes command to start under $Root"
+    throw "No installed Tandem command to start under $Root"
 }
 
 # Official source checkouts default to the stable channel (the latest published

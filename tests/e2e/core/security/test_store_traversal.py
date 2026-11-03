@@ -10,8 +10,8 @@ Two operator/agent-facing name lookups must stay inside the thing they name:
   they do for a user.
 * ``skill_manage delete`` (#120528) must refuse a pinned skill and the essential ``hermes-agent`` skill
   whatever spelling names it: bare (``my-skill``) or categorized (``research/my-skill``). The pin is set
-  with the real ``hermes curator pin`` CLI; the deletes are real tool calls in real agent turns on the
-  same backend (``hermes chat -q`` does not offer ``skill_manage``: one-shot runs hide it).
+  with the real ``tandem curator pin`` CLI; the deletes are real tool calls in real agent turns on the
+  same backend (``tandem chat -q`` does not offer ``skill_manage``: one-shot runs hide it).
 
 Every breach asserts on disk (victim bytes, skill dir, MEMORY.md) and on the command output.
 """
@@ -230,7 +230,7 @@ def deletes(tmp_path_factory: pytest.TempPathFactory) -> Iterator[DeleteRun]:
     with FakeLLMServer([], api_key=key) as srv:
         H.write_home(home / ".hermes", srv.base_url, api_key=key)
         pin = H.run_hermes(["curator", "pin", "my-skill"], home, timeout=90)
-        assert pin.returncode == 0, f"hermes curator pin failed: {pin.stdout}\n{pin.stderr[-2000:]}"
+        assert pin.returncode == 0, f"tandem curator pin failed: {pin.stdout}\n{pin.stderr[-2000:]}"
         b = TuiBackend(home, root / "tui.log")
         try:
             sid = b.ok("session.create", {})["session_id"]

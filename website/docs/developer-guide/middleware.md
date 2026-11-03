@@ -3,29 +3,29 @@ title: "Middleware"
 description: "Behavior-changing plugin middleware for LLM and tool calls: contract, execution order, examples"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
-# Hermes Middleware
+# Tandem Middleware
 
-Hermes middleware is the behavior-changing companion to observer hooks.
+Tandem middleware is the behavior-changing companion to observer hooks.
 Observer hooks report what happened. Middleware can change what happens by
 rewriting a request before execution or by wrapping the execution callback
 itself.
 
 This contract is intentionally backend-neutral. A plugin can use it for local
 policy, request shaping, tracing, adaptive routing, cache control, sandbox
-selection, or handoff to runtimes such as NeMo Relay without changing Hermes'
+selection, or handoff to runtimes such as NeMo Relay without changing Tandem'
 planner, model provider adapters, tool registry, memory, or CLI UX.
 
 With middleware enabled, plugins can:
 
-- Rewrite LLM provider request kwargs before Hermes calls the provider.
+- Rewrite LLM provider request kwargs before Tandem calls the provider.
 - Rewrite tool arguments before guardrails, approval checks, hooks, and tool
   execution see them.
-- Wrap the actual LLM execution callback while preserving Hermes retry,
+- Wrap the actual LLM execution callback while preserving Tandem retry,
   streaming, interrupt, and hook behavior.
-- Wrap the actual tool execution callback while preserving Hermes guardrails,
+- Wrap the actual tool execution callback while preserving Tandem guardrails,
   approval, post-tool hooks, and tool-result transformation.
 
 ## Contract
@@ -67,7 +67,7 @@ return {
 }
 ```
 
-Hermes stores those trace entries in later observer hook payloads as
+Tandem stores those trace entries in later observer hook payloads as
 `middleware_trace`.
 
 Execution middleware receives a `next_call` callback. Call it to continue the
@@ -79,9 +79,9 @@ def on_tool_execution(**kwargs):
     return result
 ```
 
-If multiple plugins register the same execution middleware kind, Hermes runs
+If multiple plugins register the same execution middleware kind, Tandem runs
 them as a nested chain in registration order. Middleware failures are fail-open:
-Hermes logs a warning and continues with the next middleware or the base
+Tandem logs a warning and continues with the next middleware or the base
 runtime path. A callback that fails the same way on every call (typically a
 signature naming a field the middleware does not send) is reported **once** at
 WARNING — the message lists the fields it does provide — and identical repeats go
@@ -92,7 +92,7 @@ resets the report.
 
 ### LLM Calls
 
-For each provider request, Hermes applies middleware in this order:
+For each provider request, Tandem applies middleware in this order:
 
 1. Build provider kwargs from the current conversation.
 2. Apply `llm_request` middleware.
@@ -107,11 +107,11 @@ request plus `next_call`.
 
 ### Tool Calls
 
-For each tool call, Hermes applies middleware in this order:
+For each tool call, Tandem applies middleware in this order:
 
 1. Parse and coerce model-provided tool arguments.
 2. Apply `tool_request` middleware.
-3. Run the normal Hermes pre-execution path against the effective arguments:
+3. Run the normal Tandem pre-execution path against the effective arguments:
    tool availability checks, observer block directives, guardrails, and
    approval checks.
 4. Run tool execution through `tool_execution` middleware.
@@ -127,7 +127,7 @@ rewritten path, command, or URL is the value downstream policy will evaluate.
 Middleware only runs for enabled plugins. For a bundled plugin:
 
 ```bash
-hermes plugins enable <plugin-name>
+tandem plugins enable <plugin-name>
 ```
 
 For isolated local testing, use one `HERMES_HOME` for plugin enablement and the
@@ -136,8 +136,8 @@ agent run:
 ```bash
 export HERMES_HOME=$HOME/.hermes/cache/scratch/hermes-middleware-test
 mkdir -p "$HERMES_HOME"
-hermes plugins enable <plugin-name>
-hermes chat --query 'Reply exactly ok'
+tandem plugins enable <plugin-name>
+tandem chat --query 'Reply exactly ok'
 ```
 
 For source checkouts, use the [PM developer workflow](../reference/package-management.md#developer-workflow)
@@ -148,8 +148,8 @@ the working tree:
 export HERMES_HOME="$HOME/hermes-middleware-test"
 export HERMES_RUNTIME_DIR="$HERMES_HOME/tools"
 source ./activate
-python hermes plugins enable <plugin-name>
-python hermes chat --query 'Reply exactly ok'
+python tandem plugins enable <plugin-name>
+python tandem chat --query 'Reply exactly ok'
 ```
 
 ## Generic Plugin Examples
@@ -228,7 +228,7 @@ def time_llm_execution(**kwargs):
     return response
 ```
 
-Return the same response shape Hermes expects from the provider adapter. Do not
+Return the same response shape Tandem expects from the provider adapter. Do not
 wrap the response in a plugin-specific envelope unless the rest of the runtime
 expects that envelope.
 
@@ -264,14 +264,14 @@ and system configuration, or through an explicit `plugins.toml` selected with
   patches.
 - Execution middleware should call `next_call(...)` exactly once unless it is
   intentionally short-circuiting execution.
-- If execution middleware raises before calling `next_call(...)`, Hermes treats
+- If execution middleware raises before calling `next_call(...)`, Tandem treats
   that as middleware failure and continues with the remaining middleware chain
   and base execution.
 - If execution middleware calls `next_call(...)` successfully and then raises
-  during post-processing, Hermes preserves the downstream result and does not
+  during post-processing, Tandem preserves the downstream result and does not
   run the provider or tool a second time.
 - If downstream provider or tool execution fails, middleware may let that error
-  propagate or translate it deliberately. Hermes does not convert downstream
+  propagate or translate it deliberately. Tandem does not convert downstream
   failure into a successful `None` result.
 - Tool request middleware runs before approvals. If it mutates file paths,
   commands, URLs, or arguments, the mutated values are what guardrails and

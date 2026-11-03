@@ -412,7 +412,7 @@ def test_hermes_owned_opener_uses_resolved_https_context(monkeypatch):
 
 
 def test_resolved_https_context_defers_to_the_platform_store(monkeypatch, tmp_path):
-    """Hermes-owned urllib openers verify against the OS certificate store.
+    """Tandem-owned urllib openers verify against the OS certificate store.
 
     None means "urllib's default context", which — with truststore installed
     process-wide — IS the platform verifier. There is no CA-bundle ladder
@@ -429,7 +429,7 @@ def test_resolved_https_context_defers_to_the_platform_store(monkeypatch, tmp_pa
 
 
 def test_resolved_https_context_installs_the_platform_verifier():
-    """Resolving trust for a Hermes opener must put truststore in force.
+    """Resolving trust for a Tandem opener must put truststore in force.
 
     A stdlib urllib request is the call path certifi never covered (the
     llama.cpp engine download among them), so the install has to happen here

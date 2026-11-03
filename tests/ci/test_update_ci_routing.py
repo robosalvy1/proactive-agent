@@ -777,7 +777,7 @@ def test_build_scripts_the_update_runs_start_the_upgrade_suite():
 
 
 def test_desktop_build_scripts_start_the_desktop_update_suite():
-    """`hermes desktop --build-only` (the update's Desktop rebuild) runs
+    """`tandem desktop --build-only` (the update's Desktop rebuild) runs
     apps/desktop's `build` script, which steps through scripts/build/desktop.mjs."""
     package = json.loads((_REPO / "apps/desktop/package.json").read_text(encoding="utf-8-sig"))
     build = re.search(r"node\s+(\S+\.mjs)", package["scripts"]["build"])

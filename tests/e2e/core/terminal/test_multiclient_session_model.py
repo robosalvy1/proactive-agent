@@ -5,7 +5,7 @@ wrong connection, events rendered twice or leaking into another chat, a zombie l
 chat ("already has a live owner"), a ws drop orphaning the in-flight turn, client absence killing
 the turn, an active session hard-deleted.
 
-Harness: one real ``hermes serve`` (the Desktop's backend argv) per module, 3 Desktop-shaped
+Harness: one real ``tandem serve`` (the Desktop's backend argv) per module, 3 Desktop-shaped
 WebSocket clients, and a seeded fuzzer that interleaves create / switch(resume) / prompt (fast and
 slow streams) / interrupt mid-stream / delete (inactive and active) / close / abrupt ws drop +
 reconnect + resume / owner death + takeover / client absence. The fake provider echoes a per-prompt

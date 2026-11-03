@@ -1,4 +1,4 @@
-"""Tests for `hermes -z --resume <session>` (#105892).
+"""Tests for `tandem -z --resume <session>` (#105892).
 
 The oneshot path used to accept ``--resume``/``-c`` in the parser but silently drop
 them: ``_run_oneshot_from_args`` ran before any session-arg normalization and never

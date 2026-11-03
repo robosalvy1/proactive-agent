@@ -1006,8 +1006,8 @@ class TestAuthFailureAborts:
         # env var (#114405 / #78996) and must classify as permanent, not be retried.
         oauth_err = RuntimeError(
             "Provider 'minimax-oauth' is set in config.yaml but no credentials were found. "
-            "Run `hermes auth add minimax-oauth` to sign in, or switch to a different provider "
-            "with `hermes model`."
+            "Run `tandem auth add minimax-oauth` to sign in, or switch to a different provider "
+            "with `tandem model`."
         )
         assert _is_summary_access_or_quota_error(oauth_err) is True
 
@@ -1055,7 +1055,7 @@ class TestAuthFailureAborts:
         err = RuntimeError(
             "Provider 'opencode-zen' is set in config.yaml but no API key was "
             "found. Set the OPENCODE-ZEN_API_KEY environment variable, or switch "
-            "to a different provider with hermes model."
+            "to a different provider with tandem model."
         )
         with patch(
             "agent.context_compressor.get_model_context_length", return_value=100000

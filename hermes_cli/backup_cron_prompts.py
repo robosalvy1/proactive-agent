@@ -113,7 +113,7 @@ def restore_cron_prompt_fields_if_degraded(
     snapshot_id: str,
     hermes_home: Optional[Path] = None,
 ) -> Optional[dict[str, Any]]:
-    """Safety net for field-level cron-job degradation across ``hermes update``.
+    """Safety net for field-level cron-job degradation across ``tandem update``.
 
     A writer active during the update's mutation window replaced every
     agent-job ``prompt`` with the job's own ``name`` while the job COUNT
@@ -139,7 +139,7 @@ def restore_cron_prompt_fields_if_degraded(
     Args:
         snapshot_id: The pre-update quick-snapshot id (from
             :func:`create_quick_snapshot`).
-        hermes_home: Override for the Hermes home directory (tests/siblings).
+        hermes_home: Override for the Tandem home directory (tests/siblings).
 
     Returns:
         ``None`` when no action was taken (the common, healthy path). On a

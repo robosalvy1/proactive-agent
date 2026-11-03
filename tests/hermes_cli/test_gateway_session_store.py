@@ -69,7 +69,7 @@ def test_new_session_is_created_on_the_gateway_and_its_id_adopted(store, monkeyp
 
 def test_a_finite_run_creates_mains_oneshot_session_so_bare_c_finds_it(store, monkeypatch):
     """Main labels a `chat -q` / `-Q` session ``oneshot`` (agent.session_source.session_source_for), which
-    `hermes -c` / `--resume latest` count as CLI history; created as ``cli`` the owner stores the
+    `tandem -c` / `--resume latest` count as CLI history; created as ``cli`` the owner stores the
     transport's ``local`` and the next bare `-c` finds nothing."""
     monkeypatch.delenv("HERMES_SESSION_SOURCE", raising=False)
     monkeypatch.delenv("HERMES_SESSION_SOURCE_EXPLICIT", raising=False)
@@ -651,7 +651,7 @@ def test_branch_never_shows_yolo_the_gateway_refused(store):
 
 
 def test_exported_ignore_rules_never_refuses_a_bare_resume(store, monkeypatch):
-    """CLI-2: an exported HERMES_IGNORE_RULES is creation policy only, so a bare `hermes -c` continues a
+    """CLI-2: an exported HERMES_IGNORE_RULES is creation policy only, so a bare `tandem -c` continues a
     session created without it (Desktop, Ink, before the export); a typed --ignore-rules is still refused,
     as the thin client refuses it."""
     from hermes_cli.cli_init_mixin import CLIInitMixin, _gateway_launch

@@ -3,9 +3,9 @@
 Failure class: paths and ACLs.
 
 * ``C:\\Users\\Jörg Ñúñez`` is an ordinary Windows account. ``install.ps1`` must get
-  through the uv ``python-deps`` stage there (#124526), and ``hermes`` must then work and
+  through the uv ``python-deps`` stage there (#124526), and ``tandem`` must then work and
   update from that profile.
-* After ``hermes update`` the managed toolchain under ``%LOCALAPPDATA%\\hermes\\tools``
+* After ``tandem update`` the managed toolchain under ``%LOCALAPPDATA%\\hermes\\tools``
   must still be executable by a non-elevated process: a logon Scheduled Task or Startup
   entry runs with a standard-user token even when the updating session was elevated
   (#122935). The runner session is elevated, so each tool's DACL is checked (kernel
@@ -164,13 +164,13 @@ def test_install_from_non_ascii_profile_with_spaces(journey: Journey) -> None:
 def test_hermes_works_and_updates_from_that_profile(journey: Journey) -> None:
     m = journey.machine
     version, turn, update = journey["version"], journey["turn"], journey["update"]
-    assert version.returncode == 0 and "Hermes Agent v" in version.stdout, fail_with(
+    assert version.returncode == 0 and "Tandem Agent v" in version.stdout, fail_with(
         m, "hermes --version fails from a non-ASCII profile", version)
     assert turn.ok, fail_with(
         m, f"a turn fails from a non-ASCII profile (reply printed={turn.reply_id in turn.run.stdout}, "
            f"prompt reached provider={turn.reached_wire})", turn.run)
     assert update.returncode == 0 and m.installed_head() == m.next, fail_with(
-        m, f"hermes update from a non-ASCII profile exited {update.returncode}, checkout at {m.installed_head()}",
+        m, f"tandem update from a non-ASCII profile exited {update.returncode}, checkout at {m.installed_head()}",
         update)
 
 

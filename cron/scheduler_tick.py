@@ -114,7 +114,7 @@ def _run_attention_flush(_sched, adapters, loop) -> None:
 
 
 def _start_attention_flush(_sched, adapters, loop, sync: bool) -> None:
-    """Flush inline for a synchronous tick (``hermes cron tick``, tests). The gateway ticker
+    """Flush inline for a synchronous tick (``tandem cron tick``, tests). The gateway ticker
     (``sync=False``) serves several profiles in turn, so there the flush runs on a context-bound
     thread and never delays the next profile's due jobs; a home whose previous flush is still
     sending is skipped until it finishes."""

@@ -550,7 +550,7 @@ test('update-window process checks use the isolated launch environment, not the 
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'smoke-update-window-process-'))
 
   try {
-    const executable = path.join(root, 'Hermes')
+    const executable = path.join(root, 'Tandem')
     const isolated = path.join(root, 'isolated-user-data')
     const driver = path.join(root, 'driver-user-data')
     fs.writeFileSync(executable, '')

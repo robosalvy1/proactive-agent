@@ -2,7 +2,7 @@
 board listing (issue #111743).
 
 A ``body`` stored as TEXT holding invalid UTF-8 made sqlite3 abort the whole
-``fetchall`` ("Could not decode to UTF-8 column 'body'"), so ``hermes kanban list``
+``fetchall`` ("Could not decode to UTF-8 column 'body'"), so ``tandem kanban list``
 failed for every card until the row was deleted by hand; a BLOB-typed body came
 back as ``bytes`` and crashed ``--json``. Board connections now decode lossily
 (U+FFFD) and the ``from_row`` constructors (task, comment, event, run) coerce

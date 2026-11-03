@@ -1,4 +1,4 @@
-"""Shared-metrics consent JSON-RPC handlers (the Desktop twin of ``hermes setup``'s Shared Metrics
+"""Shared-metrics consent JSON-RPC handlers (the Desktop twin of ``tandem setup``'s Shared Metrics
 section). Both opt-ins live in the focused profile's config.yaml exactly where the wizard writes
 them — ``telemetry.shared_metrics.enabled`` (local collection) and ``.send`` (daily upload) — so the
 CLI and the app can never disagree about the answer. ``shared_metrics.set`` enforces the wizard's

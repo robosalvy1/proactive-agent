@@ -114,12 +114,12 @@ class TestFindBashCollapsedToPmShell:
 
     def test_raises_when_pm_shell_finds_nothing(self, monkeypatch):
         """A store with no bash (and no PATH bash) surfaces a clear error
-        pointing at `hermes pm install` instead of hunting locations."""
+        pointing at `tandem pm install` instead of hunting locations."""
         monkeypatch.setattr("pm.shell.bash", lambda: None)
         with pytest.raises(RuntimeError) as exc_info:
             _find_bash()
         assert "No shell found" in str(exc_info.value)
-        assert "hermes pm install" in str(exc_info.value)
+        assert "tandem pm install" in str(exc_info.value)
 
 
 

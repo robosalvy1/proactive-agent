@@ -1,4 +1,4 @@
-"""``hermes plugins doctor`` warns when Desktop runs a stale copy of a unified package's desktop half."""
+"""``tandem plugins doctor`` warns when Desktop runs a stale copy of a unified package's desktop half."""
 
 from __future__ import annotations
 

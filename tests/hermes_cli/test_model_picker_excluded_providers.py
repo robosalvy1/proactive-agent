@@ -1,5 +1,5 @@
 """Tests that ``model_catalog.excluded_providers`` hides providers from the
-interactive ``hermes model`` CLI picker.
+interactive ``tandem model`` CLI picker.
 
 The CLI picker (``hermes_cli.main.select_provider_and_model``) builds its
 provider menu from ``CANONICAL_PROVIDERS`` via ``group_providers`` — a
@@ -61,7 +61,7 @@ def _capture_provider_labels(config_home):
 
 def test_cli_picker_hides_excluded_provider(config_home):
     """``excluded_providers: [openrouter]`` must remove the OpenRouter row
-    from the ``hermes model`` provider menu."""
+    from the ``tandem model`` provider menu."""
     _write_config(config_home, model_catalog={"excluded_providers": ["openrouter"]})
 
     labels = _capture_provider_labels(config_home)
@@ -173,7 +173,7 @@ def test_unconfigured_rows_exclusion_is_case_insensitive():
 
 def test_unconfigured_rows_hide_excluded_provider_by_alias():
     """Excluding by an *alias* (not the canonical slug) must also drop the
-    canonical skeleton row, matching ``hermes model`` and
+    canonical skeleton row, matching ``tandem model`` and
     ``list_authenticated_providers``. Comparing the raw exclusion strings
     against ``entry.slug`` alone would leak the canonical row back in."""
     from hermes_cli.inventory import _append_unconfigured_rows

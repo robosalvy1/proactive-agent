@@ -1,4 +1,4 @@
-"""Regression tests for profile-name-keyed state migration on `hermes profile rename`.
+"""Regression tests for profile-name-keyed state migration on `tandem profile rename`.
 
 When a profile is renamed, the directory move carries the row data, but the profile name is also
 baked into session keys (``agent:<name>:*``), ``sessions.profile_name``, ``gateway_heartbeats.profile``,

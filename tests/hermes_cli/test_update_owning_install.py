@@ -1,4 +1,4 @@
-"""``hermes update`` from a PM environment's workspace goes to the checkout that owns it (#122627)."""
+"""``tandem update`` from a PM environment's workspace goes to the checkout that owns it (#122627)."""
 import sys
 
 from hermes_cli.update_owning_install import owning_install_root

@@ -134,7 +134,7 @@ def test_picker_uses_the_route_base_not_a_mismatched_env(monkeypatch, picker_htt
 
 
 def test_setup_flow_status_carries_the_pool_entry_route(monkeypatch):
-    """``hermes model`` → Codex reads the token from the auth status; the status must carry the
+    """``tandem model`` → Codex reads the token from the auth status; the status must carry the
     host that token routes to (model.base_url gateway), not leave the caller to assume chatgpt.com."""
     home = _home(monkeypatch)
     _write_config(home, base_url=GW)
@@ -157,7 +157,7 @@ def test_setup_flow_status_carries_a_pool_row_own_gateway_url(monkeypatch):
 
 
 def test_model_setup_flow_catalog_goes_to_the_pool_entry_gateway(monkeypatch, picker_http):
-    """``hermes model`` → OpenAI Codex with a pooled gateway key: the model list is fetched from
+    """``tandem model`` → OpenAI Codex with a pooled gateway key: the model list is fetched from
     the gateway that key routes to, not chatgpt.com."""
     home = _home(monkeypatch)
     _write_config(home, base_url=GW)

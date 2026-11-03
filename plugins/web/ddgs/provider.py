@@ -1,5 +1,5 @@
 """DuckDuckGo search via the optional ``ddgs`` package (search only, no key). ``is_available()``
-reflects package importability; the plugin registers either way so ``hermes tools`` can offer to
+reflects package importability; the plugin registers either way so ``tandem tools`` can offer to
 install it. Isolation: ``ddgs``/``primp`` can block inside native code while holding the GIL, so a
 thread-pool ``future.result(timeout=…)`` cap can never fire and Ctrl+C/SIGTERM freeze the process —
 each search runs in a disposable child process the parent can terminate/kill.
@@ -189,7 +189,7 @@ class DDGSWebSearchProvider(BaseWebSearchProvider):
 
     def is_available(self) -> bool:
         """True when ``ddgs`` is importable. Must NOT do network I/O — runs at
-        tool-registration time and on every ``hermes tools`` paint."""
+        tool-registration time and on every ``tandem tools`` paint."""
         try:
             import ddgs
             return True
@@ -198,7 +198,7 @@ class DDGSWebSearchProvider(BaseWebSearchProvider):
 
     def search(self, query: str, limit: int = 5) -> dict[str, Any]:
         """Run the search in a disposable child with a hard wall-clock timeout so a
-        hung native ``primp`` call cannot freeze the Hermes process.
+        hung native ``primp`` call cannot freeze the Tandem process.
 
         See #36776, #68096.
         """

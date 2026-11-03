@@ -48,7 +48,7 @@ async def test_batched_thread_updates_retire_the_alias_through_connected_bot(mon
         assert await adapter.connect()
         try:
             assert not adapter._platform_events_subscribed()
-            parent = SimpleNamespace(id=700, name="ops", guild=SimpleNamespace(name="Hermes Server"))
+            parent = SimpleNamespace(id=700, name="ops", guild=SimpleNamespace(name="Tandem Server"))
 
             class CachedThread:
                 id, parent_id = 800, 700

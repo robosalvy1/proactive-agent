@@ -6,8 +6,8 @@ Node ids (from ``agent.learning_graph``): skills → the skill name; memories �
 first; ``fingerprint`` = digest of the card's text, so the entry the user clicked is
 still nameable once the list has shifted). Ids from an older graph carry no
 fingerprint and resolve by position alone.
-Shared by CLI ``hermes journey``, the TUI ``/journey`` overlay and the desktop.
-Deleting a skill *archives* it (``hermes curator restore`` recovers it);
+Shared by CLI ``tandem journey``, the TUI ``/journey`` overlay and the desktop.
+Deleting a skill *archives* it (``tandem curator restore`` recovers it);
 deleting a memory rewrites its file under the memory tool's lock.
 """
 
@@ -173,11 +173,11 @@ def _delete_skill(name: str) -> dict[str, Any]:
     # ``_pinned_guard`` (which only blocks deletion) precisely because there is no user in the loop to
     # consent to an edit here.
     if skill_usage.get_record(name).get("pinned"):
-        return {"ok": False, "message": f"'{name}' is pinned — unpin it first (hermes curator unpin {name})"}
+        return {"ok": False, "message": f"'{name}' is pinned — unpin it first (tandem curator unpin {name})"}
     ok, message = skill_usage.archive_skill(name)
     if ok:
         _clear_skill_cache()
-    return {"ok": ok, "message": f"archived '{name}' — restore with: hermes curator restore {name}" if ok else message}
+    return {"ok": ok, "message": f"archived '{name}' — restore with: tandem curator restore {name}" if ok else message}
 
 
 def _delete_memory(node_id: str) -> dict[str, Any]:

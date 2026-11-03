@@ -94,8 +94,8 @@ class TestIsBotMentioned:
 
 
     def test_matrix_pill_in_formatted_body(self):
-        html = '<a href="https://matrix.to/#/@hermes:example.org">Hermes</a> help'
-        assert self.adapter._is_bot_mentioned("Hermes help", html)
+        html = '<a href="https://matrix.to/#/@hermes:example.org">Tandem</a> help'
+        assert self.adapter._is_bot_mentioned("Tandem help", html)
 
 
     # m.mentions.user_ids — MSC3952 / Matrix v1.7 authoritative mentions

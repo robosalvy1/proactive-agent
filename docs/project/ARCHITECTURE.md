@@ -2,7 +2,7 @@
 
 ## Current foundation
 
-The imported Hermes source is the executable foundation. There is no separate Proactive Agent runtime layer yet. Keep small improvements in existing modules; use established plugins where they fit. Read `docs/project/ENGINEERING.md` and nested `AGENTS.md` files before edits.
+The imported Tandem source is the executable foundation. There is no separate Tandem Agent runtime layer yet. Keep small improvements in existing modules; use established plugins where they fit. Read `docs/project/ENGINEERING.md` and nested `AGENTS.md` files before edits.
 
 ## Useful starting points
 
@@ -22,7 +22,7 @@ These are navigation hints, not a claim that every existing feature meets our pr
 
 ## Proposed direction to validate
 
-Use a persistent goal as the common unit linking user intent, relevant context, triggers, execution history, and outcomes. Start by mapping existing Hermes state rather than introducing another database or scheduler.
+Use a persistent goal as the common unit linking user intent, relevant context, triggers, execution history, and outcomes. Start by mapping existing Tandem state rather than introducing another database or scheduler.
 
 Context assembly should make relevance, freshness, token budget, and source traceable. New context must respect session caching and compression boundaries. A background run must bind its owning profile and carry only the authority granted to that goal.
 

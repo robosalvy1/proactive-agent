@@ -1,4 +1,4 @@
-"""Hostile-concurrency cells for the update lock, with real ``hermes update`` processes.
+"""Hostile-concurrency cells for the update lock, with real ``tandem update`` processes.
 
 A real git checkout (a clone of the commit under test, served by a local bare origin) is updated
 by real ``python -m hermes_cli.main update`` processes inside the bwrap sandbox. A ``git`` shim
@@ -33,7 +33,7 @@ pytestmark = [
     pytest.mark.skipif(H.sandbox_required_reason() is not None, reason=str(H.sandbox_required_reason())),
 ]
 
-REFUSAL = "Another Hermes update is already running"
+REFUSAL = "Another Tandem update is already running"
 
 # Runs inside the sandbox (its own pid namespace), so owners, updates and completion children
 # see each other's pids and creation times exactly as on a real machine.
@@ -242,7 +242,7 @@ def test_reused_pid_marker_is_reclaimed(rig):
 
 
 def test_killed_owner_keeps_the_checkout_locked_while_its_tree_runs(rig):
-    """(d) SIGKILL `hermes update` while its completion child runs: the child inherited the locked
+    """(d) SIGKILL `tandem update` while its completion child runs: the child inherited the locked
     fd, so a new update (any home) is refused until the child exits; never starts mid-mutation."""
     r = rig.driver("kill-mid-completion", timeout=600)
     assert r["child_seen"] and r["child_alive_before"], f"no completion child outlived the owner: {r}"
@@ -252,7 +252,7 @@ def test_killed_owner_keeps_the_checkout_locked_while_its_tree_runs(rig):
 
 
 def test_orphaned_update_tree_reads_as_in_progress(rig):
-    """(e) SIGKILL `hermes update` mid-completion and lose its marker: the completion child still
+    """(e) SIGKILL `tandem update` mid-completion and lose its marker: the completion child still
     holds the checkout lock, so every "is an update running" reader must still say yes."""
     r = rig.driver("orphan-reader", timeout=600)
     assert r["child_seen"] and r["child_alive_after"], f"premise: no completion child outlived the owner: {r}"

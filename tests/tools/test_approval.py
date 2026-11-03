@@ -651,13 +651,13 @@ class TestSensitiveInPlaceEditPattern:
 
 
 class TestWindowsAbsolutePathFolding:
-    """Windows absolute home / Hermes-home prefixes must fold to ~/ and
+    """Windows absolute home / Tandem-home prefixes must fold to ~/ and
     ~/.hermes/ in dangerous-command detection.
 
     Regression: on native Windows the home prefix uses backslash separators
     (``C:\\Users\\alice\\.ssh\\authorized_keys``). Detection stripped backslash
     escapes *before* folding, dissolving those separators, so writes to startup,
-    SSH, and Hermes config/env files returned "safe" without an approval prompt.
+    SSH, and Tandem config/env files returned "safe" without an approval prompt.
     The OS-specific ``Path.home()`` / ``get_hermes_home()`` tests above only
     exercise this branch on a Windows host; these monkeypatch a Windows-style
     HOME/HERMES_HOME so the fold is verified on the POSIX CI runner too."""
@@ -1135,8 +1135,8 @@ class TestPgrepKillExpansion:
 
 
 class TestLaunchctlGatewayLifecycle:
-    """launchctl stop/kickstart/bootout/unload against the Hermes service
-    label achieves the same effect as `hermes gateway stop|restart` and
+    """launchctl stop/kickstart/bootout/unload against the Tandem service
+    label achieves the same effect as `tandem gateway stop|restart` and
     must require the same approval. See issue #33071.
     """
 
@@ -1172,7 +1172,7 @@ class TestLaunchctlGatewayLifecycle:
             "launchctl kick'start' -k gui/501/ai.hermes.gateway",
             'launchctl boot"out" gui/501/ai.hermes.gateway',
             'launchctl bootout gui/501/ai.hermes."gateway"',
-            'hermes gateway re"start"',
+            'tandem gateway re"start"',
             'systemctl re"start" hermes-gateway',
         ):
             dangerous, _, _ = detect_dangerous_command(cmd)

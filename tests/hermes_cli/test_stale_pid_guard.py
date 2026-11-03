@@ -179,7 +179,7 @@ def test_stop_only_targets_the_invoking_hermes_home(monkeypatch):
 
     with mock.patch.object(
         dashboard_procs, "_scan_dashboard_processes",
-        return_value=[(12345, "hermes serve"), (12346, "hermes serve"), (12347, "hermes serve")],
+        return_value=[(12345, "tandem serve"), (12346, "tandem serve"), (12347, "tandem serve")],
     ), mock.patch.object(dashboard_procs, "_caller_ancestor_pids", return_value=set()), mock.patch.object(
         dashboard_procs, "_hermes_home_for_pid",
         side_effect=lambda pid: {
@@ -242,7 +242,7 @@ class TestHermesHomeForPid:
 
     def test_root_shaped_hermes_home_follows_the_flag_and_the_sticky_active_profile(self, monkeypatch, tmp_path):
         """Mirror ``_apply_profile_override``: an exported root ``HERMES_HOME`` is the root, not the
-        home — ``-p work`` and ``hermes profile use work`` both land in ``<root>/profiles/work``."""
+        home — ``-p work`` and ``tandem profile use work`` both land in ``<root>/profiles/work``."""
         root = tmp_path / ".hermes"
         root.mkdir()
         monkeypatch.setattr(dashboard_procs, "_pid_environ",

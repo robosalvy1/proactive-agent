@@ -180,7 +180,7 @@ def _store_lock(root: Path) -> Iterator[bool]:
 def adopt_legacy_engine(backend: str) -> bool:
     """Move the newest pre-PM install of ``backend`` into PM's store and record it as installed.
 
-    A machine that already ran a Hermes-installed engine keeps it across the update to PM. The
+    A machine that already ran a Tandem-installed engine keeps it across the update to PM. The
     manifest's archive digests become the PM identity, so a tag that matches the pin counts as
     current and an older tag counts as outdated, which offers the update. ``os.rename`` only:
     instant on one volume, and a store on another volume leaves the engine where it is. Never

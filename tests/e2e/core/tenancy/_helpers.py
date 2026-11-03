@@ -7,7 +7,7 @@ text, SOUL text, terminal cwd and a cron prompt. Each tenant also owns its own l
 WHO sent it. The invariant shared by every scenario is ``leaks(...) == []``: no tenant's canary may
 appear in another tenant's provider request, tool-subprocess env snapshot, or on-disk file.
 
-Hermes runs for real in child processes with HOME=<tmp>/home and HERMES_HOME=<tmp>/home/.hermes
+Tandem runs for real in child processes with HOME=<tmp>/home and HERMES_HOME=<tmp>/home/.hermes
 (profiles resolve under $HOME, never the real install), every credential env var stripped.
 """
 
@@ -466,7 +466,7 @@ class TuiBackend:
 
 
 class ServeBackend(TuiBackend):
-    """The real Desktop backend: ``hermes serve --port 0`` with the JSON-RPC surface on ``/api/ws``.
+    """The real Desktop backend: ``tandem serve --port 0`` with the JSON-RPC surface on ``/api/ws``.
 
     ``HERMES_DESKTOP=1`` marks it app-spawned, which is also what runs the cron ticker in-process.
     """
@@ -498,8 +498,8 @@ class ServeBackend(TuiBackend):
                     port_box.append(int(m.group(1)))
         threading.Thread(target=pump, daemon=True, name="tenancy-serve-stdout").start()
         self.port = poll(lambda: port_box[0] if port_box else (self.proc.poll() is not None and -1), 120,
-                         "hermes serve to report its port")
-        assert self.port > 0, f"hermes serve exited rc={self.proc.returncode}"
+                         "tandem serve to report its port")
+        assert self.port > 0, f"tandem serve exited rc={self.proc.returncode}"
         self.ws = connect(f"ws://127.0.0.1:{self.port}/api/ws?token={self.token}", open_timeout=90, max_size=None)
         self._q: queue.Queue[dict[str, Any]] = queue.Queue()
         self._rid = 0

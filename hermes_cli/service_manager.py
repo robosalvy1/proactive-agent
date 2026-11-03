@@ -58,7 +58,7 @@ def detect_service_manager() -> ServiceManagerKind:
     This function does NOT replace ``supports_systemd_services()`` —
     host call sites continue to use that. It exists for new backend-
     agnostic code (profile create/delete hooks, the s6 dispatch path
-    in ``hermes gateway start/stop/restart``).
+    in ``tandem gateway start/stop/restart``).
     """
     # Deferred so importing this module (Protocol type, validate_profile_name) doesn't drag in
     # the whole gateway dependency graph.
@@ -88,7 +88,7 @@ def _s6_running() -> bool:
 
     The obvious probe — ``Path('/proc/1/exe').resolve()`` — only works as root: for any other UID, the
     symlink at ``/proc/1/exe`` is unreadable and ``resolve()`` silently returns the path unchanged, so the
-    resolved name is the literal ``"exe"`` and detection always fails. Since every Hermes runtime call
+    resolved name is the literal ``"exe"`` and detection always fails. Since every Tandem runtime call
     inside the container drops to hermes via ``s6-setuidgid``, that silent failure made the entire
     service-manager runtime-registration path inert in production (PR #30136 review).
     """
@@ -275,7 +275,7 @@ def _write_gateway_desired_state(name: str, desired_state: str) -> None:
 def register_unregistered_profile_gateway(mgr: ServiceManager, profile: str) -> bool:
     """Register a ``down`` s6 slot for a profile whose directory exists but was never registered.
 
-    `hermes profile create` can only register a slot when it runs inside the container; created
+    `tandem profile create` can only register a slot when it runs inside the container; created
     from the host against a bind-mounted home, the directory lands where the container reads it
     but no ``/run/service/gateway-<name>`` exists, and the boot reconciler only notices on the
     next container restart. Returns False without touching anything unless the directory carries
@@ -385,7 +385,7 @@ class GatewayNotRegisteredError(S6Error):
         self.profile = profile
         super().__init__(
             f"no such gateway {profile!r}: register it with "
-            f"`hermes profile create {profile}` first, or pass "
+            f"`tandem profile create {profile}` first, or pass "
             "an existing profile name via `-p <name>`",
             service=f"gateway-{profile}",
         )
@@ -465,9 +465,9 @@ class S6ServiceManager:
         # above prevents the run→start→run recursion. s6 guarantees one supervised instance per
         # slot, so there is no legitimate sibling for ``--replace`` to clobber.
         if profile == "default":
-            gateway_cmd = "hermes gateway run --replace"
+            gateway_cmd = "tandem gateway run --replace"
         else:
-            gateway_cmd = f"hermes -p {shlex.quote(profile)} gateway run --replace"
+            gateway_cmd = f"tandem -p {shlex.quote(profile)} gateway run --replace"
         # Skip the drop when already non-root (setgroups() lacks CAP_SETGID → s6 boot-loop).
         lines.append(f'[ "$(id -u)" = 0 ] || exec {gateway_cmd}')
         lines.append(f"exec s6-setuidgid hermes {gateway_cmd}")

@@ -37,7 +37,7 @@ function useIdentity(profile: string): Identity | null {
     let live = true;
     fetchJSON<Identity>(`/api/personal/identity?profile=${encodeURIComponent(profile)}`)
       .then((next) => live && setIdentity(next))
-      .catch(() => live && setIdentity({ agent_name: "Hermes", user_name: null }));
+      .catch(() => live && setIdentity({ agent_name: "Tandem", user_name: null }));
     return () => {
       live = false;
     };

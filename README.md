@@ -1,6 +1,6 @@
 <img src="assets/icon.svg" width="64" height="64" alt="">
 
-# Proactive Agent
+# Tandem Agent
 
 A personal agent harness focused on polished interactions, accessible capabilities, useful proactivity, and excellent context continuity.
 

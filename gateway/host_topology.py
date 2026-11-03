@@ -1,6 +1,6 @@
 """Who owns the gateway role on THIS host, and which profiles does that one process serve?
 
-Multiplex-only (Teknium ruling): exactly ONE ``hermes gateway run`` per host, multiplexing every
+Multiplex-only (Teknium ruling): exactly ONE ``tandem gateway run`` per host, multiplexing every
 profile. Every reporting surface (doctor, ``cron status``, ``claw``, the dashboard liveness ladder)
 used to ask a per-PROFILE question instead — "does *my* profile own a gateway process?" — and a
 profile that is SERVED by the host gateway answered "no". That produced three user-visible lies:

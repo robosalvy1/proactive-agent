@@ -8,7 +8,7 @@ real install's unit to point at the scratch directory, and the real gateway fail
 
 The rule: a definition that pins a home is written only by a process acting for that home. Uninstall
 already refused a unit pinning another home (``_systemd_unit_belongs_to_current_home``); the writers now
-refuse the same way. ``hermes gateway install --force-unit-path`` is the explicit repoint.
+refuse the same way. ``tandem gateway install --force-unit-path`` is the explicit repoint.
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ def definition_belongs_to_home(definition_path: Path, home: Path, action: str) -
     print(f"✗ Refusing to {action} {definition_path}: it runs HERMES_HOME={raw}, "
           f"but this process has HERMES_HOME={home}.")
     print("  That file is another install's gateway. Use that install, or pass --force-unit-path")
-    print("  to `hermes gateway install` if you really mean to repoint it at this home.")
+    print("  to `tandem gateway install` if you really mean to repoint it at this home.")
     return False
 
 

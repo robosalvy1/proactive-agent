@@ -97,14 +97,14 @@ def _reserve_abandoned_loader_slot() -> None:
             return
     raise PluginLoadTimeout(
         f"not loaded: {_MAX_ABANDONED_LOADERS} abandoned plugin loader thread(s) are still running "
-        f"(plugins.load_timeout_seconds); restart Hermes to retry"
+        f"(plugins.load_timeout_seconds); restart Tandem to retry"
     )
 
 
 def run_with_load_deadline(plugin_key: str, ctx: PluginContext, fn: Callable[[], Any]) -> Any:
     """Run ``fn`` (a plugin's import + ``register()``) under the per-plugin deadline.
 
-    The worker inherits the caller's context (the Hermes-home override is a ContextVar). On timeout the
+    The worker inherits the caller's context (the Tandem-home override is a ContextVar). On timeout the
     worker is abandoned as a daemon, ``ctx`` is marked so any registration it still attempts is ignored,
     and :class:`PluginLoadTimeout` is raised on the calling thread so the usual failure path records the
     reason and disposes whatever was registered before the hang.
@@ -170,7 +170,7 @@ def _serialized_replacement(method):
 
 @contextmanager
 def _plugin_home_scope(home: Path):
-    """Bind discovery and loading to the manager's immutable Hermes home."""
+    """Bind discovery and loading to the manager's immutable Tandem home."""
     token = set_hermes_home_override(home)
     try:
         yield
@@ -204,7 +204,7 @@ class PluginLoaderMixin:
         """Subscribe to "a discovery sweep loaded plugins this process did not have": fires from INSIDE
         :meth:`discover_and_load` (never emitted by an install RPC) with one
         ``{name, key, activated_now, deferred}`` summary per NEWLY loaded plugin — every plugin at boot,
-        just the newcomer after a mid-run ``hermes plugins install/enable``, Desktop / dashboard /
+        just the newcomer after a mid-run ``tandem plugins install/enable``, Desktop / dashboard /
         ``plugins.manage`` install-enable-update, a tool-triggered force re-discovery or the gateway's
         ``reload-plugins`` verb (all of which run ``discover_plugins(force=True)``; a non-forced call
         short-circuits on ``_discovered`` and never fires). See
@@ -253,7 +253,7 @@ class PluginLoaderMixin:
     def _register_deferred_platform(self, manifest: PluginManifest) -> None:
         """Register a lazy loader for a bundled platform: the adapter imports only when the
         ``platform_registry`` is first asked for it; a placeholder ``LoadedPlugin`` keeps it visible in
-        ``hermes plugins list`` until then."""
+        ``tandem plugins list`` until then."""
         from hermes_cli.plugins import LoadedPlugin
         lookup_key = manifest_key(manifest)
         loaded = LoadedPlugin(manifest=manifest, enabled=True, deferred=True)
@@ -328,13 +328,13 @@ class PluginLoaderMixin:
     def _register_deferred_platform_tools(self, manifest: PluginManifest, loaded: LoadedPlugin) -> None:
         """Register a deferred platform's *client* tools without its adapter. Deferring the plugin would
         otherwise defer its outbound tools too, so CLI/TUI processes (which never materialize platforms)
-        would miss them in ``hermes tools`` / ``platform_toolsets``. Opt-in is explicit via ``provides_tools``;
+        would miss them in ``tandem tools`` / ``platform_toolsets``. Opt-in is explicit via ``provides_tools``;
         tools live in a ``tools`` submodule so ``__init__`` stays import-light.
 
         A platform plugin can ship two independent things: an inbound adapter (heavy — it imports the
         platform SDK) and outbound client tools the agent calls like any other tool. Deferring the plugin
         defers both, so in a CLI/TUI process the client tools never register at all: ``resolve_toolset()``
-        returns ``[]``, the toolset is missing from the ``hermes tools`` checklist, and even an explicit
+        returns ``[]``, the toolset is missing from the ``tandem tools`` checklist, and even an explicit
         ``platform_toolsets`` entry is dropped because the key is unknown. The same tools work in
         gateway/web processes only because those materialize every platform at startup (issue #78050).
         Opting in is explicit: the manifest must declare ``provides_tools`` (the field the plugin list and
@@ -426,8 +426,8 @@ class PluginLoaderMixin:
         if missing:
             logger.warning(
                 "Plugin %s declares Python dependencies that are not "
-                "installed: %s. For an enabled plugin, run hermes pm repair, "
-                "then restart Hermes. Discovery does not install dependencies.",
+                "installed: %s. For an enabled plugin, run tandem pm repair, "
+                "then restart Tandem. Discovery does not install dependencies.",
                 key, ", ".join(missing),
             )
         else:

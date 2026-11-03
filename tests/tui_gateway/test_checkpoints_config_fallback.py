@@ -1,6 +1,6 @@
 """Tests for TUI/desktop checkpoint config fallback (#79625).
 
-Desktop sessions (via ``hermes serve`` → TUI gateway) never set
+Desktop sessions (via ``tandem serve`` → TUI gateway) never set
 ``HERMES_TUI_CHECKPOINTS``, so agent creation gated filesystem checkpoints
 on that env var alone — ``checkpoints.enabled: true`` in config.yaml was
 silently ignored on the desktop surface while the CLI and messaging gateway

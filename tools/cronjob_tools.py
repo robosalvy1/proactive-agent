@@ -194,7 +194,7 @@ def _hand_off_primary_routed_run(job: dict[str, Any], extra_prompt: Optional[str
         # than an honest refusal (nothing would ever pick it up).
         cause = ("Start the gateway — its ticker will deliver the job on schedule." if alive is False
                  else "Could not determine whether a gateway serves this profile; check "
-                      "`hermes cron status` and re-run.")
+                      "`tandem cron status` and re-run.")
         return _dumps({
             "success": False,
             "error": (
@@ -471,7 +471,7 @@ def _latest_job_output_excerpt(job_id: str, max_chars: int = 2000) -> Optional[s
 
 def _reap_stale_executions(job_name: str) -> None:
     """Reap execution rows left 'claimed'/'running' by a provably-dead owner (e.g. a prior
-    one-shot `hermes cron run` that died mid-run). The ticker does this at startup; one-shot
+    one-shot `tandem cron run` that died mid-run). The ticker does this at startup; one-shot
     invocations have no such moment, so a stale claim would block every later manual run.
     Best-effort self-heal: must not block dispatch."""
     try:
@@ -1080,7 +1080,7 @@ CRONJOB_SCHEMA = {
     "name": "cronjob_manage",
     "description": """Manage scheduled cron jobs: action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id or exact name (list first to resolve ambiguity; never guess IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only).
 
-Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.
+Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `tandem model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.
 
 User-facing replies: give a short name-based confirmation with the schedule and relevant delivery status. Do not echo internal IDs, raw job records, or management instructions unless requested or needed to distinguish matching jobs. Never hide paused state, inactive scheduler warnings, local-only output, failed delivery, or queued/unverified delivery.""",
     "parameters": {
@@ -1098,7 +1098,7 @@ User-facing replies: give a short name-based confirmation with the schedule and 
             },
             "pinned": {
                 "type": "boolean",
-                "description": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `hermes model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model."
+                "description": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `tandem model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model."
             },
             "prompt": {
                 "type": "string",

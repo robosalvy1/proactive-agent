@@ -51,7 +51,7 @@ def _sanitize_ws_text(text: str) -> str:
 
     ``json.dumps(..., ensure_ascii=False)`` happily emits lone UTF-16 surrogates; Starlette's
     ``send_text`` then raises ``UnicodeEncodeError``, which used to latch the whole connection
-    closed. Same U+FFFD replacement every other Hermes transport applies.
+    closed. Same U+FFFD replacement every other Tandem transport applies.
 
     See #97288.
     """

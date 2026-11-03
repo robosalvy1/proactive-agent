@@ -14,7 +14,7 @@ function fixture() {
   writeFileSync(key, 'test credential path only')
   return {
     root,
-    context: { electronPlatformName: 'darwin', appOutDir: root, packager: { appInfo: { productFilename: 'Hermes' } } },
+    context: { electronPlatformName: 'darwin', appOutDir: root, packager: { appInfo: { productFilename: 'Tandem' } } },
     environments: [
       { APPLE_NOTARY_PROFILE: 'test-profile' },
       { APPLE_API_KEY: key, APPLE_API_KEY_ID: 'test-key', APPLE_API_ISSUER: 'test-issuer' }

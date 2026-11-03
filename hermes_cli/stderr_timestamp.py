@@ -27,7 +27,7 @@ _STDOUT_DRAIN_TIMEOUT_S = 5.0
 
 
 def timestamp() -> str:
-    """Local time in logging.Formatter's default ``%(asctime)s`` shape, which ``hermes logs --since`` parses."""
+    """Local time in logging.Formatter's default ``%(asctime)s`` shape, which ``tandem logs --since`` parses."""
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:23]
 
 
@@ -94,9 +94,9 @@ def _install_signal_forwarders(proc: subprocess.Popen[bytes]) -> dict[int, objec
 
 
 def _is_hermes_gateway_run_argv(command: Sequence[str]) -> bool:
-    """True for Hermes ``gateway run`` argv this wrapper is allowed to upgrade.
+    """True for Tandem ``gateway run`` argv this wrapper is allowed to upgrade.
 
-    The wrapper is generic. Only historical/current Hermes gateway shapes get ``--external-
+    The wrapper is generic. Only historical/current Tandem gateway shapes get ``--external-
     supervisor``; an arbitrary launchd child must not be marked as gateway-supervised (#87005).
     """
     try:
@@ -129,7 +129,7 @@ def _prepare_child_command(command: Sequence[str], environ: Mapping[str, str] | 
 
     launchd stamps ``XPC_SERVICE_NAME=<job label>`` only on this wrapper (its direct child; an
     interactive shell has none, the grandchild sees ``XPC_SERVICE_NAME=0``). Newly generated
-    plists put ``--external-supervisor`` on the inner ``gateway run`` so ``hermes update`` can see
+    plists put ``--external-supervisor`` on the inner ``gateway run`` so ``tandem update`` can see
     the flag on the live process argv.
     """
     argv = [str(part) for part in command]

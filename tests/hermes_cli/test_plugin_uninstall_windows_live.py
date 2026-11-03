@@ -1,6 +1,6 @@
-"""LIVE Windows E2E: ``hermes plugins uninstall`` while a real gateway has the plugin loaded.
+"""LIVE Windows E2E: ``tandem plugins uninstall`` while a real gateway has the plugin loaded.
 
-A real ``hermes gateway run`` child (temp HOME / HERMES_HOME) loads three enabled user plugins:
+A real ``tandem gateway run`` child (temp HOME / HERMES_HOME) loads three enabled user plugins:
 pure Python, one that keeps a file in its own directory open, and one that imports a native
 ``.pyd`` shipped inside its directory. Windows refuses to delete a file another process holds
 (WinError 32) or a mapped DLL (WinError 5), so removing those trees under the live gateway is the

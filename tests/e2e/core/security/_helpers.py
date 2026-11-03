@@ -1,6 +1,6 @@
 """Shared harness for the security-boundary E2E suite.
 
-Every scenario runs real Hermes processes (``hermes`` CLI, ``hermes serve``, the gateway,
+Every scenario runs real Tandem processes (``tandem`` CLI, ``tandem serve``, the gateway,
 ``tui_gateway``) with HOME=<tmp>/home and HERMES_HOME=<tmp>/home/.hermes, every credential env var
 stripped, and the model served by ``tests/fakes/fake_llm_provider.FakeLLMServer``. Assertions read
 the boundary's observable outcome: files on disk, state.db rows, logs, and the next wire request.
@@ -148,7 +148,7 @@ def run_hermes(argv: list[str], home: Path, *, timeout: float = 120.0, cwd: Path
 
 def run_python(code: str, home: Path, *args: str, timeout: float = 120.0,
                extra_env: dict[str, str] | None = None) -> subprocess.CompletedProcess:
-    """A fresh interpreter importing the worktree's Hermes under the hermetic env."""
+    """A fresh interpreter importing the worktree's Tandem under the hermetic env."""
     return subprocess.run([sys.executable, "-c", code, *args], cwd=str(home), env=hermetic_env(home, extra_env),
                           capture_output=True, text=True, timeout=timeout, stdin=subprocess.DEVNULL, check=False)
 

@@ -18,11 +18,11 @@ from tests.compat.old_updater_support import fresh_child as fresh_child, no_exte
     [
         (main, "_filter_non_gateway_concurrent_instances", ([(123, "hermes.exe")],), {}),
         (main, "_detect_concurrent_hermes_instances", (Path("Scripts"),), {"exclude_pid": 123}),
-        (main, "_leftover_pausable_gateway_pids", ([(123, "python.exe", "hermes serve")],), {}),
-        (main, "_ledger_manual_serve_holders", ([(123, "python.exe", "hermes serve")],), {}),
-        (main, "_ledger_reapable_backend_pids", ([(123, "python.exe", "hermes serve")],), {}),
-        (main, "_orphaned_desktop_backend_pids", ([(123, "python.exe", "hermes serve")],), {}),
-        (main, "_handoff_reapable_backend_pids", ([(123, "python.exe", "hermes serve")],), {}),
+        (main, "_leftover_pausable_gateway_pids", ([(123, "python.exe", "tandem serve")],), {}),
+        (main, "_ledger_manual_serve_holders", ([(123, "python.exe", "tandem serve")],), {}),
+        (main, "_ledger_reapable_backend_pids", ([(123, "python.exe", "tandem serve")],), {}),
+        (main, "_orphaned_desktop_backend_pids", ([(123, "python.exe", "tandem serve")],), {}),
+        (main, "_handoff_reapable_backend_pids", ([(123, "python.exe", "tandem serve")],), {}),
         (main, "_stop_process_trees", ([123, (456, 789)],), {}),
     ],
 )

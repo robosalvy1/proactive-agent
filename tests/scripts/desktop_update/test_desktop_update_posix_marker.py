@@ -244,7 +244,7 @@ def test_committed_update_with_failed_followup_is_ok_with_warnings(tmp_path):
 
 @pytest.mark.parametrize(("outcome", "code"), [("interrupted", "130"), ("partial", "1"), ("success", "1")])
 def test_nonzero_exit_after_the_commit_point_is_installed_with_a_followup(tmp_path, outcome, code):
-    """Contract C3: `hermes update` exits 130 (Ctrl-C after the code moved) or 1 (a parked
+    """Contract C3: `tandem update` exits 130 (Ctrl-C after the code moved) or 1 (a parked
     autostash) AFTER its commit point. Its own receipt says so; the result must report the
     update installed with an owed follow-up, never ok:false / "still on the previous version"."""
     home, install = _install(tmp_path)
@@ -254,7 +254,7 @@ def test_nonzero_exit_after_the_commit_point_is_installed_with_a_followup(tmp_pa
     assert result.returncode == 0, result.stdout + result.stderr
     receipt = json.loads((home / ".hermes-update-result.json").read_text(encoding="utf-8-sig"))
     assert (receipt["ok"], receipt["exit_code"], receipt["manual"]) == (True, 0, True), receipt
-    assert receipt["message"].startswith("Hermes was updated, but"), receipt
+    assert receipt["message"].startswith("Tandem was updated, but"), receipt
     assert [w.split(":")[0] for w in receipt["warnings"]] == ["update"], receipt
     assert f"exited {code} after the commit point" in receipt["warnings"][0]
 
@@ -334,7 +334,7 @@ def _ancestry(pid: int) -> list[int]:
 
 
 def test_script_killed_right_after_spawning_the_update_leaves_a_live_marker(tmp_path):
-    """C1 rule 6, written by the script itself: posix.sh dies (SIGKILL) while its `hermes update`
+    """C1 rule 6, written by the script itself: posix.sh dies (SIGKILL) while its `tandem update`
     child is only starting up and has not taken the update lock. The marker must still read LIVE
     through the child named on line 4, and turn dead once that child is gone."""
     home, install = _install(tmp_path)

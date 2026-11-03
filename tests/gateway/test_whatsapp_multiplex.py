@@ -24,10 +24,10 @@ def test_credentials_follow_profile_home(tmp_path):
     from hermes_cli import gateway_multiplex_served as served
     from unittest.mock import patch
     write_runtime_status(platform="work:whatsapp", platform_state="disabled",
-                         error_code="whatsapp_unpaired", error_message="pair it: hermes -p work whatsapp")
+                         error_code="whatsapp_unpaired", error_message="pair it: tandem -p work whatsapp")
     with patch.object(served, "live_default_gateway_pid", return_value=os.getpid()):
         assert served.served_profile_unserved_platforms("work") == {
-            "whatsapp": "pair it: hermes -p work whatsapp"}
+            "whatsapp": "pair it: tandem -p work whatsapp"}
 
 
 @pytest.mark.asyncio

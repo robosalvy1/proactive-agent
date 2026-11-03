@@ -247,7 +247,7 @@ def tools(conn, monkeypatch):
 
 
 def test_a_hung_up_store_stays_open_and_its_next_call_redials(gateway, conn, store):
-    """/sessions, /resume, /branch and /handoff gate on the store: a hang-up is not "Hermes can't
+    """/sessions, /resume, /branch and /handoff gate on the store: a hang-up is not "Tandem can't
     open its session history right now"; the next call dials the restarted gateway."""
     gateway.hang_up(conn)
     assert store

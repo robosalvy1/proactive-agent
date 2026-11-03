@@ -1,4 +1,4 @@
-"""The chrome-debug Chromium profile and Hermes media-cache dirs are created owner-only.
+"""The chrome-debug Chromium profile and Tandem media-cache dirs are created owner-only.
 
 ``$HERMES_HOME/chrome-debug`` is a real Chromium user-data dir (Cookies, Login Data,
 Local Storage). A bare ``os.makedirs`` inherited the umask and landed 0755, so on the
@@ -42,7 +42,7 @@ def test_chrome_debug_data_dir_created_owner_only(tmp_path, monkeypatch):
 
 
 def test_chrome_debug_data_dir_reconciles_legacy_world_readable(tmp_path, monkeypatch):
-    """A profile an older Hermes left at 0755 is tightened on the next launch — the
+    """A profile an older Tandem left at 0755 is tightened on the next launch — the
     exposure is already on disk, so creation-time hardening alone is not enough."""
     home = tmp_path / "hh"
     _no_managed(monkeypatch, home)

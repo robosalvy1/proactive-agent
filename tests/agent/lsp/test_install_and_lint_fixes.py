@@ -2,7 +2,7 @@
 
 Covers:
 
-1. ``hermes lsp status`` surfaces a ``Backend warnings`` section when
+1. ``tandem lsp status`` surfaces a ``Backend warnings`` section when
    bash-language-server is installed but ``shellcheck`` is missing.
 2. ``_check_lint`` returns ``skipped`` (not ``error``) when the linter
    command exists on PATH but couldn't actually run — e.g. ``npx tsc``

@@ -1,6 +1,6 @@
 """Tests for the per-plugin durable storage convention (plugins/plugin_storage).
 
-The contract under test: data lives under ``<hermes home>/plugin-data/<name>/``
+The contract under test: data lives under ``<tandem home>/plugin-data/<name>/``
 (NOT the ``plugins/<name>/`` install tree), names that could escape the root
 are rejected, and the sqlite helper opens a WAL-mode connection inside the
 data dir.

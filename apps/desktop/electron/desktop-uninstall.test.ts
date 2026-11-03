@@ -79,7 +79,7 @@ test('nativeRemovalInstructions names the steward per kind and OS', () => {
   assert.match(nativeRemovalInstructions('bundled', 'win32'), /Installed apps/)
   assert.equal(
     nativeRemovalInstructions('bundled', 'darwin', '/Applications/Hermes Agent Canary.app'),
-    'Quit the app and drag Hermes Agent Canary.app from /Applications to the Trash.'
+    'Quit the app and drag Tandem Agent Canary.app from /Applications to the Trash.'
   )
   assert.match(nativeRemovalInstructions('bundled', 'darwin'), /drag the Hermes app from Applications to the Trash/)
   assert.match(

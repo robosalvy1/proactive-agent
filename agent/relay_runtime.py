@@ -1,4 +1,4 @@
-"""Profile-scoped NeMo Relay runtimes owned by the Hermes agent core."""
+"""Profile-scoped NeMo Relay runtimes owned by the Tandem agent core."""
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ _scope_op_executor = _SCOPE_OP_EXECUTOR.get
 
 
 def runtime_metadata(runtime_id: str, **extra: Any) -> dict[str, Any]:
-    """Return the scope metadata that stamps every Hermes-owned Relay scope."""
+    """Return the scope metadata that stamps every Tandem-owned Relay scope."""
     return {RUNTIME_SCHEMA_KEY: RUNTIME_SCHEMA_VERSION, RUNTIME_INSTANCE_KEY: runtime_id, **extra}
 
 
@@ -118,7 +118,7 @@ def pop_relay_scope(relay: Any, handle: Any, *, output: Any = None, metadata: An
 def pop_relay_scope_if_top(relay: Any, handle: Any, *, output: Any = None, metadata: Any = None) -> bool:
     """Pop ``handle`` only while it is the top of the scope stack; return whether it was popped.
 
-    Two concurrent Hermes turns in one session share a physical stack, so the first turn to
+    Two concurrent Tandem turns in one session share a physical stack, so the first turn to
     finish may find the sibling's live scope above its own. Popping through it would close the
     sibling's scope and letting the binding raise ("scope handle is not at the top of the
     stack") logs a traceback per overlap (#115471). The skipped scope is reclaimed by the
@@ -183,12 +183,12 @@ def _report_requires_managed_execution(report: Any) -> bool:
     """Return whether a Relay plugin-host report enables any static or dynamic plugin.
 
     Relay owns the report contract. An unfamiliar report stays fail-safe by
-    retaining Hermes managed execution instead of silently bypassing plugins.
+    retaining Tandem managed execution instead of silently bypassing plugins.
     """
 
     def keep_enabled() -> bool:
         logger.warning(
-            "Hermes could not determine whether the Relay plugin configuration is empty; keeping managed "
+            "Tandem could not determine whether the Relay plugin configuration is empty; keeping managed "
             "execution enabled"
         )
         return True
@@ -223,7 +223,7 @@ def _report_requires_managed_execution(report: Any) -> bool:
 
 @dataclass
 class RelaySession:
-    """One isolated Relay scope stack owned by a Hermes session."""
+    """One isolated Relay scope stack owned by a Tandem session."""
 
     session_id: str
     parent_session_id: str = ""
@@ -307,7 +307,7 @@ class _ProcessRelayPluginConfiguration:
                 if self._state is _RelayPluginConfigurationState.ACTIVE:
                     logger.info(
                         "The Relay plugin host is active process-wide and applies to all profiles hosted by this "
-                        "Hermes process. Configuration files: %s",
+                        "Tandem process. Configuration files: %s",
                         "; ".join(_activation_config_paths(self._activation)) or "none reported",
                     )
             self._owners.add(id(owner))
@@ -321,8 +321,8 @@ class _ProcessRelayPluginConfiguration:
             self._activation = None
             if _is_relay_host_conflict(exc):
                 logger.warning(
-                    "A process-global Relay plugin configuration is already active outside Hermes native "
-                    "ownership; leaving it unchanged and disabling Hermes-managed Relay middleware for this process"
+                    "A process-global Relay plugin configuration is already active outside Tandem native "
+                    "ownership; leaving it unchanged and disabling Tandem-managed Relay middleware for this process"
                 )
                 return _RelayPluginConfigurationState.FOREIGN
             logger.warning("Hermes Relay plugin initialization failed: %s", exc, exc_info=True)
@@ -454,7 +454,7 @@ class RelayRuntime:
             self._execution_consumers.discard(consumer)
 
     def managed_execution_enabled(self) -> bool:
-        """Return whether a Hermes-managed consumer needs the Relay pipeline."""
+        """Return whether a Tandem-managed consumer needs the Relay pipeline."""
         with self._execution_consumers_lock:
             return bool(self._execution_consumers)
 
@@ -702,7 +702,7 @@ class RelayRuntime:
         return RelayOperationLease(self)
 
     def apply_tool_request_intercepts(self, *, session_id: str, tool_name: str, args: dict[str, Any]) -> dict[str, Any]:
-        """Apply Relay request rewriting before Hermes authorizes a tool call."""
+        """Apply Relay request rewriting before Tandem authorizes a tool call."""
         request_intercepts = getattr(getattr(self.relay, "tools", None), "request_intercepts", None)
         managed = self.managed_execution_enabled() and callable(request_intercepts)
         session = self.ensure_session({"session_id": session_id}) if managed else None
@@ -861,7 +861,7 @@ RelayHost = RelayRuntime | NoopRelayRuntime
 
 
 class RelayHostRegistry:
-    """Own exactly one Relay host for each canonical Hermes profile."""
+    """Own exactly one Relay host for each canonical Tandem profile."""
 
     def __init__(self) -> None:
         self._lock = threading.RLock()
@@ -911,7 +911,7 @@ class ConversationLease:
 
 @dataclass
 class RelayTurnContext:
-    """Runtime-only context for one Hermes turn or top-level task."""
+    """Runtime-only context for one Tandem turn or top-level task."""
 
     lease: ConversationLease
     turn_id: str
@@ -977,7 +977,7 @@ def _flag_open_session(session: RelaySession, flag: str) -> None:
 
 
 class RelaySessionCoordinator:
-    """Own semantic conversation and turn lifetimes for Hermes core."""
+    """Own semantic conversation and turn lifetimes for Tandem core."""
 
     def __init__(self, registry: RelayHostRegistry = HOST_REGISTRY) -> None:
         self.registry = registry
@@ -1060,7 +1060,7 @@ class RelaySessionCoordinator:
                 # One physical scope stack per session; concurrent turns' sibling scopes would not close LIFO.
                 turn.relay_enabled = False
                 logger.warning(
-                    "Skipping Relay instrumentation for concurrent Hermes turn %s in session %s",
+                    "Skipping Relay instrumentation for concurrent Tandem turn %s in session %s",
                     turn_id, lease.session_id,
                 )
             else:
@@ -1298,7 +1298,7 @@ def resolve_execution_context(session_id: str) -> tuple[RelayRuntime | None, Rel
 
 
 def apply_tool_request_intercepts(*, session_id: str, tool_name: str, args: dict[str, Any]) -> dict[str, Any]:
-    """Return Relay-rewritten arguments at Hermes's authorization boundary."""
+    """Return Relay-rewritten arguments at Tandem's authorization boundary."""
     runtime = get_runtime(create=False) if session_id else None
     if runtime is None:
         return args
@@ -1317,7 +1317,7 @@ def _is_relay_wrapped_callback_error(relay_error: BaseException, callback_error:
 
 
 def get_runtime(*, create: bool = True, profile_key: str | None = None) -> RelayRuntime | None:
-    """Return the Relay host for the active Hermes profile."""
+    """Return the Relay host for the active Tandem profile."""
     host = HOST_REGISTRY.for_profile(profile_key, create=create)
     return host if isinstance(host, RelayRuntime) else None
 
@@ -1341,8 +1341,8 @@ def _configured_plugin_inputs() -> Path | None:
     if config_path is None and (legacy_vars := configured_legacy_relay_env_vars(os.environ)):
         logger.warning(
             "Legacy NeMo Relay exporter variables are set but no %s was provided. %s no longer configure "
-            "Relay exporters; any standard user or system plugins.toml still applies. Run `hermes migrate "
-            "relay` (or `hermes update`, which runs it for every profile) to generate %s and select it in .env.",
+            "Relay exporters; any standard user or system plugins.toml still applies. Run `tandem migrate "
+            "relay` (or `tandem update`, which runs it for every profile) to generate %s and select it in .env.",
             RELAY_PLUGINS_CONFIG_ENV,
             ", ".join(legacy_vars),
             get_hermes_home() / "relay-plugins.toml",
@@ -1360,7 +1360,7 @@ def _explicit_plugins_toml() -> Path | None:
         with config_path.open("rb") as config_file:
             config = tomllib.load(config_file)
         if "dynamic_plugins" in config:
-            raise ValueError("Hermes [[dynamic_plugins]] records are unsupported; use Relay [[plugins.dynamic]] records")
+            raise ValueError("Tandem [[dynamic_plugins]] records are unsupported; use Relay [[plugins.dynamic]] records")
         return config_path
     except Exception as exc:
         raise _RelayPluginConfigurationLoadError(

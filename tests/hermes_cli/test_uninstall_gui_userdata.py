@@ -1,6 +1,6 @@
 """Keep-data uninstall must not delete the desktop app's Electron userData dir.
 
-Regression for #122548: ``hermes uninstall`` option 1 (Keep data) wiped
+Regression for #122548: ``tandem uninstall`` option 1 (Keep data) wiped
 ``desktop_userdata_dir()`` (connections.json, OAuth partitions, renderer state)
 because ``_perform_uninstall`` never forwarded ``remove_userdata``.
 """

@@ -130,7 +130,7 @@ class TestMacosOsascript:
 class TestMacosClipboardFileUrl:
     """Finder / file-copy puts «class furl» on the clipboard, not PNGf/TIFF.
 
-    Other apps still paste the image; Hermes must treat a local image file-url
+    Other apps still paste the image; Tandem must treat a local image file-url
     as a clipboard image too.
     """
 

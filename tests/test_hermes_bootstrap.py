@@ -1,6 +1,6 @@
 """Tests for hermes_bootstrap — Windows UTF-8 stdio shim.
 
-The bootstrap module is imported at the top of every Hermes entry point
+The bootstrap module is imported at the top of every Tandem entry point
 (hermes, hermes-agent, hermes-acp, gateway, batch_runner, cli.py).  It
 fixes Python's Windows UTF-8 defaults so print("café") doesn't crash and
 subprocess children inherit UTF-8 mode.
@@ -12,7 +12,7 @@ Key invariants covered by these tests:
   3. Idempotent: safe to call multiple times
   4. Respects user opt-out: if the user explicitly sets PYTHONUTF8=0 or
      PYTHONIOENCODING=something-else, we leave those alone
-  5. Load order: every Hermes entry point imports hermes_bootstrap as its
+  5. Load order: every Tandem entry point imports hermes_bootstrap as its
      first non-docstring import (before anything that might do file I/O
      or print to stdout)
 """
@@ -337,7 +337,7 @@ except ModuleNotFoundError as exc:
 
 class TestHardenImportPath:
     """harden_import_path() must keep a same-named package in the launch
-    directory from shadowing Hermes's own top-level modules — covering both
+    directory from shadowing Tandem's own top-level modules — covering both
     the relative ('' / '.') and absolute-path forms the cwd can take on
     sys.path (issue #51286)."""
 
@@ -401,7 +401,7 @@ class TestHardenImportPath:
 
 
 class TestEnableWindowsVt:
-    """Hermes prints raw SGR codes; a conhost console renders them only with VT on."""
+    """Tandem prints raw SGR codes; a conhost console renders them only with VT on."""
 
     @pytest.mark.platforms("windows")
     def test_turns_vt_on_for_a_console_that_has_it_off(self):

@@ -1,6 +1,6 @@
 """Resumable, hash-verified, multi-connection downloads.
 
-Every large fetch in Hermes goes through this one downloader: pm
+Every large fetch in Tandem goes through this one downloader: pm
 packages (pinned sha256 from lock.json) and local models (deliberately
 unverified — catalog sizes may lag an upstream re-upload, so sha256 is
 optional per source).

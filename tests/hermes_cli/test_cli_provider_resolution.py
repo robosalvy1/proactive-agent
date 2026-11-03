@@ -298,7 +298,7 @@ def test_runtime_resolution_failure_is_not_sticky(monkeypatch):
 
 
 def test_ensure_runtime_credentials_passes_cli_model_as_target_model(monkeypatch):
-    """`hermes -m mimo-v2.5 --provider opencode-go` must resolve credentials for the model the
+    """`tandem -m mimo-v2.5 --provider opencode-go` must resolve credentials for the model the
     CLI will send: the Zen/Go rungs key off the effective model, and without target_model a
     `*-free` config default decides the api_mode/base_url for an explicit paid model (#112600)."""
     cli = _import_cli()
@@ -619,7 +619,7 @@ def test_startup_fallback_re_resolves_reasoning_for_the_fallback_model(monkeypat
 
 
 def test_custom_entry_model_swap_re_resolves_reasoning(monkeypatch):
-    """`hermes chat --model <custom-provider-name>`: the runtime's explicit `model` replaces the
+    """`tandem chat --model <custom-provider-name>`: the runtime's explicit `model` replaces the
     slug, so the CLI-level reasoning_config must follow to that model's per-model override."""
     cli = _import_cli()
     monkeypatch.setattr(cli, "_cprint", lambda *a, **k: None)

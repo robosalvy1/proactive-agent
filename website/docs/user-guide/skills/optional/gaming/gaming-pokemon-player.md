@@ -14,7 +14,7 @@ Play Pokemon via headless emulator + RAM reads.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/gaming/pokemon-player` |
+| Source | Optional — install with `tandem skills install official/gaming/pokemon-player` |
 | Path | `optional-skills/gaming/pokemon-player` |
 | Version | `1.0.0` |
 | Author | Teknium (teknium1), Hermes Agent |
@@ -24,7 +24,7 @@ Play Pokemon via headless emulator + RAM reads.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Pokemon Player

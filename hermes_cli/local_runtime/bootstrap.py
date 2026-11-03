@@ -171,7 +171,7 @@ def _stop_state_server() -> None:
     state = read_state()
     if is_modern(state):
         if not _owner_is_dead(state):
-            logger.info("llama-server pid=%s belongs to a live Hermes process; leaving it", state.get("pid"))
+            logger.info("llama-server pid=%s belongs to a live Tandem process; leaving it", state.get("pid"))
             return
         proc = recorded_process(state)
     else:
@@ -367,7 +367,7 @@ def _unlock_boot_fd(fd: int) -> None:
 
 @contextmanager
 def _cross_process_boot_lock(timeout_s: float = 130.0):
-    """Serialize the state-check-then-spawn sequence across every Hermes process on this
+    """Serialize the state-check-then-spawn sequence across every Tandem process on this
     machine — the ``_SUPERVISOR`` singleton above only rules out a race within ONE process.
     Two profiles booting in the same second each see no ``server.json`` yet and each spawn a
     router on the stable port (#116682); an OS-held lock makes the second caller wait for the

@@ -14,7 +14,7 @@ source_hermes() {
     }
     command="$root/venv/bin/hermes"
     [ -f "$command" ] && [ -x "$command" ] || {
-      printf 'no installed Hermes command under %s\n' "$root" >&2; return 1;
+      printf 'no installed Tandem command under %s\n' "$root" >&2; return 1;
     }
   fi
   printf '%s\n' "$command"
@@ -54,7 +54,7 @@ source_hermes_for_startup() {
   fi
   command="$root/venv/bin/hermes"
   [ -f "$command" ] && [ -x "$command" ] || {
-    printf 'no installed Hermes command under %s\n' "$root" >&2; return 1
+    printf 'no installed Tandem command under %s\n' "$root" >&2; return 1
   }
   printf '%s\n' "$command"
 }

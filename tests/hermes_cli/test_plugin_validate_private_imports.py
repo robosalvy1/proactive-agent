@@ -1,4 +1,4 @@
-"""``hermes plugins validate`` warns (never fails) on imports of private Hermes core modules."""
+"""``tandem plugins validate`` warns (never fails) on imports of private Tandem core modules."""
 
 from __future__ import annotations
 

@@ -92,7 +92,7 @@ def test_windows_taskkill_targets_tree_and_is_best_effort(error):
 def test_posix_shared_group_is_never_killpgd(monkeypatch, fake_process_table):
     """A child spawned without start_new_session shares OUR process group, so
     os.getpgid returns the caller's own pgid — killpg would signal the whole
-    Hermes/test-runner tree. Only a group leader may be killpg'd; the direct
+    Tandem/test-runner tree. Only a group leader may be killpg'd; the direct
     child still gets proc.kill()."""
     proc = MagicMock()
     proc.pid = 999

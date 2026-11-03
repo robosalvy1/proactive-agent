@@ -192,7 +192,7 @@ def _openai_prefers_native_web_search() -> bool:
 
     Same contract as :func:`_xai_prefers_native_web_search` with one deliberate
     difference: it fails CLOSED (False). A resolution failure must leave the client-side
-    Hermes tool in place rather than swap in a built-in the endpoint might reject.
+    Tandem tool in place rather than swap in a built-in the endpoint might reject.
 
     Only consulted for the Codex backend (``chatgpt.com/backend-api/codex``); a custom
     OpenAI-compatible endpoint does not implement the server-side tool.
@@ -217,7 +217,7 @@ def _alias_wire_tools(
     """Apply provider-reserved tool-name aliasing; returns ``(tools, {alias: original})`` for THIS request.
 
     xAI: a client ``web_search`` collides with Grok's native search — native mode
-    swaps it 1:1 for the built-in, client mode keeps Hermes dispatch under an alias.
+    swaps it 1:1 for the built-in, client mode keeps Tandem dispatch under an alias.
 
     OpenAI Codex: the Responses endpoint carries the same collision, so the backend
     selection drives the same 1:1 swap (``web.search_backend: openai-native``).

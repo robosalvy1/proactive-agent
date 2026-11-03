@@ -48,12 +48,12 @@ def test_extract_markdown_entries_promotes_heading_context():
 
 ### Active Projects
 
-- Hermes Agent
+- Tandem Agent
 """
     entries = mod.extract_markdown_entries(text)
     assert "Tyler Williams: Founder of VANTA Research" in entries
     assert "Tyler Williams: Timezone: America/Los_Angeles" in entries
-    assert "Tyler Williams > Active Projects: Hermes Agent" in entries
+    assert "Tyler Williams > Active Projects: Tandem Agent" in entries
 
 
 
@@ -602,10 +602,10 @@ def test_skill_installs_cleanly_under_skills_guard():
 def test_rebrand_text_replaces_openclaw_variants():
     mod = load_module()
     # Mixed-case / capitalized matches → capital-H ``Hermes``.
-    assert mod.rebrand_text("OpenClaw prefers Python 3.11") == "Hermes prefers Python 3.11"
-    assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told Hermes to use dark mode"
-    assert mod.rebrand_text("Open-Claw config is great") == "Hermes config is great"
-    assert mod.rebrand_text("OPENCLAW uses tools well") == "Hermes uses tools well"
+    assert mod.rebrand_text("OpenClaw prefers Python 3.11") == "Tandem prefers Python 3.11"
+    assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told Tandem to use dark mode"
+    assert mod.rebrand_text("Open-Claw config is great") == "Tandem config is great"
+    assert mod.rebrand_text("OPENCLAW uses tools well") == "Tandem uses tools well"
     # All-lowercase matches → lowercase ``hermes``; this preserves the
     # real filesystem path ``~/.hermes`` (Hermes home) when rebranding
     # memory entries that reference ``~/.openclaw`` or ``openclaw`` prose.

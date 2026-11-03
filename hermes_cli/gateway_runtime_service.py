@@ -215,7 +215,7 @@ def _windows(home: Path, deadline: float) -> ExistingService | None:
 
 def _no_supervisor(home: Path, deadline: float) -> None:
     """Android/Termux has no service manager (main refuses `gateway install/start` there and says
-    "Run manually: hermes gateway"): an unmanaged detached start is its only owner. Python 3.13+
+    "Run manually: tandem gateway"): an unmanaged detached start is its only owner. Python 3.13+
     reports ``sys.platform == "android"``; older Termux interpreters report linux and reach the
     systemd probe, which finds no unit and lands on the same unmanaged start."""
 

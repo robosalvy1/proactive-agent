@@ -1,4 +1,4 @@
-"""Pre-swap gateway pause for ``hermes update`` on Linux and macOS.
+"""Pre-swap gateway pause for ``tandem update`` on Linux and macOS.
 
 Windows pauses its gateways before the fetch (``update_cmd_windows``) because they lock venv
 files. On POSIX nothing is locked, but a gateway that keeps running while git rewrites the tree
@@ -11,7 +11,7 @@ are synced and the launchers published, before the product builds
 The set rides the Windows pause contract: one token in ``update_pause_record`` (identity = pid
 + start time; supervisor unit, or argv + home for bare processes), written before the first stop,
 resumed by ``_resume_windows_gateways_after_update`` (which dispatches here on
-``platform == "posix"``), adopted by the next ``hermes update`` and resumed by the next launch
+``platform == "posix"``), adopted by the next ``tandem update`` and resumed by the next launch
 when this process dies.
 
 * every gateway is drained first: the control socket's ``pause-for-update`` runs the same
@@ -171,7 +171,7 @@ def _discover_launchd() -> list[dict]:
 
 
 def _home_of(pid: int) -> str | None:
-    """The Hermes home *pid* serves (its control socket lives there), or ``None``."""
+    """The Tandem home *pid* serves (its control socket lives there), or ``None``."""
     from hermes_cli.update_fleet_scope import gateway_pid_home
     with suppress(Exception):
         if home := gateway_pid_home(pid):
@@ -237,7 +237,7 @@ def _discover_bare(service_pids: set[int]) -> tuple[list[dict], list[str]]:
         argv, home = _capture_gateway_argv(pid), gateway_pid_home(pid)
         if marker or not argv or not home:
             why = f"supervised by {marker}" if marker else "its command line could not be read" if not argv \
-                else "its Hermes home could not be proved"
+                else "its Tandem home could not be proved"
             notices.append(f"  ↷ gateway PID {pid} keeps running until after the update ({why})")
             continue
         bare.append({"pid": pid, "argv": list(argv), "home": str(home), "ct": get_process_start_time(pid)})
@@ -276,7 +276,7 @@ def _escape_cgroup(unit: dict) -> bool:
     cmd = ["busctl", bus, "call", "org.freedesktop.systemd1", "/org/freedesktop/systemd1",
            "org.freedesktop.systemd1.Manager", "StartTransientUnit", "ssa(sv)a(sa(sv))",
            f"hermes-update-{os.getpid()}.scope", "fail", "2", "PIDs", "au", str(len(pids)), *map(str, pids),
-           "Description", "s", f"hermes update (outside {unit['unit']} while it is paused)", "0"]
+           "Description", "s", f"tandem update (outside {unit['unit']} while it is paused)", "0"]
     with suppress(OSError, subprocess.SubprocessError):
         subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
                    stdin=subprocess.DEVNULL, timeout=15, check=False)

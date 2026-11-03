@@ -1306,7 +1306,7 @@ class TestRunJobModelResolution:
             success, _, _, error = _run_owned_job(job, tmp_path, fake_db)
 
         assert success is False
-        assert "Hermes stopped because your settings file" in error
+        assert "Tandem stopped because your settings file" in error
         mock_agent_cls.assert_not_called()
 
 class TestRunJobSkillBacked:

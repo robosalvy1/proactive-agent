@@ -612,7 +612,7 @@ def test_put_page_object_carries_html_type_and_no_store(r2_server):
     octet-stream download."""
     import tempfile
 
-    page = "<!DOCTYPE html>\n<html lang=\"en\"><body><h1>Hermes stable builds</h1></body></html>\n"
+    page = "<!DOCTYPE html>\n<html lang=\"en\"><body><h1>Tandem stable builds</h1></body></html>\n"
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", newline="\n", delete=False) as handle:
         handle.write(page)
         path = handle.name

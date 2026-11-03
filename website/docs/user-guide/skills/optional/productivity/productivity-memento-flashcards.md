@@ -14,7 +14,7 @@ Spaced-repetition flashcards: create, review, quiz, export.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/memento-flashcards` |
+| Source | Optional — install with `tandem skills install official/productivity/memento-flashcards` |
 | Path | `optional-skills/productivity/memento-flashcards` |
 | Version | `1.0.0` |
 | Author | Memento AI |
@@ -25,7 +25,7 @@ Spaced-repetition flashcards: create, review, quiz, export.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Memento Flashcards — Spaced-Repetition Flashcard Skill
@@ -219,7 +219,7 @@ python3 ~/.hermes/skills/productivity/memento-flashcards/scripts/youtube_quiz.py
 This returns `{"title": "...", "transcript": "..."}` or an error.
 
 If the script reports `missing_dependency`, use `terminal` with a PM-prepared
-Hermes checkout to prepare the declared `youtube` extra, then reactivate:
+Tandem checkout to prepare the declared `youtube` extra, then reactivate:
 
 ```bash
 python -c "import pm; pm.sync_venv(['youtube'], explicit=True)"
@@ -232,7 +232,7 @@ Follow the isolated development-home setup in
 before preparation. Retry `youtube_quiz.py` with that Python and the actual
 skill directory returned by `skill_view`. For a remote or sandbox terminal,
 prepare an independent helper environment on that host. Never pip-install into
-Hermes's selected environment.
+Tandem's selected environment.
 
 **Step 3:** Generate 5 quiz questions from the transcript. Use these rules:
 

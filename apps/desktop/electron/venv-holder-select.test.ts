@@ -79,7 +79,7 @@ test('matches the dashboard scheduled task (python -m hermes_cli / -m hermes)', 
     true
   )
   assert.equal(
-    isExternalVenvHolder('C:\\Hermes\\venv\\Scripts\\pythonw.exe', 'pythonw.exe -m hermes serve', SCRIPTS),
+    isExternalVenvHolder('C:\\Hermes\\venv\\Scripts\\pythonw.exe', 'pythonw.exe -m tandem serve', SCRIPTS),
     true
   )
 })
@@ -103,11 +103,11 @@ test('never matches a process outside the venv, even with hermes in the cmdline'
     isExternalVenvHolder('C:\\Windows\\System32\\cmd.exe', 'cmd /c cd C:\\Hermes\\venv\\Scripts && dir', SCRIPTS),
     false
   )
-  assert.equal(isExternalVenvHolder('C:\\Other\\hermes.exe', 'hermes gateway run', SCRIPTS), false)
+  assert.equal(isExternalVenvHolder('C:\\Other\\hermes.exe', 'tandem gateway run', SCRIPTS), false)
 })
 
 test('sibling-dir and boundary safety for the external selector', () => {
-  assert.equal(isExternalVenvHolder('C:\\Hermes\\venv\\ScriptsX\\hermes.exe', 'hermes gateway run', SCRIPTS), false)
-  assert.equal(isExternalVenvHolder(null, 'hermes gateway run', SCRIPTS), false)
+  assert.equal(isExternalVenvHolder('C:\\Hermes\\venv\\ScriptsX\\hermes.exe', 'tandem gateway run', SCRIPTS), false)
+  assert.equal(isExternalVenvHolder(null, 'tandem gateway run', SCRIPTS), false)
   assert.equal(isExternalVenvHolder('C:\\Hermes\\venv\\Scripts\\hermes.exe', null, SCRIPTS), false)
 })

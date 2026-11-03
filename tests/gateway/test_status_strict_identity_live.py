@@ -1,6 +1,6 @@
 """Strict gateway identity against a REAL process holding ``gateway.lock``.
 
-``hermes update`` on Windows maps live gateways to profiles through
+``tandem update`` on Windows maps live gateways to profiles through
 ``get_running_pid_identity_strict``. A live gateway whose ``gateway.pid`` was
 unlinked still holds its runtime lock, and the lock carries the same identity
 record, so the updater must identify it from the lock instead of aborting the

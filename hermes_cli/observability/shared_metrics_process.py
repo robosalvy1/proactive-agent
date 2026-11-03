@@ -1,8 +1,8 @@
-"""hermes.process.exit: how Hermes processes (and watchdog-killed turns) end.
+"""hermes.process.exit: how Tandem processes (and watchdog-killed turns) end.
 
 A crash or SIGKILL cannot record itself. Each long-lived entrypoint drops a small marker under its
 profile's store dir at start and restamps it on the way out (``clean``, ``crash`` + class from the
-excepthook, ``watchdog`` from a hard-exit watchdog). The NEXT Hermes start in that profile reports
+excepthook, ``watchdog`` from a hard-exit watchdog). The NEXT Tandem start in that profile reports
 every marker whose owner is gone; one still ``running`` whose pid fails the canonical start-time
 liveness check was killed. Reporting runs on a daemon thread so startup never waits on the Relay
 runtime; a claimed-but-unreported marker (the reporter died mid-way) is reclaimed later.

@@ -8,7 +8,7 @@ user docs `website/docs/user-guide/features/cron.md`, `kanban.md`.
 ## Cron
 
 `cron/jobs.py` (job store) + `cron/scheduler.py` (tick loop; `scheduler_*.py` siblings). Agents
-schedule via the `cronjob` tool; users via `hermes cron list|add|edit|pause|resume|run|remove` or
+schedule via the `cronjob` tool; users via `tandem cron list|add|edit|pause|resume|run|remove` or
 `/cron`. Schedules: duration (`"30m"`, `"2h"`, `"1d"`), "every" phrase (`"every 2h"`, `"every monday
 9am"`), 5-field cron (`"0 9 * * *"`), ISO one-shot (`"2026-06-01T09:00:00Z"`). Per-job fields:
 `skills`, `model`/`provider` overrides, `script` (pre-run data-collection script whose stdout is
@@ -31,12 +31,12 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   skips past-grace misses with a logged reason. Never drop a slot silently (#107485).
 - Per-home tick lock `<home>/cron/.tick.lock` prevents duplicate ticks across processes for
   that profile's store; never a `~/.hermes/...` literal.
-- **Headless ticks refuse, never spawn.** `hermes cron tick` (system crontab / external scheduler)
+- **Headless ticks refuse, never spawn.** `tandem cron tick` (system crontab / external scheduler)
   calls `tick(headless=True)`; `cron/scheduler_gateway_gate.py` skips agent jobs when discovery
   says no gateway owns the home (`last_fire_error` stamped, one warning per tick, due instant
   untouched) instead of letting `run_canonical_job → connect_gateway → ensure_gateway_runtime`
   spawn an unmanaged daemon. Same policy as approvals (headless/cron = refuse). The in-process
-  ticker and `hermes cron run` are not headless.
+  ticker and `tandem cron run` are not headless.
 - **The ticker binds each served profile's scope for the whole tick, including pre-loop code.**
   `scheduler_provider.py::_start_multiplex` is ONE ticker iterating `profiles_to_serve()`
   sequentially under `_profile_cron_scope(home)` (home + secret scope + terminal scope) — never N
@@ -128,7 +128,7 @@ Hardening invariants — each guards a real failure; don't weaken without answer
 
 ## Kanban (multi-agent work queue)
 
-Durable SQLite-backed board letting multiple profiles/workers collaborate. Users: `hermes kanban
+Durable SQLite-backed board letting multiple profiles/workers collaborate. Users: `tandem kanban
 <verb>`; dispatcher-spawned workers use a dedicated `kanban_*` toolset so their schema footprint is
 zero outside a kanban task (footprint ladder rung 3).
 
@@ -141,7 +141,7 @@ zero outside a kanban task (footprint ladder rung 3).
   kanban_request_changes, kanban_block, kanban_schedule, kanban_heartbeat, kanban_comment,
   kanban_create, kanban_link,
   kanban_attach, kanban_attach_url, kanban_attachments`; platforms whose saved selection enables
-  `kanban` (`hermes tools enable kanban --platform <p>`; default-off, in `CONFIGURABLE_TOOLSETS`) get
+  `kanban` (`tandem tools enable kanban --platform <p>`; default-off, in `CONFIGURABLE_TOOLSETS`) get
   the full set plus `kanban_list`/`kanban_unblock` for board routing. The check_fn reads the schema
   build's own selection (`tools/kanban_toolset_context.py`), never the legacy top-level `toolsets`
   key alone.

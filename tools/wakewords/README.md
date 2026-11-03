@@ -18,6 +18,6 @@ required to say "hey hermes".
   scores across inference engines or platforms.
 
 To use a different phrase, point `wake_word.openwakeword.model` at an
-absolute path to a compatible `.tflite` model. Hermes does not download
+absolute path to a compatible `.tflite` model. Tandem does not download
 models by name, and this engine does not load `.onnx` files. See the
 wake-word docs for the training guide and platform limits.

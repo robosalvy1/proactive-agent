@@ -767,7 +767,7 @@ async def _send_qqbot(pconfig, chat_id, message, media_files=None, caption=None)
     try:
         import httpx
     except ImportError:
-        return _error("QQBot direct send requires httpx. Run: hermes pm repair")
+        return _error("QQBot direct send requires httpx. Run: tandem pm repair")
 
     # Profile-scoped lookup so a multiplex profile never borrows another's QQ credentials.
     from gateway.config import _getenv

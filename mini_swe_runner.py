@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""SWE Runner with Hermes Trajectory Format
+"""SWE Runner with Tandem Trajectory Format
 
 Runs tool-calling agent tasks in Hermes-Agent's execution environments (local,
-docker, modal) and writes trajectories in Hermes format (from/value pairs with
+docker, modal) and writes trajectories in Tandem format (from/value pairs with
 <tool_call>/<tool_response> XML), compatible with batch_runner.py and
 trajectory_compressor.py. Supports single tasks and JSONL batch mode.
 
@@ -98,7 +98,7 @@ _OPENROUTER_URL = "https://openrouter.ai/api/v1"
 
 
 def create_environment(env_type: str = "local", image: str = "python:3.11-slim", cwd: str | None = None, timeout: int = 60, **kwargs):
-    """Create a Hermes execution environment (``local`` ignores ``image``/``kwargs``).
+    """Create a Tandem execution environment (``local`` ignores ``image``/``kwargs``).
 
     ``cwd=None`` means the host temp dir locally and the sandbox's own ``/tmp`` inside a container.
     """
@@ -128,7 +128,7 @@ def _gpt_content(msg: dict[str, Any], content: str) -> str:
 
 
 class MiniSWERunner:
-    """Tool-calling agent loop over a Hermes execution environment, emitting Hermes trajectories."""
+    """Tool-calling agent loop over a Tandem execution environment, emitting Tandem trajectories."""
 
     def __init__(self, model: str = "anthropic/claude-sonnet-4.6", base_url: str | None = None, api_key: str | None = None,
                  env_type: str = "local", image: str = "python:3.11-slim", cwd: str | None = None,
@@ -215,7 +215,7 @@ class MiniSWERunner:
         return ("\n".join(tool_responses), j - 1) if tool_responses else (None, i)
 
     def _convert_to_hermes_format(self, messages: list[dict[str, Any]], user_query: str) -> list[dict[str, Any]]:
-        """Convert the OpenAI-style message list to the Hermes trajectory format used by batch_runner.py."""
+        """Convert the OpenAI-style message list to the Tandem trajectory format used by batch_runner.py."""
         system_msg = HERMES_SYSTEM_PREFIX + f"<tools>\n{self._format_tools_for_system_message()}\n</tools>\n" + HERMES_SYSTEM_SUFFIX
         trajectory = [{"from": "system", "value": system_msg}, {"from": "human", "value": user_query}]
         i = 1  # first user message already added
@@ -360,7 +360,7 @@ def main(
     verbose: bool = False,
 ):
     """
-    Run SWE tasks with Hermes trajectory format output.
+    Run SWE tasks with Tandem trajectory format output.
     
     Args:
         task: Single task to run (use this OR prompts_file)
@@ -376,7 +376,7 @@ def main(
         timeout: Command timeout in seconds (default: 60)
         verbose: Enable verbose logging
     """
-    print("🚀 Mini-SWE Runner with Hermes Trajectory Format")
+    print("🚀 Mini-SWE Runner with Tandem Trajectory Format")
     print("=" * 60)
     # Configure root logging at the entry point (not in library __init__).
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO,

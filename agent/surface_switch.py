@@ -32,8 +32,15 @@ def split_runtime_boundary(prompt: str) -> tuple:
     """``(identity, runtime_marker, runtime)`` of a persisted prompt.  Legacy prose may quote
     the runtime heading, but only the new renderer ENDS in the boundary; when the marker is
     empty the whole prompt is identity."""
-    identity, runtime_marker, runtime = prompt.rpartition(f"\n\n{RUNTIME_ENVIRONMENT_HEADING}\n\n")
-    return (identity, runtime_marker, runtime) if prompt.endswith(RUNTIME_ENVIRONMENT_END) else (prompt, "", "")
+    # Prompts persisted before the Tandem rename carry the Hermes-named boundary; recognise both.
+    for heading, end in (
+        (RUNTIME_ENVIRONMENT_HEADING, RUNTIME_ENVIRONMENT_END),
+        ("# Hermes runtime environment", "<!-- End Hermes runtime environment -->"),  # brand-compat
+    ):
+        if prompt.endswith(end):
+            identity, runtime_marker, runtime = prompt.rpartition(f"\n\n{heading}\n\n")
+            return (identity, runtime_marker, runtime)
+    return (prompt, "", "")
 
 
 def runtime_host_value(prompt: str, label: str) -> str:

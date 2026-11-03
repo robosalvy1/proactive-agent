@@ -1,7 +1,7 @@
-"""Cached chat calls for end-to-end memory evals, through Hermes' own provider routing.
+"""Cached chat calls for end-to-end memory evals, through Tandem's own provider routing.
 
 Point ``HERMES_HOME`` at a disposable eval profile that holds the provider credential
-(for example ``hermes auth add openai-codex``); never a personal profile. Responses are
+(for example ``tandem auth add openai-codex``); never a personal profile. Responses are
 cached on disk by (provider, model, messages), so reruns and resumed runs are free.
 """
 import hashlib

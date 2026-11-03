@@ -18,7 +18,7 @@ Each query also has `kw`: the search string a model would plausibly write when c
 
 ## Running
 
-Embeddings come from `embed_server.py`, a loopback OpenAI-compatible server. Run it in its own disposable venv, never a Hermes environment:
+Embeddings come from `embed_server.py`, a loopback OpenAI-compatible server. Run it in its own disposable venv, never a Tandem environment:
 
 ```bash
 python -m venv /tmp/emb && /tmp/emb/bin/pip install fastembed
@@ -84,9 +84,9 @@ Model choice for the background route (observer, reflector and per-turn check) m
 | Home excerpts today | 19% | 26% | ~22% |
 | profile only | 81% | 63% | 72% |
 | profile + per-turn connections | 89% | 96% | **93%** (50/54) |
-| upstream Hermes (`hermes`) | 41% | 56% | 48% (26/54) |
+| upstream Tandem (`tandem`) | 41% | 56% | 48% (26/54) |
 | OpenClaw 2026.10.5 (`openclaw`) | 52% | 44% | 48% (26/54) |
 
-The two baselines (`baselines.py`) replay each system's own memory design with the same answer model, filler and judge, and are deliberately generous: GPT-6 Sol writes their memory after every past chat. Hermes runs its real background memory review prompt and `memory` tool (1,375/2,200-character stores), then answers with the frozen snapshot and the real `session_search`; upstream reviews only every 10 user turns, so short chats would usually save nothing. OpenClaw follows the default AGENTS.md memory section (daily notes, USER.md, MEMORY.md), then answers with those bootstrap files, its "Memory Recall" guidance and a hybrid `memory_search` over memory files and session transcripts; dreaming is not simulated. Both caught single salient facts (allergies, medications) but rarely connected a request to a fact it did not resemble: schedule conflicts 1/12 combined, gift ideas 2/12, entity resolution 3/12 (ours: 6/6, 5/6, 4/6). Neither invented anything; each had one intrusion.
+The two baselines (`baselines.py`) replay each system's own memory design with the same answer model, filler and judge, and are deliberately generous: GPT-6 Sol writes their memory after every past chat. Tandem runs its real background memory review prompt and `memory` tool (1,375/2,200-character stores), then answers with the frozen snapshot and the real `session_search`; upstream reviews only every 10 user turns, so short chats would usually save nothing. OpenClaw follows the default AGENTS.md memory section (daily notes, USER.md, MEMORY.md), then answers with those bootstrap files, its "Memory Recall" guidance and a hybrid `memory_search` over memory files and session transcripts; dreaming is not simulated. Both caught single salient facts (allergies, medications) but rarely connected a request to a fact it did not resemble: schedule conflicts 1/12 combined, gift ideas 2/12, entity resolution 3/12 (ours: 6/6, 5/6, 4/6). Neither invented anything; each had one intrusion.
 
 One invented detail in 54 answers, no intrusions, every negative clean. With GPT-5.6 Luna in those roles the same v6 set scored 63% / 74%; swapping only the check model gave 67% (GPT-6 Luna), 74% (GPT-5.6 Luna) and 78% (GPT-6 Sol), so most of the gain comes from a stronger observer writing down the right details. GPT-6 Sol answering the profile on v3: 76%. Variants that did not hold up: connections over the profile only (85–88% on its tuning sets, 72% on v3), a "Keep in mind" profile section (54% vs 73% on v4), and per-turn keyword or embedding-matched observations (72% / 69% pooled). With 25–35 scenarios per set, single-set differences of a few points are noise; decide on pooled or fresh sets.

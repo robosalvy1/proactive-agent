@@ -14,7 +14,7 @@ description: "间隔重复闪卡系统"
 
 | | |
 |---|---|
-| 来源 | 可选 — 使用 `hermes skills install official/productivity/memento-flashcards` 安装 |
+| 来源 | 可选 — 使用 `tandem skills install official/productivity/memento-flashcards` 安装 |
 | 路径 | `optional-skills/productivity/memento-flashcards` |
 | 版本 | `1.0.0` |
 | 作者 | Memento AI |
@@ -25,7 +25,7 @@ description: "间隔重复闪卡系统"
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 Tandem 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # Memento Flashcards — 间隔重复闪卡 Skill
@@ -229,7 +229,7 @@ python -c "import youtube_transcript_api; print(youtube_transcript_api.__file__)
 
 准备前按照[包管理](https://hermes-agent.nousresearch.com/docs/reference/package-management#developer-workflow)
 选择独立开发数据目录。重试时使用该 Python 和 `skill_view` 返回的实际 skill 目录。
-远程或沙箱终端需在其主机上准备独立辅助环境；不要向 Hermes 选中的环境 pip 安装。
+远程或沙箱终端需在其主机上准备独立辅助环境；不要向 Tandem 选中的环境 pip 安装。
 
 **第 3 步：** 从字幕生成 5 道测验题。使用以下规则：
 

@@ -178,7 +178,7 @@ def test_an_adopted_baseline_never_replaces_this_runs_own(tmp_path, monkeypatch)
 
 
 def _orphan(tmp_path: Path, profiles: dict) -> None:
-    """A record whose owner — a real ``hermes update`` stand-in — was SIGKILLed after writing it."""
+    """A record whose owner — a real ``tandem update`` stand-in — was SIGKILLed after writing it."""
     owner = _child(f"""
         import time
         from hermes_cli import update_pause_record as r

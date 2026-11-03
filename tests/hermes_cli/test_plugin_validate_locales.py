@@ -1,4 +1,4 @@
-"""``hermes plugins validate`` on language packs: bad keys WARN by name, non-text leaves fail, a
+"""``tandem plugins validate`` on language packs: bad keys WARN by name, non-text leaves fail, a
 manifest-only pack is loadable, a declared id with no file fails."""
 
 from __future__ import annotations

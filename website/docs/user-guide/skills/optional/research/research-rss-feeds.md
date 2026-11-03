@@ -14,7 +14,7 @@ Read RSS, Atom, JSON feeds; discover feeds behind a page.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/research/rss-feeds` |
+| Source | Optional — install with `tandem skills install official/research/rss-feeds` |
 | Path | `optional-skills/research/rss-feeds` |
 | Version | `1.0.0` |
 | Author | Teknium (teknium1), Hermes Agent |
@@ -26,7 +26,7 @@ Read RSS, Atom, JSON feeds; discover feeds behind a page.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # RSS Feeds Skill

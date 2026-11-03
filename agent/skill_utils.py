@@ -280,7 +280,7 @@ def get_disabled_skill_names(platform: str | None = None) -> set[str]:
 
 def parse_config_string_list(value) -> list[str]:
     """Normalize a config value that may hold a JSON-array string into a list.
-    ``hermes config set`` stores lists as quoted JSON/Python-literal strings;
+    ``tandem config set`` stores lists as quoted JSON/Python-literal strings;
     treating one as a single name would silently filter nothing. A scalar
     string still means one name.
 
@@ -793,7 +793,7 @@ _HOME_VAR_RE = re.compile(r"\$(?:\{HOME\}|HOME)(?=$|[/\\])")
 
 
 def _expand_skill_config_path(value: str) -> str:
-    """Expand ``~`` / ``$HOME`` against the HOME Hermes injects into tool subprocesses.
+    """Expand ``~`` / ``$HOME`` against the HOME Tandem injects into tool subprocesses.
 
     Skill config defaults describe paths the agent hands to tools, so in a container where the
     control process HOME (``/opt/data``) differs from the tool HOME (``{HERMES_HOME}/home``) a

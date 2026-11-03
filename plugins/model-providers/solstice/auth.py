@@ -1,5 +1,5 @@
 """Solstice sign-in: browser PKCE with a loopback redirect, token exchange and refresh brokered by the
-Nous portal (NAS), which holds the confidential client secret. Hermes keeps its own PKCE verifier and
+Nous portal (NAS), which holds the confidential client secret. Tandem keeps its own PKCE verifier and
 the user's tokens; NAS never sees a prompt.
 
 The generic ``hermes_cli.auth_oauth_pkce_plugin`` flow runs the browser leg, the credential-pool row
@@ -35,7 +35,7 @@ def _nas_request(method: str, path: str, *, json: Mapping[str, Any] | None = Non
     try:
         token = resolve_nous_access_token()
     except Exception as exc:
-        raise _err("sign in to Nous Portal first (`hermes auth add nous`).", "solstice_nous_login_required",
+        raise _err("sign in to Nous Portal first (`tandem auth add nous`).", "solstice_nous_login_required",
                    relogin=True) from exc
     try:
         response = httpx.request(method, _nas_base_url() + path, json=json, timeout=_TIMEOUT_SECONDS,
@@ -71,6 +71,6 @@ def broker_token_request(grant: Mapping[str, str]) -> Mapping[str, Any]:
         return _nas_request("POST", path, json=body)
     except Exception as exc:
         if grant["grant_type"] == "refresh_token" and getattr(exc, "code", "") == "solstice_broker_failed":
-            raise _err("the stored sign-in was rejected; run `hermes auth add solstice` again.",
+            raise _err("the stored sign-in was rejected; run `tandem auth add solstice` again.",
                        "invalid_grant", relogin=True) from exc
         raise

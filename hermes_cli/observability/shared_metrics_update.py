@@ -1,15 +1,15 @@
-"""Shared-metrics facts for ``hermes update`` runs and Desktop self-updates.
+"""Shared-metrics facts for ``tandem update`` runs and Desktop self-updates.
 
 ``hermes.update.run`` / ``hermes.update.stage`` are DERIVED from the final update receipt in the
 process that finalizes it (``update_receipt.finalize_update_receipt``): the receipt already carries
 the outcome, the stage marks with timestamps, the admission refusal and the fleet matrix, so no
 stage is instrumented for metrics. A pre-pull interpreter must never import pulled code, so when
 it is the finalizer it parks the receipt under the store dir (stdlib-only code in update_receipt)
-and :func:`report_pending_updates` records it on the next Hermes start.
+and :func:`report_pending_updates` records it on the next Tandem start.
 
-Desktop's packaged updaters (electron-updater, App Installer, Store) never run ``hermes update``;
+Desktop's packaged updaters (electron-updater, App Installer, Store) never run ``tandem update``;
 Desktop reports their outcome through the ``shared_metrics.update_run`` RPC instead. Desktop's
-source-checkout hand-off DOES run ``hermes update``; that receipt is tagged ``initiator=desktop``
+source-checkout hand-off DOES run ``tandem update``; that receipt is tagged ``initiator=desktop``
 and counted here, never by the RPC, so no run is counted twice.
 
 Run and stage rows agree on where a FAILED run stopped: a run whose ``failed_stage`` names a stage it

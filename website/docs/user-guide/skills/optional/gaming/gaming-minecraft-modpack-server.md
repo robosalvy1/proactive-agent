@@ -14,7 +14,7 @@ Host modded Minecraft servers (CurseForge, Modrinth).
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/gaming/minecraft-modpack-server` |
+| Source | Optional — install with `tandem skills install official/gaming/minecraft-modpack-server` |
 | Path | `optional-skills/gaming/minecraft-modpack-server` |
 | Version | `1.0.0` |
 | Author | Teknium (teknium1), Hermes Agent |
@@ -24,7 +24,7 @@ Host modded Minecraft servers (CurseForge, Modrinth).
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Minecraft Modpack Server Setup

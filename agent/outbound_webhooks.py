@@ -108,7 +108,7 @@ def register_from_config(cfg: Optional[dict[str, Any]]) -> list[WebhookTarget]:
 
 
 def iter_configured_targets(cfg: Optional[dict[str, Any]]) -> list[WebhookTarget]:
-    """Parse ``hooks.outbound`` without registering anything (``hermes hooks list``)."""
+    """Parse ``hooks.outbound`` without registering anything (``tandem hooks list``)."""
     if not isinstance(cfg, dict):
         return []
     hooks_cfg = cfg.get("hooks")

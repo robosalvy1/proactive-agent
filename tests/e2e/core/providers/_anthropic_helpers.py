@@ -1,6 +1,6 @@
 """Hermetic rig for the Anthropic Messages wire-conformance E2E suite.
 
-Hermes' native ``anthropic`` provider runs with NO base URL override, i.e. the
+Tandem's native ``anthropic`` provider runs with NO base URL override, i.e. the
 exact production route to ``https://api.anthropic.com`` (native thinking-signature
 policy, native headers). The child reaches the scripted fake through an
 ``HTTPS_PROXY`` that terminates TLS for ``api.anthropic.com`` with a leaf signed
@@ -122,7 +122,7 @@ _PR_SET_CHILD_SUBREAPER = 36
 def become_subreaper() -> None:
     """Adopt this test process's orphaned descendants (Linux ``PR_SET_CHILD_SUBREAPER``).
 
-    A Hermes child that daemonises a helper leaves it reparented to init, outside the test's
+    A Tandem child that daemonises a helper leaves it reparented to init, outside the test's
     process tree, so teardown could neither reap it nor (under the local live-system guard)
     signal it. As subreaper the orphans stay our children: ``kill_tagged`` stays in-tree and
     ``reap_adopted`` (``Rig.stop``) collects them instead of leaving zombies."""

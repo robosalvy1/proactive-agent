@@ -387,7 +387,7 @@ class WebhookAdapter(BasePlatformAdapter):
 
     def toolsets_for_source(self, source) -> Optional[list[str]]:
         """Per-route ``toolsets`` override (config.yaml or a manual key in webhook_subscriptions.json —
-        deliberately NOT settable via `hermes webhook subscribe`, so an agent-created subscription
+        deliberately NOT settable via `tandem webhook subscribe`, so an agent-created subscription
         cannot self-grant tools). Keyed on ``user_id`` (exactly ``webhook:{route}`` as authenticated), not
         ``chat_id``, whose caller-supplied delivery id and ``:``-bearing route names make any split ambiguous
         (GHSA-2fmg-cjqm-hhrj)."""

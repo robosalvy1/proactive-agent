@@ -28,7 +28,7 @@ def _reset_multiplex_flag():
 
 
 def _two_homes(tmp_path: Path) -> tuple[Path, Path]:
-    """Default root plus ``profiles/worker``, each a real Hermes home."""
+    """Default root plus ``profiles/worker``, each a real Tandem home."""
     default_home = tmp_path / "default"
     worker_home = default_home / "profiles" / "worker"
     worker_home.mkdir(parents=True)

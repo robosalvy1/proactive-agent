@@ -1,4 +1,4 @@
-"""``session.prune``: the owner runs `hermes sessions prune` for its own store.
+"""``session.prune``: the owner runs `tandem sessions prune` for its own store.
 
 The CLI computes the filters and shows the preview from a read-only view; the delete itself is
 this owner's write, through the same ``prune_sessions`` / ``retire_prunable`` path housekeeping

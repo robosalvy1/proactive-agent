@@ -12,7 +12,7 @@ from hermes_cli.cli_terminal_input import _apply_bracketed_paste_timeout_patch
 
 
 def _reset_and_apply_production_patch():
-    """Reload prompt_toolkit's parser and apply Hermes' production patch."""
+    """Reload prompt_toolkit's parser and apply Tandem's production patch."""
     import prompt_toolkit.input.vt100_parser as vt100_mod
 
     vt100_mod = importlib.reload(vt100_mod)

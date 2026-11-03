@@ -1,8 +1,8 @@
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 # Trajectory Format
 
-Hermes Agent saves conversation trajectories in ShareGPT-compatible JSONL format
+Tandem Agent saves conversation trajectories in ShareGPT-compatible JSONL format
 for use as training data, debugging artifacts, and reinforcement learning datasets.
 
 Source files: `agent/trajectory.py`, `agent/session_persistence.py` (search for `_save_trajectory`), `batch_runner.py`
@@ -167,7 +167,7 @@ turn with XML-wrapped JSON responses:
 ### System Message
 
 The system message is generated at save time (not taken from the conversation).
-It follows the Hermes function-calling prompt template with:
+It follows the Tandem function-calling prompt template with:
 
 - Preamble explaining the function-calling protocol
 - `<tools>` XML block containing the JSON tool definitions
@@ -217,7 +217,7 @@ preventing Arrow schema mismatch errors during dataset loading.
 
 ## Controlling Trajectory Saving
 
-Trajectory saving is a `run_agent.py` / library-level switch — the `hermes` CLI
+Trajectory saving is a `run_agent.py` / library-level switch — the `tandem` CLI
 does not expose a config key or flag for it:
 
 ```bash

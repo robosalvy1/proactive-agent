@@ -26,7 +26,7 @@ def _(rid, params: dict) -> dict:
 
 
 def _run_state(*, assume_fresh: bool = False) -> dict:
-    """``run``: the root config says so, else this OS user never used Hermes (or the unpackaged
+    """``run``: the root config says so, else this OS user never used Tandem (or the unpackaged
     desktop's ``--fresh-install`` says to assume that). ``eligible``: this is the desktop's local
     backend and something can carry the first chat (the welcome trial or a configured provider);
     remote backends answer at once and run onboarding only from Settings. On the local backend the

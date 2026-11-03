@@ -21,7 +21,7 @@ def test_long_flag_runs_still_reach_the_target():
 from tools.approval_detection import detect_dangerous_command
 run = "--opt val --flag=x -q - " * 58
 cases = {
-    f"hermes {run}gateway restart": "stop/restart hermes gateway (kills running agents)",
+    f"hermes {run}gateway restart": "stop/restart tandem gateway (kills running agents)",
     f"docker {run}-H ssh://prod ps": "docker with remote daemon redirect (-H/--host)",
     f"docker {run}--context=prod ps": "docker with daemon redirect (--context: alternate daemon)",
     f"podman {run}--url tcp://prod ps": "podman with remote daemon redirect (--url/--connection/--identity)",

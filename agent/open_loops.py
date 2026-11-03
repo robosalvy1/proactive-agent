@@ -250,7 +250,7 @@ def maybe_capture_after_turn(agent: Any, user_message: Any) -> None:
 
 
 def wait_for_pending_captures(timeout: float = 20.0) -> None:
-    """Let started captures commit before a one-shot process hard-exits (``hermes -z``)."""
+    """Let started captures commit before a one-shot process hard-exits (``tandem -z``)."""
     deadline = time_module.monotonic() + timeout
     with _pending_guard:
         threads = list(_pending)

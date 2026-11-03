@@ -1,4 +1,4 @@
-"""The single commit point of a source ``hermes update``: everything the tree move needs armed first.
+"""The single commit point of a source ``tandem update``: everything the tree move needs armed first.
 
 Before git (or the ZIP swap) writes the first file of the new code, three things are durable:
 
@@ -7,7 +7,7 @@ Before git (or the ZIP swap) writes the first file of the new code, three things
   a torn tree puts the old one back (``_early_recovery.restore_interrupted_pull``);
 * the source-completion tail (``venv_sync.arm_completion``) and the host fleet-restart obligation,
   so a kill after the move but before the completion child starts still leaves the tail owed to the
-  next launch (``venv_sync.prepare_launch``) and the restart owed to the next ``hermes update``.
+  next launch (``venv_sync.prepare_launch``) and the restart owed to the next ``tandem update``.
 
 Failures before the move are no-ops: ``disarm_commit_obligations`` puts both obligations back the way
 this run found them once the tree is verified at its pre-update commit again.
@@ -159,7 +159,7 @@ def _owe_for(root: Path, sha: str) -> None:
     except OSError as exc:
         logger.warning("Could not re-arm the update obligations for %s: %s", sha[:10], exc)
         print(f"  ⚠ Could not record the restart this update still owes for {sha[:10]} ({exc}); "
-              "run `hermes gateway restart` once the update is done.", file=sys.stderr)
+              "run `tandem gateway restart` once the update is done.", file=sys.stderr)
 
 
 def debt_sha_for_move(pre: str, target: str) -> str:
@@ -433,7 +433,7 @@ def _run_python(argv: list[str], *, stdin: str = "", timeout: float = 60) -> str
 
 def _admitted_python(spec: str) -> str | None:
     """An installed ``python3.N`` the target's ``requires-python`` admits (newest first), or None
-    when this machine has none. No uv tier: Hermes never resolves the user's uv
+    when this machine has none. No uv tier: Tandem never resolves the user's uv
     (tests/test_managed_runtime_resolution.py), and a missing interpreter only means this one judges."""
     from hermes_platform.resolver import locate_command
 
@@ -488,7 +488,7 @@ def startup_syntax_error(sources: dict[str, bytes | None], pyproject: bytes | No
         return None
     return broken[0], (f"{broken[1]}\nJudged by Python {platform.python_version()}: the target requires Python "
                        f"{spec} and no installed interpreter satisfies it. Install one (`uv python install "
-                       f"'{spec}'`) and re-run `hermes update` so the release is judged by its own Python.")
+                       f"'{spec}'`) and re-run `tandem update` so the release is judged by its own Python.")
 
 
 def read_target_files(git_cmd, root: Path, target_ref: str, relpaths) -> dict[str, bytes | None]:
@@ -566,7 +566,7 @@ def checkout_untouched(git_cmd, root: Path, start: tuple[str, str] | None) -> bo
 
 
 def begin_update_attempt() -> None:
-    """A new ``hermes update`` attempt owns nothing yet: no snapshot, no stake, no run start.
+    """A new ``tandem update`` attempt owns nothing yet: no snapshot, no stake, no run start.
 
     The state above is per attempt, not per process: a second update in one interpreter (a
     long-lived caller) that inherited the first one's snapshot and owner would hand back the

@@ -4,12 +4,12 @@ title: "Tools Runtime"
 description: "Runtime behavior of the tool registry, toolsets, dispatch, and terminal environments"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Tools Runtime
 
-Hermes tools are self-registering functions grouped into toolsets and executed through a central registry/dispatch system.
+Tandem tools are self-registering functions grouped into toolsets and executed through a central registry/dispatch system.
 
 Primary files:
 
@@ -99,7 +99,7 @@ Key behaviors:
 
 ## Toolset resolution
 
-Toolsets are named bundles of tools. Hermes resolves them through:
+Toolsets are named bundles of tools. Tandem resolves them through:
 
 - explicit enabled/disabled toolset lists
 - platform presets (`hermes-cli`, `hermes-telegram`, etc.)

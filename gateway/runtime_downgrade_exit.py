@@ -2,7 +2,7 @@
 
 Downgrading is unsupported, but a manual ``git checkout <older release>`` under a running gateway
 leaves this process serving every local session from code the tree no longer has. Older clients
-cannot attach to it, and older ``hermes gateway run`` refuses because this process still holds the
+cannot attach to it, and older ``tandem gateway run`` refuses because this process still holds the
 profile. Nothing on the older side knows how to stop it. So the gateway watches its own tree, using the boot
 revision ``gateway.code_skew`` records. Once the checkout has provably moved (two consecutive
 reads, never while an update holds the tree) to code whose state-store modules lack the runtime

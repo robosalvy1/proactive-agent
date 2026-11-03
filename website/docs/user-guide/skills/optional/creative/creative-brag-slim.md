@@ -14,7 +14,7 @@ Launch video from a project or URL, upstream-maintained.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/brag-slim` |
+| Source | Optional — install with `tandem skills install official/creative/brag-slim` |
 | Path | `optional-skills/creative/brag-slim` |
 | Version | `0.4.0` |
 | Author | Shunit Haviv Hakimi (shunithaviv) |
@@ -26,7 +26,7 @@ Launch video from a project or URL, upstream-maintained.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Brag Slim (upstream-maintained)

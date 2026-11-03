@@ -366,7 +366,7 @@ def test_desktop_dependency_failure_still_builds_the_tui_and_web_ui(source_produ
     assert not (root / "node_modules/apps-desktop").exists()
     out = capsys.readouterr().out
     assert "Desktop app build owed: desktop dependencies failed" in out
-    assert "hermes uninstall --gui" in out
+    assert "tandem uninstall --gui" in out
 
 
 @pytest.mark.platforms("linux")

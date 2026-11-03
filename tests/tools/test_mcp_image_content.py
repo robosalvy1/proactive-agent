@@ -9,7 +9,7 @@ blocks looking only for ``block.text`` — image blocks were silently dropped
 and the agent saw an empty result. Distilled from @c3115644151's PR #17915
 and @gnanirahulnutakki's PR #10848 (both too stale to cherry-pick); this
 test file locks in #10848's approach of plumbing the bytes through
-Hermes' existing ``cache_image_from_bytes`` so a ``MEDIA:<path>`` tag
+Tandem's existing ``cache_image_from_bytes`` so a ``MEDIA:<path>`` tag
 goes back to the agent and through to messaging adapters that render
 images natively.
 """
@@ -24,7 +24,7 @@ from types import SimpleNamespace
 def _png_bytes():
     """Return a minimal valid PNG byte sequence.
 
-    Hermes' ``cache_image_from_bytes`` has a format-sniff guard that rejects
+    Tandem' ``cache_image_from_bytes`` has a format-sniff guard that rejects
     non-image payloads — use a real PNG signature so the test exercises the
     full pipeline instead of the reject path.
     """

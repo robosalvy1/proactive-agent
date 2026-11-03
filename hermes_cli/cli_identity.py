@@ -24,7 +24,7 @@ def read_agent_name(path: Path) -> str | None:
 
 
 def get_agent_name() -> str:
-    """Resolve the active profile's name, then the configured skin, then Hermes."""
+    """Resolve the active profile's name, then the configured skin, then Tandem."""
     from hermes_constants import get_hermes_home
 
     name = read_agent_name(get_hermes_home() / "AGENT_NAME.txt")
@@ -33,7 +33,7 @@ def get_agent_name() -> str:
     try:
         from hermes_cli.skin_engine import get_active_skin
 
-        return _plain_name(get_active_skin().get_branding("agent_name", "Hermes")) or "Hermes"
+        return _plain_name(get_active_skin().get_branding("agent_name", "Tandem")) or "Tandem"
     except Exception:  # skin/config loading can fail many ways; the name falls back, not the CLI
         logger.debug("Could not read the skin's agent name", exc_info=True)
-        return "Hermes"
+        return "Tandem"

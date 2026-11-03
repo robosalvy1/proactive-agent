@@ -186,14 +186,14 @@ describe('createSlashHandler', () => {
 
   it('routes /status to live session.status instead of slash worker', async () => {
     patchUiState({ sid: 'sid-abc' })
-    const rpc = vi.fn(() => Promise.resolve({ output: 'Hermes TUI Status' }))
+    const rpc = vi.fn(() => Promise.resolve({ output: 'Tandem TUI Status' }))
     const ctx = buildCtx({ gateway: { ...buildGateway(), rpc } })
 
     expect(createSlashHandler(ctx)('/status')).toBe(true)
     expect(rpc).toHaveBeenCalledWith('session.status', { session_id: 'sid-abc' })
     expect(gatewayWork(ctx)).toEqual([])
     await vi.waitFor(() => {
-      expect(ctx.transcript.page).toHaveBeenCalledWith('Hermes TUI Status', t('slashCmd.core.status.pageTitle'))
+      expect(ctx.transcript.page).toHaveBeenCalledWith('Tandem TUI Status', t('slashCmd.core.status.pageTitle'))
     })
   })
 
@@ -1007,7 +1007,7 @@ describe('createSlashHandler', () => {
         gw: {
           getLogTail: vi.fn(() => ''),
           request: vi.fn((method: string) =>
-            Promise.resolve(method === 'slash.exec' ? { output: 'Hermes v1', type: 'exec' } : {})
+            Promise.resolve(method === 'slash.exec' ? { output: 'Tandem v1', type: 'exec' } : {})
           )
         },
         rpc: vi.fn(() => Promise.resolve({}))
@@ -1015,7 +1015,7 @@ describe('createSlashHandler', () => {
     })
 
     expect(createSlashHandler(ctx)('/version')).toBe(true)
-    await vi.waitFor(() => expect(ctx.transcript.sys).toHaveBeenCalledWith('Hermes v1'))
+    await vi.waitFor(() => expect(ctx.transcript.sys).toHaveBeenCalledWith('Tandem v1'))
     expect(ctx.transcript.page).not.toHaveBeenCalled()
   })
 

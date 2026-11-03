@@ -87,7 +87,7 @@ SQLITE3_CLI_GUIDANCE = (
 from hermes_cli.sqlite_runtime import is_sqlite_wal_reset_vulnerable as _wal_reset_vulnerable
 
 _WAL_RESET_VULNERABLE_GUIDANCE = (
-    "salvage against a Hermes database with the WAL-reset bug "
+    "salvage against a Tandem database with the WAL-reset bug "
     "(https://sqlite.org/wal.html#walresetbug, fixed in 3.51.3+ / backports "
     "3.50.7 / 3.44.6; the vulnerable fresh-opener can unlink a live WAL/SHM "
     "pair and split the database into two generations, losing acknowledged "
@@ -388,7 +388,7 @@ def _type_conflicts(value: Any, declared: str) -> bool:
     """True when a salvaged cell cannot have come from a column of this type.
 
     Stricter than SQLite affinity on purpose: SQLite would happily keep a
-    non-numeric string in an INTEGER column, but Hermes never writes one, so
+    non-numeric string in an INTEGER column, but Tandem never writes one, so
     text sitting where a counter is declared means the layout is wrong. A
     TEXT column always yields ``str`` (numbers are coerced on write), a REAL
     column always yields ``float``, an INTEGER column yields ``int``.

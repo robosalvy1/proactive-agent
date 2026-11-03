@@ -17,7 +17,7 @@ def test_packaged_console_output_drains_both_streams(caplog, monkeypatch):
         raise AssertionError("packaged startup attempted a synchronous console write")
 
     monkeypatch.setattr("builtins.print", blocked_console)
-    desktop_launch_notice("Starting Hermes")
+    desktop_launch_notice("Starting Tandem")
     with desktop_console_output(source_mode=False) as streams:
         result = subprocess.run(
             [sys.executable, "-c", "import sys; sys.stdout.write('x'*131072); "

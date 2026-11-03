@@ -193,7 +193,7 @@ def test_standalone_lock_loss_uses_profile_discovery_when_host_probe_is_empty(
 async def test_a_replace_unit_that_replaced_nothing_is_still_refused_when_it_loses_the_lock(
     host_lock_dir, tmp_path, monkeypatch,
 ):
-    """Every unit Hermes generates (launchd, systemd, s6) runs ``gateway run --replace``. When the
+    """Every unit Tandem generates (launchd, systemd, s6) runs ``gateway run --replace``. When the
     attach check saw no owner yet (the record lands a moment after the owner's claim) nothing was
     replaced, and the lock is the only arbiter of the race. Reading ``--replace`` as ``--force``
     there started a second gateway beside the multiplexer, and the two fought for the same bot

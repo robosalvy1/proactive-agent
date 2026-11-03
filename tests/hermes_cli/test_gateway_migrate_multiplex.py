@@ -1,7 +1,7 @@
-"""``hermes gateway migrate``: preflight verdicts, apply/rollback bookkeeping, and the update hook.
+"""``tandem gateway migrate``: preflight verdicts, apply/rollback bookkeeping, and the update hook.
 
 Service layer is faked through the module's ``_installed_services`` / ``_service_op`` seams (the same
-shape ``hermes gateway install`` tests use); the default gateway boot is faked by writing the
+shape ``tandem gateway install`` tests use); the default gateway boot is faked by writing the
 ``served_profiles`` record the real multiplexer writes. Blockers reuse the gateway's own credential
 fingerprint and port-binding predicates, so the tests assert verdict → effect, not internal lists.
 """
@@ -82,7 +82,7 @@ def fleet(tmp_path, monkeypatch):
 
     from gateway import status
     # The default gateway the fixture "starts" is this process; the served probe verifies identity.
-    monkeypatch.setattr(status, "_read_process_cmdline", lambda pid: "hermes gateway run")
+    monkeypatch.setattr(status, "_read_process_cmdline", lambda pid: "tandem gateway run")
     monkeypatch.setattr(gm, "_installed_services", lambda home: _units(state.services.get(_name(home))))
     monkeypatch.setattr(gm, "_live_gateway_pid", lambda home: state.pids.get(_name(home)))
     monkeypatch.setattr(gm, "_service_op", _service_op)
@@ -476,7 +476,7 @@ def test_update_hook_refuses_to_cross_service_user_or_home_boundary(
 
 def test_update_hook_still_migrates_same_user_same_scope_profiles_under_the_default_tree(fleet, capsys, monkeypatch):
     """The guard is a boundary check, not a kill switch: one user, one service domain, everything under
-    profiles/ (the shape `hermes profile create` produces) still auto-migrates."""
+    profiles/ (the shape `tandem profile create` produces) still auto-migrates."""
     fleet.services["default"] = ("systemd", False)
     monkeypatch.setattr(gm, "_gateway_identity", lambda home, pid, service: (1000, home), raising=False)
 
@@ -521,7 +521,7 @@ def test_update_hook_folds_a_unit_less_default_when_every_secondary_shares_one_m
 
 def test_auto_multiplex_migration_false_opts_out_of_the_update_hook_but_not_the_explicit_command(fleet, capsys):
     """``gateway.auto_multiplex_migration: false`` is a durable opt-out: an otherwise-eligible fleet is
-    left alone by ``hermes update`` (no output, no ops, no flag flip), while the operator typing
+    left alone by ``tandem update`` (no output, no ops, no flag flip), while the operator typing
     ``migrate --multiplex`` still migrates. Only the nested key counts."""
     assert gm.build_migration_plan().eligible_for_migration()  # would migrate but for the flag
     (fleet.root / "config.yaml").write_text(
@@ -949,7 +949,7 @@ def test_plan_names_every_process_it_will_sigterm_before_it_signals_anything(fle
 
 
 def test_windows_task_detection_reads_both_the_task_and_the_startup_fallback(monkeypatch):
-    """`hermes gateway install` falls back to a Startup-folder entry when it cannot register a
+    """`tandem gateway install` falls back to a Startup-folder entry when it cannot register a
     task; a migration that removed only the task would leave that entry launching a second
     gateway at the next logon."""
     from hermes_cli import gateway_windows as gww

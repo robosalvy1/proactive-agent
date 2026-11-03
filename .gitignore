@@ -168,13 +168,13 @@ config/mcporter.json
 hermes_cli/tui_dist/*
 hermes_cli/scripts/
 docs/superpowers/*
-# Working directory for the Hermes Agent's session state (~/.hermes/ at runtime;
+# Working directory for the Tandem Agent's session state (~/.hermes/ at runtime;
 # also created in-repo when an agent operates in this checkout). Plans, audit
 # logs, and per-session caches are never artifacts of the codebase.
 .hermes/
 
 # Desktop/bootstrap install marker written into the managed checkout root by the
-# bootstrap installer. It is Hermes-managed runtime state, never a code change —
+# bootstrap installer. It is Tandem-managed runtime state, never a code change —
 # ignore it so `hermes update`'s `git stash push --include-untracked` does not
 # treat it as a local edit and autostash it on every run (#38529).
 .hermes-bootstrap-complete
@@ -192,7 +192,7 @@ docs/superpowers/*
 # ones), gateway lock/pid/state files and per-launch markers, cache/spill
 # directories, and the profile's own config/credential/
 # memory/profile/pairing roots, the pre-update backups (the very copies a
-# swept state.db is restored from) and the secret vault are Hermes-managed
+# swept state.db is restored from) and the secret vault are Tandem-managed
 # runtime state, never code changes. (`*-snapshots/` above already covers state-snapshots/.)
 # Ignore them so `hermes update`'s `git stash push --include-untracked` cannot
 # sweep the live state.db/-wal into the stash and unlink it under the running
@@ -326,7 +326,7 @@ native/fts5_cjk/*.so
 
 apps/desktop/.dist-build*
 
-# Proactive Agent disposable development state
+# Tandem Agent disposable development state
 /.dev/
 
 # Files tracked by the pinned upstream snapshot despite broad ignore patterns.

@@ -8,7 +8,7 @@ Run `/home` in the classic CLI or Ink TUI, or press **Home** above **New chat** 
 
 New personal CLI/web chats created after enablement participate automatically. Older chats require `/home share` from that chat. `/home exclude` excludes the current logical chat from future Home recall, as both a source and a recipient. `/home off` disables automatic Home recall for the profile; `/home on` re-enables it. `/home status` reports the setting. Opening `/home` explicitly enables it again.
 
-Ask Home a topical question to recall relevant messages from participating chats, or ask for an overview/updates. `/home overview` displays recent dated excerpts and source links directly, without a model call. These are conversation excerpts, including assistant claims; they are not verified task completion records. Existing source links use Hermes' session navigation format.
+Ask Home a topical question to recall relevant messages from participating chats, or ask for an overview/updates. `/home overview` displays recent dated excerpts and source links directly, without a model call. These are conversation excerpts, including assistant claims; they are not verified task completion records. Existing source links use Tandem's session navigation format.
 
 ## How it works
 
@@ -22,7 +22,7 @@ Ask Home a topical question to recall relevant messages from participating chats
 
 Home recall is personal and profile-local. Private messaging conversations require an explicit local-owner `/home link <session-id>` grant and exact current source identity; `/home unlink <session-id>` revokes one. Groups, jobs, subagents, hidden chats, unlinked messaging and other principals are excluded. Existing profile and turn ownership/approval controls still apply. Reading unfinished work never authorizes executing it.
 
-`exclude` means future **Home retrieval**, not private chat or forgetting. It does not clear content already sent in active contexts, native `MEMORY.md`/`USER.md`, external memory, or explicit session-search access. Use separate Hermes profiles when separate memory is required. No private-chat label is exposed.
+`exclude` means future **Home retrieval**, not private chat or forgetting. It does not clear content already sent in active contexts, native `MEMORY.md`/`USER.md`, external memory, or explicit session-search access. Use separate Tandem profiles when separate memory is required. No private-chat label is exposed.
 
 Keyword retrieval remains the configuration-free baseline. Optional semantic retrieval adds a bounded derived vector index and query embeddings; explicit source forgetting and user supersession apply to future recall and reflection. [Memory continuity](MEMORY_CONTINUITY.md) documents setup, `/home index`, linking and source controls. Excerpts remain dated evidence rather than asserted facts. Overview is recent context, not a complete task ledger. General fact-level erasure across independent stores, live-provider quality evaluation and proactive coordination remain future work.
 
@@ -30,7 +30,7 @@ Keyword retrieval remains the configuration-free baseline. Optional semantic ret
 
 Meta publicly describes [Muse's main conversation, side chats, cross-chat memory and filtered background updates](https://introducing.muse.ai/). Its [security architecture](https://research.meta.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse) describes the runtime, durable state, and authority boundaries. Its [Muse Wonder model card](https://research.meta.ai/static/muse-wonder-model-card) describes long-history memory evaluation with updates and distractors. These do not publish an exact production retrieval/consolidation algorithm.
 
-[Letta Conversations](https://www.letta.com/blog/conversations/) supplies a close public precedent for independent conversations sharing agent memory. [Anthropic's context engineering guidance](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) supports bounded relevant context and durable notes. The local implementation uses Hermes' existing seams; the broader proposal and future acceptance gates remain in [HOME_THREAD_PLAN.md](HOME_THREAD_PLAN.md).
+[Letta Conversations](https://www.letta.com/blog/conversations/) supplies a close public precedent for independent conversations sharing agent memory. [Anthropic's context engineering guidance](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) supports bounded relevant context and durable notes. The local implementation uses Tandem's existing seams; the broader proposal and future acceptance gates remain in [HOME_THREAD_PLAN.md](HOME_THREAD_PLAN.md).
 
 ## Validation
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Hermes Bot Desktop — one headless Xfce desktop per Hermes profile, served over RFB.
+# Tandem Bot Desktop — one headless Xfce desktop per Tandem profile, served over RFB.
 #
 # Spawned by tools/bot_desktop/runtime.py with HERMES_BD_* variables set. Runs TigerVNC's Xvnc
 # (X server + RFB server in one process; damage-driven, resizable via SetDesktopSize) listening on a
@@ -55,7 +55,7 @@ xauth -q -f "$XAUTHORITY" source - <<COOKIE
 add $DISPLAY MIT-MAGIC-COOKIE-1 $(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
 COOKIE
 
-# ---- look: dark theme from whatever the host ships (first match wins), Hermes wallpaper ----
+# ---- look: dark theme from whatever the host ships (first match wins), Tandem wallpaper ----
 pick_theme() { local d t; for t in "$@"; do for d in /usr/share/themes "$HOME/.themes"; do [[ -d "$d/$t" ]] && { echo "$t"; return; }; done; done; echo "$1"; }
 pick_icons() { local d t; for t in "$@"; do for d in /usr/share/icons "$HOME/.icons"; do [[ -d "$d/$t" ]] && { echo "$t"; return; }; done; done; echo "$1"; }
 GTK_THEME_NAME=$(pick_theme Adwaita-dark Breeze-Dark Greybird-dark Arc-Dark Adwaita)

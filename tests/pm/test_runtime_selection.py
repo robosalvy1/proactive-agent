@@ -65,8 +65,8 @@ def test_boot_uses_one_selected_dependency_tree_in_fresh_process(tmp_path, monke
 
 
 def test_boot_puts_the_checkout_launcher_ahead_of_the_venvs_own_console_script(tmp_path, monkeypatch):
-    """#124627: the venv's `hermes` console script is an editable install bound to the
-    build-time source snapshot. A child resolving `hermes` off PATH must reach the
+    """#124627: the venv's `tandem` console script is an editable install bound to the
+    build-time source snapshot. A child resolving `tandem` off PATH must reach the
     checkout's own launcher, never that stale copy."""
     import os
     import subprocess
@@ -119,7 +119,7 @@ def test_broken_environment_keeps_explicit_repair_entry_reachable(tmp_path, monk
                             capture_output=True, text=True, timeout=30, check=False)
     assert (result.returncode == 0) is allowed, result.stderr
     if not allowed:
-        assert "hermes pm repair" in result.stderr
+        assert "tandem pm repair" in result.stderr
         assert "Traceback" not in result.stderr
 
 
@@ -144,7 +144,7 @@ def test_manual_repair_bypasses_damaged_generation_activation(tmp_path, monkeypa
     result = subprocess.run([sys.executable, "-S", "-m", "hermes_cli.main", "pm", "repair", "--help"],
                             cwd=tmp_path, env=env, capture_output=True, text=True, timeout=30, check=False)
     assert result.returncode == 0, result.stderr
-    assert "hermes pm repair" in result.stdout
+    assert "tandem pm repair" in result.stdout
 
 
 @pytest.mark.parametrize("interpreter", ["store", "venv"])

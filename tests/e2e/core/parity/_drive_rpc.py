@@ -2,7 +2,7 @@
 
 * ``drive_tui_gateway`` — ``python -m tui_gateway.entry`` over stdio, exactly how
   the Ink TUI spawns it (launch dir = the user's shell cwd); stops on stdin EOF.
-* ``drive_serve`` — ``hermes serve --host 127.0.0.1 --port 0`` spawned the way the
+* ``drive_serve`` — ``tandem serve --host 127.0.0.1 --port 0`` spawned the way the
   Desktop spawns it (``TERMINAL_CWD`` + ``HERMES_DASHBOARD_SESSION_TOKEN`` +
   ``HERMES_DESKTOP=1`` env, stdin closed), port read from the READY sentinel on
   stdout, one turn over the ``/api/ws`` JSON-RPC WebSocket; stops on SIGTERM.
@@ -184,7 +184,7 @@ class ServeProcess:
 
 
 def spawn_serve(ph: ParityHome) -> ServeProcess:
-    """Spawn ``hermes serve`` with the Desktop's argv/env/stdio shape (electron/main.ts)."""
+    """Spawn ``tandem serve`` with the Desktop's argv/env/stdio shape (electron/main.ts)."""
     token = uuid.uuid4().hex
     env = ph.env({
         "TERMINAL_CWD": str(ph.project),

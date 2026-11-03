@@ -20,7 +20,7 @@ def channel_request(commit: str, sequence: int = 65536) -> dict:
         "sourceVersion": "1.2.3", "version": f"0.0.{sequence}",
         "windowsVersion": f"0.{sequence // 65536}.{sequence % 65536}.0",
         "identity": {
-            "token": token, "displayName": "Hermes unregistered-preview",
+            "token": token, "displayName": "Tandem unregistered-preview",
             "appId": f"com.nousresearch.hermes-channel-{token}",
             "appNamePascal": f"HermesChannel{token}", "artifactNamePascal": "HermesBundled",
             "cliName": "hermes-unregistered-preview", "windowsExecutableName": "hermes-unregistered-preview",

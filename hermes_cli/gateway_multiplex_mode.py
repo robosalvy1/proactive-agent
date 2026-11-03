@@ -4,7 +4,7 @@
 ``GATEWAY_MULTIPLEX_PROFILES`` set it. Turning the default on must not make a default gateway
 double-bind a fleet that still runs per-profile gateways (two pollers on one bot token, port
 fights), so the implicit default is a *request*: the gateway runs the same preflight
-``hermes gateway migrate --multiplex`` runs and multiplexes only when the fold would have been
+``tandem gateway migrate --multiplex`` runs and multiplexes only when the fold would have been
 safe. An explicit ``true`` is never second-guessed.
 
 An explicit ``false`` is RETIRED (multiplex-only ruling): it parses, it is logged, and it is then
@@ -13,7 +13,7 @@ mode flag every scoped code path reads (``config.multiplex_profiles``) — what 
 is pin a second gateway process onto this host.
 
 The refusal is logged, never fatal: the gateway comes up standalone exactly as before the
-default flipped, and the log names the blocker plus ``hermes gateway migrate --multiplex``.
+default flipped, and the log names the blocker plus ``tandem gateway migrate --multiplex``.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ STANDALONE_PROFILE_REASON = "this profile is standalone (gateway.standalone: tru
 #: prints this so nobody builds on it.
 STANDALONE_DEPRECATION_NOTICE = (
     "gateway.standalone is a temporary compatibility shim while multiplexing gaps are fixed; "
-    "it will be removed once they are — plan to fold this profile with `hermes gateway migrate --multiplex`."
+    "it will be removed once they are — plan to fold this profile with `tandem gateway migrate --multiplex`."
 )
 
 #: ``gateway.multiplex_profiles: false`` is no longer an opt-out from the one-gateway-per-host
@@ -54,7 +54,7 @@ def explicit_multiplex_flag(default_home: Path) -> Optional[bool]:
     """The operator's explicit choice for the DEFAULT profile's gateway: a recognized
     ``GATEWAY_MULTIPLEX_PROFILES``, else ``gateway.multiplex_profiles`` (or the top-level alias) as
     written in its config.yaml; ``None`` when neither is set. Raw read on purpose: the callers are
-    other processes (``hermes -p X ...`` has X's config loaded) asking about the default's file."""
+    other processes (``tandem -p X ...`` has X's config loaded) asking about the default's file."""
     from gateway.config import _bool_token, _env_multiplex_profiles_override
     env = _env_multiplex_profiles_override()
     if env is not None:
@@ -141,7 +141,7 @@ def standalone_launcher_decision(config) -> Optional[MultiplexDecision]:
 def implicit_multiplex_blocker() -> Optional[str]:
     """Why THIS process must not multiplex right now, or None when it may.
 
-    Mirrors what makes ``hermes gateway migrate --multiplex`` refuse or leave a per-profile gateway
+    Mirrors what makes ``tandem gateway migrate --multiplex`` refuse or leave a per-profile gateway
     in place: hosts whose per-profile gateways the preflight cannot see (s6 slots) stay standalone;
     a secondary that still runs its own gateway (live process or installed service) or a preflight
     blocker (duplicate bot credential, port binder without a ``/p/<profile>/`` ingress) keeps this
@@ -223,7 +223,7 @@ def retired_opt_out_notice_lines() -> list[str]:
 
 
 def consume_rewritten_notice(default_home: Optional[Path] = None) -> list[str]:
-    """``hermes update``'s summary: print the rewrite notice ONCE more, then clear the marker."""
+    """``tandem update``'s summary: print the rewrite notice ONCE more, then clear the marker."""
     default_home = Path(default_home) if default_home is not None else _default_profile_home()
     marker = default_home / REWRITTEN_MARKER_NAME
     if not marker.exists():
@@ -251,7 +251,7 @@ def resolve_multiplex_mode(config) -> MultiplexDecision:
     like an unset key. That is safe because the unset path is not optimistic — it refuses to
     multiplex while any real blocker holds (an s6 container, a secondary that still owns a gateway,
     a duplicate bot credential), so a host that genuinely cannot fold still comes up standalone and
-    says why, and it converges by itself once ``hermes gateway migrate --multiplex`` has run.
+    says why, and it converges by itself once ``tandem gateway migrate --multiplex`` has run.
     """
     current = getattr(config, "multiplex_profiles", None)
     standalone = standalone_launcher_decision(config)
@@ -279,7 +279,7 @@ _pending_decision: list[MultiplexDecision] = []
 
 
 def record_multiplex_decision(decision: MultiplexDecision) -> None:
-    """Persist a guard refusal into ``gateway_state.json`` so `hermes gateway status` can show why this
+    """Persist a guard refusal into ``gateway_state.json`` so `tandem gateway status` can show why this
     gateway serves one profile while the default says multiplex; any other verdict clears the field.
 
     Only the runtime-lock owner writes that file. The decision is made while the config loads, before
@@ -337,7 +337,7 @@ def standalone_warning_lines(decision: MultiplexDecision, unserved: Optional[lis
 
     Empty for anything but a guard refusal on a host with other profiles to serve: a single-profile
     install has nothing unserved, so there is nothing to shout about. The same box appears at
-    gateway start, in the ``hermes update`` summary and (as text) in the dashboard banner.
+    gateway start, in the ``tandem update`` summary and (as text) in the dashboard banner.
     """
     if decision.source != "guard" or decision.reason == SINGLE_PROFILE_REASON:
         return []
@@ -360,7 +360,7 @@ def standalone_warning_lines(decision: MultiplexDecision, unserved: Optional[lis
 
 def recorded_standalone_warning_lines() -> list[str]:
     """Same box, rebuilt from the live gateway's ``gateway_state.json`` for processes that did not
-    make the decision (``hermes update``'s summary, ``hermes gateway status``)."""
+    make the decision (``tandem update``'s summary, ``tandem gateway status``)."""
     try:
         from gateway.status import read_runtime_status, runtime_status_pid_is_live
         record = read_runtime_status() or {}

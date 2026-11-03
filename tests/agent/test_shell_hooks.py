@@ -640,7 +640,7 @@ class TestFailSemanticsEndToEnd:
 
     @pytest.mark.platforms("linux")
     def test_run_once_reflects_exit_2_block(self, tmp_path):
-        """hermes hooks test must mirror production semantics."""
+        """tandem hooks test must mirror production semantics."""
         script = _write_script(
             tmp_path, "exit2.sh",
             "#!/usr/bin/env bash\n"

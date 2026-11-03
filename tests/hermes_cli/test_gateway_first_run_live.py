@@ -22,7 +22,7 @@ def test_headless_first_run_exits_with_setup_guidance_before_gateway(tmp_path, a
         stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=40, check=False
     )
     assert result.returncode == 1, (result.stdout, result.stderr)
-    assert "hermes config set model.provider custom" in result.stdout
+    assert "tandem config set model.provider custom" in result.stdout
     assert "Run setup now?" not in result.stdout
     assert "Session:" not in result.stderr
     assert not (home / "gateway.pid").exists()

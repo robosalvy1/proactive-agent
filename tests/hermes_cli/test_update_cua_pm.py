@@ -65,7 +65,7 @@ def test_windows_refresh_defers_pin_and_uac_to_explicit_setup(refresh, monkeypat
     output = capsys.readouterr().out
     assert "deferred" in output.lower()
     assert "UAC" in output
-    assert "hermes computer-use install --upgrade" in output
+    assert "tandem computer-use install --upgrade" in output
 
 
 @pytest.mark.platforms("macos")

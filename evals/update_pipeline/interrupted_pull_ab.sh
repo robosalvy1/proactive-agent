@@ -13,7 +13,7 @@
 #   E  custom branch whose commit merges cleanly: the kill lands inside the `git merge`, after it wrote
 #      the merged run_agent.py; the user edits a file git never wrote, then runs `hermes-agent`'s import
 # Fixed: A/B untouched, C/D/E restored with the user edit kept and the re-update lands; one VERDICT line.
-# [python] defaults to <repo>/venv/bin/python (needs the Hermes deps).
+# [python] defaults to <repo>/venv/bin/python (needs the Tandem deps).
 set -u
 REPO=$1; REF=$2; LABEL=$3
 PY=${4:-$REPO/venv/bin/python}

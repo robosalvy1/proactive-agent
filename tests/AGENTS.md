@@ -1,4 +1,4 @@
-# tests/ — how Hermes tests are written and run
+# tests/ — how Tandem tests are written and run
 
 Project authority: the root `AGENTS.md` and `docs/project/` define goals and workflow. This file describes this area’s implementation contracts. External issue references are technical history, not approval requirements or a separate contribution policy.
 

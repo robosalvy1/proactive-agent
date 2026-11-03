@@ -3,7 +3,7 @@
 Desktop's silent-turn check (``session-states.ts`` ``onEventSilence``) asks this verb whether a
 turn that went 45 s without an event is still running. The authority never registered it, so the
 WS fell back to the legacy sidecar's handler, whose ``_sessions`` never holds an authority-owned
-session: a foreground tool quiet for 45 s read as a reaped turn, and Desktop painted "Hermes ended
+session: a foreground tool quiet for 45 s read as a reaped turn, and Desktop painted "Tandem ended
 this turn without a reply" over a turn that was still running.
 """
 import asyncio

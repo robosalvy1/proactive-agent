@@ -1,5 +1,5 @@
 """A stale ``platform_toolsets.cli`` entry (a toolset whose plugin was uninstalled) must not refuse every
-`hermes chat` (#138670): the profile default is the gateway's to resolve, only a picked list rides
+`tandem chat` (#138670): the profile default is the gateway's to resolve, only a picked list rides
 session.create. The CLI's launch params go through the real gateway policy build (scripted transport)."""
 from contextlib import asynccontextmanager
 

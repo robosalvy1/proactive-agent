@@ -1,6 +1,6 @@
-"""`hermes import` of a broken backup archive must report failure, never "restored".
+"""`tandem import` of a broken backup archive must report failure, never "restored".
 
-The archive is made by the real ``hermes backup`` from a populated home, then damaged the ways
+The archive is made by the real ``tandem backup`` from a populated home, then damaged the ways
 archives really break (a download cut off half-way, a file that is not a zip at all, one member
 whose bytes rotted, a target directory the importer cannot write). Each import runs as a fresh
 sandboxed CLI over a home that already holds the user's current config; the contract is the

@@ -1,4 +1,4 @@
-# Contributing to Proactive Agent
+# Contributing to Tandem Agent
 
 Start with [AGENTS.md](AGENTS.md), [project status](docs/project/STATUS.md), and the [roadmap](docs/project/ROADMAP.md). This repository's user and project direction determine what to build. No external repository search, organization approval, Discord post, or separate development skill is required.
 

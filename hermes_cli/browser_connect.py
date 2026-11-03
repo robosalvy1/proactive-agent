@@ -1,4 +1,4 @@
-"""Shared helpers for attaching Hermes to a local Chromium-family CDP port.
+"""Shared helpers for attaching Tandem to a local Chromium-family CDP port.
 
 Resolves the default Chromium browser + real profile dir, snapshots that profile for the
 ``browser.use_real_profile`` consent path, and discovers/launches a debug browser on a
@@ -402,7 +402,7 @@ def _last_used_profile(src: str) -> str:
 def _secure_snapshot(path: str, *, contents: bool = False) -> None:
     """Lock down a snapshot dir (or, with ``contents``, everything INSIDE it) as a secret store.
     It holds the user's Cookies / Login Data, so it gets the same owner-only perms (managed-mode /
-    NixOS group-share carve-out, HERMES_UID/GID) as every Hermes secret dir — via ``_secure_dir``/
+    NixOS group-share carve-out, HERMES_UID/GID) as every Tandem secret dir — via ``_secure_dir``/
     ``_secure_file``, not a bespoke chmod. Contents matter too (#96729): ``copy2`` keeps Chrome's
     0644 and sqlite backups land umask-wide, so cookies were world-readable under the
     ``HERMES_HOME_MODE`` hatch. Best-effort; never blocks a launch."""
@@ -492,7 +492,7 @@ def _unavailable_auth_dbs_error(browser: str, failed: dict[str, str]) -> str:
     names = ", ".join(failed)
     if all(reason == _AUTH_DB_LOCKED for reason in failed.values()):
         return (f"{browser} is running and holds the profile's {names} with a write lock, so their "
-                "SQLite backup made no progress within five seconds. Hermes does not fall back to a "
+                "SQLite backup made no progress within five seconds. Tandem does not fall back to a "
                 "raw file copy (it could lose committed logins). Fully quit "
                 f"{browser} (including any background instance) and retry, or turn "
                 "browser.use_real_profile off.")
@@ -664,14 +664,14 @@ def _locked_profile_error(browser: str) -> str:
     if _real_profile_autoclose():
         msg = (
             f"{browser} is running and has its profile locked, so its login data can't be copied "
-            "yet. Hermes can close it for you (this quits the browser — you'll lose unsaved "
+            "yet. Tandem can close it for you (this quits the browser — you'll lose unsaved "
             "tabs). Ask the user to confirm, then close it and retry; if it's still locked after "
             "that, they must fully quit it (including any background/tray instance).")
     else:
         msg = (
             f"{browser} is running and has its profile locked, so its login data can't be copied. "
             "Fully quit the browser (including any background/tray instance) and retry, or turn "
-            "browser.use_real_profile off. (Enable browser.real_profile_autoclose to let Hermes "
+            "browser.use_real_profile off. (Enable browser.real_profile_autoclose to let Tandem "
             "offer to close it for you.)")
     return _PROFILE_LOCKED_PREFIX + msg
 
@@ -842,7 +842,7 @@ def _ensure_chrome_debug_data_dir(data_dir: str) -> None:
     Omitting the explicit mode there lets the inherited setgid + umask decide,
     matching ``ensure_hermes_home``'s managed branch.
 
-    Reconciling unconditionally also heals a profile an older Hermes left at
+    Reconciling unconditionally also heals a profile an older Tandem left at
     0755, which is the whole point — the exposure is on disk already. It is
     safe against a *running* browser: only group/other bits are dropped, the
     owner keeps ``rwx``, and POSIX checks the mode at ``open()`` rather than
@@ -880,7 +880,7 @@ def _open_launch_stderr_log(path: str):
       per-candidate overwrite semantics.
     * **On an already-existing log** ``O_CREAT`` applies ``mode`` only to a
       file it actually creates, so the inode keeps whatever it had. An older
-      Hermes left this file at 0644 on disk, so creation-time hardening alone
+      Tandem left this file at 0644 on disk, so creation-time hardening alone
       would leave every *upgrading* install exposed at the one path in this
       change with a guessable name. ``hermes_cli.config._secure_file``
       reconciles it, for the same reason ``_ensure_chrome_debug_data_dir``

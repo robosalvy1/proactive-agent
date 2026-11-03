@@ -15,7 +15,7 @@ from hermes_constants import apply_scratch_tmp_env, get_scratch_dir, prune_scrat
 
 
 def test_scratch_env_follows_home_and_respects_user_tmpdir(tmp_path):
-    """Unset temp vars → scratch of env HERMES_HOME; a Hermes-exported value re-derives for a routed
+    """Unset temp vars → scratch of env HERMES_HOME; a Tandem-exported value re-derives for a routed
     home; a user/OS-set value (macOS ``/var/folders``, ``%TEMP%``) is never touched."""
     home_a, home_b = tmp_path / "a", tmp_path / "b"
     env = {"HERMES_HOME": str(home_a)}

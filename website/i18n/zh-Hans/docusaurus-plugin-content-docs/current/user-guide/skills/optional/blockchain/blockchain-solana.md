@@ -14,7 +14,7 @@ description: "使用 USD 定价查询 Solana 区块链数据——钱包余额�
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/blockchain/solana` 安装 |
+| 来源 | 可选 — 通过 `tandem skills install official/blockchain/solana` 安装 |
 | 路径 | `optional-skills/blockchain/solana` |
 | 版本 | `0.2.0` |
 | 作者 | Deniz Alagoz (gizdusum)，由 Hermes Agent 增强 |
@@ -25,7 +25,7 @@ description: "使用 USD 定价查询 Solana 区块链数据——钱包余额�
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 Tandem 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # Solana 区块链 Skill

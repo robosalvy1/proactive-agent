@@ -36,7 +36,7 @@ export const jaFirstRun: FirstRunCopy = {
     notNow: '今はしない'
   },
   intro: {
-    greeting: 'こんにちは、Hermes です。',
+    greeting: 'こんにちは、Tandem です。',
     plan: 'まずはあなたに合わせて設定しましょう。そのあと、何かすごいものを作りましょう。'
   },
   rerun: {

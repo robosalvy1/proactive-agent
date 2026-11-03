@@ -1,4 +1,4 @@
-"""Hermes Desktop (Chat GUI) uninstaller: removes only GUI state — built Electron artifacts, the packaged
+"""Tandem Desktop (Chat GUI) uninstaller: removes only GUI state — built Electron artifacts, the packaged
 app, and the desktop's own ``userData`` — never agent source, venv, config, sessions or .env."""
 
 import os
@@ -35,7 +35,7 @@ def desktop_userdata_dir() -> Path:
 
 
 def source_built_gui_artifacts(hermes_home: Path) -> list[Path]:
-    """GUI build artifacts produced by ``hermes desktop`` inside the checkout (same ``hermes-agent/`` layout
+    """GUI build artifacts produced by ``tandem desktop`` inside the checkout (same ``hermes-agent/`` layout
     install.sh uses). The workspace-root node_modules is shared with the TUI, dashboard and other
     workspaces, so only the desktop workspace's own dependencies belong to GUI removal."""
     agent_root = hermes_home / "hermes-agent"
@@ -45,7 +45,7 @@ def source_built_gui_artifacts(hermes_home: Path) -> list[Path]:
 
 
 def desktop_install_record() -> Path:
-    """Where ``hermes update`` records the installed ``Hermes.app`` copies it keeps current. The apps
+    """Where ``tandem update`` records the installed ``Hermes.app`` copies it keeps current. The apps
     are machine-wide, so the record sits under the default root whichever profile runs; deleting it
     is what stops an uninstalled app from being put back by the next update."""
     from hermes_constants import get_default_hermes_root
@@ -55,7 +55,7 @@ def desktop_install_record() -> Path:
 def packaged_gui_app_paths() -> list[Path]:
     """Standard install locations of the packaged desktop distributable for the current OS. Every candidate
     is returned; the caller filters to those that exist. Never globs system-wide — only the well-known
-    electron-builder output locations for the "Hermes" product."""
+    electron-builder output locations for the "Tandem" product."""
     home = Path.home()
     if sys.platform == "darwin":
         return [Path("/Applications/Hermes.app"), home / "Applications" / "Hermes.app"]

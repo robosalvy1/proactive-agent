@@ -57,7 +57,7 @@ def admit_finite(params, *, submitter=None):
 
 
 def _may_run_unattended(connection, ref):
-    """``hermes -z`` parity: main auto-approved only inside the one-shot's own process. Over the wire that
+    """``tandem -z`` parity: main auto-approved only inside the one-shot's own process. Over the wire that
     is the private local bootstrap ticket (no dashboard / remote identity), the session's creator (no
     operator attach) and a CLI-surface session (never a Desktop, TUI, ACP or Bot Chat others watch)."""
     from gateway.session_policy import policy_for_source

@@ -9,7 +9,7 @@ routing metadata (``?profile=`` and ``body.profile``, exactly what
 ``apps/desktop/src/api/sessions.ts::mutateSessionHttp`` sends) lands on that profile's
 authority, while another served profile holds a live interactive attachment.
 
-The Desktop's endpoint for a served secondary comes from ``hermes -p <name> gateway ensure``
+The Desktop's endpoint for a served secondary comes from ``tandem -p <name> gateway ensure``
 and its ticket is minted through the endpoint's ``control_home`` (the multiplexer root),
 so this test uses that exact discovery + mint path rather than a hand-built socket call.
 """
@@ -80,7 +80,7 @@ def multiplex_daemon(tmp_path, profiles=('warm', 'cold')):
 
 
 def desktop_ensure(env, root, profile):
-    """The exact child the Desktop spawns: ``hermes --profile <p> gateway ensure --json``."""
+    """The exact child the Desktop spawns: ``tandem --profile <p> gateway ensure --json``."""
     result = subprocess.run([sys.executable, '-m', 'hermes_cli.main', '--profile', profile,
                              'gateway', 'ensure', '--json', '--timeout', '30'],
                             cwd=root, env=env, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=60, check=False)

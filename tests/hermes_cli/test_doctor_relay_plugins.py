@@ -1,7 +1,7 @@
-"""``hermes doctor`` names the Relay plugin files the runtime actually loads.
+"""``tandem doctor`` names the Relay plugin files the runtime actually loads.
 
-Relay discovers user and system ``plugins.toml`` files outside the Hermes home, so doctor is the one
-Hermes surface that shows a user which files apply. It must agree with what initialization loads.
+Relay discovers user and system ``plugins.toml`` files outside the Tandem home, so doctor is the one
+Tandem surface that shows a user which files apply. It must agree with what initialization loads.
 """
 
 import pytest

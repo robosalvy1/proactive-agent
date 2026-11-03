@@ -139,7 +139,7 @@ class TestDelegatedChildFailureMessaging:
 
 
 def test_single_query_never_prompts(monkeypatch):
-    """`hermes chat -q` exports HERMES_INTERACTIVE=1 and registers the CLI sudo callback, but never renders the
+    """`tandem chat -q` exports HERMES_INTERACTIVE=1 and registers the CLI sudo callback, but never renders the
     panel (a 45 s wait per sudo call for nobody): it is headless, like a delegated child."""
     monkeypatch.setenv("HERMES_INTERACTIVE", "1")
     monkeypatch.setenv("HERMES_SINGLE_QUERY_SESSION", "1")

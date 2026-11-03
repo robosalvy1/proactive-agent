@@ -1,4 +1,4 @@
-"""Guided tour (highlight + narrate UI elements) in the Hermes desktop GUI: ``start`` with no
+"""Guided tour (highlight + narrate UI elements) in the Tandem desktop GUI: ``start`` with no
 steps runs the app's own built-in tour (``preset`` quick or full); for a custom one the agent
 discovers targets (``action="targets"``), then highlights one step at a time (``show``) or hands
 over a step list the user pages (``start`` + ``steps``). Round-trips through the gateway
@@ -28,7 +28,7 @@ def tour_tool(action: str = "", surface: Optional[str] = None, selector: Optiona
               preset: Optional[str] = None, callback: Optional[Callable] = None) -> str:
     """Dispatch one tour action to the desktop renderer and return its outcome."""
     if callback is None:
-        return tool_error("tour is only available in the Hermes desktop app.")
+        return tool_error("tour is only available in the Tandem desktop app.")
     verb = (action or "").strip().lower()
     if verb not in ACTIONS:
         return tool_error(f"action must be one of: {', '.join(ACTIONS)}.")
@@ -95,7 +95,7 @@ TOUR_SCHEMA = {
     # See #95681.
     "description": (
         "Guided tour in the desktop GUI: dim the screen, highlight an "
-        "element, attach a titled popover. Surfaces: 'app' (Hermes itself) "
+        "element, attach a titled popover. Surfaces: 'app' (Tandem itself) "
         "or 'preview' (the page in the preview pane). A general look around "
         "the app is ONE call: action='start' with no steps runs the app's "
         "built-in tour (preset 'quick' or 'full', default full). For a "

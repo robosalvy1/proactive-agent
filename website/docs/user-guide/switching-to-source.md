@@ -25,15 +25,15 @@ actual source and destination homes before changing installations.
 From the existing installation, run:
 
 ```bash
-hermes backup
-hermes gateway status
+tandem backup
+tandem gateway status
 ```
 
 Keep the backup outside any directory you plan to remove. Backups can contain
 credentials, so protect them accordingly.
 
 Quit the desktop and stop gateways/services that you own before the handoff.
-Desktop quit and `hermes gateway stop` are different operations: quitting the
+Desktop quit and `tandem gateway stop` are different operations: quitting the
 app does not necessarily stop an independently managed messaging gateway.
 
 The per-profile gateway lock prevents duplicate gateways. Session locks and
@@ -77,8 +77,8 @@ to PM. Current first-party code runs on Python 3.14. The wider
 before PM switches them to 3.14; it is not a runtime support range.
 The source default is the `all` extra, not the desktop bundle's `--all-extras`.
 
-Activation composes the installed tool environment and defines `hermes` as this
-worktree's CLI. The function hides an older `hermes` command or MSIX alias and
+Activation composes the installed tool environment and defines `tandem` as this
+worktree's CLI. The function hides an older `tandem` command or MSIX alias and
 refuses outside the worktree.
 `deactivate` restores the shell environment and removes the function when you finish.
 
@@ -97,7 +97,7 @@ POSIX example:
 
 ```bash
 export HERMES_HOME="$HOME/hermes-source-data"
-hermes setup
+tandem setup
 hermes
 ```
 
@@ -105,7 +105,7 @@ PowerShell example:
 
 ```powershell
 $env:HERMES_HOME = Join-Path $HOME 'hermes-source-data'
-hermes setup
+tandem setup
 hermes
 ```
 
@@ -113,7 +113,7 @@ If you change the home after preparing PM state, run the bootstrap for that
 home before relying on its selected dependencies. Do not assume that changing
 the environment variable moves data or copies runtime state.
 
-To build a source desktop, run `hermes desktop` from the prepared
+To build a source desktop, run `tandem desktop` from the prepared
 checkout. Opening the old packaged app still starts its packaged backend.
 
 ## Docker users
@@ -141,7 +141,7 @@ bootstrap is not its supported development or repair route. Use the
 ## Switch back without assuming a downgrade is safe
 
 Stop the source runtime, leave its activation, and open the packaged app.
-Inspect which CLI command resolves before using `hermes` again:
+Inspect which CLI command resolves before using `tandem` again:
 
 ```bash
 command -v hermes
@@ -163,8 +163,8 @@ diagnostics and garbage collection rather than deleting the shared data root.
 - **Wrong version:** inspect command resolution, then use `hermes --version`
   from the activated checkout.
 - **Missing dependencies:** run `python -m pm.cli install` from the intended
-  source environment, then restart the affected Hermes process.
-- **Gateway already running:** inspect `hermes gateway status` for the
+  source environment, then restart the affected Tandem process.
+- **Gateway already running:** inspect `tandem gateway status` for the
   selected profile. Stop the identified owner; do not kill unrelated processes.
 - **Different skills after first run:** newer code can sync bundled skills into
   the data home. A source checkout is not a read-only view of that home.

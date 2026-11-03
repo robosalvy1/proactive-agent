@@ -131,14 +131,14 @@ class HomeIOGuard:
                 import pytest
                 # pytest.fail, not AssertionError: removal helpers catch Exception and would log
                 # the refusal as a warning while the test passed.
-                pytest.fail(f"TEST BUG: changing the REAL installed Hermes desktop app: {value}\n"
+                pytest.fail(f"TEST BUG: changing the REAL installed Tandem desktop app: {value}\n"
                             "Stub hermes_cli.gui_uninstall.packaged_gui_app_paths to a temporary path.")
         return resolved
 
     @staticmethod
     def refuse(value):
         raise AssertionError(
-            f"TEST BUG: file I/O against the REAL hermes home: {value}\n"
+            f"TEST BUG: file I/O against the REAL tandem home: {value}\n"
             "Use the isolated HERMES_HOME or a temporary fixture instead."
         )
 

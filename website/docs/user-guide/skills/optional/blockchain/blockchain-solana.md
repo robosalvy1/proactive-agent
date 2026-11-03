@@ -14,7 +14,7 @@ Query Solana wallets, tokens, txs, and NFTs in USD.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/blockchain/solana` |
+| Source | Optional — install with `tandem skills install official/blockchain/solana` |
 | Path | `optional-skills/blockchain/solana` |
 | Version | `0.2.0` |
 | Author | Deniz Alagoz (gizdusum), enhanced by Hermes Agent |
@@ -25,7 +25,7 @@ Query Solana wallets, tokens, txs, and NFTs in USD.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Solana Blockchain Skill

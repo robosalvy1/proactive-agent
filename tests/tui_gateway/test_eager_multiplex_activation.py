@@ -2,7 +2,7 @@
 
 ``profiles_to_serve`` takes the multiplex flag as an ARGUMENT and never reads config, so the eager
 gate has to consult the operator's setting itself; and ``named_profile_has_identity`` accepts an
-empty ``.env``, which is all a crashed ``hermes profile create`` leaves behind. Both made a host
+empty ``.env``, which is all a crashed ``tandem profile create`` leaves behind. Both made a host
 arm a one-way, process-wide guard it was never meant to arm.
 """
 import pytest

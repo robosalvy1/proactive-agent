@@ -1,6 +1,6 @@
 """Read-only binding checks; unknown supervisor syntax is not profile absence.
 
-These checks recognize the installed Hermes launch formats, not arbitrary shell
+These checks recognize the installed Tandem launch formats, not arbitrary shell
 programs. Manager-loaded values take precedence over filenames and disk copies.
 """
 from __future__ import annotations

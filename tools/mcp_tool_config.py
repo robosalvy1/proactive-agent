@@ -108,7 +108,7 @@ class _StderrTee:
 
 def _write_stderr_log_header(server_name: str) -> None:
     """Session marker so operators can find each server's output in the shared log; it leads with the
-    same stamp as every server line (``_StderrTee``) so ``hermes logs mcp --since`` can filter it."""
+    same stamp as every server line (``_StderrTee``) so ``tandem logs mcp --since`` can filter it."""
     fh = _get_mcp_stderr_log()
     try:
         fh.write(f"\n{timestamp()} ===== starting MCP server '{server_name}' =====\n")
@@ -259,12 +259,12 @@ def _managed_launcher(command: str) -> Optional[tuple[str, list[str]]]:
         dirs = [d for d in with_hermes_node_path({"PATH": ""})["PATH"].split(os.pathsep) if d]
     executable = shutil.which(command, path=os.pathsep.join(dirs)) if dirs else None
     if executable is None:
-        raise RuntimeError(f"Hermes-managed {command} is not installed; run `hermes pm install {package}`")
+        raise RuntimeError(f"Tandem-managed {command} is not installed; run `tandem pm install {package}`")
     return executable, dirs
 
 
 def _outside_package(launcher: str, managed: str, dirs: list[str]) -> tuple[str, list[str]]:
-    """Hermes's npm/node *launcher* and toolchain *dirs*, swapped for PM's copies outside a
+    """Tandem's npm/node *launcher* and toolchain *dirs*, swapped for PM's copies outside a
     sealed Windows payload (``pm.user_facing.copies``). npm starts each package bin through
     cmd.exe, and cmd.exe cannot start the packaged ``node.exe``."""
     from pm.user_facing import copies
@@ -278,8 +278,8 @@ def _outside_package(launcher: str, managed: str, dirs: list[str]) -> tuple[str,
 
 
 def _is_hermes_managed_bin_dir(directory: str) -> bool:
-    """True for the bin dirs Hermes' bootstrap prepends to this process's PATH: anything
-    under the active hermes home (the sealed payload's venv, ``<home>/bin``, PM store
+    """True for the bin dirs Tandem's bootstrap prepends to this process's PATH: anything
+    under the active tandem home (the sealed payload's venv, ``<home>/bin``, PM store
     runtimes) plus the running interpreter's own bin dir (a repo checkout's venv)."""
     try:
         resolved = Path(directory).resolve()
@@ -319,7 +319,7 @@ def _pathext_suffixes(env: Optional[dict] = None, *, windows: Optional[bool] = N
 
 def _first_user_which_hit(command: str, path_arg: Optional[str],
                           env: Optional[dict] = None, *, windows: Optional[bool] = None) -> Optional[str]:
-    """First PATH hit for *command* OUTSIDE Hermes-managed bin dirs, or ``None``.
+    """First PATH hit for *command* OUTSIDE Tandem-managed bin dirs, or ``None``.
 
     ``shutil.which`` stops at the first hit, and bootstrap prepends the managed runtime's
     bin dir, so a bare ``python3`` resolves to the bundled interpreter — which lacks the
@@ -345,7 +345,7 @@ def _first_user_which_hit(command: str, path_arg: Optional[str],
 def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
     """Resolve a stdio command against the exact subprocess env (bare launchers under a filtered PATH).
 
-    Bare ``npx``/``npm``/``node``/``uv``/``uvx`` resolve to Hermes's PM-managed copies with their
+    Bare ``npx``/``npm``/``node``/``uv``/``uvx`` resolve to Tandem's PM-managed copies with their
     toolchain dirs first on the child PATH, never the user's (an absolute ``command:`` stays the
     user's choice). Anything else resolves on the child env's PATH only: ``shutil.which`` with
     ``path=None`` silently falls back to the PARENT's ``os.environ["PATH"]``, letting a command
@@ -402,7 +402,7 @@ def _npx_cached_bin(args: list) -> Optional[tuple]:
     """Resolve ``npx -y <pkg>`` to the already-installed binary, or None.
 
     ``npx`` resolves the package and then FORKS, staying resident as the real server's parent
-    for nothing (~48 MB private memory per MCP server, measured); Hermes already supervises the
+    for nothing (~48 MB private memory per MCP server, measured); Tandem already supervises the
     child (shared death supervisor). When the package is in npx's cache we spawn its binary
     directly. Deliberately conservative — None (caller keeps plain ``npx``, so a cold machine
     still installs) for a cache miss, a version pin (``pkg@1.2.3``), extra npx flags, a manifest
@@ -468,7 +468,7 @@ def _packaged_npx_entry(command: str, args: list) -> Optional[tuple]:
     Windows payload's own npx, else None.
 
     That npx starts the package bin through cmd.exe, and cmd.exe cannot start the packaged
-    ``node.exe`` (``pm.user_facing``). Hermes gets here only without a host Node and without
+    ``node.exe`` (``pm.user_facing``). Tandem gets here only without a host Node and without
     a copy that PM may make. The payload's Python CAN start the packaged ``node.exe``, so the
     package is installed with npm's own script and the bin's script runs on that node.
     Install scripts stay off, because npm runs them through cmd.exe too. None keeps plain

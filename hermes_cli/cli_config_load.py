@@ -27,7 +27,7 @@ def _cli():
 def _load_prefill_messages(file_path: str, base_dir: Path | None = None) -> list[dict[str, Any]]:
     """Load prefill messages (JSON array) from *file_path*; missing/empty -> [].
 
-    Relative paths resolve against *base_dir*, defaulting to the CLI's hermes home.
+    Relative paths resolve against *base_dir*, defaulting to the CLI's tandem home.
     """
     if not file_path:
         return []

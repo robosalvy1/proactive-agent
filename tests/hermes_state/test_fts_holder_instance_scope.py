@@ -1,12 +1,12 @@
 """Instance-scoping of the uninspectable-holder fallback.
 
 Field-verified 2026-09-07 on a production host running TWO independent
-Hermes instances: a main gateway (user ``ubuntu``,
+Tandem instances: a main gateway (user ``ubuntu``,
 HERMES_HOME=/home/ubuntu/.hermes) and a demo gateway (user ``demo``,
 HERMES_HOME=/home/demo/.hermes).  The demo gateway runs as another user, so
 its ``/proc/<pid>/fd`` table is unreadable from the main instance and the
 holder scan falls back to ``/proc/<pid>/cmdline`` + ``_looks_like_hermes``.
-The demo process's argv matches the Hermes patterns exactly, so the fallback
+The demo process's argv matches the Tandem patterns exactly, so the fallback
 flagged it as an uninspectable holder of the MAIN instance's state.db even
 though ``lsof`` proved zero open handles on it.  Consequence: the stale-FTS
 rebuild in ``hermes_state_schema._recover_stale_fts`` was deferred 42 times
@@ -18,7 +18,7 @@ hermes); a genuine second instance with a DIFFERENT HERMES_HOME is still
 misjudged on current main (issue #92401).
 
 Behavior contract: an uninspectable holder identified only by argv must be
-counted unless its own argv proves it is scoped to a *different* Hermes
+counted unless its own argv proves it is scoped to a *different* Tandem
 home / state.db and never references ours.  Ambiguous argv (no absolute
 paths at all) must remain fail-closed, exactly as before — the conservative
 intent of the fallback is preserved.
@@ -111,7 +111,7 @@ def _install_fake_argv(monkeypatch, argv_by_pid):
 class TestUninspectableHolderInstanceScope:
     def test_other_instance_argv_is_not_a_holder_of_our_db(self, tmp_path, monkeypatch):
         """RED: fd dir unreadable + argv proves the process belongs to a
-        DIFFERENT Hermes home → not a holder of our state.db."""
+        DIFFERENT Tandem home → not a holder of our state.db."""
         # A real ``.hermes`` home, as on the field host this test is drawn from: the install
         # location can only identify a home that is itself part of an install layout.
         db_path = tmp_path / ".hermes" / "state.db"
@@ -162,7 +162,7 @@ class TestUninspectableHolderInstanceScope:
         """argv[0] is the SHARED install binary, so it cannot prove a hold of profile b's store.
 
         Every hermes process on a normal host runs ``<root>/venv/bin/hermes``; counting that token
-        as proof made ``hermes -p other chat -q`` an uninspectable holder of every OTHER profile's
+        as proof made ``tandem -p other chat -q`` an uninspectable holder of every OTHER profile's
         state.db, deferring its FTS rebuild and auto-VACUUM for as long as the sibling lived
         (#92401, inside a single install). The process's own ``-p``/``--profile`` selection decides.
         """
@@ -209,9 +209,9 @@ class TestUninspectableHolderInstanceScope:
         """``<X>/profiles/<n>/state.db`` does not make all of ``<X>`` ours.
 
         A raw ``basename == "profiles"`` test promoted any such parent to the install root, so an
-        unrelated Hermes install living under it was counted as a holder — the literal two-instance
+        unrelated Tandem install living under it was counted as a holder — the literal two-instance
         shape #92401 was filed about. The canonical ``named_profile_home`` predicate requires the
-        parent to be a real Hermes home.
+        parent to be a real Tandem home.
         """
         work = tmp_path / "work"
         db_path = work / "profiles" / "b" / "state.db"

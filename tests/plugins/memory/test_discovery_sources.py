@@ -235,7 +235,7 @@ def test_provider_registered_past_the_first_8kb_is_discovered(tmp_path, monkeypa
 
 def test_unreadable_user_plugin_does_not_abort_memory_discovery(tmp_path, monkeypatch):
     """One mode-000 / ACL-denied ``$HERMES_HOME/plugins/<x>`` must not hide the bundled
-    providers or its readable siblings from the dashboard / ``hermes memory`` pickers (#111804)."""
+    providers or its readable siblings from the dashboard / ``tandem memory`` pickers (#111804)."""
     plugins_root = tmp_path / "plugins"
     _write_provider_dir(plugins_root, "goodmem")
     denied = plugins_root / "denied"

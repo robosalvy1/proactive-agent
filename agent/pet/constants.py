@@ -2,7 +2,7 @@
 
 Common petdex/Codex pet geometry. ``pet.json`` usually only carries
 ``id``/``displayName``/``description``/``spritesheetPath``; row taxonomy is
-inferred from the atlas shape so Hermes renders both legacy 8-row sheets and
+inferred from the atlas shape so Tandem renders both legacy 8-row sheets and
 current 9-row Codex sheets.
 """
 
@@ -54,7 +54,7 @@ def resolve_cols(scale: float, unicode_cols: int = 0) -> int:
 
 
 class PetState(str, Enum):
-    """Animation state a pet can be shown in (Hermes names; Codex rows say ``jumping``/``running`` for ``jump``/``run``)."""
+    """Animation state a pet can be shown in (Tandem names; Codex rows say ``jumping``/``running`` for ``jump``/``run``)."""
 
     IDLE = "idle"
     WAVE = "wave"

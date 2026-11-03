@@ -95,7 +95,7 @@ def start_background_mcp_discovery(*, logger, thread_name: str) -> None:
 
     If the first run exits without connecting any server (e.g. startup cancellation / OOM restart),
     later calls may retry instead of pinning the profile in "already started" with zero MCP tools.
-    Likewise a server added to ``mcp_servers`` after that run (``hermes mcp add`` against a running
+    Likewise a server added to ``mcp_servers`` after that run (``tandem mcp add`` against a running
     Desktop backend) is connected by the next call, which every agent build makes, so a new session
     gets its tools without a reload (#76954). Discovery is additive: live servers are untouched.
     """
@@ -308,7 +308,7 @@ def ensure_mcp_discovery_before_agent_build(
     thread_name: str = "cli-mcp-discovery") -> None:
     """Give configured MCP tools a bounded chance to register before AIAgent.
 
-    Non-interactive first turns (``chat -q``, ``hermes -z``) can construct ``AIAgent`` before any
+    Non-interactive first turns (``chat -q``, ``tandem -z``) can construct ``AIAgent`` before any
     path started discovery, and ``wait_for_mcp_discovery()`` only joins an existing thread — so
     start discovery if needed, then wait up to the configured bound.
     """

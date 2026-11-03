@@ -187,7 +187,7 @@ def test_startup_route_decodes_custom_colon_qualified_model(tmp_path, monkeypatc
 
 
 def test_oneshot_and_tui_qualified_model_never_reaches_default_provider(tmp_path, monkeypatch):
-    """``hermes -z -m custom:<name>:<model>`` and ``hermes --tui -m …`` route through the same
+    """``tandem -z -m custom:<name>:<model>`` and ``tandem --tui -m …`` route through the same
     startup owner, so provider auto-detection never hands the qualified string to the configured
     default (#73943)."""
     from hermes_cli.oneshot import _resolve_model_and_provider

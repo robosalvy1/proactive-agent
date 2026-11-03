@@ -1,9 +1,9 @@
 """A later generation of a POSIX Desktop hand-off's update adopts the hand-off's own claim.
 
-``hermes update`` adopts an existing claim only when a live partner is its own pid, the
+``tandem update`` adopts an existing claim only when a live partner is its own pid, the
 ``HERMES_UPDATE_HANDOFF_PID`` value, or an ancestor (``update_lock.UpdateLock._is_partner``).
 ``posix.sh`` hands marker line 1 to a custodian before any update work starts; the custodian is a
-sibling of the update, never an ancestor. The first ``hermes update`` is named on the delegate
+sibling of the update, never an ancestor. The first ``tandem update`` is named on the delegate
 line, but a later generation (a relaunch or a takeover detached from it) has a new pid, so the
 hand-off pid is its only way to recognise the custodian. Naming the script there made those
 updates refuse their own claim with exit 2 (#134268, #134602).

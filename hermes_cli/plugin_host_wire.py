@@ -84,7 +84,7 @@ class Opaque:
         self.type_name, self.text = type_name, text
 
     def __getattr__(self, name: str) -> Any:
-        raise AttributeError(f"{self.type_name!r} is a live object in the Hermes process and is not "
+        raise AttributeError(f"{self.type_name!r} is a live object in the Tandem process and is not "
                              f"available inside the plugin host (attribute {name!r})")
 
     def __bool__(self) -> bool:

@@ -47,7 +47,7 @@ def check_runtime_readiness(requested=None, *, strict_profile_scope=False, resol
         return {'ok': False, 'provider': blamed, 'model': model, 'source': src, 'error': error}
 
     if not configured and provider == 'bedrock' and source in {'iam-role', 'aws-sdk-default-chain'}:
-        return fail('No Hermes provider is configured.', source)
+        return fail('No Tandem provider is configured.', source)
     api_key = runtime.get('api_key')
     api_key_text = '' if callable(api_key) else str(api_key or '').strip()
     if not (callable(api_key) or api_key_text in {'aws-sdk', 'no-key-required'}

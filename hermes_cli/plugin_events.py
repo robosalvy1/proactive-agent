@@ -19,11 +19,11 @@ is core-internal. The ``plugin.`` prefix keeps plugin traffic out of core's own
 event names (``skin.changed``, ``session.reclaimed``, …).
 
 Delivery is per process: the frame goes to the clients of the gateway the
-caller runs in. Under ``hermes serve`` (the Desktop backend, where plugin
+caller runs in. Under ``tandem serve`` (the Desktop backend, where plugin
 routers, slash commands and the agent turn's tools/hooks run) that is every
 connected window; a call from the ``dashboard.turn_isolation`` compute-host
-child rides the host pipe to ``hermes serve`` and fans out there. A process
-with no Desktop client at all (``hermes gateway run``, ``hermes chat``, cron)
+child rides the host pipe to ``tandem serve`` and fans out there. A process
+with no Desktop client at all (``tandem gateway run``, ``tandem chat``, cron)
 has nobody to deliver to: the call is a logged no-op.
 """
 

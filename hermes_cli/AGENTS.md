@@ -21,10 +21,10 @@ Moved bodies late-bind cli-level names via `from cli import ...` at call time, s
 handles input + autocomplete; `KawaiiSpinner` (`agent/display.py`) animates API calls and prints
 the `┊` activity feed. `load_cli_config()` in `cli.py` merges CLI defaults + user YAML.
 
-`hermes_cli/gateway.py` is the `hermes gateway` facade (process discovery, PM-aware systemd unit
+`hermes_cli/gateway.py` is the `tandem gateway` facade (process discovery, PM-aware systemd unit
 generation/refresh, command dispatch); topical siblings re-exported by the facade include
 `gateway_launchd.py` (macOS LaunchAgent backend), `gateway_setup_wizard.py`
-(`hermes gateway setup`: `_PLATFORMS` registry, status table, per-platform prompts, service offer),
+(`tandem gateway setup`: `_PLATFORMS` registry, status table, per-platform prompts, service offer),
 `gateway_windows*.py`, `gateway_supervised_restart.py`, `gateway_migrate*.py`, `gateway_multiplex_*.py`,
 `gateway_enroll.py`, `gateway_command_errors.py`. Sibling bodies read facade names through `_gw()`
 (late binding on `hermes_cli.gateway`), so monkeypatch on the facade; mutable state such as
@@ -85,7 +85,7 @@ archive_after_days, backup.*`.
   `{"description", "prompt", "url", "password": True, "category": provider|tool|messaging|setting}`.
   Non-secret settings go in config.yaml; if internal code needs an env mirror, bridge it in code
   (`gateway_timeout`; `terminal.cwd` → `TERMINAL_CWD`). `MESSAGING_CWD` is removed and `TERMINAL_CWD`
-  in `.env` is deprecated — the loader warns; canonical is `terminal.cwd`. `hermes config
+  in `.env` is deprecated — the loader warns; canonical is `terminal.cwd`. `tandem config
 set/get/unset <NAME>` route any bare name registered in `OPTIONAL_ENV_VARS` / `_EXTRA_ENV_KEYS`
   (or carrying a `setup_hidden_env` platform suffix) to `.env` via `config_env_routing.py` — the
   file the platform setup flows write — never to the top level of config.yaml.
@@ -99,9 +99,9 @@ set/get/unset <NAME>` route any bare name registered in `OPTIONAL_ENV_VARS` / `_
   (CI lint) rejects it, and `tests/hermes_cli/test_config_yaml_comment_preservation.py` guards each
   path (#92554). The commented example blocks are appended only when the file is created.
 - **Three loaders — know which you're in:** `load_cli_config()` (CLI, `cli.py`); `load_config()`
-  (`hermes tools/setup`, most subcommands, `hermes_cli/config.py`, merges `DEFAULT_CONFIG`);
+  (`tandem tools/setup`, most subcommands, `hermes_cli/config.py`, merges `DEFAULT_CONFIG`);
   `hermes_cli/config_effective.py::load_user_config_effective()` (gateway runtime via
-  `gateway/run.py::_load_gateway_config`, TUI gateway `_load_cfg`, cron, `hermes send`, doctor,
+  `gateway/run.py::_load_gateway_config`, TUI gateway `_load_cfg`, cron, `tandem send`, doctor,
   `hermes_time`/`hermes_logging`: user file + managed overlay + `${VAR}` expansion + model-key
   canon, NO defaults — for presence-sensitive readers). If the CLI sees a key and the gateway
   doesn't (or vice versa), you're on the wrong loader — check `DEFAULT_CONFIG` coverage. Never
@@ -126,7 +126,7 @@ thinking_verbs, wings), `tool_prefix`, `tool_emojis`, `branding.*` (agent_name, 
 response_label, prompt_symbol). Consumers: `banner.py`, `display.py`, `cli.py`. Key-by-key table
 and YAML template: `website/docs/user-guide/features/skins.md`.
 
-## Update pipeline (`hermes update`)
+## Update pipeline (`tandem update`)
 
 Transactional, `plan → snapshot → apply → restart-per-kind → verify → report`; every stage guards a
 real field failure (fleet campaign #91277), and a PR that weakens a stage answers for that class.
@@ -148,7 +148,7 @@ The stage-by-stage contract: `website/docs/developer-guide/cli-internals.md` § 
 ## Profiles (multi-instance)
 
 `_apply_profile_override()` in `hermes_cli/main.py` sets `HERMES_HOME` before any module import for
-single-profile commands (`hermes -p x <cmd>`), so there `get_hermes_home()` scopes to the active
+single-profile commands (`tandem -p x <cmd>`), so there `get_hermes_home()` scopes to the active
 profile. The multiplex gateway and the Desktop/dashboard `serve` backend instead bind the active
 profile per activity via a contextvar override while `os.environ["HERMES_HOME"]` keeps the launch
 profile — a module constant or import-time read there freezes to the launch profile (rules in
@@ -180,7 +180,7 @@ tool registry overlays) key on `hermes_constants.hermes_home_key()`, never a sin
 no preflight blocker, migratable host → `True`; else `False` + a logged reason. Explicit values pass
 through. CLI/dashboard readers use `default_gateway_multiplexes` (live `served_profiles` record, then
 the explicit flag) — never the merged default, which would guess a verdict only the gateway makes.
-Migration from per-profile gateways: `hermes_cli/gateway_migrate.py` (`hermes gateway migrate
+Migration from per-profile gateways: `hermes_cli/gateway_migrate.py` (`tandem gateway migrate
 --multiplex`, the only mode — `--standalone` is deleted and a per-profile fleet is not a supported
 target; table-driven `_PREFLIGHT_CHECKS`; manifest `<default>/gateway_migration.json` = UNFINISHED,
 a re-run resumes from it; a named profile's `gateway install|start|run` refuse without `--force` via
@@ -192,7 +192,7 @@ other service domain / UNIX user / HERMES_HOME outside `profiles/` — notices f
 blockers for the hook) and the `gateway.auto_multiplex_migration` opt-out (#109954). Blockers reuse `GatewayRunner._adapter_credential_fingerprint` and `platform_binds_port`;
 "has a `/p/<profile>/` ingress" is the adapter class attribute `serves_profile_prefix` — set it on a
 new HTTP-inbound adapter when it answers the prefix, never extend a list here.
-`hermes gateway restart` for a gateway Hermes did not install (custom launchd agent / unit running
+`tandem gateway restart` for a gateway Tandem did not install (custom launchd agent / unit running
 `gateway run --external-supervisor`): `gateway_supervised_restart.py` — the gateway's SELF-declared
 supervisor (control-socket `identify` answering anything but `manual`, OR the argv marker) decides; hand back via SIGUSR1 and wait
 for a fresh supervised PID, never stop + foreground `run_gateway` (that stamps the CLI's PID and wedges
@@ -214,6 +214,6 @@ recorded when both exist. Process liveness is `(pid, start_time)` or the canonic
 
 `anon_auth.run_sign_in()` is the one sign-in composition: it yields `SignInState`s that carry their
 own `.copy` / `.copy_terminal`, persists only after a completed promotion AND a token grant, and runs
-`settle_after_upgrade` exactly once per completion. `hermes auth upgrade`, the CLI and gateway
+`settle_after_upgrade` exactly once per completion. `tandem auth upgrade`, the CLI and gateway
 `/login` and the desktop poller are renderers over it; the desktop's plain device-code login
 (`_nous_plain_poller`) stays a separate path. Long form: `cli-internals.md` § Nous free tier sign-in.

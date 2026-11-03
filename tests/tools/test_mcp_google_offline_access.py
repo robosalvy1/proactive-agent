@@ -80,7 +80,7 @@ async def _run_browser_flow(tmp_path, monkeypatch, *, issuer, authorization_serv
     async def callback():
         return _authorization_code_result("code-1", seen["state"])
 
-    metadata = OAuthClientMetadata(redirect_uris=[AnyUrl("http://127.0.0.1:1/cb")], client_name="Hermes Agent")
+    metadata = OAuthClientMetadata(redirect_uris=[AnyUrl("http://127.0.0.1:1/cb")], client_name="Tandem Agent")
     if scope is not None:
         metadata.scope = scope
     provider = _HERMES_PROVIDER_CLS(
@@ -172,7 +172,7 @@ async def test_device_flow_normalizes_issuer_and_asks_google_for_offline_access(
 
         provider = _HERMES_PROVIDER_CLS(
             server_name="srv", server_url=RESOURCE, storage=HermesTokenStorage("srv"),
-            client_metadata=OAuthClientMetadata(redirect_uris=[AnyUrl("http://127.0.0.1:1/cb")], client_name="Hermes Agent"))
+            client_metadata=OAuthClientMetadata(redirect_uris=[AnyUrl("http://127.0.0.1:1/cb")], client_name="Tandem Agent"))
         provider.context.oauth_metadata = DeviceOAuthMetadata.model_validate(
             _asm_doc(issuer, device_authorization_endpoint=f"{issuer}/device/code"))
         provider.context.client_info = OAuthClientInformationFull.model_validate(

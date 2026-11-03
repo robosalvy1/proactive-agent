@@ -1,4 +1,4 @@
-"""pytest's basetemp must never sit inside the operator's platform-native Hermes home.
+"""pytest's basetemp must never sit inside the operator's platform-native Tandem home.
 
 Every per-test sandbox is ``<basetemp>/.../hermes_test`` and ``get_default_hermes_root()``
 prefers the platform-native home whenever ``HERMES_HOME`` sits *under* it — so a basetemp

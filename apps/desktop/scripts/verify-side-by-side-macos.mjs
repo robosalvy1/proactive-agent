@@ -285,7 +285,7 @@ try {
     JSON.stringify(
       {
         scope:
-          'Native builder transformation and Electron fixture only; no release build, signing, registration, update or Hermes backend E2E.',
+          'Native builder transformation and Electron fixture only; no release build, signing, registration, update or Tandem backend E2E.',
         platform: os.release(),
         arch: process.arch,
         node: process.version,

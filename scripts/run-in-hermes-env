@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run a command in the Hermes dev environment, whatever shell or cwd it is
+# Run a command in the Tandem dev environment, whatever shell or cwd it is
 # launched from: `scripts/run-in-hermes-env CMD [ARGS...]`.
 #
 # The environment is the one `activate` would give a shell, applied to this

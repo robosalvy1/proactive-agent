@@ -1,6 +1,6 @@
 """The linux relaunch gate must compare canonical paths, not spellings.
 
-``--install-root`` keeps whatever spelling the app's Hermes root had (a symlinked
+``--install-root`` keeps whatever spelling the app's Tandem root had (a symlinked
 ``~/.hermes/hermes-agent``, or ``/home`` on Fedora/ostree where it is a link to
 ``/var/home``), while ``--relaunch-target`` comes from ``process.execPath`` /
 ``/proc/<pid>/exe`` and is already resolved.  A raw prefix compare then reads the
@@ -51,7 +51,7 @@ def test_target_outside_the_checkout_is_still_skew(tmp_path):
     real = tmp_path / "real"
     unpacked = _checkout(real)
     (tmp_path / "link").symlink_to(real)
-    foreign = tmp_path / "opt" / "Hermes"
+    foreign = tmp_path / "opt" / "Tandem"
     foreign.mkdir(parents=True)
     (foreign / "hermes").touch()
     assert _gate(tmp_path / "link", foreign / "hermes") == "skew"

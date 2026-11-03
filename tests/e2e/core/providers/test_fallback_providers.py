@@ -1,7 +1,7 @@
-"""Provider fallback (``fallback_providers``) through REAL ``hermes -z`` processes.
+"""Provider fallback (``fallback_providers``) through REAL ``tandem -z`` processes.
 
 Two loopback fakes stand in for two vendors: the primary and the fallback. Everything
-between the CLI and those sockets is real Hermes: config loading, credential resolution,
+between the CLI and those sockets is real Tandem: config loading, credential resolution,
 the retry ladder, fallback activation and the fallback client.
 
 Proven here:

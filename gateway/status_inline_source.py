@@ -1,7 +1,7 @@
 """Inline-source (``python -c <src> …``) command-line parsing for gateway process identity.
 
 Everything after ``-c`` is data for the inline program, not the process's own identity -- except
-Hermes' own bootstraps, which run an entry point in-process and are mapped back to the equivalent
+Tandem's own bootstraps, which run an entry point in-process and are mapped back to the equivalent
 ``python -m <module> <argv…>`` (see #107002).
 """
 
@@ -145,7 +145,7 @@ def _bootstrap_entry(source: str, argv: list[str]) -> list[str] | None:
 
 def inline_bootstrap_argv(tokens: list[str]) -> list[str] | None:
     """*tokens* as the equivalent ``python -m <module> <argv…>`` when this interpreter's ``-c`` source
-    is a Hermes bootstrap running an entry point in-process; None for any other inline source.
+    is a Tandem bootstrap running an entry point in-process; None for any other inline source.
 
     Command lines usually arrive space-joined (``/proc``, psutil, ``ps``), which splits the source
     across tokens; the shortest token run that ends in a recognised tail is the source, whatever

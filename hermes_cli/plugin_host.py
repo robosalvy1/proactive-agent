@@ -4,16 +4,16 @@ With ``plugins.isolation: host`` the loader hands a general Python plugin to :cl
 instead of importing it. The host process imports it and runs ``register(ctx)``; every ``ctx`` call
 arrives here and is replayed on the plugin's real :class:`~hermes_cli.plugins.PluginContext`, with
 the plugin's callables and provider objects swapped for proxies that call back into the host. From
-then on the rest of Hermes sees ordinary registrations — the registry, hook dispatch, the ledger,
-unload and ``hermes plugins list`` do not know the plugin lives elsewhere, and neither does the
+then on the rest of Tandem sees ordinary registrations — the registry, hook dispatch, the ledger,
+unload and ``tandem plugins list`` do not know the plugin lives elsewhere, and neither does the
 plugin: its code is unchanged and never learns which process or tenant it serves.
 
-Requests the host makes while Hermes is waiting on it (a tool handler calling ``ctx.dispatch_tool``)
+Requests the host makes while Tandem is waiting on it (a tool handler calling ``ctx.dispatch_tool``)
 run in the caller's context — same profile home, secret scope and session — via the wire's
 ``origin`` field; spontaneous ones (a ``spawn_task`` loop) run bound to this profile's home.
 
 When the host dies every proxy raises :class:`PluginHostUnavailable`: tool calls return an error,
-hooks fail like any raising callback, and Hermes itself keeps running. A fresh host is then started
+hooks fail like any raising callback, and Tandem itself keeps running. A fresh host is then started
 and its plugins reloaded (bounded restarts; a plugin that killed the host while loading stays out).
 """
 
@@ -146,7 +146,7 @@ class PluginHost:
                 code = proc.wait(timeout=0.5)  # the pipe closes a moment before the exit status lands
             except subprocess.TimeoutExpired:
                 pass
-        return (f"the plugin host for this profile exited (code {code}); Hermes restarts it and reloads "
+        return (f"the plugin host for this profile exited (code {code}); Tandem restarts it and reloads "
                 f"its plugins automatically" if code is not None else "the plugin host is not running")
 
     def _on_channel_close(self, generation: int, reason: str) -> None:
@@ -447,7 +447,7 @@ class PluginHost:
     def _object_proxy(self, ref: dict[str, Any], base: type,
                       reload: Optional[Callable[[], dict[str, Any]]] = None) -> Any:
         """An instance of ``base`` whose methods and public attributes live in the host. Attributes
-        Hermes assigns go to the plugin's object when they can cross; live handles stay local."""
+        Tandem assigns go to the plugin's object when they can cross; live handles stay local."""
         host = self
         slot = _ObjectSlot(self, ref, reload)
         live = set(ref.get("live") or ())
@@ -563,7 +563,7 @@ def _import_ref(ref: str) -> type:
 
 
 def _pump_stderr(proc: subprocess.Popen, label: str) -> None:
-    """Plugin output and host logs go to the Hermes log, tagged with the host's profile."""
+    """Plugin output and host logs go to the Tandem log, tagged with the host's profile."""
     stream = proc.stderr
     if stream is None:
         return

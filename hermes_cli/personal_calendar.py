@@ -1,8 +1,8 @@
-"""Google Calendar for the personal home, connected through Hermes's Google Workspace sign-in.
+"""Google Calendar for the personal home, connected through Tandem's Google Workspace sign-in.
 
 The tile does not keep a grant of its own. It drives the same OAuth flow as the google-workspace
 skill's ``setup.py`` (same client file, scopes, pending-session file and ``google_token.json``), so
-connecting from the home connects Hermes to Google once, and a grant made in chat lights the tile up.
+connecting from the home connects Tandem to Google once, and a grant made in chat lights the tile up.
 The person still configures the tile; the agent never adds or changes it. Implemented with httpx so
 the home works without the optional Google client libraries installed.
 """
@@ -93,7 +93,7 @@ def _client() -> dict:
 
 def store_client(raw: str) -> None:
     """Validate and save a downloaded client_secret JSON. Never replaces an existing client,
-    because Hermes's Google token is bound to it."""
+    because Tandem's Google token is bound to it."""
     if client_path().exists():
         raise CalendarError("A Google OAuth client is already configured for this profile.")
     try:
@@ -181,7 +181,7 @@ def finish(code_or_url: str) -> None:
         "redirect_uri": pending.get("redirect_uri", MANUAL_REDIRECT), "code_verifier": pending["code_verifier"],
     })
     if not body.get("refresh_token"):
-        raise CalendarError("Google didn't return a refresh token. Remove Hermes's access in your Google account and retry.")
+        raise CalendarError("Google didn't return a refresh token. Remove Tandem's access in your Google account and retry.")
     granted = str(body.get("scope") or "").split() or list(WORKSPACE_SCOPES)
     # The authorized_user shape the skill (google-auth) and the gws bridge read.
     _write_private(token_path(), {
@@ -198,7 +198,7 @@ def finish(code_or_url: str) -> None:
 
 
 def disconnect() -> None:
-    """Sign Hermes out of Google: revoke the grant, then forget the token (like `setup.py --revoke`)."""
+    """Sign Tandem out of Google: revoke the grant, then forget the token (like `setup.py --revoke`)."""
     token = _read_json(token_path()) or {}
     secret = token.get("refresh_token") or token.get("token")
     if secret:

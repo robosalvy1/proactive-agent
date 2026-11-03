@@ -195,7 +195,7 @@ function scheduleStreamRestart() {
     }
     console.error(
       `photon-sidecar: upstream stream degraded for ${degradedForMs}ms; ` +
-        "exiting so Hermes can restart the Photon adapter"
+        "exiting so Tandem can restart the Photon adapter"
     );
     process.exit(75);
   }, STREAM_DEGRADED_RESTART_MS + 1000);
@@ -684,7 +684,7 @@ function inboundStreamErrorMessage(e) {
   ) {
     out +=
       " | Photon Spectrum CatchUpEvents returned an internal server error; " +
-      "this is upstream of Hermes, so inbound iMessages may not be delivered " +
+      "this is upstream of Tandem, so inbound iMessages may not be delivered " +
       "until Photon recovers or the stream is re-established.";
   }
   return out;

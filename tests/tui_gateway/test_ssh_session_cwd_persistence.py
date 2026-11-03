@@ -2,7 +2,7 @@
 
 A resume adopts a stored ssh cwd as the remote workspace, so a persisted launch directory (in the Docker image
 ``/opt/hermes``, ``/opt/data`` or ``/opt/data/home``) made every remote terminal and file call ``cd`` into a path that
-only exists on the Hermes host.
+only exists on the Tandem host.
 """
 
 from __future__ import annotations
@@ -112,8 +112,8 @@ def test_hermes_owned_cwd(tmp_path):
 
 
 def test_hermes_owned_cwd_includes_the_root_for_a_named_profile():
-    """A named profile's home sits under the Hermes root; the root's launch dirs (``/opt/data``, ``/opt/data/home``)
-    are still Hermes's own."""
+    """A named profile's home sits under the Tandem root; the root's launch dirs (``/opt/data``, ``/opt/data/home``)
+    are still Tandem's own."""
     root = server.get_hermes_home()
     profile = str(root / "profiles" / "work")
     assert server._is_hermes_owned_cwd(_hermes_home_subdir("home"), profile)

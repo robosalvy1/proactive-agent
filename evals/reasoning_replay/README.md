@@ -4,8 +4,8 @@ Which providers and models actually **read** the reasoning that a client replays
 earlier assistant turns? A `200 OK` only shows a field was accepted. The gateway may drop it,
 and so may the chat template (for example, Qwen3 templates discard reasoning from earlier turns).
 This harness measures consumption on the wire. It uses only the standard library's HTTP client
-and has no Hermes runtime dependency, so it tests what a provider does with a request, not what
-Hermes sends.
+and has no Tandem runtime dependency, so it tests what a provider does with a request, not what
+Tandem sends.
 
 ## Method
 

@@ -1,6 +1,6 @@
 """C6: every shipped module and every entrypoint works in a FRESH process after an update.
 
-The ``hermes update`` failure class this guards (issue_classes.md C6): after the pull every
+The ``tandem update`` failure class this guards (issue_classes.md C6): after the pull every
 command dies with ``ImportError: cannot import name 'file_signature'`` (#111942, #111943,
 #112522, #114616), a module-level ``NameError``/circular import only shows up in a clean
 interpreter, or the restart phase of a pre-hand-off updater imports new code into a stale

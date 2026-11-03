@@ -1,6 +1,6 @@
 """Editor session metadata and commands on the shipped gateway path (tracker ACP-1/2/3/6/7/11).
 
-An actual ``hermes acp`` stdio process against an ordinary isolated gateway. Main's in-process
+An actual ``tandem acp`` stdio process against an ordinary isolated gateway. Main's in-process
 server (``acp_adapter/server.py``, ``acp_adapter/commands.py``) is the reference for each reply.
 """
 import json

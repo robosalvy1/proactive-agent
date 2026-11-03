@@ -70,11 +70,11 @@ def _scan_dashboard_processes(*, exclude_pids: set[int] | None = None) -> list[t
     """``(pid, cmdline)`` of running ``dashboard``/``serve`` processes; empty on any scan error.
 
     A forgotten dashboard keeps the old Python backend against the new JS bundle after
-    ``hermes update`` (every API call 401s). *exclude_pids* (Desktop's HERMES_DESKTOP_CHILD_PID
+    ``tandem update`` (every API call 401s). *exclude_pids* (Desktop's HERMES_DESKTOP_CHILD_PID
     backends) are never returned.
 
-    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the Hermes
-    Desktop Electron app to protect its own backend child process: when the desktop spawns ``hermes serve``
+    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the Tandem
+    Desktop Electron app to protect its own backend child process: when the desktop spawns ``tandem serve``
     as a backend and triggers an auto-update, the update must not kill the backend that the desktop itself
     manages. The desktop sets the environment variable ``HERMES_DESKTOP_CHILD_PID`` on the spawned backend
     process; ``_kill_stale_dashboard_processes`` reads it and passes it here. (#37532)
@@ -164,11 +164,11 @@ def _pid_passwd_home(pid: int) -> str | None:
 
 
 def _hermes_home_for_pid(pid: int) -> str | None:
-    """The Hermes home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
+    """The Tandem home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
     (another user, hardened ``/proc``) — callers spare those, never guess.
 
     A readable environment always resolves, replaying ``_apply_profile_override`` on the target's
-    exec-time env + argv (``hermes -p X serve`` rewrites ``HERMES_HOME`` in ``os.environ`` AFTER
+    exec-time env + argv (``tandem -p X serve`` rewrites ``HERMES_HOME`` in ``os.environ`` AFTER
     startup, which ``/proc/<pid>/environ`` never reflects): a profile-shaped ``HERMES_HOME``
     without a flag is the home; otherwise the root is ``HERMES_HOME`` (its grandparent when
     profile-shaped) or the platform default of the process's own ``HOME`` / ``LOCALAPPDATA``
@@ -219,7 +219,7 @@ def _profile_flag_value(argv: list[str]) -> str | None:
 
 def _is_ephemeral_port_zero_backend(argv: list[str]) -> bool:
     """True for Desktop-style ``serve|dashboard --port 0`` backends — replaying them after
-    ``hermes update`` multiplies listening backends because ``--port 0`` binds a fresh port.
+    ``tandem update`` multiplies listening backends because ``--port 0`` binds a fresh port.
 
     See #78821.
     """
@@ -265,10 +265,10 @@ def _normalized_home_for_compare(home: str) -> str:
 
 
 def _pids_owned_by_hermes_home(pids: list[int], home: str) -> list[int]:
-    """Return only *pids* whose resolved Hermes home (``_hermes_home_for_pid``) is ``home``.
+    """Return only *pids* whose resolved Tandem home (``_hermes_home_for_pid``) is ``home``.
 
     Dashboard argv is discovery-only: it is not an ownership proof because
-    several Hermes installs and profiles can run the same command on one
+    several Tandem installs and profiles can run the same command on one
     machine.  An unreadable process environment is deliberately not treated
     as a match, so a stop request fails closed rather than taking down an
     unrelated backend.
@@ -312,7 +312,7 @@ def _filter_dashboard_respawn_candidates(
     (``HERMES_DESKTOP_CHILD_PID``) owns their lifecycle. These are also the PPID-1 orphans that previously
     multiplied across updates because ``--port 0`` always binds a fresh free port. 2. A foreign install's
     backend is owned by that install's supervisor/user. 3. 4. See #78821, #94030.
-    Intentionally does **not** blanket-skip every PPID-1 process: a prior ``hermes update`` respawn detaches
+    Intentionally does **not** blanket-skip every PPID-1 process: a prior ``tandem update`` respawn detaches
     with ``start_new_session=True``, so fixed-port manual backends are reparented to init and must still be
     eligible for the next update's #40449 restart.
     """
@@ -414,7 +414,7 @@ def _is_caller_wrapper_shell(pid: int, ancestors: set[int]) -> bool:
     """True when *pid* is a caller ancestor headed by a wrapper executable.
 
     Root selection is a substring match, so the shell a ``--stop`` was typed into (or a
-    ``bash -c 'hermes dashboard --stop'`` wrapper) matches on its own argv. Ancestor alone
+    ``bash -c 'tandem dashboard --stop'`` wrapper) matches on its own argv. Ancestor alone
     is not a spare: the backend hosting a shell-escaped TUI is also the caller's ancestor
     and must stay stoppable — only a wrapper-headed ancestor is spared.
     """
@@ -470,7 +470,7 @@ def _is_detached_session_leader(pid: int, tty: str) -> bool:
 
     Messaging-gateway bots and profile actions started from ``/api/gateway/*`` are such processes:
     they are the user's, not the dashboard's, and must survive a dashboard stop. A hosted
-    ``hermes --tui`` child is a session leader too (``pty.fork``) but owns the pts whose master the
+    ``tandem --tui`` child is a session leader too (``pty.fork``) but owns the pts whose master the
     dashboard held, so its tty column is set and it stays in the sweep.
 
     Known gap: the turn-isolation ``tui_gateway.compute_host`` and ``slash_worker`` children are
@@ -492,8 +492,8 @@ def _posix_descendants(roots: list[int]) -> dict[int, tuple[int, int | None]]:
     """``{pid: (root, start_time)}`` of every dashboard-owned descendant of *roots*, snapshotted
     BEFORE the kill: once the root dies its children are reparented and the PPID link is gone.
     Detached session leaders (see ``_is_detached_session_leader``) are pruned together with their own
-    subtrees. So is the calling process with its subtree and its ancestor chain: ``hermes dashboard
-    --stop`` / ``hermes update`` run from a shell escape inside the hosted Chat TUI are same-session
+    subtrees. So is the calling process with its subtree and its ancestor chain: ``tandem dashboard
+    --stop`` / ``tandem update`` run from a shell escape inside the hosted Chat TUI are same-session
     descendants of the backend, and sweeping them would SIGTERM the caller mid-run (POSIX twin of the
     Windows #98814 hazard). The start-time fingerprint is the PID-reuse guard (same one
     ``_kill_pids_windows`` uses). Empty on scan failure → root-only kill, the historical behaviour.
@@ -591,7 +591,7 @@ def _kill_stale_dashboard_processes(
     restart_managed: bool = False, already_restarted_units: set[str] | None = None,
     scope_home: str | None = None,
 ) -> dict[str, list]:
-    """Kill running ``hermes dashboard`` / ``hermes serve`` processes (update end, ``--stop``).
+    """Kill running ``tandem dashboard`` / ``tandem serve`` processes (update end, ``--stop``).
 
     With ``restart_managed`` (update only) systemd-owned PIDs get their unit restarted after the
     kill (systemd treats our SIGTERM as a clean stop, so ``Restart=on-failure`` never fires) and
@@ -605,7 +605,7 @@ def _kill_stale_dashboard_processes(
     Manually-started dashboards are not auto-restarted because we don't know the original launch args
     (--host, --port, --insecure, --tui, --no-open). See #68934.
     *already_restarted_units* names units (no ``.service`` suffix) the caller already restarted directly —
-    e.g. ``hermes update``'s systemd fleet-restart loop, which restarts ``hermes-serve*`` units before this
+    e.g. ``tandem update``'s systemd fleet-restart loop, which restarts ``hermes-serve*`` units before this
     function runs. Without excluding them, a Serve-only install's freshly restarted process is found again
     here and restarted a second time for no benefit (review on #83595).
     """
@@ -685,7 +685,7 @@ def _kill_stale_dashboard_processes(
             print(f"  ⚠ PID(s) supervised by launchd job {target}: a KeepAlive job restarts itself.\n"
                   f"    To keep it down: launchctl bootout {target}")
         if any(p not in pid_launchd for p in killed):
-            print("  Restart the dashboard when you're ready:\n    hermes dashboard --port <port>")
+            print("  Restart the dashboard when you're ready:\n    tandem dashboard --port <port>")
     return {"matched": list(pids), "killed": list(killed), "failed": list(failed),
             "unrecovered": list(unrecovered)}
 
@@ -747,7 +747,7 @@ def _restart_killed_backends(
     if failed_cmds:
         unrecovered.extend(p for p in killed if pid_cmdline.get(p) in failed_cmds)
     if failed_restarts or unrecovered:
-        print("  Restart anything not auto-restarted when you're ready:\n    hermes dashboard --port <port>")
+        print("  Restart anything not auto-restarted when you're ready:\n    tandem dashboard --port <port>")
     return unrecovered
 
 
@@ -771,7 +771,7 @@ def _detect_concurrent_hermes_instances(
 
 
 def _is_desktop_local_serve_cmdline(command: str) -> bool:
-    """True for the Desktop-local shape ``hermes serve [--isolated] --host 127.0.0.1 --port 0``.
+    """True for the Desktop-local shape ``tandem serve [--isolated] --host 127.0.0.1 --port 0``.
 
     Long-lived headless serves (``--host <tailscale-ip> --port 9119``) must never match —
     those are operator-managed remote backends that legitimately run with ppid 1.
@@ -834,7 +834,7 @@ _HEX32 = set("0123456789abcdef")
 
 
 def _hermes_home_dir() -> Path:
-    """The process's Hermes home: remote-backend locks are a process-level asset, so a request scoped
+    """The process's Tandem home: remote-backend locks are a process-level asset, so a request scoped
     to another profile must still see the same lock dir."""
     from hermes_constants import get_process_hermes_home
     return get_process_hermes_home()
@@ -870,7 +870,7 @@ def _remote_lock_roots(base_dir: Path | None) -> list[Path]:
     """Every dir the Desktop may have written ``desktop-ssh/<ownershipId>/backend.lock.json`` under.
 
     The Desktop writes SSH locks beneath the ROOT home (``~/.hermes/desktop-ssh``), but a profile
-    backend (``hermes --profile X serve``) runs with ``HERMES_HOME=<root>/profiles/X`` — scanning only
+    backend (``tandem --profile X serve``) runs with ``HERMES_HOME=<root>/profiles/X`` — scanning only
     the process home found no lock there and its reaper killed the sibling profile's live SSH
     backend on every profile switch (#89811)."""
     if base_dir is not None:
@@ -932,9 +932,9 @@ def _process_age_seconds(pid: int) -> float:
 
 
 def _reap_orphaned_desktop_local_serves(
-    *, reason: str = "orphaned desktop-local hermes serve", signal_term=None, signal_kill=None,
+    *, reason: str = "orphaned desktop-local tandem serve", signal_term=None, signal_kill=None,
     sleep_fn=None, lock_owned_pids_fn=None, process_age_seconds_fn=None) -> dict[str, list]:
-    """Kill leftover Desktop-local ``hermes serve`` backends with no parent. Never raises.
+    """Kill leftover Desktop-local ``tandem serve`` backends with no parent. Never raises.
 
     When Electron dies uncleanly its ``serve --host 127.0.0.1 --port 0`` children are
     reparented to pid 1 with their MCP trees alive; each Desktop boot then stacks a fresh

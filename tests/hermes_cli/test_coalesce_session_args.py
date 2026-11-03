@@ -9,7 +9,7 @@ class TestCoalesceSessionNameArgs:
     # ── -c / --continue ──────────────────────────────────────────────────
 
     def test_continue_multiword_unquoted(self):
-        """hermes -c Pokemon Agent Dev → -c 'Pokemon Agent Dev'"""
+        """tandem -c Pokemon Agent Dev → -c 'Pokemon Agent Dev'"""
         assert _coalesce_session_name_args(
             ["-c", "Pokemon", "Agent", "Dev"]
         ) == ["-c", "Pokemon Agent Dev"]
@@ -33,7 +33,7 @@ class TestCoalesceSessionNameArgs:
 
 
     def test_stops_at_setup_subcommand(self):
-        """hermes -c my setup → 'setup' is a subcommand, not part of name"""
+        """tandem -c my setup → 'setup' is a subcommand, not part of name"""
         assert _coalesce_session_name_args(
             ["-c", "my", "setup"]
         ) == ["-c", "my", "setup"]

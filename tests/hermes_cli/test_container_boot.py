@@ -306,7 +306,7 @@ def test_main_skips_reconcile_in_dashboard_container_s6v3(
 
 
 def test_a_named_slots_autostart_intent_boots_the_root_slot(tmp_path: Path) -> None:
-    """An image only ever driven as `hermes -p coder gateway start` has no root state at all.
+    """An image only ever driven as `tandem -p coder gateway start` has no root state at all.
     Named slots are now registered DOWN unconditionally (one gateway per container), so without
     the root slot inheriting their intent the container boots with ZERO gateways while every
     action reports "registered" — healthy-looking and completely dark."""

@@ -1,4 +1,4 @@
-"""One user's machine across one real ``hermes update``, observed once per column.
+"""One user's machine across one real ``tandem update``, observed once per column.
 
 A manual gateway (with its cron ticker and embedded kanban dispatcher) and a manual dashboard run
 in one shared-PID-namespace sandbox. A kanban worker is in flight and a one-shot cron job comes due
@@ -141,7 +141,7 @@ def listener_pid(inst: X.Install, port: int) -> int | None:
 
 
 def dashboards(inst: X.Install) -> list[dict]:
-    """Top-level ``hermes dashboard`` processes (a dashboard's own helpers are not a second one)."""
+    """Top-level ``tandem dashboard`` processes (a dashboard's own helpers are not a second one)."""
     out = [p for p in inst.host.procs()
            if p["state"] not in ("Z", "X") and "dashboard" in p["cmdline"] and "update" not in p["cmdline"]
            and any("hermes" in a for a in p["cmdline"])]
@@ -431,7 +431,7 @@ class HandoffProperties:
         self._relaunched(o)
         assert not o.pid_file, f"{o.pid_file}\n{o.diag}"
         assert f"Gateway is running (PID: {o.ident['pid']})" in o.status.stdout, (
-            f"`hermes gateway status` cannot find the relaunched gateway:\n{H.describe(o.status)}\n{o.diag}")
+            f"`tandem gateway status` cannot find the relaunched gateway:\n{H.describe(o.status)}\n{o.diag}")
 
     def test_dashboard_is_back_on_its_port(self, fleet):
         o = fleet

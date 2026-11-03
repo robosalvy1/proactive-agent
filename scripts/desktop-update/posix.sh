@@ -250,7 +250,7 @@ on_signal() {
     # Contract C3: the code is already updated, so the interruption is an owed
     # follow-up on an ok result, never "the update failed".
     FINAL_CODE=0
-    DONE_NOTE="Hermes was updated, but the update hand-off was interrupted by $sig before its remaining steps finished. The next launch or hermes update finishes them."
+    DONE_NOTE="Tandem was updated, but the update hand-off was interrupted by $sig before its remaining steps finished. The next launch or tandem update finishes them."
     add_warning "handoff" "interrupted by $sig after the update was committed"
     exit 0
   fi
@@ -325,20 +325,20 @@ notify_fallback() { # status message — renderer-free recovery surface.
   # boot surfaces it in a dialog (handoff-result.ts + main.ts).
   case "$1" in manual|error) ;; *) return 0 ;; esac
   if [ "$(uname)" = "Darwin" ]; then
-    /usr/bin/osascript -e "display notification \"$(printf '%s' "$2" | sed 's/"/\\"/g')\" with title \"Hermes update\"" 2>/dev/null && return 0
+    /usr/bin/osascript -e "display notification \"$(printf '%s' "$2" | sed 's/"/\\"/g')\" with title \"Tandem update\"" 2>/dev/null && return 0
   else
     if command -v notify-send >/dev/null 2>&1; then
-      notify-send -u critical "Hermes update" "$2" 2>/dev/null && return 0
+      notify-send -u critical "Tandem update" "$2" 2>/dev/null && return 0
     fi
     local p
     if command -v zenity >/dev/null 2>&1; then
-      zenity --warning --title="Hermes update" --text="$2" 2>/dev/null &
+      zenity --warning --title="Tandem update" --text="$2" 2>/dev/null &
       p=$!; sleep 1
       kill -0 "$p" 2>/dev/null && return 0
       wait "$p" 2>/dev/null
     fi
     if command -v kdialog >/dev/null 2>&1; then
-      kdialog --title "Hermes update" --sorry "$2" 2>/dev/null &
+      kdialog --title "Tandem update" --sorry "$2" 2>/dev/null &
       p=$!; sleep 1
       kill -0 "$p" 2>/dev/null && return 0
       wait "$p" 2>/dev/null
@@ -371,7 +371,7 @@ find_browser() {
   # No Microsoft Edge and no Brave, on purpose. Edge's OS-level
   # Microsoft-account integration signs a fresh throwaway profile into the
   # user's MSA and renders its own "syncing your data" notification — MSA
-  # email included — inside this window that is titled "Hermes" (#88410).
+  # email included — inside this window that is titled "Tandem" (#88410).
   # Brave paints its own P3A privacy-notice bar over the progress page in
   # the same window — cramped to unreadability at the shim's small size
   # (#88682). The throwaway --user-data-dir below cannot block either; the
@@ -568,7 +568,7 @@ linux_gate() {
     [ "$arg" = "--no-sandbox" ] && { GATE=relaunch; return; }
   done
 
-  GATE=manual GATE_MSG="Update complete, but the rebuilt app can't relaunch itself (its sandbox helper needs root ownership). Reopen Hermes to finish."
+  GATE=manual GATE_MSG="Update complete, but the rebuilt app can't relaunch itself (its sandbox helper needs root ownership). Reopen Tandem to finish."
 }
 
 mac_bundle_recover() { # bundle path -- finish or roll back an interrupted swap
@@ -626,7 +626,7 @@ mac_swap() {
     swap_checkpoint start
     if ! "$MAC_DITTO" "$rebuilt" "$RELAUNCH_TARGET.new"; then
       rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-      DONE_NOTE="Hermes was updated, but the new app could not be staged; the previous app was kept. Run the update again."
+      DONE_NOTE="Tandem was updated, but the new app could not be staged; the previous app was kept. Run the update again."
       add_warning "app-swap" "bundle copy failed; previous app kept"
       return
     fi
@@ -637,15 +637,15 @@ mac_swap() {
     swap_checkpoint staged
     if ! mv "$RELAUNCH_TARGET" "$RELAUNCH_TARGET.old"; then
       rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-      DONE_NOTE="Hermes was updated, but the new app could not replace the old one; the previous app was kept. Run the update again."
+      DONE_NOTE="Tandem was updated, but the new app could not replace the old one; the previous app was kept. Run the update again."
       add_warning "app-swap" "could not move the old bundle aside; previous app kept"
     elif swap_checkpoint aside; ! mv "$RELAUNCH_TARGET.new" "$RELAUNCH_TARGET"; then
       if mv "$RELAUNCH_TARGET.old" "$RELAUNCH_TARGET"; then
         rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-        DONE_NOTE="Hermes was updated, but the new app could not be installed; the previous app was restored. Run the update again."
+        DONE_NOTE="Tandem was updated, but the new app could not be installed; the previous app was restored. Run the update again."
         add_warning "app-swap" "bundle install failed; rolled back to the previous app"
       else
-        DONE_NOTE="Hermes was updated, but installing the new app failed and the previous app could not be restored. Reinstall Hermes (the rebuilt app is at $rebuilt)."
+        DONE_NOTE="Tandem was updated, but installing the new app failed and the previous app could not be restored. Reinstall Tandem (the rebuilt app is at $rebuilt)."
         add_warning "app-swap" "bundle install failed AND rollback failed"
       fi
     else
@@ -763,7 +763,7 @@ finish() {
       if ! launch_app; then
         # Even the kept bundle didn't come back: the durable message must
         # carry BOTH facts (update ok, previous app not reopened).
-        FINAL_MSG="$DONE_NOTE Hermes also could not reopen itself - open it manually."
+        FINAL_MSG="$DONE_NOTE Tandem also could not reopen itself - open it manually."
         write_result
       fi
     fi
@@ -773,7 +773,7 @@ finish() {
   else
     # Launch was due and did not land. Downgrade: truthful result for the
     # next boot, manual state held on screen now.
-    FINAL_MSG="Update complete. Reopen Hermes to finish (it could not restart itself)."
+    FINAL_MSG="Update complete. Reopen Tandem to finish (it could not restart itself)."
     MANUAL=1
     write_result
     publish "manual" "$FINAL_MSG"; stop_ui leave-window
@@ -980,7 +980,7 @@ fi
 # teardown, while retaining the same marker/result protocol.
 if [ "$HANDOFF_DAEMONIZED" -ne 1 ]; then
   # This launcher is disposable. In particular it must not run finish() on
-  # EXIT: that would publish a false failure and relaunch Hermes while the
+  # EXIT: that would publish a false failure and relaunch Tandem while the
   # re-parented orchestrator is only just starting.
   trap - EXIT HUP INT QUIT TERM
   # --daemonized must precede ORIGINAL_ARGS, not follow it: ORIGINAL_ARGS may
@@ -1041,7 +1041,7 @@ if ! marker_claim; then
   # A4: this run changed nothing and owns no result -- the other update (or
   # the Desktop that gave up on this hand-off) reports its own. An older
   # Desktop quits right after spawning us, so bring one back if it is gone.
-  log "Another Hermes update is already running (process $MARKER_REFUSED_PID), or the Desktop gave up on this hand-off. Nothing was changed."
+  log "Another Tandem update is already running (process $MARKER_REFUSED_PID), or the Desktop gave up on this hand-off. Nothing was changed."
   trap - EXIT
   [ "$(uname)" = "Darwin" ] || linux_gate
   launch_app || true
@@ -1093,7 +1093,7 @@ if [ "$DESKTOP_PID" -gt 0 ] 2>/dev/null; then
   _exit_deadline=$(( $(date +%s) + DESKTOP_EXIT_SECONDS ))
   while ident_alive "$DESKTOP_PID" "$DESKTOP_CT" && [ "$(date +%s)" -lt "$_exit_deadline" ]; do sleep 0.3; done
   if ident_alive "$DESKTOP_PID" "$DESKTOP_CT"; then
-    FINAL_CODE=4 FINAL_MSG="Update aborted: the Hermes window (pid $DESKTOP_PID) did not exit within ${DESKTOP_EXIT_SECONDS}s. Nothing was changed. Close Hermes fully and try again."
+    FINAL_CODE=4 FINAL_MSG="Update aborted: the Tandem window (pid $DESKTOP_PID) did not exit within ${DESKTOP_EXIT_SECONDS}s. Nothing was changed. Close Tandem fully and try again."
     log "$FINAL_MSG"; exit "$FINAL_CODE"
   fi
 fi
@@ -1164,7 +1164,7 @@ export HERMES_UPDATE_STATUS_FILE="$STATUS"
 # and never an ancestor of the `hermes update` we spawn. update_lock._is_partner can only
 # match it through this variable, so exporting `$$` left the custodian unrecognisable and
 # every desktop-initiated update refused its own claim with exit code 2
-# ("Another Hermes update is already running (started Ns ago, process <custodian>)").
+# ("Another Tandem update is already running (started Ns ago, process <custodian>)").
 # $MY_PID is the custodian once the handover succeeded, and our own pid when it did not.
 export HERMES_UPDATE_HANDOFF_PID="$MY_PID"
 # The update's receipt carries this id (update_receipt._launcher_correlation_id),
@@ -1173,7 +1173,7 @@ export HERMES_UPDATE_CORRELATION_ID="$UPDATE_CORRELATION"
 # --keep-stash: never re-apply local source edits after the update (they stay
 # parked in git stash). Probe --help first: older installed backends don't
 # know the flag and argparse would abort with exit 2, which collides with the
-# "close all Hermes windows" sentinel. The probe is bounded: a hung launcher
+# "close all Tandem windows" sentinel. The probe is bounded: a hung launcher
 # must not hold the marker forever.
 KEEP_STASH=""
 if run_bounded 60 "${UPDATE_INVOKE[@]}" update --help | grep -q -- '--keep-stash'; then
@@ -1239,7 +1239,7 @@ log "hermes update exit code: $CODE"
 
 if [ "$LEGACY_INSTALL" -eq 1 ] && [ "$CODE" -ne 0 ] && [ "$CODE" -ne 2 ]; then
   # Retry once: update-boundary class (fresh code on disk, stale in memory).
-  # Exit 2 ("close all Hermes windows") is not retryable.
+  # Exit 2 ("close all Tandem windows") is not retryable.
   #
   # A parked-branch SKIP (checkout on a feature branch with unmerged
   # commits) is also deterministic — the retry would hit the exact same
@@ -1265,11 +1265,11 @@ if [ "$CODE" -eq 0 ]; then FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMM
   # Contract C3: a Desktop build that fails after the code committed is an owed
   # follow-up (hermes update exits 0 and prints one whole "Desktop app build
   # owed:" line for it; the follow-up text itself is truncated). The user is on
-  # the new Hermes, but this app was not rebuilt: say so and say how to fix it,
+  # the new Tandem, but this app was not rebuilt: say so and say how to fix it,
   # never "finished OK" and never "still on the previous version".
   if printf '%s\n' "$OUT" | grep -Eq '^[[:space:]]*Desktop app build owed: '; then
     APP_REBUILD_FAILED=1
-    DONE_NOTE="Hermes was updated, but the Desktop app could not be rebuilt, so it still runs its old build. Run hermes desktop --force-build in a terminal to rebuild it; the update log has the build error."
+    DONE_NOTE="Tandem was updated, but the Desktop app could not be rebuilt, so it still runs its old build. Run tandem desktop --force-build in a terminal to rebuild it; the update log has the build error."
     add_warning "build" "the Desktop app build is owed by the committed update"
   fi
   # Every other owed follow-up (a gateway still on the old code, a Windows
@@ -1278,18 +1278,18 @@ if [ "$CODE" -eq 0 ]; then FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMM
   # end as a plain "Update complete." (review regression 1).
   OWED_STEPS="$(owed_followup_steps)"
   if [ -n "$OWED_STEPS" ]; then
-    case " $OWED_STEPS " in *" gateway_restart "*) OWED_HINT=" Run hermes gateway restart to move the messaging gateway onto the new code now." ;; *) OWED_HINT="" ;; esac
+    case " $OWED_STEPS " in *" gateway_restart "*) OWED_HINT=" Run tandem gateway restart to move the messaging gateway onto the new code now." ;; *) OWED_HINT="" ;; esac
     if [ -n "$DONE_NOTE" ]; then DONE_NOTE="$DONE_NOTE Follow-up steps still owed: $OWED_STEPS.$OWED_HINT"
-    else DONE_NOTE="Hermes was updated, but some follow-up steps did not finish ($OWED_STEPS). The next launch or hermes update retries them; the update log has the details.$OWED_HINT"; fi
+    else DONE_NOTE="Tandem was updated, but some follow-up steps did not finish ($OWED_STEPS). The next launch or tandem update retries them; the update log has the details.$OWED_HINT"; fi
     add_warning "followup" "owed by the committed update: $OWED_STEPS"
   fi
 elif [ "$CODE" -ne 2 ] && update_committed_after_exit; then
   # Past the commit point: installed, with an owed follow-up (contract C3).
   FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMMITTED=1
   case "$RECEIPT_OUTCOME" in
-    partial) DONE_NOTE="Hermes was updated, but one step is left for you: your local source changes may still be parked in git stash. Run hermes update in a terminal for the exact commands." ;;
-    interrupted) DONE_NOTE="Hermes was updated, but its post-update steps were interrupted. The next launch or hermes update finishes them." ;;
-    *) DONE_NOTE="Hermes was updated, but hermes update exited with code $CODE afterwards. Run hermes update in a terminal to finish any remaining steps." ;;
+    partial) DONE_NOTE="Tandem was updated, but one step is left for you: your local source changes may still be parked in git stash. Run tandem update in a terminal for the exact commands." ;;
+    interrupted) DONE_NOTE="Tandem was updated, but its post-update steps were interrupted. The next launch or tandem update finishes them." ;;
+    *) DONE_NOTE="Tandem was updated, but tandem update exited with code $CODE afterwards. Run tandem update in a terminal to finish any remaining steps." ;;
   esac
   add_warning "update" "hermes update exited $CODE after the commit point (receipt outcome: $RECEIPT_OUTCOME)"
 else
@@ -1299,7 +1299,7 @@ else
   # succeed — tell the user what is actually wrong (#95759).
   if [ "$LEGACY_INSTALL" -eq 1 ] && ! tcc_probe_python "$INSTALL_ROOT/venv/bin/python3" \
       && ! tcc_probe_python "$INSTALL_ROOT/venv/bin/python"; then
-    FINAL_MSG="Update failed: the Python interpreter inside $INSTALL_ROOT/venv cannot start (heal state: $TCC_HEAL_STATE). Reinstall the runtime with the Hermes installer, or run hermes doctor --fix from a terminal if any hermes command still works."
+    FINAL_MSG="Update failed: the Python interpreter inside $INSTALL_ROOT/venv cannot start (heal state: $TCC_HEAL_STATE). Reinstall the runtime with the Tandem installer, or run hermes doctor --fix from a terminal if any hermes command still works."
   fi
 fi
 
@@ -1312,7 +1312,7 @@ if [ "$LEGACY_INSTALL" -eq 1 ] && [ "$CODE" -eq 0 ] && printf '%s' "$OUT" | grep
   publish_stage "Rebuilding Desktop"
   if ! ( trap - TERM; exec "${UPDATE_INVOKE[@]}" desktop --force-build --build-only ) >> "$LOG" 2>&1; then
     APP_REBUILD_FAILED=1
-    DONE_NOTE="Hermes was updated, but the Desktop app rebuild failed - you are running the previous app build. Run hermes desktop --force-build from a terminal to retry."
+    DONE_NOTE="Tandem was updated, but the Desktop app rebuild failed - you are running the previous app build. Run tandem desktop --force-build from a terminal to retry."
     add_warning "desktop-rebuild" "hermes desktop --force-build --build-only failed"
   fi
 fi

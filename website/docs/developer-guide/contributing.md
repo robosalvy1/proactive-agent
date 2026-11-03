@@ -1,9 +1,9 @@
 ---
 title: Contributing
-description: Development workflow for Proactive Agent
+description: Development workflow for Tandem Agent
 ---
 
-# Contributing to Proactive Agent
+# Contributing to Tandem Agent
 
 Follow this repository’s [contribution guide](../../../CONTRIBUTING.md) and root `AGENTS.md`. Product scope, work priorities, validation, and review follow the project documentation in `docs/project/`. External project acceptance policies do not govern work here.
 

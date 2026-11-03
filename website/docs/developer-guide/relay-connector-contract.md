@@ -1,9 +1,9 @@
 ---
 title: "Relay ↔ Connector Contract"
-description: "Wire contract between the Hermes gateway relay adapter and external connectors (experimental)"
+description: "Wire contract between the Tandem gateway relay adapter and external connectors (experimental)"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Relay ↔ Connector Contract (v1, EXPERIMENTAL)
@@ -13,7 +13,7 @@ description: "Wire contract between the Hermes gateway relay adapter and externa
 > validated it. Evolution during the experimental phase is **additive-only**,
 > gated by `contract_version`. A breaking change updates both repos in lockstep.
 
-This document is the formal interface between the **Hermes gateway** (Python,
+This document is the formal interface between the **Tandem gateway** (Python,
 `gateway/relay/`) and the **connector** (Node/TypeScript,
 `NousResearch/gateway-gateway`). The connector implementer's first action is to
 read this file.
@@ -319,7 +319,7 @@ the wake SIGNAL so a future scale-to-zero behaviour layer can rely on "buffered
 
 - **Registration.** The gateway registers a **wake URL** at enroll/provision —
   any reachable URL the connector can GET to wake it (a Fly autostart hostname,
-  a dashboard host). Self-hosted: `hermes gateway enroll --wake-url <url>` (or
+  a dashboard host). Self-hosted: `tandem gateway enroll --wake-url <url>` (or
   `GATEWAY_RELAY_WAKE_URL` / `gateway.relay_wake_url`). Managed/NAS: stamped into
   the container env beside `GATEWAY_RELAY_URL`. Forwarded in the
   `/relay/provision` body as `wakeUrl` and stored per-instance on the connector's
@@ -428,7 +428,7 @@ The gateway calls the transport with action dicts. Source of truth:
 
 **`metadata.profile` (multiplex round-trip).** Every chat-addressed outbound
 frame's `metadata` carries the tenant discriminators the gateway captured from
-the inbound (`scope_id`, `user_id`) and, on a multiplexed gateway, the Hermes
+the inbound (`scope_id`, `user_id`) and, on a multiplexed gateway, the Tandem
 `profile` the connector routed that chat's inbound to; `follow_up` frames carry
 the profile encoded in their `session_key` namespace. The connector MUST stamp
 the same `profile` on the next `passthrough_forward` / `inbound` for that chat or
@@ -651,7 +651,7 @@ only in transport. See `docs/capability-trust-boundary.md` (connector repo:
 A2 makes the connector the sole holder of platform secrets while the gateway may
 be **customer-managed and internet-exposed**, so the connector⇄gateway channel
 is itself authenticated. The gateway holds an enrollment- or provision-issued
-**per-gateway secret** (`hermes gateway enroll` → connector `/relay/enroll`, or
+**per-gateway secret** (`tandem gateway enroll` → connector `/relay/enroll`, or
 managed self-provision → `/relay/provision`) that authenticates its outbound WS
 upgrade. It is an HMAC-SHA256 scheme with a multi-secret rotation verify list
 (gateway side: `gateway/relay/auth.py`; connector side:
@@ -718,7 +718,7 @@ body (a body-asserted `instanceId` is ignored).
 
 These are connector-owned (the management plane is not part of the gateway's
 agent path); the gateway only calls `POST /relay/policy` (§7.3). The others are
-driven by the managed Portal / `hermes` CLI.
+driven by the managed Portal / `tandem` CLI.
 
 ### 7.3 Relevance-policy declaration (the gateway's responsibility)
 

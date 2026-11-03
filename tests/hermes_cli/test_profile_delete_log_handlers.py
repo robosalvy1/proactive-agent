@@ -1,6 +1,6 @@
 """Profile deletion must release the profile-routed log handlers this process holds (#112538).
 
-A long-lived multiplex process (the Desktop's ``hermes serve`` backend) routes records to every
+A long-lived multiplex process (the Desktop's ``tandem serve`` backend) routes records to every
 served profile's ``logs/*.log`` through ``_ProfileRoutingFileHandler``, which lazily opens one
 rotating handler per home. On Windows that handler is ``ConcurrentRotatingFileHandler`` and keeps
 ``logs/.__<name>.lock`` open, so ``delete_profile`` run inside that process fails ``rmtree`` with

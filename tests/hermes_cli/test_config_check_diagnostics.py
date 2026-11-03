@@ -74,5 +74,5 @@ def test_config_check_reports_disabled_platform_only_when_runtime_disables_it(tm
         output = _check(home, monkeypatch, capsys)
         assert ("platform plugin 'platforms/fakechat' is disabled" in output) is reported, home.name
         if reported:
-            assert "hermes plugins enable platforms/fakechat" in output
+            assert "tandem plugins enable platforms/fakechat" in output
         assert "synthetic-test-token" not in output

@@ -127,7 +127,7 @@ def test_scoped_current_board_context_trumps_kanban_db_env(monkeypatch, tmp_path
 def test_cli_board_flag_trumps_worker_env_pin_end_to_end(monkeypatch, tmp_path):
     """Real boundary: a worker shell pinned via HERMES_KANBAN_DB/BOARD (the
     exact env every dispatcher-spawned kanban worker runs with) invokes
-    `hermes kanban --board B create ...` through the actual CLI parser.
+    `tandem kanban --board B create ...` through the actual CLI parser.
     Only board B's physical database may receive the write; the pinned
     board's database must not also contain the task."""
     import argparse

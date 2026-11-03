@@ -23,7 +23,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Hermes</title>
+<title>Tandem</title>
 <style>
   :root {
     --background: #ffffff;
@@ -107,8 +107,8 @@
   <div class="wrap">
     <div id="loader" role="status" aria-label="Updating"></div>
     <div id="glyph"></div>
-    <h2 id="title">Updating Hermes</h2>
-    <p id="line">Hermes will open once done.</p>
+    <h2 id="title">Updating Tandem</h2>
+    <p id="line">Tandem will open once done.</p>
   </div>
 <script>
   /* ── Fourier Flow loader, ported verbatim from loader.tsx ─────────────── */
@@ -228,20 +228,20 @@
       settle('done')
       glyphEl.textContent = '\u2713'
       titleEl.textContent = 'Update complete'
-      lineEl.textContent = 'Opening Hermes\u2026\nYou can close this window.'
+      lineEl.textContent = 'Opening Tandem\u2026\nYou can close this window.'
     } else if (state.status === 'manual') {
-      // Update landed but Hermes will NOT reopen itself (package skew,
+      // Update landed but Tandem will NOT reopen itself (package skew,
       // sandbox helper, launch rejected). The orchestrator leaves this
       // window up; the message says what to do.
       settle('done')
       glyphEl.textContent = '\u2713'
       titleEl.textContent = 'Update complete'
-      lineEl.textContent = state.message || 'Reopen Hermes to finish.'
+      lineEl.textContent = state.message || 'Reopen Tandem to finish.'
     } else if (state.status === 'error') {
       settle('error')
       glyphEl.textContent = '\u2715'
       titleEl.textContent = 'Failed to update'
-      lineEl.innerHTML = 'Run <code>hermes debug share</code> in a terminal to send a report.'
+      lineEl.innerHTML = 'Run <code>tandem debug share</code> in a terminal to send a report.'
     }
   }
 
@@ -280,7 +280,7 @@
         settle('disconnected')
         glyphEl.textContent = '!'
         titleEl.textContent = 'Update status unavailable'
-        lineEl.textContent = 'The progress connection was lost.\nCheck Hermes for the update result. You can close this window.'
+        lineEl.textContent = 'The progress connection was lost.\nCheck Tandem for the update result. You can close this window.'
       }
     }
     if (!settled) setTimeout(poll, 400)

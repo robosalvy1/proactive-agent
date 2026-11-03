@@ -93,7 +93,7 @@ class TestWebBuildLimits:
 
 
 class TestBuildSourceWebPropagatesLimits:
-    """The install/update/``hermes dashboard`` build path must apply the caps."""
+    """The install/update/``tandem dashboard`` build path must apply the caps."""
 
     def test_build_source_web_applies_limits(self, tmp_path, monkeypatch):
         from hermes_cli import source_build

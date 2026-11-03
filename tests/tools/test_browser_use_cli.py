@@ -3,7 +3,7 @@
 Covers the three seams the integration relies on:
 
 * Mode detection — ``browser.backend: browser-use`` in config (set via the
-  ``hermes tools`` picker); off by default.
+  ``tandem tools`` picker); off by default.
 * Tool-surface swap — when the mode is on, ``check_browser_requirements``
   returns False so every legacy ``browser_*`` tool (including
   browser_cdp/browser_dialog, whose check_fns funnel through it) is hidden,
@@ -584,7 +584,7 @@ class TestBackendCdpResolution:
         assert _fake_managed_chromium == [("t1", "get", ("cdp-url",))]
 
     def test_picker_managed_selection_resolves_gateway_provider(self, monkeypatch):
-        """``cloud_provider: nous`` (the `hermes tools` managed row) must resolve through the
+        """``cloud_provider: nous`` (the `tandem tools` managed row) must resolve through the
         provider: the picker never writes the legacy ``use_gateway`` flag, and the direct-API
         branch leaves browser_exec with no CDP endpoint at all (#108310)."""
         import tools.browser_tool as bt
@@ -708,7 +708,7 @@ class TestOwnTabPreamble:
 
 
 class TestProviderPickerIntegration:
-    """The `hermes tools` Browser Automation picker row (browser_backend
+    """The `tandem tools` Browser Automation picker row (browser_backend
     marker) must enter/leave CLI mode cleanly and highlight correctly."""
 
     def _rows(self):
@@ -1062,7 +1062,7 @@ class TestDefaultDowngradeNotice:
 
 
 class TestLightpandaBackendResolution:
-    """browser.engine: lightpanda in Browser Use mode — Hermes spawns
+    """browser.engine: lightpanda in Browser Use mode — Tandem spawns
     ``lightpanda serve`` through the same _get_session_info machinery and
     exports its endpoint, but only when nothing with higher precedence
     (BU_CDP_* env, a CDP override, a cloud provider) claimed the session."""

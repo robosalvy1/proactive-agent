@@ -1,4 +1,4 @@
-"""Bounded product contract for the first Hermes shared-metrics slice."""
+"""Bounded product contract for the first Tandem shared-metrics slice."""
 
 from __future__ import annotations
 
@@ -798,7 +798,7 @@ def client_architecture(value: Any) -> str:
 
 
 def client_install_method(value: Any) -> str:
-    """Return an allowlisted Hermes installation method."""
+    """Return an allowlisted Tandem installation method."""
     normalized = _norm(value)
     return _allowlisted("nixos" if normalized == "nix" else normalized, CLIENT_INSTALL_METHODS)
 
@@ -1347,7 +1347,7 @@ def model_call_dimensions(event: Any) -> dict[str, str] | None:
 
 
 def _auxiliary_model_call_dimensions(event: Any) -> dict[str, str] | None:
-    """Project a terminal auxiliary route from its Hermes logical scope."""
+    """Project a terminal auxiliary route from its Tandem logical scope."""
     metadata = _relay_metadata(
         event, RUNTIME_SCHEMA_KEY, RUNTIME_SCHEMA_VERSION, "hermes.call_role"
     )
@@ -1662,7 +1662,7 @@ def task_failure_class(kwargs: dict[str, Any], outcome: str | None = None) -> st
 
 
 def task_terminal_state(kwargs: dict[str, Any]) -> tuple[str, str, str]:
-    """Map Hermes terminal state to bounded (outcome, end_reason, termination)."""
+    """Map Tandem terminal state to bounded (outcome, end_reason, termination)."""
     reason = _norm(kwargs.get("turn_exit_reason"))
     if kwargs.get("interrupted") or "interrupt" in reason or "cancel" in reason:
         return "cancelled", "user_cancelled", "user_cancelled"
@@ -1724,7 +1724,7 @@ _TOOL_CATEGORY_PREFIXES = (
 
 
 def tool_category(kwargs: dict[str, Any]) -> str:
-    """Map Hermes registry toolset metadata to a low-cardinality category."""
+    """Map Tandem registry toolset metadata to a low-cardinality category."""
     if _norm(kwargs.get("tool_name")).startswith(CONNECTOR_NAME_PREFIX):
         return "connector"
     toolset = _norm(kwargs.get("toolset"))
@@ -1745,7 +1745,7 @@ _TOOL_STATUS_OUTCOMES = {
 
 
 def tool_outcome(kwargs: dict[str, Any]) -> str:
-    """Normalize the terminal Hermes tool status without inspecting its result."""
+    """Normalize the terminal Tandem tool status without inspecting its result."""
     return _TOOL_STATUS_OUTCOMES.get(_norm(kwargs.get("status")), "unknown")
 
 
@@ -1808,7 +1808,7 @@ _TOOL_ERROR_TYPES = {
 
 
 def tool_error_class(kwargs: dict[str, Any], outcome: str | None = None) -> str:
-    """Closed failure class from Hermes's own error_type; exception class names become
+    """Closed failure class from Tandem's own error_type; exception class names become
     ``exception`` so plugin-defined identifiers never leave the machine. A connector entry's
     gateway error code names its class instead of ``tool_error``."""
     outcome = outcome or tool_outcome(kwargs)
@@ -1892,7 +1892,7 @@ def _non_negative_number(value: Any) -> float | None:
 
 
 def model_call_fields(kwargs: dict[str, Any]) -> dict[str, str]:
-    """Return the terminal model identity and provider route known to Hermes."""
+    """Return the terminal model identity and provider route known to Tandem."""
     from .shared_metrics_catalog import model_metric_name, provider_metric_name
 
     provider = provider_metric_name(kwargs.get("provider"))

@@ -159,7 +159,7 @@ def _minimax_poll_token(
 
 
 def _minimax_save_auth_state(auth_state: dict[str, Any], *, set_active: bool = True) -> None:
-    """Persist MiniMax OAuth state to Hermes auth store (~/.hermes/auth.json).
+    """Persist MiniMax OAuth state to Tandem auth store (~/.hermes/auth.json).
 
     ``set_active=False`` rewrites credentials without making minimax-oauth the
     active provider (``_save_provider_state_to_source``'s rule: a token refresh
@@ -189,7 +189,7 @@ def _minimax_oauth_login(*, region: str = "global", open_browser: bool = True, t
     if _is_remote_session():
         open_browser = False
 
-    print(f"Starting Hermes login via MiniMax ({region}) OAuth...")
+    print(f"Starting Tandem login via MiniMax ({region}) OAuth...")
     print(f"Portal: {portal_base_url}")
 
     with httpx.Client(timeout=httpx.Timeout(timeout_seconds), headers={"Accept": "application/json"},
@@ -309,7 +309,7 @@ def _minimax_fresh_state() -> dict[str, Any]:
         state = get_provider_auth_state("minimax-oauth")
         if not state or not state.get("access_token"):
             raise _minimax_err(
-                "Not logged into MiniMax OAuth. Run `hermes model` and select MiniMax (OAuth).",
+                "Not logged into MiniMax OAuth. Run `tandem model` and select MiniMax (OAuth).",
                 "not_logged_in", relogin=True,
             )
         try:
@@ -338,7 +338,7 @@ def resolve_minimax_oauth_runtime_credentials(
     *, min_token_ttl_seconds: int = MINIMAX_OAUTH_REFRESH_SKEW_SECONDS,
     as_token_provider: bool = False,
 ) -> dict[str, Any]:
-    """Return {provider, api_key, base_url, source}; string ``api_key`` by default (``hermes status`` contract)."""
+    """Return {provider, api_key, base_url, source}; string ``api_key`` by default (``tandem status`` contract)."""
     state = _minimax_fresh_state()
     return {
         "provider": "minimax-oauth",

@@ -439,8 +439,8 @@ class CLIStreamMixin:
             try:
                 from hermes_cli.skin_engine import get_active_skin
                 _skin = get_active_skin()
-                label = _skin.get_branding("response_label", "☤ Hermes")
-                if label == "☤ Hermes":
+                label = _skin.get_branding("response_label", "☤ Tandem")
+                if label == "☤ Tandem":
                     from hermes_cli.cli_identity import get_agent_name
                     label = f"☤ {get_agent_name()}"
                 _text_hex = _skin.get_color("banner_text", "#FFF8DC")

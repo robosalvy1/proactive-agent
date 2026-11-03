@@ -1,4 +1,4 @@
-"""Classic `hermes --cli chat` session commands on the shared gateway, driven in a real PTY.
+"""Classic `tandem --cli chat` session commands on the shared gateway, driven in a real PTY.
 
 The classic CLI is main's HermesCLI again (gateway-backed agent and session store), so each
 expectation is main's own output for the same keystrokes (lanes/pushready/probe_cmds.py, main =
@@ -110,7 +110,7 @@ def classic_session(tmp_path):
             # The banner prints before prompt_toolkit owns the tty: keys typed then are echoed raw and
             # reach the app in one burst with their Enter (a newline, not a submit). The drawn
             # composer row means the app is reading keys.
-            while not ("Welcome to Hermes Agent" in screen() and composer_shows("")):
+            while not ("Welcome to Tandem Agent" in screen() and composer_shows("")):
                 assert time.monotonic() < deadline, (screen(), (home / "gw.log").read_text())
                 time.sleep(.1)
             yield send, screen, db, session_id

@@ -246,7 +246,7 @@ async def test_named_telegram_private_topic_is_created_before_delivery(tmp_path,
     await router._deliver_to_platform(target, "hello", metadata=None)
 
     assert adapter.ensure_dm_topic_calls == [
-        {"chat_id": "722341991", "topic_name": "Hermes API Test", "force_create": False}
+        {"chat_id": "722341991", "topic_name": "Tandem API Test", "force_create": False}
     ]
     assert adapter.calls == [
         {

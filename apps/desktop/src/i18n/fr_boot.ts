@@ -3,21 +3,21 @@ import type { TranslationOverrides } from './define-locale'
 // The boot screen's copy (including the update-hold screen), composed by fr.ts.
 export const frBoot = {
   boot: {
-    ready: 'Hermes Desktop est prêt',
+    ready: 'Tandem Desktop est prêt',
     desktopBootFailedWithMessage: message => `Échec du démarrage : ${message}`,
     steps: {
       connectingGateway: 'Connexion au gateway desktop',
-      loadingSettings: 'Chargement des paramètres Hermes',
+      loadingSettings: 'Chargement des paramètres Tandem',
       loadingSessions: 'Chargement des sessions récentes',
-      retryingRemoteBackend: 'Reconnexion au backend Hermes distant…',
+      retryingRemoteBackend: 'Reconnexion au backend Tandem distant…',
       startingDesktopConnection: 'Démarrage de la connexion desktop',
-      startingHermesDesktop: 'Démarrage de Hermes Desktop…'
+      startingHermesDesktop: 'Démarrage de Tandem Desktop…'
     },
     errors: {
-      backgroundExited: "Le processus en arrière-plan de Hermes s'est arrêté.",
-      backgroundExitedDuringStartup: "Le processus en arrière-plan de Hermes s'est arrêté pendant le démarrage.",
+      backgroundExited: "Le processus en arrière-plan de Tandem s'est arrêté.",
+      backgroundExitedDuringStartup: "Le processus en arrière-plan de Tandem s'est arrêté pendant le démarrage.",
       backendStopped: 'Backend arrêté',
-      restartHermes: 'Redémarrer Hermes',
+      restartHermes: 'Redémarrer Tandem',
       openLogs: 'Ouvrir les journaux',
       desktopBootFailed: 'Échec du démarrage',
       gatewayConnectionLost: 'Connexion au gateway perdue',
@@ -32,16 +32,16 @@ export const frBoot = {
       ipcBridgeUnavailable: 'Le pont IPC du desktop est indisponible.'
     },
     causes: {
-      exitedEarly: "Le service en arrière-plan de Hermes s'est arrêté juste après son démarrage.",
-      timedOut: "Le service en arrière-plan de Hermes n'a pas répondu à temps.",
-      permission: "Hermes n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
-      diskFull: "Le disque est plein ; Hermes n'a donc pas pu démarrer.",
-      portInUse: 'Un autre programme utilise le port réseau nécessaire à Hermes.',
+      exitedEarly: "Le service en arrière-plan de Tandem s'est arrêté juste après son démarrage.",
+      timedOut: "Le service en arrière-plan de Tandem n'a pas répondu à temps.",
+      permission: "Tandem n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
+      diskFull: "Le disque est plein ; Tandem n'a donc pas pu démarrer.",
+      portInUse: 'Un autre programme utilise le port réseau nécessaire à Tandem.',
       installMissing:
-        "Une partie de l'installation de Hermes est manquante. Choisissez Réparer l'installation pour la restaurer."
+        "Une partie de l'installation de Tandem est manquante. Choisissez Réparer l'installation pour la restaurer."
     },
     failure: {
-      title: "Hermes n'a pas pu démarrer",
+      title: "Tandem n'a pas pu démarrer",
       description:
         "Le gateway en arrière-plan n'a pas pu se lancer. Essayez l'une des étapes de récupération ci-dessous. Rien ici ne supprime vos conversations ou paramètres.",
       details: 'Détails',
@@ -79,31 +79,31 @@ export const frBoot = {
       identityProvider: "votre fournisseur d'identité"
     },
     updateHold: {
-      title: 'Une mise à jour précédente bloque encore Hermes',
-      titleUnverified: 'Hermes ne peut pas confirmer la fin de la dernière mise à jour',
+      title: 'Une mise à jour précédente bloque encore Tandem',
+      titleUnverified: 'Tandem ne peut pas confirmer la fin de la dernière mise à jour',
       description:
-        "Hermes attend avant de démarrer pour ne pas charger des fichiers qu'une mise à jour modifie peut-être encore. Il démarre tout seul dès que le blocage cesse.",
+        "Tandem attend avant de démarrer pour ne pas charger des fichiers qu'une mise à jour modifie peut-être encore. Il démarre tout seul dès que le blocage cesse.",
       heldByProcess: pid =>
-        `La mise à jour (processus ${pid}) s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Hermes.`,
+        `La mise à jour (processus ${pid}) s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Tandem.`,
       heldUnknown:
-        "Une mise à jour s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Hermes.",
+        "Une mise à jour s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Tandem.",
       unverified:
-        "L'assistant de mise à jour n'a pas pu vérifier qui détient l'installation de Hermes. Hermes continue de vérifier.",
+        "L'assistant de mise à jour n'a pas pu vérifier qui détient l'installation de Tandem. Tandem continue de vérifier.",
       since: time => `En attente depuis ${time}`,
       lastChecked: time => `Dernière vérification ${time}`,
       recoveryHint:
-        "Cela se règle généralement en quelques minutes. Sinon : quittez Hermes, arrêtez les processus git ou hermes restants (ou redémarrez l'ordinateur), puis rouvrez Hermes.",
+        "Cela se règle généralement en quelques minutes. Sinon : quittez Tandem, arrêtez les processus git ou hermes restants (ou redémarrez l'ordinateur), puis rouvrez Tandem.",
       checkAgain: 'Vérifier à nouveau',
-      quit: 'Quitter Hermes',
+      quit: 'Quitter Tandem',
       openLogs: 'Ouvrir les journaux',
       startAnyway: 'Démarrer quand même…',
-      confirmTitle: 'Démarrer Hermes alors que la mise à jour le bloque encore ?',
+      confirmTitle: 'Démarrer Tandem alors que la mise à jour le bloque encore ?',
       confirmBody:
-        'Le processus de mise à jour restant modifie peut-être encore les fichiers de Hermes. Démarrer maintenant peut charger une installation à moitié mise à jour, qui risque de ne pas fonctionner avant une nouvelle mise à jour. Hermes consigne ce choix dans son journal et laisse le marqueur de mise à jour en place.',
+        'Le processus de mise à jour restant modifie peut-être encore les fichiers de Tandem. Démarrer maintenant peut charger une installation à moitié mise à jour, qui risque de ne pas fonctionner avant une nouvelle mise à jour. Tandem consigne ce choix dans son journal et laisse le marqueur de mise à jour en place.',
       confirmKeepWaiting: 'Continuer à attendre',
       confirmStart: 'Démarrer quand même',
       startAnywayRefused:
-        "Ce qui bloque l'installation a changé avant que Hermes puisse démarrer. Vérifiez et réessayez."
+        "Ce qui bloque l'installation a changé avant que Tandem puisse démarrer. Vérifiez et réessayez."
     }
   }
 } satisfies Pick<TranslationOverrides, 'boot'>

@@ -1,6 +1,6 @@
 """Is there ONE live host gateway, and does it already serve this profile?
 
-Multiplex-only (Teknium ruling): exactly one MULTIPLEXING ``hermes gateway run`` per host, serving
+Multiplex-only (Teknium ruling): exactly one MULTIPLEXING ``tandem gateway run`` per host, serving
 every profile; standalone per-profile gateways coexist until that migration is forced (#109417).
 The lifecycle verbs therefore answer a different question than they used to — not "does THIS home
 hold a ``gateway.pid``?" but "is the host process live, and is this profile in its served set?" —
@@ -114,7 +114,7 @@ def record_home(record) -> Path:
 
 
 def launched_by_other_tenant(owner_home: Path | str, our_home: Path | str) -> bool:
-    """Was the owner launched from ANOTHER Hermes root (a second tenant on this host)?
+    """Was the owner launched from ANOTHER Tandem root (a second tenant on this host)?
 
     The host record and lock are per OS user, and two tenants (separate ``HERMES_HOME`` roots)
     each expose a profile named ``default``: tenant A's multiplexer "serving default" is a name
@@ -278,7 +278,7 @@ def attach_message(gateway: HostGateway, profile: str) -> str:
         f"✓ The host gateway already serves profile '{profile}' — nothing to start.\n"
         f"  {gateway.describe()}\n"
         f"  One gateway per host serves every profile; manage it with "
-        f"`hermes -p {gateway.profile_label} gateway restart`.")
+        f"`tandem -p {gateway.profile_label} gateway restart`.")
 
 
 def _unknown_served_message(gateway: HostGateway, profile: str) -> str:
@@ -288,8 +288,8 @@ def _unknown_served_message(gateway: HostGateway, profile: str) -> str:
         f"   Whether it will serve profile '{profile}' is unknown, so starting a second gateway\n"
         f"   now could double-bind this profile's platforms. Nothing was started; this is a\n"
         f"   transient state and a service supervisor will retry.\n"
-        f"   Take the host over (only from the home that launched it):  hermes gateway run --replace\n"
-        f"   Start anyway:  hermes gateway run --force")
+        f"   Take the host over (only from the home that launched it):  tandem gateway run --replace\n"
+        f"   Start anyway:  tandem gateway run --force")
 
 
 def _refuse_message(gateway: HostGateway, profile: str) -> str:
@@ -301,7 +301,7 @@ def _refuse_message(gateway: HostGateway, profile: str) -> str:
         f"   Exactly one gateway per host serves every profile, so starting a second one\n"
         f"   would double-bind this profile's platforms.\n"
         f"   Fold this profile into it:   {MIGRATE_COMMAND}\n"
-        f"   Or start one anyway:         hermes gateway run --force\n"
+        f"   Or start one anyway:         tandem gateway run --force\n"
         f"   (--replace only replaces an owner that serves this profile, so it would not take this one over.)")
 
 

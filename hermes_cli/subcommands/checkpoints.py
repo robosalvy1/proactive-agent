@@ -1,4 +1,4 @@
-"""``hermes checkpoints`` subcommand parser."""
+"""``tandem checkpoints`` subcommand parser."""
 
 from __future__ import annotations
 

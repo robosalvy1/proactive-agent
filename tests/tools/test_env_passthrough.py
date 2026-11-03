@@ -343,7 +343,7 @@ class TestTerminalIntegration:
 
     def test_passthrough_cannot_override_provider_blocklist(self):
         """GHSA-rhgp-j443-p4rf: register_env_passthrough must NOT accept
-        Hermes provider credentials — that was the bypass where a skill
+        Tandem provider credentials — that was the bypass where a skill
         could declare ANTHROPIC_TOKEN / OPENAI_API_KEY as passthrough and
         defeat the execute_code sandbox scrubbing."""
         from tools.environments.local import _sanitize_subprocess_env
@@ -423,7 +423,7 @@ class TestTerminalIntegration:
         assert child_env["PATH"] == "/usr/bin"
 
     def test_passthrough_cannot_override_internal_dynamic_secret(self):
-        """A skill must NOT be able to register dynamically-named Hermes
+        """A skill must NOT be able to register dynamically-named Tandem
         secrets (AUXILIARY_*_API_KEY / _BASE_URL, GATEWAY_RELAY_* auth) as
         passthrough — they aren't in the static blocklist, so this is the
         defense-in-depth layer that keeps env_passthrough consistent with the
@@ -507,7 +507,7 @@ class TestTerminalIntegration:
 
     def test_non_hermes_api_key_still_registerable(self):
         """Third-party API keys (TENOR_API_KEY, NOTION_TOKEN, etc.) are NOT
-        Hermes provider credentials and must still pass through — skills
+        Tandem provider credentials and must still pass through — skills
         that legitimately wrap third-party APIs must keep working."""
         # TENOR_API_KEY is a real example — used by the gif-search skill
         register_env_passthrough(["TENOR_API_KEY"])
@@ -520,7 +520,7 @@ class TestTerminalIntegration:
     def test_provider_blocklist_import_failure_fails_closed(self, monkeypatch):
         """If the dynamic provider blocklist can't be imported, provider
         credentials must be treated as protected and refused passthrough —
-        otherwise a skill could tunnel a Hermes credential into the
+        otherwise a skill could tunnel a Tandem credential into the
         execute_code child (regression for #37950 / GHSA-rhgp-j443-p4rf).
 
         Verifies the full path: _is_hermes_provider_credential returns True,

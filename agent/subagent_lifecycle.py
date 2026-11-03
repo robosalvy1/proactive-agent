@@ -1,4 +1,4 @@
-"""Public, plugin-safe lifecycle API for delegated Hermes subagents: immutable contracts, not ``AIAgent``
+"""Public, plugin-safe lifecycle API for delegated Tandem subagents: immutable contracts, not ``AIAgent``
 objects. Plugins obtain it via ``PluginContext.subagent_lifecycle``."""
 
 from __future__ import annotations
@@ -227,9 +227,9 @@ _REQUEST_REJECTIONS: tuple[tuple[Callable[[Any], bool], str], ...] = (
      "provider must be a non-empty string of at most 64 characters."),
     (lambda r: r.timeout_seconds is not None, "Per-launch timeout is not supported; configure delegation timeout explicitly."),
     (lambda r: r.working_directory is not None,
-     "working_directory is not supported because Hermes delegates use isolated task environments."),
+     "working_directory is not supported because Tandem delegates use isolated task environments."),
     (lambda r: bool(r.blocked_tools),
-     "Per-tool blocking is not supported; use allowed_toolsets. Hermes always blocks unsafe child tools."),
+     "Per-tool blocking is not supported; use allowed_toolsets. Tandem always blocks unsafe child tools."),
 )
 
 
@@ -277,7 +277,7 @@ class SubagentLifecycleService:
     def launch(self, request: SubagentLaunchRequest | Mapping[str, Any]) -> SubagentHandle:
         parent = self._parent_agent_resolver()
         if parent is None:
-            raise SubagentLifecycleError("No active Hermes parent session is available.")
+            raise SubagentLifecycleError("No active Tandem parent session is available.")
         request = _coerce_request(request)
         self._validate_request(request, parent)
         parent_session_id = _session_id_of(parent)
@@ -307,7 +307,7 @@ class SubagentLifecycleService:
         )
         subagent_id = str(getattr(child, "_subagent_id", "") or "")
         if not subagent_id:
-            raise SubagentLifecycleError("Hermes failed to assign a child identity.")
+            raise SubagentLifecycleError("Tandem failed to assign a child identity.")
         created = time.time()
         handle = SubagentHandle(
             PUBLIC_CONTRACT_VERSION, subagent_id, parent_session_id, request.correlation_id, created,

@@ -209,11 +209,11 @@ class TestCreateSession:
         first-run "No LLM provider configured" text; the operator must get the swallowed cause
         instead. The fallback still stands when the bare build succeeds."""
         def _no_creds(**_kw):
-            raise RuntimeError("No Codex credentials stored. Run `hermes auth add openai-codex`")
+            raise RuntimeError("No Codex credentials stored. Run `tandem auth add openai-codex`")
 
         class BareFails:
             def __init__(self, **kwargs):
-                raise RuntimeError("No LLM provider configured. Run `hermes setup`")
+                raise RuntimeError("No LLM provider configured. Run `tandem setup`")
 
         class BareWorks:
             def __init__(self, **kwargs):

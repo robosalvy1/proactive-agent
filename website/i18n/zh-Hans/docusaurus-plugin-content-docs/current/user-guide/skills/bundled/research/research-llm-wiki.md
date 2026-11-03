@@ -26,7 +26,7 @@ Karpathy 的 LLM Wiki：构建/查询互联 Markdown 知识库。
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 skill 激活时 agent 看到的指令内容。
+以下是 Tandem 在触发此 skill 时加载的完整 skill 定义。这是 skill 激活时 agent 看到的指令内容。
 :::
 
 # Karpathy 的 LLM Wiki

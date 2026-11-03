@@ -71,7 +71,7 @@ class NousPortalAdapter(UpstreamAdapter):
         with self._lock:
             state = self._read_state()
             if state is None:
-                raise RuntimeError("Not logged into Nous Portal. Run `hermes auth add nous` first.")
+                raise RuntimeError("Not logged into Nous Portal. Run `tandem auth add nous` first.")
             try:
                 # Every proxied request queues on self._lock: a free-tier browser challenge is
                 # announced and raised, never waited on while holding it.
@@ -88,7 +88,7 @@ class NousPortalAdapter(UpstreamAdapter):
             if not runtime_key:
                 raise RuntimeError(
                     "Nous Portal refresh did not return a usable inference JWT. "
-                    "Try `hermes auth add nous` to re-authenticate."
+                    "Try `tandem auth add nous` to re-authenticate."
                 )
             # The returned base_url already honors the NOUS_INFERENCE_BASE_URL override (documented
             # dev/staging hatch); validating it against the prod allowlist would reject a legit

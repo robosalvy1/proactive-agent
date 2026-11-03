@@ -1,4 +1,4 @@
-"""Browser Use caller -> browser-harness on Hermes's own interpreter -> actual child."""
+"""Browser Use caller -> browser-harness on Tandem's own interpreter -> actual child."""
 import importlib.metadata
 import json
 import subprocess

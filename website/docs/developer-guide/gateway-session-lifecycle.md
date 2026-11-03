@@ -3,7 +3,7 @@ title: "Gateway Session Lifecycle"
 description: "SessionSource, SessionEntry, SessionStore, session-key rules and multi-user isolation in the gateway"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Session Lifecycle
@@ -422,7 +422,7 @@ Written at the end of a graceful shutdown. On next startup:
   were already drained, so no sessions are stuck.
 - Then delete the marker.
 
-This prevents unwanted auto-resets after `hermes update`, `hermes gateway restart`,
+This prevents unwanted auto-resets after `tandem update`, `tandem gateway restart`,
 or `/restart`.
 
 ---

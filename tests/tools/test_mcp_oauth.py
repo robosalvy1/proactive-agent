@@ -903,7 +903,7 @@ def test_build_oauth_auth_preserves_server_url_path():
     breaking RFC 9728 protected-resource validation against servers whose PRM
     advertises a path-scoped resource (Notion). The MCP SDK strips the path
     itself for authorization-server discovery via
-    ``OAuthContext.get_authorization_base_url``; Hermes must not pre-strip.
+    ``OAuthContext.get_authorization_base_url``; Tandem must not pre-strip.
     """
     from tools import mcp_oauth
 
@@ -1120,7 +1120,7 @@ def test_humanize_404_registration_error_guidance():
     assert msg is not None
     assert "does not support automatic client registration" in msg
     assert "client_id" in msg
-    assert "hermes mcp login gmail" in msg
+    assert "tandem mcp login gmail" in msg
 
 
 def test_humanize_404_non_registration_passthrough():

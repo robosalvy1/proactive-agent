@@ -66,7 +66,7 @@ def complete_source_checkout(
     if not lock.acquire():
         raise RuntimeError(
             f"an update is still running ({describe_holder(lock.holder)}); "
-            "wait for it to exit, then relaunch Hermes"
+            "wait for it to exit, then relaunch Tandem"
         )
     try:
         return _complete_locked(
@@ -175,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args([argument for argument in argv if argument != _PREPARED])
     root = args.source.resolve()
     if not (root / "hermes_cli/source_completion.py").is_file():
-        print(f"✗ {root} is not a Hermes source checkout", file=sys.stderr)
+        print(f"✗ {root} is not a Tandem source checkout", file=sys.stderr)
         return 1
 
     if prepared:

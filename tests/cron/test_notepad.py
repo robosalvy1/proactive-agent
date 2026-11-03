@@ -2,7 +2,7 @@
 
 Covers CRUD on the SQLite-backed store, size-cap enforcement, prompt
 injection of non-empty notepads, byte-stable prompts for jobs that don't
-use the notepad, and the `hermes cron notepad` CLI handler.
+use the notepad, and the `tandem cron notepad` CLI handler.
 """
 
 from __future__ import annotations

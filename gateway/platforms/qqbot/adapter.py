@@ -191,7 +191,7 @@ class QQAdapter(OwnAccessPolicyMixin, BasePlatformAdapter):
         for ok, code, what, hint in (
             (AIOHTTP_AVAILABLE, "qq_missing_dependency", "aiohttp not installed",
              f". Run: {install_hint('messaging')}"),
-            (HTTPX_AVAILABLE, "qq_missing_dependency", "httpx not installed", ". Run: hermes pm repair"),
+            (HTTPX_AVAILABLE, "qq_missing_dependency", "httpx not installed", ". Run: tandem pm repair"),
             (self._app_id and self._client_secret, "qq_missing_credentials",
              "QQ_APP_ID and QQ_CLIENT_SECRET are required", "")):
             if not ok:
@@ -729,7 +729,7 @@ class QQAdapter(OwnAccessPolicyMixin, BasePlatformAdapter):
     @staticmethod
     def _write_update_response(answer: str, operator: str = "") -> None:
         """Atomically (tmp + rename) write the update-prompt answer to
-        ``.update_response``, polled by the detached ``hermes update --gateway`` watcher."""
+        ``.update_response``, polled by the detached ``tandem update --gateway`` watcher."""
         try:
             from hermes_constants import get_hermes_home
             response_path = get_hermes_home() / ".update_response"
