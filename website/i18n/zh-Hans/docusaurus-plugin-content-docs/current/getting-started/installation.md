@@ -56,7 +56,7 @@ Dashboard 终端使用 `pywinpty`/ConPTY，不再是尚未实现的 POSIX-only �
 | POSIX 源码脚本 | `~/.hermes/hermes-agent/` | `~/.local/bin/hermes` 包装器 | `~/.hermes/` |
 | Windows 源码脚本 | `%LOCALAPPDATA%\hermes\hermes-agent\` | `%LOCALAPPDATA%\hermes\bin\` | `%LOCALAPPDATA%\hermes\` |
 | 桌面软件包 | 应用包内部 | 包内启动器；Windows 执行别名 | 平台默认数据目录 |
-| Docker | `/opt/hermes/` | 镜像入口和 `tandem` | 挂载的 `/opt/data/` |
+| Docker | `/opt/hermes/` | 镜像入口和 `hermes` shim | 挂载的 `/opt/data/` |
 | Termux APT | `$PREFIX/lib/hermes-agent/` | `$PREFIX/bin/` 符号链接 | `~/.hermes/` |
 
 `HERMES_HOME` 选择数据目录。POSIX 的 `--dir` 单独选择源码目录。
