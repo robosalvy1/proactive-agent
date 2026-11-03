@@ -30,7 +30,7 @@ The dispatcher matches `task.assignee` against either a Tandem profile name (the
 
 ### 2. A spawn mechanism
 
-For Tandem profile lanes, the dispatcher's `_default_spawn` runs `tandem -p <assignee> chat -q <prompt>` (or the equivalent module form when the `tandem` shim isn't on `$PATH`) inside the task's pinned workspace, with these env vars set:
+For Tandem profile lanes, the dispatcher's `_default_spawn` runs `tandem -p <assignee> chat -q <prompt>` (or the equivalent module form when the `hermes` shim isn't on `$PATH`) inside the task's pinned workspace, with these env vars set:
 
 | Variable | Carries |
 |---|---|

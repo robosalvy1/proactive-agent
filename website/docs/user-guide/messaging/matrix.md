@@ -180,7 +180,7 @@ If you run your own homeserver (Synapse, Conduit, Dendrite):
 register_new_matrix_user -c /etc/synapse/homeserver.yaml http://localhost:8008
 ```
 
-2. Choose a username like `tandem` — the full user ID will be `@hermes:your-server.org`.
+2. Choose a username like `hermes` — the full user ID will be `@hermes:your-server.org`.
 
 ### Option B: Use matrix.org or Another Public Homeserver
 

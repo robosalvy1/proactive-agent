@@ -158,11 +158,11 @@ docker run -it --rm \
 
 ### 不可变安装树
 
-在托管/发布的 Docker 镜像中，`/opt/hermes` 是安装好的应用树。它由 root 拥有，并且对运行时的 `tandem` 用户只读，因此 agent 回合、gateway 会话、dashboard 操作以及普通的 `docker exec hermes hermes ...` 命令都不能原地修改核心源码、打包的 `.venv`、`node_modules` 或 TUI bundle。
+在托管/发布的 Docker 镜像中，`/opt/hermes` 是安装好的应用树。它由 root 拥有，并且对运行时的 `hermes` 用户只读，因此 agent 回合、gateway 会话、dashboard 操作以及普通的 `docker exec hermes hermes ...` 命令都不能原地修改核心源码、打包的 `.venv`、`node_modules` 或 TUI bundle。
 
 所有可变的 Tandem 状态都应位于 `/opt/data` 下：配置、`.env`、profiles、skills、memories、sessions、logs、dashboard 上传、plugins 以及其他用户管理的文件。官方镜像还会阻止在运行时向不可变的 `/opt/hermes` 树写入 `.pyc` 或执行 Tandem 的懒安装依赖流程。
 
-如果运维人员确实需要修复或检查 `/opt/data` 之外的文件，请有意识地使用 root shell。`tandem` shim 默认会把 `docker exec hermes hermes ...` 降回运行时用户；只有在你明确需要 root 语义时，才临时设置 `HERMES_DOCKER_EXEC_AS_ROOT=1`。
+如果运维人员确实需要修复或检查 `/opt/data` 之外的文件，请有意识地使用 root shell。`hermes` shim 默认会把 `docker exec hermes hermes ...` 降回运行时用户；只有在你明确需要 root 语义时，才临时设置 `HERMES_DOCKER_EXEC_AS_ROOT=1`。
 
 某些 skill CLI 会把凭据写到 `~` 下，因此在官方 Docker 布局里要针对子进程 HOME 初始化，而不是只针对数据卷根目录。例如 [xurl skill](./skills/bundled/social-media/social-media-xurl.md) 会把 OAuth 状态存到 `~/.xurl`；在容器里这对应 `/opt/data/home/.xurl`，因此手动认证时应使用 `HOME=/opt/data/home xurl auth status` 之类的调用。
 
@@ -185,15 +185,15 @@ Tandem 支持[多个 profile](../reference/profile-commands.md)——独立的 `
 
 ```sh
 # 创建 profile —— 同时注册 gateway-<name> s6 槽位
-docker exec hermes tandem profile create coder
+docker exec hermes hermes profile create coder
 
 # 启停/重启 —— 底层分发给 s6-svc
-docker exec hermes tandem -p coder gateway start
-docker exec hermes tandem -p coder gateway stop
-docker exec hermes tandem -p coder gateway restart
+docker exec hermes hermes -p coder gateway start
+docker exec hermes hermes -p coder gateway stop
+docker exec hermes hermes -p coder gateway restart
 
 # 状态 —— 容器内会显示 `Manager: s6 (container supervisor)`
-docker exec hermes tandem -p coder gateway status
+docker exec hermes hermes -p coder gateway status
 ```
 
 若第二个 profile 也要暴露 OpenAI 兼容 API server，请在**该 profile 自己的** `.env` 中设置不同的 `API_SERVER_PORT`，然后重启该 profile 的 gateway；不要把端口放进容器级 `environment:`，否则所有 profile 都会争抢同一个端口。更底层的监管细节见后文的 [Per-profile gateway 监管](#per-profile-gateway-supervision)。
@@ -305,7 +305,7 @@ Bot Screen 会话。代价是镜像体积：完整版比早期镜像附带的 he
 
 PID-1 路径先准备数据卷和配置，重建各 profile 的 gateway 服务槽，然后运行主命令。
 不要绕过这些入口步骤，否则会失去权限处理和服务监管。
-主程序及受监管服务以 `tandem` 用户运行，避免在 `/opt/data` 中留下 root 所有的文件。
+主程序及受监管服务以 `hermes` 用户运行，避免在 `/opt/data` 中留下 root 所有的文件。
 
 ### Per-profile gateway 监管 {#per-profile-gateway-supervision}
 

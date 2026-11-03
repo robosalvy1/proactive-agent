@@ -561,7 +561,7 @@ Profile 分发默认不带签名。你信任的是：
 - manifest 格式为 YAML，schema 极简（仅 `name` 为必填）。
 - 安装器使用你本地的 `git` 二进制文件进行克隆，因此 shell 已处理的任何认证（SSH 密钥、credential helper）都能透明生效。
 - 克隆完成后，`.git/` 会被剥离——已安装的 profile 本身不是 git checkout，避免了"不小心将 `.env` 提交到分发 git 历史"的陷阱。
-- 保留的 profile 名称（`tandem`、`test`、`tmp`、`root`、`sudo`）在安装时会被拒绝，以避免与常见二进制文件冲突。
+- 保留的 profile 名称（`hermes`、`test`、`tmp`、`root`、`sudo`）在安装时会被拒绝，以避免与常见二进制文件冲突。
 
 ## 另请参阅
 

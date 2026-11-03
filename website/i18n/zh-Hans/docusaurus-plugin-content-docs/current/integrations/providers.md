@@ -699,7 +699,7 @@ tandem model
 | `--enable-auto-tool-choice` | `tool_choice: "auto"` 所必需（Tandem 的默认值） |
 | `--tool-call-parser <name>` | 模型工具调用格式的解析器 |
 
-支持的解析器：`tandem`（Qwen 2.5、Hermes 2/3）、`llama3_json`（Llama 3.x）、`mistral`、`deepseek_v3`、`deepseek_v31`、`xlam`、`pythonic`。没有这些标志，工具调用将无法工作——模型会将工具调用以文本形式输出。
+支持的解析器：`hermes`（Qwen 2.5、Hermes 2/3）、`llama3_json`（Llama 3.x）、`mistral`、`deepseek_v3`、`deepseek_v31`、`xlam`、`pythonic`。没有这些标志，工具调用将无法工作——模型会将工具调用以文本形式输出。
 
 :::tip
 vLLM 支持人类可读的大小：`--max-model-len 64k`（小写 k = 1000，大写 K = 1024）。

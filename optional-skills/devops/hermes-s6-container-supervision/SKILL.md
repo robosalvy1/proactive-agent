@@ -49,7 +49,7 @@ If you're just running the Tandem Agent and want to use Docker, see `website/doc
 ├── /run/service (s6-svscan watches; tmpfs)
 │   ├── gateway-coder/                 ← runtime-registered per-profile
 │   │   ├── type        ("longrun")
-│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes tandem -p coder gateway run")
+│   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes hermes -p coder gateway run")
 │   │   ├── down        (marker — present means "registered but don't auto-start")
 │   │   └── log/run     (s6-log → $HERMES_HOME/logs/gateways/coder/current)
 │   └── ...

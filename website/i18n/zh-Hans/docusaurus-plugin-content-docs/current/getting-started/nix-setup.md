@@ -115,7 +115,7 @@ nix build
 }
 ```
 
-就这些。`nixos-rebuild switch` 会创建 `tandem` 用户、生成 `config.yaml`、连接密钥并启动 gateway——这是一个长期运行的服务，将 Agent 连接到消息平台（Telegram、Discord 等）并监听传入消息。
+就这些。`nixos-rebuild switch` 会创建 `hermes` 用户、生成 `config.yaml`、连接密钥并启动 gateway——这是一个长期运行的服务，将 Agent 连接到消息平台（Telegram、Discord 等）并监听传入消息。
 
 :::warning 密钥是必需的
 上面的 `environmentFiles` 行假设你已配置 [sops-nix](https://github.com/Mic92/sops-nix) 或 [agenix](https://github.com/ryantm/agenix)。该文件至少应包含一个 LLM 提供商密钥（例如 `OPENROUTER_API_KEY=sk-or-...`）。完整设置请参阅[密钥管理](#密钥管理)。如果你还没有密钥管理器，可以先使用普通文件——只需确保它不是全局可读的：
@@ -153,7 +153,7 @@ services.hermes-agent = {
 };
 ```
 
-`hostUsers` 中列出的用户会自动加入 `tandem` 组以获得文件权限访问。
+`hostUsers` 中列出的用户会自动加入 `hermes` 组以获得文件权限访问。
 
 **Podman 用户：** NixOS 服务以 root 身份运行容器。Docker 用户通过 `docker` 组 socket 获得访问权限，但 Podman 的 rootful 容器需要 sudo。为你的容器运行时授予免密 sudo：
 
@@ -857,7 +857,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # 合并脚本保留用户�
 | `container.image` | `str` | `"ubuntu:24.04"` | 基础镜像（运行时拉取） |
 | `container.extraVolumes` | `listOf str` | `[]` | 额外卷挂载（`host:container:mode`） |
 | `container.extraOptions` | `listOf str` | `[]` | 传递给 `docker create` 的额外参数 |
-| `container.hostUsers` | `listOf str` | `[]` | 获得 `~/.hermes` 符号链接（指向服务 stateDir）的交互式用户，自动加入 `tandem` 组 |
+| `container.hostUsers` | `listOf str` | `[]` | 获得 `~/.hermes` 符号链接（指向服务 stateDir）的交互式用户，自动加入 `hermes` 组 |
 
 ---
 

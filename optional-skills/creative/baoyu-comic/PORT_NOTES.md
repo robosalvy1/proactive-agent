@@ -8,7 +8,7 @@ Ported from [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) v1.56.
 
 | Change | Upstream | Tandem |
 |--------|----------|--------|
-| Metadata namespace | `openclaw` | `tandem` (with `tags` + `homepage`) |
+| Metadata namespace | `openclaw` | `hermes` (with `tags` + `homepage`) |
 | Trigger | Slash commands / CLI flags | Natural language skill matching |
 | User config | EXTEND.md file (project/user/XDG paths) | Removed — not part of Tandem infra |
 | User prompts | `AskUserQuestion` (batched) | `clarify` tool (batched, up to 5 questions) |

@@ -104,7 +104,7 @@ directory; a failed step prints its last lines and the log path. CI (`CI` or
 | POSIX source script | `~/.hermes/hermes-agent/` | `~/.local/bin/hermes` wrapper | `~/.hermes/` |
 | Windows source script | `%LOCALAPPDATA%\hermes\hermes-agent\` | `%LOCALAPPDATA%\hermes\bin\` | `%LOCALAPPDATA%\hermes\` |
 | Desktop bundle | Inside the installed app package | Packaged launchers; Windows execution aliases | Platform default Tandem data directory |
-| Docker | `/opt/hermes/` | Image entrypoint and `tandem` shim | Mounted `/opt/data/` |
+| Docker | `/opt/hermes/` | Image entrypoint and `hermes` shim | Mounted `/opt/data/` |
 | Termux APT | `$PREFIX/lib/hermes-agent/` | Symlinks in `$PREFIX/bin/` | `~/.hermes/` |
 
 `HERMES_HOME` selects user data. The POSIX script's `--dir` selects its source

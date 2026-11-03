@@ -257,18 +257,18 @@ The lifecycle commands you'd run on the host work the same way from inside the c
 
 ```sh
 # Create a profile — registers the gateway-<name> s6 slot.
-docker exec hermes tandem profile create coder
+docker exec hermes hermes profile create coder
 
 # Start / stop / restart — dispatches s6-svc; the gateway lifecycle survives docker restart.
-docker exec hermes tandem -p coder gateway start
-docker exec hermes tandem -p coder gateway stop
-docker exec hermes tandem -p coder gateway restart
+docker exec hermes hermes -p coder gateway start
+docker exec hermes hermes -p coder gateway stop
+docker exec hermes hermes -p coder gateway restart
 
 # Status — reports `Manager: s6 (container supervisor)` inside the container.
-docker exec hermes tandem -p coder gateway status
+docker exec hermes hermes -p coder gateway status
 
 # Remove a profile — tears down the s6 slot too.
-docker exec hermes tandem profile delete coder
+docker exec hermes hermes profile delete coder
 ```
 
 Under the hood, `tandem gateway start/stop/restart` inside the container is intercepted and routed to `s6-svc` against the right service directory; you don't need to learn the s6 commands directly. For raw supervisor state, use `/command/s6-svstat /run/service/gateway-<name>` (note `/command/` is on PATH only for processes spawned by the supervision tree — when calling from `docker exec`, pass the absolute path).
@@ -283,7 +283,7 @@ Two different surfaces reach a profile's gateway from outside, and they behave d
 
 ```sh
 # Create the profile (registers its gateway-<name> s6 slot)
-docker exec hermes tandem profile create work
+docker exec hermes hermes profile create work
 
 # Point its API server at a free port (write to the profile's own .env)
 cat >> /opt/data/profiles/work/.env <<'EOF'
@@ -291,7 +291,7 @@ API_SERVER_ENABLED=true
 API_SERVER_PORT=8643
 EOF
 
-docker exec hermes tandem -p work gateway restart
+docker exec hermes hermes -p work gateway restart
 ```
 
 Keep `API_SERVER_PORT` in each profile's **own** `.env`, never in the container-wide `environment:` block — a global value would force every profile onto the same port and they would collide. With bridge networking, publish the extra port in `docker-compose.yml` (`- "8643:8643"`); with `network_mode: host` it is already reachable on the host. The default profile's 8642 connection is untouched.
@@ -356,7 +356,7 @@ The s6 container has four distinct log surfaces, and "why isn't my gateway showi
 | **Per-profile gateway** (`tandem gateway run` and per-profile gateways under s6) | Tee'd to two places: `docker logs <container>` (real time, no extra prefix) **and** `${HERMES_HOME}/logs/gateways/<profile>/current` (rotated, ISO-8601 timestamped, 10 archives × 1 MB each) | `docker logs -f hermes` or `tail -F ~/.hermes/logs/gateways/default/current` on the host |
 | **Dashboard** (when `HERMES_DASHBOARD=1`) | `docker logs <container>` (no prefix) | `docker logs -f hermes` — interleaved with gateway lines |
 | **Boot reconciler** (records which profile gateways were restored on each container start) | `${HERMES_HOME}/logs/container-boot.log` (append-only audit log) | `tail -F ~/.hermes/logs/container-boot.log` |
-| **Generic Tandem logs** (`agent.log`, `errors.log`) | `${HERMES_HOME}/logs/` (profile-aware) | `docker exec hermes tandem logs --follow [--level WARNING] [--session <id>]` |
+| **Generic Tandem logs** (`agent.log`, `errors.log`) | `${HERMES_HOME}/logs/` (profile-aware) | `docker exec hermes hermes logs --follow [--level WARNING] [--session <id>]` |
 
 Two practical consequences worth knowing:
 
@@ -595,7 +595,7 @@ services:
 
 ### `docker exec` automatically drops to the `hermes` user
 
-`docker exec hermes <cmd>` defaults to running as root inside the container, but the image ships a thin shim at `/opt/hermes/bin/hermes` (earliest on PATH) that detects root callers and transparently re-execs through `s6-setuidgid hermes`. So `docker exec hermes tandem login`, `docker exec hermes tandem profile create …`, `docker exec hermes tandem setup`, etc. all write files owned by UID 10000 — i.e. readable by the supervised gateway — with no extra `--user` flag needed. Non-root callers (the supervised processes themselves, `docker exec --user hermes`, kanban subagents inside the container) hit a short-circuit that exec's the venv binary directly, so there's no overhead on the hot paths.
+`docker exec hermes <cmd>` defaults to running as root inside the container, but the image ships a thin shim at `/opt/hermes/bin/hermes` (earliest on PATH) that detects root callers and transparently re-execs through `s6-setuidgid hermes`. So `docker exec hermes hermes login`, `docker exec hermes hermes profile create …`, `docker exec hermes hermes setup`, etc. all write files owned by UID 10000 — i.e. readable by the supervised gateway — with no extra `--user` flag needed. Non-root callers (the supervised processes themselves, `docker exec --user hermes`, kanban subagents inside the container) hit a short-circuit that exec's the venv binary directly, so there's no overhead on the hot paths.
 
 If you specifically need a `docker exec` that retains root semantics (diagnostic sessions, inspecting root-only state, files outside `/opt/data` that root happens to own), opt out per invocation:
 

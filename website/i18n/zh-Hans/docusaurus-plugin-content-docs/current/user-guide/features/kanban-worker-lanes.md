@@ -30,7 +30,7 @@ Tandem Kanban 拥有生命周期的真实状态——`ready` → `running` → `
 
 ### 2. 生成机制
 
-对于 Tandem profile 通道，调度器的 `_default_spawn` 会在任务固定的工作区内运行 `tandem -p <assignee> chat -q <prompt>`（或当 `tandem` shim 不在 `$PATH` 时使用等效的模块形式），并设置以下环境变量：
+对于 Tandem profile 通道，调度器的 `_default_spawn` 会在任务固定的工作区内运行 `tandem -p <assignee> chat -q <prompt>`（或当 `hermes` shim 不在 `$PATH` 时使用等效的模块形式），并设置以下环境变量：
 
 | 变量 | 携带内容 |
 |---|---|

@@ -145,7 +145,7 @@ This module needs NixOS. Tandem is an agent for one person. If you want an agent
 }
 ```
 
-That's it. `nixos-rebuild switch` creates the `tandem` user, generates `config.yaml`, wires up secrets, and starts the gateway — a long-running service that connects the agent to messaging platforms (Telegram, Discord, etc.) and listens for incoming messages.
+That's it. `nixos-rebuild switch` creates the `hermes` user, generates `config.yaml`, wires up secrets, and starts the gateway — a long-running service that connects the agent to messaging platforms (Telegram, Discord, etc.) and listens for incoming messages.
 
 :::warning Secrets are required
 The `environmentFiles` line above assumes you have [sops-nix](https://github.com/Mic92/sops-nix) or [agenix](https://github.com/ryantm/agenix) configured. The file should contain at least one LLM provider key (e.g., `OPENROUTER_API_KEY=sk-or-...`). See [Secrets Management](#secrets-management) for full setup. If you don't have a secrets manager yet, you can use a plain file as a starting point — just ensure it's not world-readable:
@@ -183,7 +183,7 @@ services.hermes-agent = {
 };
 ```
 
-Users listed in `hostUsers` are automatically added to the `tandem` group for file permission access.
+Users listed in `hostUsers` are automatically added to the `hermes` group for file permission access.
 
 **Podman users:** The NixOS service runs the container as root. Docker users get access via the `docker` group socket, but Podman's rootful containers require sudo. Grant passwordless sudo for your container runtime:
 
@@ -1102,7 +1102,7 @@ replacement.
 | `container.image` | `str` | `"ubuntu:24.04"` | Base image (pulled at runtime) |
 | `container.extraVolumes` | `listOf str` | `[]` | Extra volume mounts (`host:container:mode`) |
 | `container.extraOptions` | `listOf str` | `[]` | Extra args passed to `docker create` |
-| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.hermes` symlink to the service stateDir and are auto-added to the `tandem` group |
+| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.hermes` symlink to the service stateDir and are auto-added to the `hermes` group |
 
 ---
 

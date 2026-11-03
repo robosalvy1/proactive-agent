@@ -913,7 +913,7 @@ The ID token is what establishes identity — the access token is treated as opa
 
 [Keycloak](https://www.keycloak.org/) is one of the easiest self-hosted OIDC servers to stand up for a local test — it runs as a single container in dev mode (in-memory DB) and exposes textbook OIDC discovery. This walkthrough gets you from nothing to a working dashboard login in a few minutes.
 
-**1. Run Keycloak with a pre-configured realm.** Save this realm export as `realm-hermes.json` — it defines a `tandem` realm, a **public PKCE client** (`hermes-dashboard`), and a test user, all imported on boot so there's nothing to click in the admin UI:
+**1. Run Keycloak with a pre-configured realm.** Save this realm export as `realm-hermes.json` — it defines a `hermes` realm, a **public PKCE client** (`hermes-dashboard`), and a test user, all imported on boot so there's nothing to click in the admin UI:
 
 ```json
 {
