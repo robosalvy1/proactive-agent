@@ -65,7 +65,9 @@ def test_completion_scripts_register_tandem_and_hermes():
     parser = argparse.ArgumentParser(prog='tandem')
     parser.add_subparsers(dest='command').add_parser('chat', help='Chat')
     assert 'complete -F _hermes_completion hermes tandem' in generate_bash(parser)
-    assert 'compdef _hermes hermes tandem' in generate_zsh(parser)
+    zsh = generate_zsh(parser)
+    assert '#compdef hermes tandem' in zsh
+    assert 'compdef _hermes hermes tandem' in zsh
     fish = generate_fish(parser).splitlines()
     for command in ('hermes', 'tandem'):
         assert f"complete -c {command} -f -n 'not __fish_seen_subcommand_from chat' -a chat -d 'Chat'" in fish

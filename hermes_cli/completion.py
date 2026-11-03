@@ -152,7 +152,7 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
                 f"                    _describe '{cmd} command' {safe}_cmds\n"
                 f"                    ;;")
     sub_cases_str = "\n".join(sub_cases)
-    return f"""#compdef hermes
+    return f"""#compdef hermes tandem
 # Hermes Agent zsh completion
 # Add to ~/.zshrc:
 #   eval "$(tandem completion zsh)"
