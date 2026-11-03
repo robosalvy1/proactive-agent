@@ -123,3 +123,30 @@ def test_cron_guard_blocks_tandem_profile_selector_for_current_profile(monkeypat
     monkeypatch.setattr(lifecycle_guard, '_named_profile_is_current', lambda name: name == 'zeus')
     assert lifecycle_guard.contains_gateway_lifecycle_command('tandem -p zeus gateway restart')
     assert not lifecycle_guard.contains_gateway_lifecycle_command('tandem -p venus gateway restart')
+
+
+def test_cron_guard_blocks_windows_launcher_with_profile_selector(monkeypatch):
+    from cron import lifecycle_guard
+    monkeypatch.setattr(lifecycle_guard, '_named_profile_is_current', lambda name: name == 'zeus')
+    for command in ('tandem.exe -p zeus gateway restart', 'hermes.exe --profile zeus gateway stop',
+                    'tandem.exe --profile=zeus gateway stop'):
+        assert lifecycle_guard.contains_gateway_lifecycle_command(command), command
+    assert not lifecycle_guard.contains_gateway_lifecycle_command('tandem.exe -p venus gateway restart')
+
+
+@pytest.mark.parametrize('argv, expected', [
+    (['/bin/main-wrapper.sh', 'tandem', 'dashboard'], ['dashboard']),
+    (['/bin/main-wrapper.sh', 'hermes', 'dashboard'], ['dashboard']),
+    (['/bin/main-wrapper.sh', '/usr/local/bin/tandem', 'gateway', 'run'], ['gateway', 'run']),
+])
+def test_container_boot_strips_either_command(argv, expected):
+    from hermes_cli.container_boot import _strip_container_argv_prefix
+    assert _strip_container_argv_prefix(argv) == expected
+
+
+@pytest.mark.parametrize('command', [
+    'tandem gateway restart', 'tandem -p work gateway stop', 'tandem update', 'hermes update',
+])
+def test_dangerous_command_approval_covers_both_commands(command):
+    from tools.approval_detection import detect_dangerous_command
+    assert detect_dangerous_command(command)[0]

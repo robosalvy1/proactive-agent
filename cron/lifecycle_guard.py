@@ -244,7 +244,7 @@ _ARGV_LIST_PUNCTUATION = re.compile(r"[\[\],]+")
 # the self-targeting shape (named profile == the profile running the guard). See #78028.
 _PROFILE_FLAG_LIFECYCLE_PATTERN = re.compile(
     r"(?i)"
-    r"(?:hermes|tandem)\s+"
+    r"(?:hermes|tandem)(?:\.(?:exe|cmd|bat|com|ps1))?\s+"
     # Each flag has one parse: '-' plus its remainder, never two ways to split
     # '--'. A following flag cannot also be an optional value (#129281).
     # Possessive token/space runs avoid repartitioning whitespace on failure;
