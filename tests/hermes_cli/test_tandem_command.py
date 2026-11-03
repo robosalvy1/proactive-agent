@@ -107,3 +107,19 @@ def test_tandem_gateway_is_recognised_as_running_gateway(command):
     from gateway.status import looks_like_gateway_command_line
     assert looks_like_gateway_command_line(command)
     assert not looks_like_gateway_command_line('tandem chat')
+
+
+@pytest.mark.parametrize('name', ['tandem', 'hermes', 'tandem.exe'])
+@pytest.mark.parametrize('verb', ['restart', 'stop'])
+def test_cron_guard_blocks_gateway_lifecycle_for_both_commands(name, verb):
+    from cron.lifecycle_guard import contains_gateway_lifecycle_command
+    assert contains_gateway_lifecycle_command(f'{name} gateway {verb}')
+    assert not contains_gateway_lifecycle_command(f'{name} gateway start')
+    assert not contains_gateway_lifecycle_command(f'/docs/{name} gateway {verb}-notes.md')
+
+
+def test_cron_guard_blocks_tandem_profile_selector_for_current_profile(monkeypatch):
+    from cron import lifecycle_guard
+    monkeypatch.setattr(lifecycle_guard, '_named_profile_is_current', lambda name: name == 'zeus')
+    assert lifecycle_guard.contains_gateway_lifecycle_command('tandem -p zeus gateway restart')
+    assert not lifecycle_guard.contains_gateway_lifecycle_command('tandem -p venus gateway restart')
