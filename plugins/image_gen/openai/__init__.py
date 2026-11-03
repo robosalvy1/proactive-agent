@@ -77,7 +77,7 @@ def _resolve_endpoint() -> tuple[str, str]:
 
 
 def _build_client(openai: Any, base_url: str, api_key: str) -> Any:
-    """``openai.OpenAI`` on Hermes' env-only-proxy httpx client, so a local/custom endpoint never
+    """``openai.OpenAI`` on Tandem' env-only-proxy httpx client, so a local/custom endpoint never
     routes through a macOS system proxy whose ExceptionsList httpx cannot see (#64888). The project
     header is blanked: an ``OPENAI_PROJECT_ID`` set for chat makes ``/images/generations`` 403 on
     projects with a model allow-list, and the key already carries the project (#60748)."""
@@ -161,7 +161,7 @@ class OpenAIImageGenProvider(StaticImageGenProvider):
         if not api_key:
             return error_factory("openai", aspect)(
                 "OPENAI_API_KEY not set (or the variable named by image_gen.openai.key_env is empty). "
-                "Run `hermes tools` → Image Generation → OpenAI to configure, or `hermes setup` "
+                "Run `tandem tools` → Image Generation → OpenAI to configure, or `tandem setup` "
                 "to add the key.",
                 "auth_required")
 

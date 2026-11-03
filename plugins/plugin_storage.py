@@ -1,6 +1,6 @@
-"""Per-plugin persistent storage: ``<hermes home>/plugin-data/<name>/``.
+"""Per-plugin persistent storage: ``<tandem home>/plugin-data/<name>/``.
 
-Plugins must NOT park state in ``<hermes home>/plugins/<name>/`` (the install dir, deleted by
+Plugins must NOT park state in ``<tandem home>/plugins/<name>/`` (the install dir, deleted by
 ``remove`` and git-pulled by ``update``). Secrets are deliberately NOT part of this convention —
 credential reads go through ``agent.secret_scope`` / ``.env``.
 Usage: ``plugin_data_dir("my-plugin") / "state.json"``; ``plugin_db("my-plugin")`` → ``data.db``.
@@ -25,7 +25,7 @@ def _validate_name(name: str) -> str:
 
 
 def plugin_data_dir(name: str) -> Path:
-    """Return (and create) ``<hermes home>/plugin-data/<name>/``; resolves ``get_hermes_home()`` on
+    """Return (and create) ``<tandem home>/plugin-data/<name>/``; resolves ``get_hermes_home()`` on
     every call so it follows the active profile — don't cache across profile switches."""
     from hermes_constants import get_hermes_home
     root = get_hermes_home() / "plugin-data" / _validate_name(name)

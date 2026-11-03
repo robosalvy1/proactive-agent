@@ -1,6 +1,6 @@
 """Tests for `--resume latest` and `--in DIR` launch sugar.
 
-`hermes --tui --resume latest --in ./dir` (and the classic-CLI equivalents)
+`tandem --tui --resume latest --in ./dir` (and the classic-CLI equivalents)
 resolve "latest" through the same workspace-scoped MRU lookup as `-c`, with
 `--in` re-homing the process before any session resolution happens.
 """
@@ -238,7 +238,7 @@ def test_in_dir_expands_user_home(main_mod, launched, monkeypatch, tmp_path):
 
 
 def test_in_dir_replaces_inherited_terminal_cwd(main_mod, monkeypatch, tmp_path):
-    """A parent Hermes surface, the shell or .env can export TERMINAL_CWD before
+    """A parent Tandem surface, the shell or .env can export TERMINAL_CWD before
     the CLI starts. Every cwd consumer prefers that variable over the process
     cwd, so a bare chdir left the Codex app-server thread, the terminal tool and
     context-file discovery in the inherited directory."""

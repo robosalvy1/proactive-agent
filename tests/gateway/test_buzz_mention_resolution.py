@@ -170,7 +170,7 @@ class TestMentionTokenMatching:
         result = await self._resolve(
             "@Hermes Matt please review",
             members=[FIZZ_PUBKEY, BUZZ_PUBKEY],
-            profiles={FIZZ_PUBKEY: "Hermes Matt", BUZZ_PUBKEY: "Hermes"},
+            profiles={FIZZ_PUBKEY: "Tandem Matt", BUZZ_PUBKEY: "Tandem"},
         )
         assert result == [FIZZ_PUBKEY]
 

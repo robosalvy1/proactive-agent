@@ -1,6 +1,6 @@
 """Vertex AI recovery paths: compaction in a signed reasoning session, and a mid-stream drop.
 
-Real ``hermes chat -q`` turns against the fake Vertex (``tests/fakes/providers/vertex.py``), which
+Real ``tandem chat -q`` turns against the fake Vertex (``tests/fakes/providers/vertex.py``), which
 rejects exactly what Gemini 3 rejects after history surgery: orphaned tool results, unanswered
 calls, and a current-turn function call without its thought signature (or with a signature it
 never issued). Scenarios run concurrently in a module fixture:
@@ -150,7 +150,7 @@ def test_compacted_session_rows_keep_tool_pairs(results: dict[str, Any]) -> None
 
 
 def test_stream_drop_retried_without_duplicate_content(results: dict[str, Any]) -> None:
-    """The response after a signed tool step dies mid-body: Hermes resends the same valid request
+    """The response after a signed tool step dies mid-body: Tandem resends the same valid request
     (signature intact), prints the recovered answer, and persists it exactly once."""
     res = results["drop"]
     fake, nh = res["fake"], res["nh"]

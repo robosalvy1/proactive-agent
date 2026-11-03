@@ -296,7 +296,7 @@ class TestSetupLogging:
     ):
         """A profile deleted underneath a long-lived dashboard must not loop.
 
-        ``_profile_homes`` is a startup snapshot, so a ``hermes profile delete``
+        ``_profile_homes`` is a startup snapshot, so a ``tandem profile delete``
         leaves the routing set naming a home whose directory no longer exists.
         Records for that home must fall back to the default home instead of
         retrying (and stderr-spamming) the vanished logs/ path on every record

@@ -1,6 +1,6 @@
 """Loopback OpenAI-compatible eval server: real local embeddings + a scripted chat model.
 
-Runs in its own disposable venv (``pip install fastembed``), never a Hermes environment:
+Runs in its own disposable venv (``pip install fastembed``), never a Tandem environment:
     python embed_server.py <port> <fastembed-model>   e.g. 18555 BAAI/bge-small-en-v1.5
 The scripted chat model replays the dataset's assistant turns so other agents (OpenClaw)
 can record the same synthetic history through their real turn loop.

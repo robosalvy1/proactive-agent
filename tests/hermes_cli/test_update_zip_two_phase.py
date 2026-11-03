@@ -715,7 +715,7 @@ def test_a_backup_copy_killed_before_its_rename_is_cleared_by_the_recovery(tmp_p
 @pytest.mark.parametrize("content", ["USER FILE", "old", "old\n", ""])
 def test_a_file_at_the_backup_temp_name_that_is_not_the_killed_copy_is_kept(tmp_path, content):
     """The run's tag names the temp but proves nothing, and neither do its bytes: a swap killed before
-    its backup copy existed leaves the name free, and a file there afterwards is not Hermes', even an
+    its backup copy existed leaves the name free, and a file there afterwards is not Tandem', even an
     empty one, a prefix or a full copy of the live file. Only the identity the swap journaled when it
     created the temp may delete it; anything else is kept aside, the journal still retiring (F78-R)."""
     from hermes_cli._early_recovery_zip import (

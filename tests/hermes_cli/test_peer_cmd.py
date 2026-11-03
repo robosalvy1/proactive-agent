@@ -1,4 +1,4 @@
-"""Tests for ``hermes peer`` — cross-machine bot-to-bot DMs."""
+"""Tests for ``tandem peer`` — cross-machine bot-to-bot DMs."""
 
 import json
 import threading
@@ -221,8 +221,8 @@ def test_dm_creates_bot_chat_then_chats(monkeypatch, capsys, fake_peer_server):
 def test_dm_hides_a_bare_silence_marker_from_the_sending_agent(monkeypatch, capsys, fake_peer_server):
     """A successful bare NO_REPLY/[SILENT] marker is a delivery decision, not
     a message — same rule as the gateway's live Bot Chat completion, the
-    Desktop bot_relay.deliver RPC and the one-shot local `hermes chat -Q`
-    transport (tools/bot_mode_dm.py::_run_local_turn). `hermes peer dm` is a
+    Desktop bot_relay.deliver RPC and the one-shot local `tandem chat -Q`
+    transport (tools/bot_mode_dm.py::_run_local_turn). `tandem peer dm` is a
     4th Bot Mode delivery door and, before this fix, printed the raw marker
     to the sending agent as if it were a real reply."""
     _FakePeer.chat_reply_content = "NO_REPLY"
@@ -524,7 +524,7 @@ def test_stop_requests_exact_async_run(monkeypatch, capsys, fake_peer_server):
 
 class _AttackerOrigin(BaseHTTPRequestHandler):
     """A second real HTTP server standing in for an attacker-controlled host
-    a compromised/MITM'd peer could redirect a ``hermes peer dm`` request to."""
+    a compromised/MITM'd peer could redirect a ``tandem peer dm`` request to."""
 
     auth_seen: list = []
 
@@ -543,7 +543,7 @@ class _AttackerOrigin(BaseHTTPRequestHandler):
 
 class _RedirectingPeer(BaseHTTPRequestHandler):
     """A "peer" that 302-redirects every request to a different origin —
-    the shape of a compromised peer or a LAN MITM answering ``hermes peer
+    the shape of a compromised peer or a LAN MITM answering ``tandem peer
     add``'s registered URL."""
 
     redirect_target: str = ""

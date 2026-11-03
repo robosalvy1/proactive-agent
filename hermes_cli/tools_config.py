@@ -1,4 +1,4 @@
-"""Unified tool configuration for Hermes Agent."""
+"""Unified tool configuration for Tandem Agent."""
 
 import json as _json
 import logging
@@ -168,7 +168,7 @@ def _get_plugin_toolset_keys() -> set:
 
 
 def _checklist_toolset_keys(platform: str) -> set[str]:
-    """Toolset keys the ``hermes tools`` checklist offers for ``platform`` (mirrors ``_prompt_toolset_checklist``);
+    """Toolset keys the ``tandem tools`` checklist offers for ``platform`` (mirrors ``_prompt_toolset_checklist``);
     read-time-resolved toolsets (recovered composites, MCP names) are NOT here."""
     return {
         ts_key for ts_key, _, _ in _get_effective_configurable_toolsets()
@@ -305,7 +305,7 @@ TOOL_CATEGORIES = {
     "x_search": {
         "name": "X (Twitter) Search", "setup_title": "Select xAI Credential Source",
         "setup_note": (
-            "Hermes routes X searches through xAI's built-in x_search Responses tool for read-only public X "
+            "Tandem routes X searches through xAI's built-in x_search Responses tool for read-only public X "
             "discovery. Use the xurl skill for authenticated X API reads and account actions. Both credential "
             "sources hit the same https://api.x.ai/v1/responses endpoint — pick whichever you already have. "
             "SuperGrok OAuth is preferred when both are set (uses your subscription quota instead of API spend)."
@@ -329,7 +329,7 @@ TOOL_CATEGORIES = {
         "providers": [
             _row("Local Browser", "★ recommended · free", "Headless Chromium, no API key needed", browser_provider="local",
                  browser_engine="auto", post_setup="agent_browser"),
-            _row("Lightpanda", "free · local · no Chromium", "Zig headless browser spawned by Hermes, text-only (no screenshots)",
+            _row("Lightpanda", "free · local · no Chromium", "Zig headless browser spawned by Tandem, text-only (no screenshots)",
                  browser_provider="local", browser_engine="lightpanda", post_setup="lightpanda"),
             # Cloud hook installs only the agent-browser CLI: Browser Use hosts its own Chromium, so the
             # local-Chromium install and readiness gate must not apply (with "agent_browser" this row read
@@ -527,7 +527,7 @@ def _context_engine_active(config: dict) -> bool:
 def _coerce_platform_toolsets_value(value, platform: str):
     """Read a list-literal string saved for ``platform_toolsets.<platform>`` as the list it encodes.
 
-    The parser is shared with ``hermes doctor`` and ``hermes plugins`` (``toolset_validation``
+    The parser is shared with ``tandem doctor`` and ``tandem plugins`` (``toolset_validation``
     ``parse_platform_toolsets_value``) so every surface agrees on the user's selection (#115866).
     Any other non-list value is warned about once (naming the expected shape) and left as-is, so
     the default fallback below is loud rather than silent.
@@ -542,7 +542,7 @@ def _coerce_platform_toolsets_value(value, platform: str):
         logger.warning(
             "platform_toolsets.%s is %r, expected a YAML list of toolset names "
             "(e.g. [terminal, file, web]) - falling back to the platform default. "
-            "Run `hermes tools` to reconfigure.", platform, value)
+            "Run `tandem tools` to reconfigure.", platform, value)
     return value
 
 
@@ -642,7 +642,7 @@ def _prune_toolsets_stripped_by_disabled(enabled_toolsets: set[str], disabled_na
 
     The agent subtracts ``agent.disabled_toolsets`` at TOOL granularity (``model_tools._select_tool_names``),
     so disabling a composite like ``debugging`` removes the terminal/web/file tools even though those names
-    never appear in the list. A name-only subtraction here left inspection surfaces (``hermes tools
+    never appear in the list. A name-only subtraction here left inspection surfaces (``tandem tools
     --summary``, banner, ``/tools``) showing toolsets as enabled that no session could call (#97015).
     Passthrough entries (MCP server names) and toolsets with no static tools (``context_engine``) are kept.
     """
@@ -696,7 +696,7 @@ def _merge_mcp_servers(
 
 
 def _warn_all_invalid_platform_toolsets(platform: str, explicit: list) -> None:
-    """Warn once when an explicit platform list has only invalid names (``hermes`` for ``hermes-cli`` → no
+    """Warn once when an explicit platform list has only invalid names (``tandem`` for ``hermes-cli`` → no
     native tools), at session tool resolution rather than only in update/doctor."""
     from toolsets import validate_toolset
 
@@ -705,7 +705,7 @@ def _warn_all_invalid_platform_toolsets(platform: str, explicit: list) -> None:
         _warned_invalid_platform_toolsets.add(platform)
         logger.warning(
             "platform '%s' has no valid toolsets configured (unknown "
-            "name(s): %s) - tools will be unavailable. Run `hermes tools` "
+            "name(s): %s) - tools will be unavailable. Run `tandem tools` "
             "to reconfigure. See issue #38798.",
             platform, ", ".join(named))
 
@@ -952,7 +952,7 @@ def _platform_menu_label(config: dict, pkey: str) -> str:
 
 
 def _print_tools_summary(config: dict, enabled_platforms: list[str]) -> None:
-    """``hermes tools --summary``: enabled toolsets per platform, non-interactive."""
+    """``tandem tools --summary``: enabled toolsets per platform, non-interactive."""
     total = len(_get_effective_configurable_toolsets())
     print(color("☤ Tool Summary", Colors.CYAN, Colors.BOLD))
     print()
@@ -1051,7 +1051,7 @@ def _configure_platforms(config: dict, platform_keys: list[str], *, all_platform
 
 
 def tools_command(args=None, first_install: bool = False, config: dict | None = None):
-    """Entry point for `hermes tools` / `hermes setup tools`. ``first_install`` skips the menu (checklist + key
+    """Entry point for `tandem tools` / `tandem setup tools`. ``first_install`` skips the menu (checklist + key
     prompts); a wizard-passed ``config`` receives platform_toolsets so its final save_config() keeps them."""
     if config is None:
         config = load_config()
@@ -1061,7 +1061,7 @@ def tools_command(args=None, first_install: bool = False, config: dict | None = 
     if getattr(args, "summary", False):
         _print_tools_summary(config, enabled_platforms)
         return
-    print(color("☤ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
+    print(color("☤ Tandem Tool Configuration", Colors.CYAN, Colors.BOLD))
     print(color("  Enable or disable tools per platform.", Colors.DIM))
     print(color("  Tools that need API keys will be configured when enabled.", Colors.DIM))
     print(color("  Guide: https://hermes-agent.nousresearch.com/docs/user-guide/features/tools", Colors.DIM))

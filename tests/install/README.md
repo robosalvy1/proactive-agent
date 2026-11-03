@@ -21,7 +21,7 @@ To declare a new method, edit the generator. To implement a method, flip the gat
 
 ## The isolation trick
 
-Source drivers redirect canonical Hermes Git URLs to a local bare clone at
+Source drivers redirect canonical Tandem Git URLs to a local bare clone at
 `serve.git`, using a driver-owned `GIT_CONFIG_GLOBAL` rewrite. This controls
 the source install/update boundary, not all network access: tool/dependency
 downloads and published bootstrap artifacts can still use the network.
@@ -147,7 +147,7 @@ A leg can install a release from months back. The driver must not assume that th
 The desktop app has two launch paths, so the matrix has two app-update methods. Both click "Update now" in the running app. They differ in how the app starts:
 
 - `open-app-update`: the app starts from the installed app entry point. On Windows, both the desktop installer and `installer-script+desktop` create shortcuts, so both support this route. On Linux and macOS, the script's opt-in desktop stage builds inside the checkout without registering an OS entry point. The macOS route therefore requires a desktop-installer install; Linux has no open-app-update leg.
-- `hermes-desktop-app-update`: the app starts with the `hermes desktop` command. Every install method provides this command, on each OS that ships the desktop app. On linux this is the only app surface: no desktop installer and no packaged desktop artifact exist for linux. The driver captures the product's own launch call (argv, cwd, environment) with `e2e-assets/launch-capture/sitecustomize.py` and re-executes it under Playwright, which owns the app and clicks the update flow. Pre-PM console scripts load the capture hook via `PYTHONPATH`; PM launchers use `-I`, so `launch-capture/pm-launch.py` obtains the installed launcher's own isolated runtime command and loads the driver hook before its bootstrap.
+- `hermes-desktop-app-update`: the app starts with the `tandem desktop` command. Every install method provides this command, on each OS that ships the desktop app. On linux this is the only app surface: no desktop installer and no packaged desktop artifact exist for linux. The driver captures the product's own launch call (argv, cwd, environment) with `e2e-assets/launch-capture/sitecustomize.py` and re-executes it under Playwright, which owns the app and clicks the update flow. Pre-PM console scripts load the capture hook via `PYTHONPATH`; PM launchers use `-I`, so `launch-capture/pm-launch.py` obtains the installed launcher's own isolated runtime command and loads the driver hook before its bootstrap.
 
 ## Skips
 
@@ -184,7 +184,7 @@ Per-leg timeouts and GitHub's matrix limits remain workflow constraints, not
 proof that every declared combination ran. Native package acceptance is separate
 from the deferred desktop Playwright application suite.
 
-Running the drivers locally: don't, except in a disposable VM. The windows driver kills every process named Hermes during teardown and the macos driver operates on `/Applications/Hermes.app`; on a machine with a real Hermes install they will interfere with it.
+Running the drivers locally: don't, except in a disposable VM. The windows driver kills every process named Tandem during teardown and the macos driver operates on `/Applications/Hermes.app`; on a machine with a real Tandem install they will interfere with it.
 
 ## Plugin upgrade preservation
 
@@ -223,7 +223,7 @@ contract and not exercised.
 
 There is no `manual/` directory in this repo. The rehearsal scripts — `pre`
 (back up the whole `HERMES_HOME`, the desktop app's Electron userData, the
-`hermes` shims on PATH and the global git config, then point the install's
+`tandem` shims on PATH and the global git config, then point the install's
 update source at a custom repo + ref) and `post` (undo all of it and report how
 exact the restore was) — are a hand-off kit for someone with a *real* install,
 kept outside this checkout on purpose: they are not part of the repo and not
@@ -250,8 +250,8 @@ re-syncs it), but it may not delete or modify the user's own durable state —
   purpose: the state it defends must be produced by the product through the
   ordinary user path, never hand-written by the harness.
 - `e2e-assets/user-state-actions.sh` produces that state with real commands —
-  `hermes chat -q` (a real turn → `sessions/` + `state.db` rows),
-  `hermes auth add` (→ `auth.json`), `hermes profile create`
+  `tandem chat -q` (a real turn → `sessions/` + `state.db` rows),
+  `tandem auth add` (→ `auth.json`), `tandem profile create`
   (→ `profiles/<name>/`) — after probing `--help` for each flag, per the
   harness's "probe, do not assume" rule. Each action asserts it actually landed,
   so a leg can never "pass" while testing nothing.

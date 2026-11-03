@@ -1,4 +1,4 @@
-"""A network failure during ``hermes update`` must never take down a healthy gateway (the exit-75
+"""A network failure during ``tandem update`` must never take down a healthy gateway (the exit-75
 class, #123370: keep it closed).
 
 The upstream is published, but the git transport is refused: the official URL is rewritten to a

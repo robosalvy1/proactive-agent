@@ -1,6 +1,6 @@
 """A gateway-owned session opened in a linked git worktree gets the isolated-worktree guidance.
 
-Regression for #134889 (CLI-4): the classic CLI appended its ``hermes -w`` worktree note to its
+Regression for #134889 (CLI-4): the classic CLI appended its ``tandem -w`` worktree note to its
 own system prompt, which the gateway never reads. The gateway now derives the note from the
 session's frozen cwd, so every local surface opened in a worktree carries it.
 """

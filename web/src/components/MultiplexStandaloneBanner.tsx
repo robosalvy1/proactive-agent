@@ -31,7 +31,7 @@ export function MultiplexStandaloneBanner({
   const unserved = (status?.profiles ?? []).filter((p) => p !== "default");
   const template =
     t.app.multiplexStandaloneBanner ??
-    "Your gateway serves only one profile. Not served: {profiles}. Why: {reason}. Fix: hermes gateway migrate --multiplex";
+    "Your gateway serves only one profile. Not served: {profiles}. Why: {reason}. Fix: tandem gateway migrate --multiplex";
   const message = template
     .replace("{profiles}", unserved.length > 0 ? unserved.join(", ") : "—")
     .replace("{reason}", reason);

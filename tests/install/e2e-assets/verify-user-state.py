@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""User-state upgrade-preservation verifier (Hermes install/update E2E hook).
+"""User-state upgrade-preservation verifier (Tandem install/update E2E hook).
 
 Answers the question the install/update E2E legs only answered indirectly:
 after an upgrade, is the user's *own* state still there?
@@ -7,7 +7,7 @@ after an upgrade, is the user's *own* state still there?
 Standalone and stdlib-only. Both modes are read-only against the home; nothing
 is ever created, deleted or written under it. There is deliberately NO `seed`
 mode: the state this verifies must be produced by the product through the
-ordinary user path (a real chat turn, `hermes auth add`, `hermes profile
+ordinary user path (a real chat turn, `tandem auth add`, `tandem profile
 create`), never hand-written by the harness. Assertions over fixtures we wrote
 ourselves would only prove the harness can write files.
 

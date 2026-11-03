@@ -1419,7 +1419,7 @@ class TestSecretFileAssignmentRedaction:
 
 
 class TestHermesHomePathClassification:
-    """``_is_secret_file_arg`` must see the RESOLVED Hermes home: a managed Windows home
+    """``_is_secret_file_arg`` must see the RESOLVED Tandem home: a managed Windows home
     (``%LOCALAPPDATA%\\hermes``) has no ``.hermes`` segment and a resolved path never spells
     ``$HERMES_HOME``, so the literal test alone classified its ``config.yaml`` as ordinary YAML."""
 

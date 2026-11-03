@@ -35,9 +35,9 @@ Sources accessed 2026-10-15. Vendor pages describe intended behavior, not measur
 
 **Synthesis:** good proactivity rarely comes from a smarter prompt. It comes from durable concerns, cheap sensing, an editorial gate with budgets and timing, a small set of interaction types (inform / ask / propose / alert), explicit authority levels, and feedback.
 
-## 3. What Hermes already has (source-inspected)
+## 3. What Tandem already has (source-inspected)
 
-Hermes already contains most of the parts. What it lacks is the layer that ties them into one attention policy.
+Tandem already contains most of the parts. What it lacks is the layer that ties them into one attention policy.
 
 | Capability | Where | Gap for this goal |
 | --- | --- | --- |

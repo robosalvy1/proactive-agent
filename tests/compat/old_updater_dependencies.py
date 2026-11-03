@@ -169,7 +169,7 @@ def _sync_python_dependencies_after_pull(
         _m()._clear_lazy_refresh_incomplete_marker()
     else:
         print(
-            "  ⚠ Lazy-refresh recovery incomplete — run `hermes` again "
+            "  ⚠ Lazy-refresh recovery incomplete — run `tandem` again "
             "to finish import-based venv repair."
         )
 
@@ -195,5 +195,5 @@ def _sync_python_dependencies_after_pull(
         print()
         print(f"  ⚠ {failing_module} still fails to import after updating:")
         print(f"      {import_error}")
-        print("    Run `hermes update` again — if it persists, reinstall:")
+        print("    Run `tandem update` again — if it persists, reinstall:")
         print("    https://hermes-agent.nousresearch.com")

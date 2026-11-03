@@ -19,7 +19,7 @@ Desktop/gateway/ACP/cron" class:
 * after the surface's normal shutdown no MCP server / grandchild survives. For the
   gateway-client surfaces (``-z``, ``chat -q``, ``acp``, ``cron run``) the turn runs
   in the profile's ``gateway run`` daemon, which outlives the client by design;
-  their normal shutdown is client exit + ``hermes gateway stop``.
+  their normal shutdown is client exit + ``tandem gateway stop``.
 
 ``PARITY_TABLE_OUT=<path>`` appends a markdown row per entrypoint (REPORT.md table).
 """

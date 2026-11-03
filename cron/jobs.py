@@ -857,7 +857,7 @@ def parse_schedule(schedule: str) -> dict[str, Any]:
 
 
 def _ensure_aware(dt: datetime) -> datetime:
-    """Aware datetime in the configured Hermes timezone. Legacy naive values are read as
+    """Aware datetime in the configured Tandem timezone. Legacy naive values are read as
     *system-local* wall time (what created them) then converted, preserving ordering across
     timezone changes and avoiding false not-due results."""
     target_tz = _hermes_now().tzinfo
@@ -1250,7 +1250,7 @@ def record_ticker_heartbeat(success: bool = False) -> None:
     "alive but failing" from "firing"; scoped per profile store.
 
     The ticker calls this once per loop iteration. ``success=True`` additionally bumps the *last successful
-    tick* marker. We track two distinct signals so `hermes cron status` can tell a thread that is merely
+    tick* marker. We track two distinct signals so `tandem cron status` can tell a thread that is merely
     *alive and looping* (heartbeat fresh, success stale) from one that is actually *firing jobs* (both
     fresh) — a ticker stuck failing every tick would otherwise keep the plain heartbeat fresh and falsely
     report healthy (#32612, #32895).
@@ -1295,7 +1295,7 @@ def get_ticker_heartbeat_age() -> Optional[float]:
     not "dead").
 
     Resolution uses ``_current_cron_store()`` so the heartbeat is correctly scoped to the active profile —
-    critical under multiplex_profiles where ``hermes cron status`` must report per-profile liveness
+    critical under multiplex_profiles where ``tandem cron status`` must report per-profile liveness
     (#69377).
     """
     return _epoch_file_age("ticker_heartbeat")
@@ -1305,7 +1305,7 @@ def get_ticker_success_age() -> Optional[float]:
     """Seconds since the ticker last completed a tick WITHOUT raising, or None.
 
     Resolution uses ``_current_cron_store()`` so the heartbeat is correctly scoped to the active profile —
-    critical under multiplex_profiles where ``hermes cron status`` must report per-profile liveness
+    critical under multiplex_profiles where ``tandem cron status`` must report per-profile liveness
     (#69377).
     """
     return _epoch_file_age("ticker_last_success")
@@ -2188,7 +2188,7 @@ def trigger_job(job_id: str, extra_prompt: Optional[str] = None) -> Optional[dic
         name = job.get("name", job_id)
         raise ValueError(
             f"Cannot run: job '{name}' is {job.get('state')} (terminal). "
-            f"Create a new occurrence with 'hermes cron resume {name} "
+            f"Create a new occurrence with 'tandem cron resume {name} "
             "--run-now' or '--at <ISO-8601>'.")
     manual_run_at = _hermes_now().isoformat()
     return update_job(job["id"], {
@@ -2207,7 +2207,7 @@ def _claim_is_live(claim: Any, now: datetime, ttl_seconds: float) -> bool:
     """True for a well-formed claim aged within ``[0, ttl)`` whose owner is not provably dead:
     future-dated (clock/TZ skew) or malformed claims count as stale so they can never wedge a
     job, and a same-host owner pid that has exited releases the claim immediately instead of
-    after the TTL (a killed ``hermes cron run`` otherwise blocks the next manual run for the
+    after the TTL (a killed ``tandem cron run`` otherwise blocks the next manual run for the
     full window with "already being fired")."""
     if not isinstance(claim, dict) or not claim.get("at"):
         return False
@@ -3179,7 +3179,7 @@ def _oneshot_dispatch_limit_reached(job: dict[str, Any], scan: _DueScan) -> bool
             "Job '%s': one-shot dispatch limit reached (%d/%d) on a record that already completed "
             "a run (last_run_at=%s) — removing it WITHOUT firing. This record was re-armed "
             "without a budget reset (pre-#93615 store or hand edit); re-run it with "
-            "'hermes cron resume <job> --run-now' (#93524).",
+            "'tandem cron resume <job> --run-now' (#93524).",
             name, completed, times, job.get("last_run_at"))
     else:
         logger.info(

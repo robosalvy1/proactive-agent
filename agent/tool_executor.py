@@ -647,7 +647,7 @@ def _run_with_activity_heartbeat(agent, function_name: str, fn):
 
 _PRUNED_TOOL_ARGUMENTS_ERROR = "suspected_pruned_tool_arguments"
 _PRUNED_TOOL_ARGUMENTS_MESSAGE = (
-    "Tool was not executed because effect-capable arguments contain a Hermes context-compression artifact. "
+    "Tool was not executed because effect-capable arguments contain a Tandem context-compression artifact. "
     "Recover the exact content from its durable source or re-read it, then issue a complete new call; "
     "do not retry these arguments. To remove a marker that already landed in a file, match it by its "
     f"{_COMPRESSION_MARKER_PREFIX.strip('⟪:')} prefix (e.g. a terminal sed on that line) instead of quoting the full marker."
@@ -696,7 +696,7 @@ def _dispatch_authorized_once(
     begin_execution,
     authorization_gate: _ConcurrentToolAuthorizationGate | None,
 ) -> Any:
-    """Hermes policy (scope → plugin pre-hooks → pruned-arg check → guardrails) then the one real dispatch.
+    """Tandem policy (scope → plugin pre-hooks → pruned-arg check → guardrails) then the one real dispatch.
 
     Plugin ``modify`` hooks may rewrite ``ref.args`` (mirrored into ``state.args``).
     ``begin_execution`` (concurrent start-order gate) is advanced exactly once on every
@@ -768,7 +768,7 @@ def _run_agent_tool_execution_middleware(
     begin_execution=None,
     authorization_gate: _ConcurrentToolAuthorizationGate | None = None,
 ) -> _ManagedToolResult:
-    """Run Relay rewrites before Hermes policy and dispatch exactly once."""
+    """Run Relay rewrites before Tandem policy and dispatch exactly once."""
     from agent import relay_tools
     from hermes_cli.middleware import (
         apply_tool_request_middleware,
@@ -782,7 +782,7 @@ def _run_agent_tool_execution_middleware(
     def _authorized_dispatch(final_args: dict[str, Any]) -> Any:
         with dispatch_lock:
             if state.dispatched:
-                raise RuntimeError("Hermes tool execution callback invoked more than once")
+                raise RuntimeError("Tandem tool execution callback invoked more than once")
             state.dispatched = True
             state.blocked = False
             state.args = final_args

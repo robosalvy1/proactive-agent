@@ -1,6 +1,6 @@
 """A matching source stamp must not hide a packaged app whose node-pty has no native binary.
 
-Regression for #62462: ``hermes desktop`` reported "content stamp matches" and
+Regression for #62462: ``tandem desktop`` reported "content stamp matches" and
 launched a package that crashed on ``require('node-pty')``.
 """
 import sys
@@ -20,7 +20,7 @@ def packaged(tmp_path, monkeypatch):
     (dist / "index.html").write_text("<html></html>", encoding="utf-8")
     (tmp_path / ".gitignore").write_text("apps/desktop/release/\n", encoding="utf-8")
     # Executable lookup and the per-OS resources layout are covered natively elsewhere.
-    monkeypatch.setattr(main_desktop, "_desktop_packaged_executable", lambda _: dist / "Hermes")
+    monkeypatch.setattr(main_desktop, "_desktop_packaged_executable", lambda _: dist / "Tandem")
     monkeypatch.setattr(main_desktop, "_renderer_bundle_dir", lambda *_a, **_k: dist)
     # The compiler owns receipts now. Hold that independent check current so
     # this test isolates the packaged native-binary boundary.

@@ -4,7 +4,7 @@
 decide WHO may talk to the agent. They are not credentials (no secret scrub sees them), a unit-file
 ``Environment=`` or operator export never appears in the launch ``.env`` (no name list sees them), and
 the target profile's own ``.env`` rarely defines them (its dotenv load never overwrites them) — so a
-``hermes -p B`` child built from profile A's process enforced A's channel list as its own.
+``tandem -p B`` child built from profile A's process enforced A's channel list as its own.
 """
 
 import json

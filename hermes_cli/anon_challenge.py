@@ -1,9 +1,9 @@
 """Nous free tier: the browser challenge the account service may put in front of a token exchange.
 
 NAS can answer ``POST /api/anonymous/token`` with **428** ``challenge_required`` and a list of
-challenges. Hermes implements exactly one primitive, ``browser-v1``: *open this portal URL, poll
+challenges. Tandem implements exactly one primitive, ``browser-v1``: *open this portal URL, poll
 until it clears, exchange again*. Everything the page does (bot detection, an in-browser proof of
-work, an interactive fallback, its copy) belongs to the portal and changes without a Hermes release.
+work, an interactive fallback, its copy) belongs to the portal and changes without a Tandem release.
 
 Who opens the URL depends on the surface:
 

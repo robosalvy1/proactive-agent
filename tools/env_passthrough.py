@@ -44,8 +44,8 @@ _config_passthrough: dict[str, frozenset[str]] = {}
 
 
 def _is_hermes_provider_credential(name: str) -> bool:
-    """True if ``name`` is a Hermes-managed provider credential per
-    ``_HERMES_PROVIDER_ENV_BLOCKLIST`` or a dynamic Hermes-internal secret
+    """True if ``name`` is a Tandem-managed provider credential per
+    ``_HERMES_PROVIDER_ENV_BLOCKLIST`` or a dynamic Tandem-internal secret
     (AUXILIARY_*_API_KEY / _BASE_URL, GATEWAY_RELAY_*). Skill-declared
     ``required_environment_variables`` must not override this — that was the
     GHSA-rhgp-j443-p4rf bypass (a skill registered ``OPENAI_API_KEY`` and received it
@@ -67,11 +67,11 @@ def _is_hermes_provider_credential(name: str) -> bool:
 
 def register_env_passthrough(var_names: Iterable[str]) -> None:
     """Register env var names as allowed in sandboxed environments (typically a
-    skill's ``required_environment_variables``). Hermes-managed provider credentials
+    skill's ``required_environment_variables``). Tandem-managed provider credentials
     are rejected (GHSA-rhgp-j443-p4rf) — such skills should use the main-process tools
     (web_search, web_extract, …); third-party keys pass normally."""
     for name in _accepted((n.strip() for n in var_names), (
-        "env passthrough: refusing to register Hermes provider "
+        "env passthrough: refusing to register Tandem provider "
         "credential %r (blocked by _HERMES_PROVIDER_ENV_BLOCKLIST). "
         "Skills must not override the execute_code sandbox's "
         "credential scrubbing; see GHSA-rhgp-j443-p4rf."
@@ -81,7 +81,7 @@ def register_env_passthrough(var_names: Iterable[str]) -> None:
 
 
 def _accepted(names, refusal_msg: str):
-    """Yield non-empty *names* that are not Hermes provider credentials; refused
+    """Yield non-empty *names* that are not Tandem provider credentials; refused
     names are logged with *refusal_msg* (``%r`` = name)."""
     for name in names:
         if not name:
@@ -111,7 +111,7 @@ def _load_config_passthrough() -> frozenset[str]:
         passthrough = cfg_get(read_raw_config(), "terminal", "env_passthrough")
         items = passthrough if isinstance(passthrough, list) else ()
         result.update(_accepted((i.strip() for i in items if isinstance(i, str)), (
-            "env passthrough: refusing to register Hermes "
+            "env passthrough: refusing to register Tandem "
             "provider credential %r from config.yaml (blocked "
             "by _HERMES_PROVIDER_ENV_BLOCKLIST). Operator "
             "configuration must not override the execute_code "
@@ -126,7 +126,7 @@ def _load_config_passthrough() -> frozenset[str]:
 
 def is_env_passthrough(var_name: str) -> bool:
     """True if *var_name* was registered by a skill or listed in config and is not a
-    Hermes-managed credential NOW. Ownership changes after acceptance (a platform plugin
+    Tandem-managed credential NOW. Ownership changes after acceptance (a platform plugin
     registered later declares the name in its ``required_env`` or manifest), so the refusal applied at registration
     is re-applied here, where every child builder consumes the allowlist."""
     return ((var_name in _get_allowed() or var_name in _load_config_passthrough())
@@ -135,7 +135,7 @@ def is_env_passthrough(var_name: str) -> bool:
 
 def get_all_passthrough() -> frozenset[str]:
     """Return the union of skill-registered and config-based passthrough vars, minus names
-    that have become Hermes-managed credentials since they were accepted."""
+    that have become Tandem-managed credentials since they were accepted."""
     return frozenset(name for name in frozenset(_get_allowed()) | _load_config_passthrough()
                      if not _is_hermes_provider_credential(name))
 

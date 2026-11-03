@@ -92,7 +92,7 @@ class TestHandleUpdateCommand:
     @pytest.mark.asyncio
     async def test_resolve_hermes_bin_module_argv(self):
         """_resolve_hermes_bin uses the running interpreter's module argv when hermes_cli is
-        importable, even when PATH also offers a ``hermes`` binary (#111569: a PATH-first
+        importable, even when PATH also offers a ``tandem`` binary (#111569: a PATH-first
         lookup would re-exec an attacker-planted executable on /update and /restart)."""
         import sys
         from gateway.run import _resolve_hermes_bin
@@ -107,7 +107,7 @@ class TestHandleUpdateCommand:
     @pytest.mark.asyncio
     async def test_resolve_hermes_bin_falls_back_to_path_then_none(self):
         """Without an importable hermes_cli the argv degrades to PATH, then to None — never a
-        bare ``hermes`` string that a hostile PATH entry could shadow."""
+        bare ``tandem`` string that a hostile PATH entry could shadow."""
         from gateway.run import _resolve_hermes_bin
 
         with patch("shutil.which", return_value="/usr/local/bin/hermes"), \
@@ -537,7 +537,7 @@ class TestSendUpdateNotification:
         assert "ok before" in sent_text
         assert "invalid byte" in sent_text
         assert "continued after" in sent_text
-        assert "Hermes update finished" in sent_text
+        assert "Tandem update finished" in sent_text
         assert not pending_path.exists()
         assert not output_path.exists()
         assert not exit_code_path.exists()
@@ -597,7 +597,7 @@ class TestWatchUpdateProgress:
         sent = "\n".join(call.args[1] for call in mock_adapter.send.call_args_list)
         assert "ok before" in sent
         assert "continued after" in sent
-        assert "Hermes update finished" in sent
+        assert "Tandem update finished" in sent
         assert not (hermes_home / ".update_pending.json").exists()
 # ---------------------------------------------------------------------------
 # Install-method refusal gate
@@ -606,7 +606,7 @@ class TestWatchUpdateProgress:
 
 class TestUpdateCommandInstallMethodRefusal:
     """/update on a non-git install refuses with the steward's own update
-    command instead of attempting a git-based `hermes update`."""
+    command instead of attempting a git-based `tandem update`."""
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method", ["docker", "nix"])

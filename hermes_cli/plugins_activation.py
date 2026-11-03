@@ -98,7 +98,7 @@ def activate_plugin_now(name: str, *, in_process: bool = True) -> dict[str, Any]
     subscribers here — the TUI/Desktop server — see it), connect its MCP servers and hand them plus
     its skills to the open chats of this profile (:func:`load_and_go_live`), and nudge the running
     gateway to load it too over its control socket so live adapters re-wire their handlers. A caller
-    in another process (``hermes plugins install``) passes ``in_process=False``; the running Desktop /
+    in another process (``tandem plugins install``) passes ``in_process=False``; the running Desktop /
     dashboard backend is then asked to do the in-process half (:func:`notify_serve_backend`). Never raises.
 
     Returns ``{"gateway_reloaded": bool, "activation": summary | None, "restart_required": bool}``.
@@ -184,7 +184,7 @@ def _serve_backend_record():
 
 
 def notify_serve_backend(name: str, home: Path) -> Optional[dict[str, Any]]:
-    """Ask the running dashboard / Desktop backend (``hermes serve``, found through its host record) to
+    """Ask the running dashboard / Desktop backend (``tandem serve``, found through its host record) to
     run :func:`load_and_go_live` for ``name`` in ``home``. None when no backend answers. Never raises."""
     try:
         import json
@@ -221,7 +221,7 @@ def activation_hint(result: dict[str, Any]) -> str:
     if not result.get("gateway_reloaded"):
         if lines:  # live in open chats; a messaging gateway that starts later loads it at boot
             return "\n".join(lines)
-        return "\n".join([*lines, "Restart the gateway for the plugin to take effect:\n  hermes gateway restart"])
+        return "\n".join([*lines, "Restart the gateway for the plugin to take effect:\n  tandem gateway restart"])
     now, deferred = act.get("activated_now") or {}, act.get("deferred") or {}
     parts = []
     if now:

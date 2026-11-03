@@ -1,4 +1,4 @@
-"""``hermes plugins`` CLI subcommand — install, update, remove, and list plugins.
+"""``tandem plugins`` CLI subcommand — install, update, remove, and list plugins.
 
 Facade: shared primitives (errors, console/config helpers, manifest reading, discovery, enable/disable
 selection) and the dispatch table live here; each verb family lives in a ``plugins_cmd_<topic>.py``
@@ -441,7 +441,7 @@ def _clone_failure_message(git_url: str, git_error: str) -> str:
     not parsed as markup."""
     from rich.markup import escape
     return (f"Could not download the plugin from {git_url}. Check the address (browse the catalog "
-            "with `hermes plugins search`), check your internet connection, or, if the repository "
+            "with `tandem plugins search`), check your internet connection, or, if the repository "
             "is private, sign in first with `gh auth login` (or set GITHUB_TOKEN in your .env).\n"
             f"Details: {escape(git_error.strip())}")
 
@@ -466,9 +466,9 @@ def _unknown_plugin_message(name: str, *, downloaded_only: bool = False) -> str:
     from hermes_cli.left_core_migration import moved_plugin_hint
     if moved := moved_plugin_hint(name):
         return f"[red]No plugin named '{name}'.[/red] {moved}"
-    return (f"[red]No plugin named '{name}'.[/red] Run `hermes plugins list` to see the exact names "
+    return (f"[red]No plugin named '{name}'.[/red] Run `tandem plugins list` to see the exact names "
             f"(nested plugins use their full key, e.g. web/firecrawl).{scope} "
-            "To add one: `hermes plugins install <owner/repo>`.")
+            "To add one: `tandem plugins install <owner/repo>`.")
 
 
 # ``plugins.disabled`` is an explicit deny-list that wins over the ``plugins.enabled`` allow-list.
@@ -519,7 +519,7 @@ def _admit_and_save_plugin_sets(
             console.print(f"[red]✗[/red] {action} refused: {exc}")
             console.print(
                 "[dim]config.yaml and the active environment are unchanged. "
-                "Run `hermes pm install` to resolve dependencies, then retry.[/dim]"
+                "Run `tandem pm install` to resolve dependencies, then retry.[/dim]"
             )
         raise
 
@@ -531,7 +531,7 @@ _BASIC_AUTH_PLUGIN_KEYS = frozenset({"basic", "dashboard_auth/basic"})
 def ensure_basic_auth_plugin_enabled_in_config(cfg: dict) -> bool:
     """Drop the bundled basic dashboard-auth plugin from ``plugins.disabled`` in *cfg*.
 
-    ``hermes setup`` / ``hermes plugins disable basic`` can park it there while
+    ``tandem setup`` / ``tandem plugins disable basic`` can park it there while
     ``dashboard.basic_auth`` is configured, and password auth then silently fails.
     Returns True when modified.
     """
@@ -706,7 +706,7 @@ def cmd_enable(name: str, allow_tool_override: Optional[bool] = None) -> None:
         if plugin in LEGACY_RELAY_PLUGIN_KEYS:
             _fail(console, (
                 f"[red]Plugin '{plugin}' was removed.[/red] Relay lifecycle is owned "
-                "by Hermes core; configure a standard user or system Relay plugins.toml, or use "
+                "by Tandem core; configure a standard user or system Relay plugins.toml, or use "
                 f"{RELAY_PLUGINS_CONFIG_ENV} for an explicit user-file override."))
 
     _refuse_legacy_relay(name)
@@ -1106,7 +1106,7 @@ _PLUGIN_ACTIONS = {
 
 
 def plugins_command(args) -> None:
-    """Dispatch hermes plugins subcommands."""
+    """Dispatch tandem plugins subcommands."""
     action = getattr(args, "plugins_action", None)
     handler = _PLUGIN_ACTIONS.get(action)
     if handler is None:

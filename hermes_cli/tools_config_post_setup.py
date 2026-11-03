@@ -1,4 +1,4 @@
-"""Post-setup install hooks and installed-state predicates for `hermes tools` provider rows."""
+"""Post-setup install hooks and installed-state predicates for `tandem tools` provider rows."""
 
 from __future__ import annotations
 
@@ -28,15 +28,15 @@ def _info_lines(*lines: str) -> None:
 
 def _ensure_browser_use_cli(*, verbose_hints: bool = False) -> None:
     """Confirm the Browser Use CLI engine is runnable. It is browser-harness, a core dependency of
-    Hermes's own venv, so there is nothing to download; a miss means the venv needs a re-sync.
+    Tandem's own venv, so there is nothing to download; a miss means the venv needs a re-sync.
     Primary driver engine for EVERY browser backend except Camofox (Firefox-based, no CDP surface)."""
     from tools.browser_use_cli import _find_cli
 
     if _find_cli() is not None:
-        _print_success("    Browser Use CLI ready (browser-harness, bundled with Hermes)")
+        _print_success("    Browser Use CLI ready (browser-harness, bundled with Tandem)")
     else:
-        _print_warning("    browser-harness is missing from Hermes's Python environment")
-        _print_info("    Re-sync it with: hermes update")
+        _print_warning("    browser-harness is missing from Tandem's Python environment")
+        _print_info("    Re-sync it with: tandem update")
     if verbose_hints:
         _info_lines("Local Chrome needs remote debugging: chrome://inspect/#remote-debugging",
                     "Cloud browsers: set BROWSER_USE_API_KEY")
@@ -54,7 +54,7 @@ def _post_setup_lightpanda() -> None:
         _print_warning("    lightpanda binary not found on PATH, ~/.lightpanda or ~/.local/bin")
         _print_info(f"    {LIGHTPANDA_INSTALL_HINT}")
         if os.name == "nt":
-            _print_info("    Lightpanda has no native Windows build; run Hermes under WSL2.")
+            _print_info("    Lightpanda has no native Windows build; run Tandem under WSL2.")
 
 
 def _post_setup_agent_browser(post_setup_key: str) -> None:
@@ -89,7 +89,7 @@ def _post_setup_agent_browser(post_setup_key: str) -> None:
         pm.ensure("agent-browser", explicit=True)
     except Exception as exc:
         _print_warning(f"    agent-browser install failed: {exc}")
-        _info_lines("Retry with: hermes tools post-setup " + post_setup_key)
+        _info_lines("Retry with: tandem tools post-setup " + post_setup_key)
         return
     _print_success("    Managed agent-browser and Chromium are ready")
 
@@ -107,7 +107,7 @@ def _post_setup_agent_browser(post_setup_key: str) -> None:
 def _post_setup_camofox() -> None:
     from tools.browser_camofox import check_camofox_available
 
-    _info_lines("Camofox is an externally managed server; Hermes does not install or start it.")
+    _info_lines("Camofox is an externally managed server; Tandem does not install or start it.")
     if check_camofox_available():
         _print_success("    Configured Camofox server is reachable")
         return
@@ -152,9 +152,9 @@ def _post_setup_python(spec: dict) -> None:
         pm.sync_venv([spec["extra"]], explicit=True)
     except (pm.InstallError, OSError, ValueError) as exc:
         _print_warning(f"    {label} install failed: {exc}")
-        _info_lines("Retry with: hermes tools")
+        _info_lines("Retry with: tandem tools")
         return
-    _print_success(f"    {label} dependencies ready. Restart Hermes to use them.")
+    _print_success(f"    {label} dependencies ready. Restart Tandem to use them.")
     _info_lines(*spec["on_install"], *spec["always"])
 
 
@@ -182,26 +182,26 @@ def _post_setup_xai_grok() -> None:
         from hermes_cli.config import save_env_value
     except Exception as exc:
         _print_warning(f"    Could not load setup helpers: {exc}")
-        _info_lines("Run later: hermes auth add xai-oauth   (or set XAI_API_KEY)")
+        _info_lines("Run later: tandem auth add xai-oauth   (or set XAI_API_KEY)")
         return
 
     idx = prompt_choice(
         "    How do you want xAI to authenticate?", default=0,
         choices=["Sign in with xAI Grok OAuth (SuperGrok / Premium+) — browser login",
                  "Paste an xAI API key (console.x.ai)",
-                 "Skip — configure later via `hermes auth add xai-oauth`"])
+                 "Skip — configure later via `tandem auth add xai-oauth`"])
     if idx == 0:
         if _run_xai_oauth_login_from_setup():
             _print_success("    Logged in — xAI will use these OAuth credentials")
         else:
-            _print_warning("    xAI Grok OAuth login did not complete. Run later: hermes auth add xai-oauth")
+            _print_warning("    xAI Grok OAuth login did not complete. Run later: tandem auth add xai-oauth")
     elif idx == 1:
         api_key = _setup_prompt("    xAI API key", password=True)
         if api_key:
             save_env_value("XAI_API_KEY", api_key)
             _print_success("    XAI_API_KEY saved")
         else:
-            _print_warning("    No API key provided. Run later: hermes auth add xai-oauth")
+            _print_warning("    No API key provided. Run later: tandem auth add xai-oauth")
     else:
         _print_info("    xAI will remain inactive until credentials are configured.")
 
@@ -223,7 +223,7 @@ def _post_setup_openai_codex() -> None:
         _print_success("    Image generation will use your existing Codex/ChatGPT OAuth credentials")
         return
 
-    relogin = "hermes auth add openai-codex"
+    relogin = "tandem auth add openai-codex"
     _print_info("    OpenAI (Codex auth) needs credentials.")
     try:
         from hermes_cli.auth import _codex_device_code_login, _save_codex_tokens
@@ -307,11 +307,11 @@ def valid_post_setup_keys() -> set[str]:
 
 
 def run_post_setup_command(args) -> int:
-    """``hermes tools post-setup <key>`` — non-interactive runner the dashboard spawns so the GUI can drive
+    """``tandem tools post-setup <key>`` — non-interactive runner the dashboard spawns so the GUI can drive
     backend setup without re-implementing install logic. Exit code: 0 ok, 2 unknown key."""
     key = getattr(args, "post_setup_key", None)
     if not key:
-        _print_error("Usage: hermes tools post-setup <key>")
+        _print_error("Usage: tandem tools post-setup <key>")
         return 2
     valid = valid_post_setup_keys()
     if key not in valid:

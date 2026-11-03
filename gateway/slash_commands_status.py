@@ -71,7 +71,7 @@ async def _quiet(call, default=None):
 # English source for the transcript-read-failure reply; callers render ``history_unreadable()``
 # (``gateway.shared.history_unreadable``) so the active language applies.
 HISTORY_UNREADABLE = ("⚠️ I can't read this conversation's history right now (your earlier messages "
-                      "exist but cannot be loaded). Run `hermes doctor --fix` on the host, or use /new "
+                      "exist but cannot be loaded). Run `tandem doctor --fix` on the host, or use /new "
                       "to start fresh.")
 
 

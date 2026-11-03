@@ -5,7 +5,7 @@ from __future__ import annotations
 from .method_ctx import bind_module
 
 def _env_model_seed() -> str:
-    """The launch-scoped model seed (``hermes --tui -m``, hosted provisioning); "" when unset."""
+    """The launch-scoped model seed (``tandem --tui -m``, hosted provisioning); "" when unset."""
     return (os.environ.get("HERMES_MODEL", "") or os.environ.get("HERMES_INFERENCE_MODEL", "")).strip()
 
 
@@ -26,7 +26,7 @@ def _resolve_model() -> str:
 
 def _resolve_session_platform() -> str:
     """``HERMES_DESKTOP=1`` without ``HERMES_DESKTOP_TERMINAL`` → "desktop" (chat panel; the agent then
-    suggests TUI-only slash commands), else "tui" (embedded terminal pane or standalone ``hermes --tui``)."""
+    suggests TUI-only slash commands), else "tui" (embedded terminal pane or standalone ``tandem --tui``)."""
     desktop = is_truthy_value(os.environ.get("HERMES_DESKTOP"))
     return "desktop" if desktop and not is_truthy_value(os.environ.get("HERMES_DESKTOP_TERMINAL")) else "tui"
 
@@ -613,7 +613,7 @@ def _startup_system_prompt(cfg: dict, task_id: str) -> str:
     if missing_skills:
         if not loaded_skills:
             raise ValueError(format_missing_skills(missing_skills))
-        logger.warning("Skipping %s. Continuing with: %s. List available skills with `hermes skills list`.",
+        logger.warning("Skipping %s. Continuing with: %s. List available skills with `tandem skills list`.",
                        format_missing_skills(missing_skills), ", ".join(loaded_skills))
     if skills_prompt:
         system_prompt = "\n\n".join(part for part in (system_prompt, skills_prompt) if part).strip()

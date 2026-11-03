@@ -101,7 +101,7 @@ RULES: tuple[Rule, ...] = (
     Rule("HX009", "isinstance(r, Exception) on gather results", "check `BaseException`:"
          " `gather(return_exceptions=True)` also returns CancelledError", "ast"),
     # Profile scope (one process serves many profiles).
-    Rule("HX001", "hardcoded Hermes home", "`get_hermes_home()` for paths,"
+    Rule("HX001", "hardcoded Tandem home", "`get_hermes_home()` for paths,"
          " `display_hermes_home()` for user-facing text (`hermes_constants`); a path that"
          " deliberately lives under the user's home, not the profile (e.g. the profiles root),"
          " takes `# health: allow HX001 -- <why>`", "ast",

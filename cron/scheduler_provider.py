@@ -56,7 +56,7 @@ def _guarded_store_write(action, description, *args, **kwargs):
 
     The gateway runs the provider on an unsupervised daemon thread: one escaping exception
     there stops cron silently while the gateway keeps serving (#111010). Heartbeat/error
-    markers are diagnostics for ``hermes cron status`` — losing one write to a broken store
+    markers are diagnostics for ``tandem cron status`` — losing one write to a broken store
     must degrade to a logged warning, not thread death.
     """
     try:
@@ -77,7 +77,7 @@ def _existing_profile_homes(profile_homes: list) -> list:
 
     Ticking or heartbeating a deleted home recreates its ``cron/`` workspace (``record_ticker_heartbeat`` ->
     ``ensure_dirs`` -> ``mkdir(parents=True)``) on every 60s cycle, so the "deleted" profile silently comes
-    back on disk and in ``hermes profile list`` (#47368). Filtering on directory existence leaves a deleted
+    back on disk and in ``tandem profile list`` (#47368). Filtering on directory existence leaves a deleted
     profile's home untouched, which is the correct invariant: a home that does not exist cannot hold jobs to
     fire.
     """

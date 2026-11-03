@@ -1,7 +1,7 @@
 """The gateway-restart flow refuses BEFORE it stops anything (#125394, #77276).
 
 The Desktop backend's ``_spawn_gateway_restart`` used to reap "orphan" gateways
-before spawning ``hermes gateway restart``; when that child then refused (a
+before spawning ``tandem gateway restart``; when that child then refused (a
 named profile under the host multiplexer) the profile had already lost its
 gateway. The reap belongs to the child, after its refusal guard.
 """

@@ -21,7 +21,7 @@ def _deterministic_call_id(item_type: str, item_id: str) -> str:
 
 
 def _format_tool_args(d: dict) -> str:
-    """Format a dict as JSON the way Hermes' existing tool_calls path does."""
+    """Format a dict as JSON the way Tandem' existing tool_calls path does."""
     return json.dumps(d, ensure_ascii=False, sort_keys=True)
 
 

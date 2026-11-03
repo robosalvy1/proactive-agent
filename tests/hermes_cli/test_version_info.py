@@ -165,7 +165,7 @@ def test_get_version_info_derives_identity_from_reachable_release_tag(tmp_path, 
         return result.stdout.strip()
 
     git("init", "-q")
-    git("config", "user.name", "Hermes Test")
+    git("config", "user.name", "Tandem Test")
     git("config", "user.email", "hermes@example.invalid")
     (repo / "tracked").write_text("release\n", encoding="utf-8")
     git("add", "tracked")
@@ -200,7 +200,7 @@ def test_get_version_info_takes_the_version_a_calver_only_release_shipped(tmp_pa
         return result.stdout.strip()
 
     git("init", "-q")
-    git("config", "user.name", "Hermes Test")
+    git("config", "user.name", "Tandem Test")
     git("config", "user.email", "hermes@example.invalid")
     (repo / "pyproject.toml").write_text('[project]\nname = "hermes-agent"\nversion = "0.21.4"\n', encoding="utf-8")
     git("add", "pyproject.toml")

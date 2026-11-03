@@ -1,6 +1,6 @@
 """Late session cwd updates must stay in the SSH peer's namespace.
 
-The creation path already translates the Hermes subprocess home to remote ~.
+The creation path already translates the Tandem subprocess home to remote ~.
 These regressions exercise an existing environment and a later command reading
 the raw session record, neither of which creates a new environment.
 """

@@ -4,7 +4,7 @@ v2026.9.24's ``_subprocess_compat.bounded_probe_run`` lazily imports
 ``spawn_server`` after the pull, inside a process that still holds the old
 ``hermes_platform`` and other first-party modules. Importing that one
 submodule must not run the rest of the package, or any name added to an
-already-loaded module since the release crashes ``hermes update``.
+already-loaded module since the release crashes ``tandem update``.
 """
 
 import subprocess

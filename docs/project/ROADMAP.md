@@ -26,7 +26,7 @@ The initial [Home thread implementation](HOME_THREAD.md) adds stable CLI/Ink/web
 
 ## P3 — Deliver one proactive workflow
 
-**Task:** choose one user-enabled workflow with a concrete trigger and useful outcome, reusing Hermes scheduling and state.
+**Task:** choose one user-enabled workflow with a concrete trigger and useful outcome, reusing Tandem scheduling and state.
 
 **Done when:** authority and execution/notification budgets are explicit; pause/cancel, duplicates, retries, quiet hours, and restart behavior are tested; users can see what ran and why; the workflow is off until configured. A local dry run uses synthetic data and sends no external messages.
 
@@ -38,4 +38,4 @@ The initial [Home thread implementation](HOME_THREAD.md) adds stable CLI/Ink/web
 
 ## Copyable first-task brief
 
-> Read AGENTS.md and complete P0 in docs/project/ROADMAP.md. Use an isolated Hermes home, inspect actual source before drawing conclusions, and document commands and results. Produce a capability map and recommend the smallest context and proactive slices. Do not implement a parallel scheduler, memory store, or new UI during the audit.
+> Read AGENTS.md and complete P0 in docs/project/ROADMAP.md. Use an isolated Tandem home, inspect actual source before drawing conclusions, and document commands and results. Produce a capability map and recommend the smallest context and proactive slices. Do not implement a parallel scheduler, memory store, or new UI during the audit.

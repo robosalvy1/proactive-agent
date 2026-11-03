@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 title: "Toolsets Reference"
-description: "Reference for Hermes core, composite, platform, and dynamic toolsets"
+description: "Reference for Tandem core, composite, platform, and dynamic toolsets"
 ---
 
 # Toolsets Reference
@@ -21,9 +21,9 @@ Every tool belongs to exactly one toolset. When you enable a toolset, all tools 
 ### Per-session (CLI)
 
 ```bash
-hermes chat --toolsets web,file,terminal
-hermes chat --toolsets debugging        # composite — expands to file + terminal + web
-hermes chat --toolsets all              # everything
+tandem chat --toolsets web,file,terminal
+tandem chat --toolsets debugging        # composite — expands to file + terminal + web
+tandem chat --toolsets all              # everything
 ```
 
 ### Per-platform (config.yaml)
@@ -37,7 +37,7 @@ toolsets:
 ### Interactive management
 
 ```bash
-hermes tools                            # curses UI to enable/disable per platform
+tandem tools                            # curses UI to enable/disable per platform
 ```
 
 Or in-session:
@@ -54,7 +54,7 @@ Or in-session:
 |---------|-------|---------|
 | `browser` | `browser_back`, `browser_cdp`, `browser_click`, `browser_console`, `browser_dialog`, `browser_exec`, `browser_get_images`, `browser_navigate`, `browser_press`, `browser_scroll`, `browser_snapshot`, `browser_type`, `browser_vault`, `browser_vision` | Core browser automation. `browser_cdp` and `browser_dialog` are gated at runtime — registered only when a CDP endpoint is reachable at session start (via `/browser connect`, `browser.cdp_url` config, Browserbase, or Camofox). `browser_dialog` works together with the `pending_dialogs` and `frame_tree` fields that `browser_snapshot` adds when a CDP supervisor is attached. `browser_exec` replaces the other browser tools when `browser.backend` is `browser-use`; `browser_vault` rides with the browser for credential forms and is deferred behind tool search by default. Quick lookups belong to the `web`/`search` toolsets — `web_search` is deliberately NOT a member, so `disabled_toolsets: [browser]` cannot strip it (#64503). |
 | `clarify` | `clarify` | Ask the user a question when the agent needs clarification. |
-| `code_execution` | `execute_code` | Run Python scripts that call Hermes tools programmatically. |
+| `code_execution` | `execute_code` | Run Python scripts that call Tandem tools programmatically. |
 | `connections` | `manage_connections` | Connect the user to apps: managed connector accounts through the Nous gateway, and local MCP servers from the catalog. It can add a second named account of an app and rename accounts. On the desktop every action is a card that blocks until the user settles it; off the desktop managed actions return a connect link per app. |
 | `coding` | composite (`file` + `terminal` + `search` + `web` + `skills` + `browser` + `todo` + `memory` + `session_search` + `clarify` + `code_execution` + `delegation` + `vision`) | Coding-focused bundle for software work: file editing, terminal, search, web docs, skills, browser, delegate, and code execution. |
 | `cronjob` | `cronjob_manage` | Schedule and manage recurring tasks. |
@@ -70,9 +70,9 @@ Or in-session:
 | `home` | `home_cards` | Cards on the person's web home from a fixed catalog: live calendar/scheduled/recent/clock cards, and list/stats/text cards with a named source. No custom design; the person's own tiles are off limits. |
 | `image_gen` | `image_generate` | Text-to-image generation via FAL.ai (with opt-in OpenAI / xAI backends). |
 | `video_gen` | `video_generate`, `xai_video_edit`, `xai_video_extend` | Text-to-video and image-to-video via plugin-registered backends (xAI Grok-Imagine, FAL.ai Veo 3.1 / Pixverse v6 / Kling 3.0 / Kling O3). Pass `image_url` to animate an image; omit it for text-to-video. `xai_video_edit` / `xai_video_extend` are provider-specific edit/extend tools, gated on xAI Imagine credentials. |
-| `kanban` | `kanban_attach`, `kanban_attach_url`, `kanban_attachments`, `kanban_block`, `kanban_comment`, `kanban_complete`, `kanban_create`, `kanban_heartbeat`, `kanban_link`, `kanban_list`, `kanban_request_changes`, `kanban_request_review`, `kanban_show`, `kanban_unblock` | Multi-agent coordination tools. Registered for dispatcher-spawned task workers (`HERMES_KANBAN_TASK`) and for platforms whose saved selection lists `kanban` (`hermes tools enable kanban --platform <p>`; the `all`/`*` wildcard does **not** enable it). Workers mark tasks done, request first-class review, block, heartbeat, comment, and create/link follow-up tasks; orchestrator profiles additionally get board-routing tools like list/unblock. `delegate_task` children are not Kanban run owners: their schema strips/disables this toolset and runtime guards reject direct board mutations, even if parent `HERMES_KANBAN_*` env vars are present. |
+| `kanban` | `kanban_attach`, `kanban_attach_url`, `kanban_attachments`, `kanban_block`, `kanban_comment`, `kanban_complete`, `kanban_create`, `kanban_heartbeat`, `kanban_link`, `kanban_list`, `kanban_request_changes`, `kanban_request_review`, `kanban_show`, `kanban_unblock` | Multi-agent coordination tools. Registered for dispatcher-spawned task workers (`HERMES_KANBAN_TASK`) and for platforms whose saved selection lists `kanban` (`tandem tools enable kanban --platform <p>`; the `all`/`*` wildcard does **not** enable it). Workers mark tasks done, request first-class review, block, heartbeat, comment, and create/link follow-up tasks; orchestrator profiles additionally get board-routing tools like list/unblock. `delegate_task` children are not Kanban run owners: their schema strips/disables this toolset and runtime guards reject direct board mutations, even if parent `HERMES_KANBAN_*` env vars are present. |
 | `memory` | `memory` | Persistent cross-session memory management. |
-| `desktop_ui` | `annotate_preview`, `close_terminal`, `desktop_preview`, `drive_preview`, `focus_pane`, `gui_tour`, `react_to_message`, `read_terminal`, `read_window_below`, `set_theme`, `show_tip` | Affordances that act on the Hermes desktop app itself — read/close the embedded terminal pane, open, read, close, interact with, and annotate the in-app browser, identify the OS window behind the app, reveal a pane, react to a message, run a guided tour (highlight + narrate UI elements in the app or the preview pane), and set the accent colour, light/dark mode and layout (or show a picker card for the user to choose). Enabled for sessions whose source is the desktop app, whichever backend it's connected to (local, SSH, URL, or Hermes Cloud). Never present on CLI, TUI, messaging, or cron sessions. |
+| `desktop_ui` | `annotate_preview`, `close_terminal`, `desktop_preview`, `drive_preview`, `focus_pane`, `gui_tour`, `react_to_message`, `read_terminal`, `read_window_below`, `set_theme`, `show_tip` | Affordances that act on the Tandem desktop app itself — read/close the embedded terminal pane, open, read, close, interact with, and annotate the in-app browser, identify the OS window behind the app, reveal a pane, react to a message, run a guided tour (highlight + narrate UI elements in the app or the preview pane), and set the accent colour, light/dark mode and layout (or show a picker card for the user to choose). Enabled for sessions whose source is the desktop app, whichever backend it's connected to (local, SSH, URL, or Hermes Cloud). Never present on CLI, TUI, messaging, or cron sessions. |
 | `project` | `desktop_project` | Create and switch desktop [Projects](../user-guide/cli.md) (named, multi-folder workspaces) via one `create`/`switch`/`list` action enum. GUI / desktop sessions only. |
 | `catalog` | `manage_catalog` | Search the plugin catalog and skills hub, and install items through the approval card into this chat's profile. Enabled for sessions whose source is the desktop app, whichever backend it's connected to (local, SSH, URL, or Hermes Cloud). Never present on CLI, TUI, messaging, or cron sessions, even when a config list names it. `all` does not include it. Deferred behind `tool_search` by default. Remove it with `agent.disabled_toolsets: [catalog]`. |
 | `safe` | `image_generate`, `vision_analyze`, `web_extract`, `web_search` (via `includes`) | Read-only research + media generation. No file writes, no terminal, no code execution. |
@@ -85,7 +85,7 @@ Or in-session:
 | `vision` | `vision_analyze` | Image analysis via vision-capable models. |
 | `video` | `video_analyze` | Video analysis and understanding tools (opt-in, not in the default toolset — add explicitly via `--toolsets`). |
 | `web` | `web_extract`, `web_search` | Web search and page content extraction. |
-| `x_search` | `x_search` | Read-only public X discovery via xAI's built-in `x_search` Responses tool. Use the `xurl` skill for authenticated X API reads and account actions. Off by default; opt in via `hermes tools`. Schema only registered when xAI credentials (SuperGrok OAuth or `XAI_API_KEY`) are configured. |
+| `x_search` | `x_search` | Read-only public X discovery via xAI's built-in `x_search` Responses tool. Use the `xurl` skill for authenticated X API reads and account actions. Off by default; opt in via `tandem tools`. Schema only registered when xAI credentials (SuperGrok OAuth or `XAI_API_KEY`) are configured. |
 | `yuanbao` | `yb_query_group_info`, `yb_query_group_members`, `yb_search_sticker`, `yb_send_dm`, `yb_send_sticker` | Yuanbao DM/group actions and sticker search. Registered only on `hermes-yuanbao`. |
 
 ## Platform Toolsets
@@ -165,8 +165,8 @@ A handful of tools have an additional availability check on top of toolset membe
 - **Capability-gated** tools (browser, `computer_use`, `code_execution`, Feishu, cronjob) appear only when their backend/credential prerequisite is configured.
 - **Workflow-gated** tools — the `kanban` toolset — are deliberately opt-in. `all`/`*` does **not** enable kanban; you must list `kanban` explicitly (or be a dispatcher-spawned worker with `HERMES_KANBAN_TASK` set). Kanban tools mutate shared board state, so they stay off by default even under `all`.
 
-## Relationship to `hermes tools`
+## Relationship to `tandem tools`
 
-The `hermes tools` command provides a curses-based UI for toggling individual tools on or off per platform. This operates at the tool level (finer than toolsets) and persists to `config.yaml`. Disabled tools are filtered out even if their toolset is enabled.
+The `tandem tools` command provides a curses-based UI for toggling individual tools on or off per platform. This operates at the tool level (finer than toolsets) and persists to `config.yaml`. Disabled tools are filtered out even if their toolset is enabled.
 
 See also: [Tools Reference](./tools-reference.md) for the complete list of individual tools and their parameters.

@@ -273,7 +273,7 @@ def _is_remote_launch_cwd(session: dict | None) -> bool:
 
 
 def _is_hermes_owned_cwd(cwd: str, profile_home) -> bool:
-    """Whether ``cwd`` is inside Hermes's own host tree: the Hermes root (``/opt/data`` and its ``/opt/data/home``
+    """Whether ``cwd`` is inside Tandem's own host tree: the Tandem root (``/opt/data`` and its ``/opt/data/home``
     subprocess home in the Docker image, which also holds every named profile) or the install tree
     (``/opt/hermes``). A ``~`` path is the remote's home, never this host's."""
     from agent.runtime_cwd import _is_install_tree
@@ -291,7 +291,7 @@ def _is_hermes_owned_cwd(cwd: str, profile_home) -> bool:
 
 
 def _is_other_profiles_cwd(cwd: str, profile_home) -> bool:
-    """Whether a NAMED local profile's stored cwd is a directory that belongs to another profile or to Hermes itself:
+    """Whether a NAMED local profile's stored cwd is a directory that belongs to another profile or to Tandem itself:
     the root (``/opt/data``), its subprocess home (``/opt/data/home``), a sibling profile's tree, or the install tree.
     Those are launch-profile workspaces that leaked into this profile's row before #87584, never a folder chosen for
     it. Other folders under the root stay: a user may keep a workspace there."""
@@ -311,7 +311,7 @@ def _is_other_profiles_cwd(cwd: str, profile_home) -> bool:
 
 
 def _resumable_stored_cwd(cwd, profile_home) -> str:
-    """A session row's stored cwd as a resume may adopt it: empty when an ssh session's row holds a path in Hermes's
+    """A session row's stored cwd as a resume may adopt it: empty when an ssh session's row holds a path in Tandem's
     own host tree (a host launch directory, never a remote workspace), or a named profile's row holds another
     profile's (the resume then lands in :func:`_profile_default_cwd` and re-persists it)."""
     cwd = str(cwd or "")
@@ -347,7 +347,7 @@ def _heal_dead_cwd(cwd: str) -> str:
 def _session_is_local_backend(session: dict | None) -> bool:
     """Whether THIS session's cwd can be stat'ed / git-probed here. A session bound to a named ssh profile never can,
     whatever the launch process runs (one multiplexed gateway serves many profiles), and a per-profile gateway
-    (``hermes -p x``) may set ``terminal.backend: ssh`` in config without ``TERMINAL_ENV``: an env-only check would
+    (``tandem -p x``) may set ``terminal.backend: ssh`` in config without ``TERMINAL_ENV``: an env-only check would
     heal a live remote cwd to its nearest host ancestor (``/home``) and persist that."""
     if session and session.get("profile_home") and _bound_terminal_backend(session["profile_home"]) != "local":
         return False

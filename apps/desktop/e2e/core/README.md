@@ -3,7 +3,7 @@
 A small, deterministic Electron suite that guards three issue classes end to end:
 
 - **C2 transcript integrity** — `transcript-integrity.spec.ts`: one real app +
-  one real `hermes serve`, only the LLM faked (`provider.ts`, scripted per turn
+  one real `tandem serve`, only the LLM faked (`provider.ts`, scripted per turn
   by a unique marker, every streamed chunk recorded). After every transition —
   stream, tool-call turn, reasoning turn, steer, queued follow-up, session
   switch mid-stream, warm resume, reload, WebSocket drop + reconnect mid-stream,
@@ -53,14 +53,14 @@ A small, deterministic Electron suite that guards three issue classes end to end
   titled (#121062) and is its own sidebar row; switching branch ↔ parent (3
   round trips + reload) never renders the other session's turn or a duplicate
   part (in-page sampler). `lineage-rotation.spec.ts`: REAL rotated
-  compression rows (`hermes chat -q` with `compression.in_place: false` on the
+  compression rows (`tandem chat -q` with `compression.in_place: false` on the
   same `HERMES_HOME`, compacting against the fake provider), then the Desktop
   shows one row per lineage live, after rotations, after reload and after a
   cold relaunch (#121148). `lineage-compaction-prompt.spec.ts`: a redirect
   prompt acknowledged mid-turn whose turn then compacts; the refresh passes
   through `preserveLocalPendingTurnMessages` (#121088).
 - **Remote topology** — `remote-topology.spec.ts`: the whole app on a remote
-  `hermes serve` (`HERMES_DESKTOP_REMOTE_URL` + token): a client-only image is
+  `tandem serve` (`HERMES_DESKTOP_REMOTE_URL` + token): a client-only image is
   shipped as bytes, never as a client path (#120730, env-remote shape); remote
   backend restart keeps the session. `remote-secondary.spec.ts`: the Bot-Mode
   shape of #120730 — local primary backend + a remote secondary connection in

@@ -12,7 +12,7 @@ def test_legacy_tini_entrypoint_boots(built_image: str) -> None:
     """``--entrypoint /usr/bin/tini <image> -g -- --help`` must run hermes.
 
     Regression for #34192 / #66679: orchestration templates (e.g.
-    Hostinger's 'Hermes WebUI' catalog, NAS compose projects that keep
+    Hostinger's 'Tandem WebUI' catalog, NAS compose projects that keep
     an old entrypoint across image updates) still pin /usr/bin/tini as
     the entrypoint, often with ``-g --``. A missing shim fails to exec; a
     bare symlink to /init forwards ``-g`` into s6 and boot-loops. The shim

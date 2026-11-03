@@ -1,6 +1,6 @@
-"""Driver-side spawn interception for hermes desktop E2E legs.
+"""Driver-side spawn interception for tandem desktop E2E legs.
 
-Pre-PM ``hermes`` is a venv console script that imports this module at
+Pre-PM ``tandem`` is a venv console script that imports this module at
 startup via ``PYTHONPATH``. PM launchers use -I and instead load it via
 the driver-side pm-launch.py before the installed bootstrap. With an
 explicit env-var opt-in the module wraps
@@ -32,7 +32,7 @@ tag's own hermes_cli/main.py):
 
   3ddf82fe249+ on Windows: the packaged launch is a detached
                subprocess.Popen(launch_command, creationflags=...) and
-               ``hermes desktop`` exits without waiting for it
+               ``tandem desktop`` exits without waiting for it
 
 Every shape passes an explicit ``env=`` kwarg, so both ``subprocess.run``
 and ``subprocess.Popen`` are intercepted. npm BUILD calls (``npm run

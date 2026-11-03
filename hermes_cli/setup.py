@@ -1,4 +1,4 @@
-"""Interactive setup wizard for Hermes Agent (config lives in ~/.hermes/).
+"""Interactive setup wizard for Tandem Agent (config lives in ~/.hermes/).
 
 Independently-runnable sections: Model & Provider, Terminal Backend, Agent Settings, Messaging
 Platforms, Tools. Section bodies live in sibling setup_* modules and are re-exported here; they
@@ -85,17 +85,17 @@ def is_interactive_stdin() -> bool:
 def print_noninteractive_setup_guidance(reason: str | None = None) -> None:
     """Print guidance for headless/non-interactive setup flows."""
     print()
-    print(color("☤ Hermes Setup — Non-interactive mode", Colors.CYAN, Colors.BOLD))
+    print(color("☤ Tandem Setup — Non-interactive mode", Colors.CYAN, Colors.BOLD))
     print()
     if reason:
         print_info(reason)
     _info("The interactive wizard cannot be used here.", None,
-          "Configure Hermes using environment variables or config commands:",
-          "  hermes config set model.provider custom",
-          "  hermes config set model.base_url http://localhost:8080/v1",
-          "  hermes config set model.default your-model-name", None,
+          "Configure Tandem using environment variables or config commands:",
+          "  tandem config set model.provider custom",
+          "  tandem config set model.base_url http://localhost:8080/v1",
+          "  tandem config set model.default your-model-name", None,
           "Or set OPENROUTER_API_KEY (OpenRouter) / OPENAI_API_KEY (OpenAI) in your environment.",
-          "Run 'hermes setup' in an interactive terminal to use the full wizard.", None)
+          "Run 'tandem setup' in an interactive terminal to use the full wizard.", None)
 
 
 def _sanitize_pasted_input(value: str) -> str:
@@ -246,7 +246,7 @@ def run_setup_action_with_navigation(
     label: str, action: Callable[[], None], *, cancelled_message: str = "Setup cancelled."
 ) -> None:
     """Run a setup-style menu flow with Escape and nested Left navigation — for commands such as
-    ``hermes model`` that use the wizard's pickers outside ``run_setup_wizard``."""
+    ``tandem model`` that use the wizard's pickers outside ``run_setup_wizard``."""
     with _setup_navigation_scope():
         try:
             _run_setup_steps([(label, action)])
@@ -338,7 +338,7 @@ def _prompt_api_key(var: dict):
     if var.get("url"):
         print_info(f"  Get your key at: {var['url']}")
     print()
-    _prompt_and_save_env_var(var, "  ✓ Saved", "  Skipped (configure later with 'hermes setup')")
+    _prompt_and_save_env_var(var, "  ✓ Saved", "  Skipped (configure later with 'tandem setup')")
 
 
 def _prompt_and_save_env_var(var: dict, saved_msg: str, skipped_msg: str) -> None:
@@ -373,7 +373,7 @@ def _print_banner(*lines: str) -> None:
 
 
 def setup_model_provider(config: dict, *, quick: bool = False):
-    """Configure the inference provider and default model via the ``hermes model`` flow (one code
+    """Configure the inference provider and default model via the ``tandem model`` flow (one code
     path — any provider added there is available here). *quick* is accepted for the first-time
     quick setup caller; rotation, vision and TTS keep safe defaults either way."""
     from hermes_cli.config import load_config, save_config
@@ -390,7 +390,7 @@ def setup_model_provider(config: dict, *, quick: bool = False):
     except Exception as exc:
         logger.debug("select_provider_and_model error during setup: %s", exc)
         from hermes_cli.auth_error_copy import provider_setup_failure_lines
-        lead, *rest = provider_setup_failure_lines(exc, retry_command="hermes model")
+        lead, *rest = provider_setup_failure_lines(exc, retry_command="tandem model")
         print_warning(lead)
         for line in rest:
             print_info(line)
@@ -419,7 +419,7 @@ def _apply_default_agent_settings(config: dict):
     save_config(config)
     print_success("Applied recommended defaults:")
     _info("  Max iterations: 150", "  Compression threshold: 0.50",
-          "  Run `hermes setup agent` later to customize.")
+          "  Run `tandem setup agent` later to customize.")
 
 
 def _prompt_number(label: str, current, cast=int):
@@ -501,7 +501,7 @@ def setup_agent_settings(config: dict):
 
 
 def setup_tools(config: dict, first_install: bool = False):
-    """`hermes setup tools` == `hermes tools`: platform selection → toolset toggles → provider keys.
+    """`tandem setup tools` == `tandem tools`: platform selection → toolset toggles → provider keys.
     ``first_install`` selects the simplified flow (no platform menu, prompts for all missing keys)."""
     from hermes_cli.tools_config import tools_command
     tools_command(first_install=first_install, config=config)
@@ -534,7 +534,7 @@ def setup_telemetry(config: dict):
           "counts, update and install results and timing (with a fixed-list reason",
           "and the stage when one fails; a fresh install is noted on this machine and",
           "counted only once you opt in), crashes,",
-          "startup and reply speed, messaging-platform health, how Hermes gets used",
+          "startup and reply speed, messaging-platform health, how Tandem gets used",
           "(agent accuracy and efficiency, active time per surface, which features and",
           "settings are used or switched off, provider setup outcomes), and coarse",
           "machine facts (RAM range, GPU type, version age and channel, updates behind,",
@@ -611,14 +611,14 @@ def run_setup_wizard(args):
 
 
 def _run_setup_section(config: dict, section: str) -> None:
-    """``hermes setup <section>``: run one SETUP_SECTIONS entry under the banner."""
+    """``tandem setup <section>``: run one SETUP_SECTIONS entry under the banner."""
     entry = next(((label, func) for key, label, func in SETUP_SECTIONS if key == section), None)
     if entry is None:
         print_error(f"Unknown setup section: {section}")
         print_info(f"Available sections: {', '.join(k for k, _, _ in SETUP_SECTIONS)}")
         return
     label, func = entry
-    _print_banner(f"│     ☤ Hermes Setup — {label:<34s} │")
+    _print_banner(f"│     ☤ Tandem Setup — {label:<34s} │")
     _run_setup_steps([(label, lambda: func(config))])
     save_config(config)
     print()
@@ -630,7 +630,7 @@ def _run_full_setup(config: dict, hermes_home, *, is_existing: bool, migration_r
     print_header("Configuration Location")
     _info(f"Config file:  {get_config_path()}", f"Secrets file: {get_env_path()}",
           f"Data folder:  {hermes_home}", f"Install dir:  {PROJECT_ROOT}", None,
-          "You can edit these files directly or use 'hermes config edit'")
+          "You can edit these files directly or use 'tandem config edit'")
     if migration_ran:
         _info(None, "Settings were imported from OpenClaw.",
               "Each section below will show what was imported — press Enter to keep,",
@@ -672,7 +672,7 @@ _FIRST_TIME_MODES = (
 
 def _run_setup_wizard_impl(args):
     """Run the interactive setup wizard: full/quick (auto-detected), ``--portal``, or one
-    ``hermes setup <section>`` from SETUP_SECTIONS."""
+    ``tandem setup <section>`` from SETUP_SECTIONS."""
     from hermes_cli.config import is_managed, managed_error
     if is_managed():
         managed_error("run setup wizard")
@@ -708,9 +708,9 @@ def _run_setup_wizard_impl(args):
     from hermes_cli.auth import get_active_provider
     is_existing = bool(get_env_value("OPENROUTER_API_KEY") or get_env_value("OPENAI_BASE_URL")
                        or get_active_provider() is not None)
-    _print_banner("│             ☤ Hermes Agent Setup Wizard                │",
+    _print_banner("│             ☤ Tandem Agent Setup Wizard                │",
                   "├─────────────────────────────────────────────────────────┤",
-                  "│  Let's configure your Hermes Agent installation.       │",
+                  "│  Let's configure your Tandem Agent installation.       │",
                   "│  Press Ctrl+C at any time to exit.                     │")
     migration_ran = False
     if is_existing:
@@ -722,10 +722,10 @@ def _run_setup_wizard_impl(args):
             _record_setup_completed(config)
             return
         print_header("Reconfigure", gap=True)
-        print_success("You already have Hermes configured.")
+        print_success("You already have Tandem configured.")
         _info("Running the full wizard — each prompt shows your current value.",
               "Press Enter to keep it, or type a new value to change it.", "",
-              "Tip: jump straight to a section with 'hermes setup model|terminal|",
+              "Tip: jump straight to a section with 'tandem setup model|terminal|",
               "     gateway|tools|agent', or fill only missing items with --quick.")
     else:
         # First-time setup (--reconfigure / --quick are meaningless here; fall through)
@@ -735,7 +735,7 @@ def _run_setup_wizard_impl(args):
         migration_ran = _offer_openclaw_migration(hermes_home)  # before configuration begins
         if migration_ran:
             config = load_config()
-        setup_mode = prompt_choice("How would you like to set up Hermes?", [label for label, _ in _FIRST_TIME_MODES], 0)
+        setup_mode = prompt_choice("How would you like to set up Tandem?", [label for label, _ in _FIRST_TIME_MODES], 0)
         label, runner = _FIRST_TIME_MODES[setup_mode]
         if runner is not None:
             from hermes_cli import setup_quick

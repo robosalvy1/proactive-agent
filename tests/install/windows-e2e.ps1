@@ -1,7 +1,7 @@
 # ============================================================================
 # Windows Desktop GUI install + update E2E driver (the REAL user flow)
 # ============================================================================
-# Proves, on a real Windows machine, that a user who installs Hermes the way
+# Proves, on a real Windows machine, that a user who installs Tandem the way
 # the website tells them to can then update to the commit under test through
 # a real update surface -- with every leg driven through the GUI a user
 # actually touches:
@@ -734,7 +734,7 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
     }
     Assert-True ($driveExit -eq 0) "app driven via captured hermes desktop spec; update completed"
 
-    # The production updater relaunches Hermes. Close that verified window
+    # The production updater relaunches Tandem. Close that verified window
     # normally so the test-owned checkpoint starts and owns its own backend.
     $desktopExe = Get-DesktopExe
     $deadline = (Get-Date).AddMinutes(5)
@@ -749,7 +749,7 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
     Close-VerifiedDesktop $desktopExe $windows[0].Id
 }
 
-# Evidence for a GUI-driver failure, taken while the installer is still alive: which Hermes
+# Evidence for a GUI-driver failure, taken while the installer is still alive: which Tandem
 # processes exist (was Hermes.exe ever started, and by whom), the installer's thread states,
 # and a full memory dump of the installer. The installer's tracing log is buffered and never
 # reaches disk when the job kills it; the dump still holds it. A Launch that left the
@@ -846,7 +846,7 @@ function Stop-DesktopRecorder($proc, [string]$OutDir) {
 function Stop-HermesAppProcesses([string]$Label) {
     # Close the desktop app the blunt way between phases (a user quitting).
     # Only Hermes.exe (Electron) -- never hermes.exe (the venv CLI shim).
-    $procs = @(Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)
+    $procs = @(Get-Process -Name "Tandem" -ErrorAction SilentlyContinue)
     foreach ($p in $procs) {
         try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
     }
@@ -872,8 +872,8 @@ function New-NextCommit([string]$Repo, [string]$Parent) {
     $saved = @{}
     $vars = @{
         GIT_INDEX_FILE = (Join-Path $WorkRoot "next.index")
-        GIT_AUTHOR_NAME = "Hermes E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
-        GIT_COMMITTER_NAME = "Hermes E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
+        GIT_AUTHOR_NAME = "Tandem E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
+        GIT_COMMITTER_NAME = "Tandem E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
     }
     foreach ($k in $vars.Keys) { $saved[$k] = [Environment]::GetEnvironmentVariable($k); [Environment]::SetEnvironmentVariable($k, $vars[$k]) }
     try {
@@ -1062,7 +1062,7 @@ function Invoke-PhaseInstallGui {
 
         # The Launch hand-off under test: the app the installer spawned must
         # actually be running.
-        Assert-True ($null -ne (Get-Process -Name "Hermes" -ErrorAction SilentlyContinue)) "Hermes.exe process is running (installer Launch hand-off worked)"
+        Assert-True ($null -ne (Get-Process -Name "Tandem" -ErrorAction SilentlyContinue)) "Hermes.exe process is running (installer Launch hand-off worked)"
 
         # Installer should have exited after Launch.
         if (-not $installer.HasExited) {
@@ -1226,18 +1226,18 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
         $rDeadline = (Get-Date).AddMinutes(5)
         $relaunched = $null
         while ((Get-Date) -lt $rDeadline) {
-            $relaunched = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue
+            $relaunched = Get-Process -Name "Tandem" -ErrorAction SilentlyContinue
             if ($relaunched) { break }
             Start-Sleep -Seconds 5
         }
         Assert-True ($null -ne $relaunched) "updater relaunched the desktop app"
         Start-Sleep -Seconds 12   # let the window paint for the screenshot
-        # Foreground the relaunched Hermes window so the proof screenshot
+        # Foreground the relaunched Tandem window so the proof screenshot
         # captures IT, not whatever else is on top (the full-desktop grab is
         # otherwise at the mercy of z-order -- an earlier run caught VS Code).
         $mainProc = $null
         try {
-            $mainProc = Get-Process -Name "Hermes" -ErrorAction SilentlyContinue |
+            $mainProc = Get-Process -Name "Tandem" -ErrorAction SilentlyContinue |
                 Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
             if ($mainProc) {
                 Add-Type -Namespace HdE2E -Name Win -MemberDefinition @'

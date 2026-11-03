@@ -285,7 +285,7 @@ def test_reaps_the_server_when_the_registering_parent_is_sigkilled(tmp_path):
         parent.wait(timeout=10)
 
         assert _wait_gone(victim_pid), (
-            "stdio MCP server survived kill -9 of its Hermes parent"
+            "stdio MCP server survived kill -9 of its Tandem parent"
         )
     finally:
         for pid in (victim_pid, supervisor_pid):

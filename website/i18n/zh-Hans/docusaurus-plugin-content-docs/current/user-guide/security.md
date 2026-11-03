@@ -6,7 +6,7 @@ description: "安全模型、危险命令审批、用户授权、容器隔离及
 
 # 安全
 
-Hermes Agent 采用纵深防御安全模型。本页涵盖所有安全边界——从命令审批到容器隔离，再到消息平台上的用户授权。
+Tandem Agent 采用纵深防御安全模型。本页涵盖所有安全边界——从命令审批到容器隔离，再到消息平台上的用户授权。
 
 ## 概述
 
@@ -22,7 +22,7 @@ Hermes Agent 采用纵深防御安全模型。本页涵盖所有安全边界—�
 
 ## 危险命令审批
 
-在执行任何命令之前，Hermes 会将其与一份精心维护的危险模式列表进行比对。若匹配，用户必须明确批准。
+在执行任何命令之前，Tandem 会将其与一份精心维护的危险模式列表进行比对。若匹配，用户必须明确批准。
 
 ### 审批模式
 
@@ -48,7 +48,7 @@ approvals:
 
 YOLO 模式会绕过当前会话中**所有**危险命令审批提示。可通过以下三种方式激活：
 
-1. **CLI 标志**：使用 `hermes --yolo` 或 `hermes chat --yolo` 启动会话
+1. **CLI 标志**：使用 `tandem --yolo` 或 `tandem chat --yolo` 启动会话
 2. **斜杠命令**：在会话中输入 `/yolo` 以切换开/关
 3. **环境变量**：设置 `HERMES_YOLO_MODE=1`
 
@@ -64,7 +64,7 @@ YOLO 模式会绕过当前会话中**所有**危险命令审批提示。可通�
 
 YOLO 模式在 CLI 和 gateway 会话中均可使用。在内部，它会设置 `HERMES_YOLO_MODE` 环境变量，该变量在每次命令执行前都会被检查。
 
-当 YOLO 激活时，Hermes 会显示两个持久的视觉提醒，以确保用户不会忘记审批提示已被绕过：
+当 YOLO 激活时，Tandem 会显示两个持久的视觉提醒，以确保用户不会忘记审批提示已被绕过：
 
 - 当 YOLO 已激活时，会话开始时显示一条红色横幅：`⚠ YOLO mode — all approval prompts bypassed`。YOLO 关闭时隐藏，以保持默认横幅整洁。
 - 状态栏中所有宽度层级均显示 `⚠ YOLO` 片段，随着 YOLO 的切换实时更新（富文本渲染器和纯文本回退均支持）。
@@ -77,7 +77,7 @@ YOLO 模式会禁用会话中**所有**危险命令安全检查——**但硬性
 
 ### 硬性黑名单（始终生效的底线）
 
-某些命令极具破坏性——不可逆的文件系统清除、fork 炸弹、直接写入块设备——无论以下任何情况，Hermes 都**拒绝**执行：
+某些命令极具破坏性——不可逆的文件系统清除、fork 炸弹、直接写入块设备——无论以下任何情况，Tandem 都**拒绝**执行：
 
 - `--yolo` / `/yolo` 已开启
 - `approvals.mode: off`
@@ -190,12 +190,12 @@ command_allowlist:
 这些模式在启动时加载，并在所有后续会话中静默批准。
 
 :::tip
-使用 `hermes config edit` 查看或删除永久允许列表中的模式。
+使用 `tandem config edit` 查看或删除永久允许列表中的模式。
 :::
 
 ## 用户授权（Gateway）
 
-运行消息 gateway 时，Hermes 通过分层授权系统控制谁可以与机器人交互。
+运行消息 gateway 时，Tandem 通过分层授权系统控制谁可以与机器人交互。
 
 ### 授权检查顺序
 
@@ -241,13 +241,13 @@ or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id).
 
 ### DM 配对系统
 
-为实现更灵活的授权，Hermes 提供了基于验证码的配对系统。无需预先提供用户 ID，未知用户会收到一次性配对码，由机器人所有者通过 CLI 批准。
+为实现更灵活的授权，Tandem 提供了基于验证码的配对系统。无需预先提供用户 ID，未知用户会收到一次性配对码，由机器人所有者通过 CLI 批准。
 
 **工作原理：**
 
 1. 未知用户向机器人发送 DM
 2. 机器人回复一个 8 位配对码
-3. 机器人所有者在 CLI 上运行 `hermes pairing approve <platform> <code>`
+3. 机器人所有者在 CLI 上运行 `tandem pairing approve <platform> <code>`
 4. 该用户在该平台上获得永久批准
 
 在 `~/.hermes/config.yaml` 中控制未授权私信的处理方式：
@@ -280,16 +280,16 @@ whatsapp:
 
 ```bash
 # 列出待处理和已批准的用户
-hermes pairing list
+tandem pairing list
 
 # 批准配对码
-hermes pairing approve telegram ABC12DEF
+tandem pairing approve telegram ABC12DEF
 
 # 撤销用户访问权限
-hermes pairing revoke telegram 123456789
+tandem pairing revoke telegram 123456789
 
 # 清除所有待处理验证码
-hermes pairing clear-pending
+tandem pairing clear-pending
 ```
 
 **存储：** 配对数据存储于 `~/.hermes/pairing/`，按平台分为独立的 JSON 文件：
@@ -299,7 +299,7 @@ hermes pairing clear-pending
 
 ## 容器隔离
 
-使用 `docker` 终端后端时，Hermes 对每个容器应用严格的安全加固。
+使用 `docker` 终端后端时，Tandem 对每个容器应用严格的安全加固。
 
 ### Docker 安全标志
 
@@ -408,7 +408,7 @@ required_credential_files:
     description: Google OAuth2 client credentials
 ```
 
-加载后，Hermes 会检查这些文件是否存在于活跃 profile 的 `HERMES_HOME` 中，并将其注册为挂载：
+加载后，Tandem 会检查这些文件是否存在于活跃 profile 的 `HERMES_HOME` 中，并将其注册为挂载：
 
 - **Docker**：只读绑定挂载（`-v host:container:ro`）
 - **Modal**：在沙箱创建时挂载，并在每次命令前同步（处理会话中途的 OAuth 配置）
@@ -430,7 +430,7 @@ terminal:
 | 沙箱 | 默认过滤 | 透传覆盖 |
 |---------|---------------|---------------------|
 | **execute_code** | 阻止名称中包含 `KEY`、`TOKEN`、`SECRET`、`PASSWORD`、`CREDENTIAL`、`PASSWD`、`AUTH` 的变量；仅允许安全前缀变量通过 | ✅ 透传变量绕过两项检查 |
-| **terminal**（本地） | 阻止明确的 Hermes 基础设施变量（提供商密钥、gateway token、工具 API 密钥） | ✅ 透传变量绕过黑名单 |
+| **terminal**（本地） | 阻止明确的 Tandem 基础设施变量（提供商密钥、gateway token、工具 API 密钥） | ✅ 透传变量绕过黑名单 |
 | **terminal**（Docker） | 默认不传入宿主机环境变量 | ✅ 透传变量 + `docker_forward_env` 通过 `-e` 转发 |
 | **terminal**（Modal） | 默认不传入宿主机环境/文件 | ✅ 凭据文件挂载；环境变量通过同步透传 |
 | **MCP** | 阻止所有变量，仅允许安全系统变量 + 显式配置的 `env` | ❌ 不受透传影响（改用 MCP `env` 配置） |
@@ -441,7 +441,7 @@ terminal:
 - 凭据文件以**只读**方式挂载到 Docker 容器中
 - Skills Guard 在安装前会扫描技能内容中的可疑环境变量访问模式
 - 缺失/未设置的变量永远不会被注册（不存在的内容无法泄露）
-- Hermes 基础设施密钥（提供商 API 密钥、gateway token）不应添加到 `env_passthrough`——它们有专用机制。声明此类名称时会被拒绝；已声明的名称若之后被某个平台适配器占用（例如在技能加载后才注册的插件适配器），从那时起便不再转发
+- Tandem 基础设施密钥（提供商 API 密钥、gateway token）不应添加到 `env_passthrough`——它们有专用机制。声明此类名称时会被拒绝；已声明的名称若之后被某个平台适配器占用（例如在技能加载后才注册的插件适配器），从那时起便不再转发
 
 ## MCP 凭据处理
 
@@ -581,7 +581,7 @@ security:
 7. **设置 `MESSAGING_CWD`** — 不要让 Agent 在敏感目录中操作
 8. **以非 root 用户运行** — 切勿以 root 身份运行 gateway
 9. **监控日志** — 检查 `~/.hermes/logs/` 中的未授权访问尝试
-10. **保持更新** — 定期运行 `hermes update` 以获取安全补丁
+10. **保持更新** — 定期运行 `tandem update` 以获取安全补丁
 
 ### 保护 API 密钥
 
@@ -614,18 +614,18 @@ SSH 连接详情保存在 `.env`（而非 `config.yaml`）中，以避免随 pro
 
 ## 供应链安全公告检查
 
-Hermes 内置了一个公告扫描器，用于标记活跃 venv 中与已知受损版本目录匹配的 Python 包（例如 2026 年 5 月的 `mistralai 2.4.6` 供应链投毒事件）。实现位于 `hermes_cli/security_advisories.py`。
+Tandem 内置了一个公告扫描器，用于标记活跃 venv 中与已知受损版本目录匹配的 Python 包（例如 2026 年 5 月的 `mistralai 2.4.6` 供应链投毒事件）。实现位于 `hermes_cli/security_advisories.py`。
 
 运行方式：
 
-- **CLI 启动横幅。** 若有任何公告匹配，会打印一行警告，并指向 `hermes doctor` 获取完整修复方案。
-- **`hermes doctor`。** 显示所有活跃公告的版本详情和 2-4 步修复说明。
+- **CLI 启动横幅。** 若有任何公告匹配，会打印一行警告，并指向 `tandem doctor` 获取完整修复方案。
+- **`tandem doctor`。** 显示所有活跃公告的版本详情和 2-4 步修复说明。
 - **Gateway 启动。** 记录到 `gateway.log`；第一条交互消息会附带简短的操作者横幅。
 
 每条公告都有一个稳定 ID。阅读并处理后，可以永久忽略它：
 
 ```bash
-hermes doctor --ack <advisory-id>
+tandem doctor --ack <advisory-id>
 ```
 
 确认信息持久化到 `config.security.acked_advisories`，重启后仍有效。旧公告**不会**从目录中删除——保留它们可以确保新安装的用户收到关于历史受损版本的警告，这些版本可能仍缓存在私有镜像中。
@@ -654,7 +654,7 @@ PM 通过 `pyproject.toml` 中的 extras 管理可选 Python 功能。
 关闭按需安装：
 
 ```bash
-hermes config set security.allow_lazy_installs false
+tandem config set security.allow_lazy_installs false
 ```
 
 已安装的依赖仍可使用。显式安装命令与按需安装不同。
@@ -662,5 +662,5 @@ hermes config set security.allow_lazy_installs false
 该设置不是禁止显式插件准入或手动包管理命令的沙箱。
 官方 Docker 镜像还通过内部策略关闭按需安装，仅更改配置不能覆盖它。
 
-用 `hermes tools` 和 `hermes doctor` 检查缺失需求。
+用 `tandem tools` 和 `tandem doctor` 检查缺失需求。
 不要向签名载荷或系统 Python 执行 pip 安装。详见[包管理](../reference/package-management.md)。

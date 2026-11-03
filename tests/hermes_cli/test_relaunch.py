@@ -205,7 +205,7 @@ class TestResolveHermesBinWindowsPyGuard:
     def test_posix_python_launcher_falls_through_to_path(self, monkeypatch, tmp_path):
         """A Python source launcher must not be re-executed through its shebang.
 
-        The git installer invokes ``hermes`` with the venv interpreter while the
+        The git installer invokes ``tandem`` with the venv interpreter while the
         source launcher's shebang uses ``/usr/bin/env python3``.  Re-executing
         that source file directly can therefore escape the venv and lose core
         dependencies such as PyYAML.

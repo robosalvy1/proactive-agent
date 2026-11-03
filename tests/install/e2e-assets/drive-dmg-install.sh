@@ -3,7 +3,7 @@
 #
 # The Setup app is Tauri (Rust + system webview), so Playwright/Electron
 # attach never works. Launch the binary bare in the background (it inherits
-# the redirect env), click "Install Hermes ->" with native input, then watch
+# the redirect env), click "Install Tandem ->" with native input, then watch
 # the install land on disk: checkout + installed source launcher + app.
 #
 # Usage:
@@ -60,7 +60,7 @@ command -v cliclick >/dev/null 2>&1 || brew install --quiet cliclick
 window_geometry() {
   osascript <<'OSA' 2>/dev/null
 tell application "System Events"
-  set procs to (every process whose name contains "Hermes")
+  set procs to (every process whose name contains "Tandem")
   if (count of procs) = 0 then return "no-process"
   set p to item 1 of procs
   if (count of windows of p) = 0 then return "no-window"

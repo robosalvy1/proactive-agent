@@ -1,9 +1,9 @@
 # QQ Bot
 
 本页的 Python 依赖命令使用 [PM 准备的源码环境](../../reference/package-management.md#developer-workflow)。
-依赖变更后，请重新激活该 checkout 并重启 Hermes。
+依赖变更后，请重新激活该 checkout 并重启 Tandem。
 
-通过**官方 QQ Bot API（v2）**将 Hermes 接入 QQ——支持私聊（C2C）、群组 @-提及、频道及直接消息，并具备语音转写功能。
+通过**官方 QQ Bot API（v2）**将 Tandem 接入 QQ——支持私聊（C2C）、群组 @-提及、频道及直接消息，并具备语音转写功能。
 
 ## 概述
 
@@ -31,7 +31,7 @@ QQ Bot 适配器使用[官方 QQ Bot API](https://bot.q.qq.com/wiki/develop/api-
 ### 交互式设置
 
 ```bash
-hermes gateway setup
+tandem gateway setup
 ```
 
 从平台列表中选择 **QQ Bot** 并按提示操作。

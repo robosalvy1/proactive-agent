@@ -3,7 +3,7 @@
 A guest who only uses connectors or managed tools never meets the free-inference browser challenge:
 those callers (``resolve_nous_access_token``) hold or mint a ``purpose: "connectors"`` token, and an
 inference token is minted (inside ``run_with_challenge``) only when the free model is called
-(``resolve_nous_runtime_credentials``). Driven through the fake NAS with Hermes' real client code;
+(``resolve_nous_runtime_credentials``). Driven through the fake NAS with Tandem' real client code;
 no request leaves the process.
 """
 

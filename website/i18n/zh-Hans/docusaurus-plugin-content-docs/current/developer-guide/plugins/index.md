@@ -1,18 +1,18 @@
 ---
 sidebar_label: "Build a Plugin"
-title: "构建 Hermes 插件"
-description: "逐步指南：构建包含工具、钩子、数据文件和技能的完整 Hermes 插件"
+title: "构建 Tandem 插件"
+description: "逐步指南：构建包含工具、钩子、数据文件和技能的完整 Tandem 插件"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
-# 构建 Hermes 插件
+# 构建 Tandem 插件
 
-本指南从零开始构建一个完整的 Hermes 插件。完成后，你将拥有一个包含多个工具、生命周期钩子（hook）、随附数据文件和捆绑技能的可用插件——涵盖插件系统支持的所有功能。
+本指南从零开始构建一个完整的 Tandem 插件。完成后，你将拥有一个包含多个工具、生命周期钩子（hook）、随附数据文件和捆绑技能的可用插件——涵盖插件系统支持的所有功能。
 
 :::info 不确定需要哪份指南？
-Hermes 有多种不同的可插拔接口——有些使用 Python `register_*` API，另一些是配置驱动或放入指定目录即可生效。请先查阅下表：
+Tandem 有多种不同的可插拔接口——有些使用 Python `register_*` API，另一些是配置驱动或放入指定目录即可生效。请先查阅下表：
 
 | 如果你想添加… | 请阅读 |
 |---|---|
@@ -32,7 +32,7 @@ Hermes 有多种不同的可插拔接口——有些使用 Python `register_*` A
 | **通过 MCP 接入外部工具**（文件系统、GitHub、Linear、任意 MCP 服务器） | [MCP](../../user-guide/features/mcp.md)——在 `config.yaml` 中声明 `mcp_servers.<name>` |
 | **网关事件钩子**（在启动、会话事件、命令时触发） | [事件钩子](../../user-guide/features/hooks.md#gateway-event-hooks)——将 `HOOK.yaml` + `handler.py` 放入 `~/.hermes/hooks/<name>/` |
 | **Shell 钩子**（在事件发生时运行 shell 命令） | [Shell 钩子](../../user-guide/features/hooks.md#shell-hooks)——在 `config.yaml` 的 `hooks:` 下声明 |
-| **额外技能来源**（自定义 GitHub 仓库、私有技能索引） | [技能](../../user-guide/features/skills.md)——`hermes skills tap add <repo>` · [发布 tap](../../user-guide/features/skills.md#发布自定义-skill-tap) |
+| **额外技能来源**（自定义 GitHub 仓库、私有技能索引） | [技能](../../user-guide/features/skills.md)——`tandem skills tap add <repo>` · [发布 tap](../../user-guide/features/skills.md#发布自定义-skill-tap) |
 | 一流的**核心**推理提供商（非插件） | [添加提供商](../adding-providers.md) |
 
 查看完整的[可插拔接口表](../../user-guide/features/plugins.md#可插拔接口--各场景对应文档)，获取每种扩展接口的汇总视图，包括配置驱动（TTS、STT、MCP、shell 钩子）和放入目录（网关钩子）两种方式。
@@ -68,13 +68,13 @@ provides_hooks:
   - post_tool_call
 ```
 
-这告诉 Hermes："我是一个名为 calculator 的插件，我提供工具和钩子。" `provides_tools` 和 `provides_hooks` 字段是插件注册内容的列表。
+这告诉 Tandem："我是一个名为 calculator 的插件，我提供工具和钩子。" `provides_tools` 和 `provides_hooks` 字段是插件注册内容的列表。
 
 请在 `provides_tools` 中列出 `register()` 注册的每一个工具。该字段**不**决定用户安装的插件的工具是否加载：插件启用后，`register()` 注册的所有工具都可用，无论是否声明。它实际影响的是：
 
-- **`hermes plugins validate`**：注册的工具与列表不一致时，“declared tools”检查失败，插件无法进入目录（catalog）。
+- **`tandem plugins validate`**：注册的工具与列表不一致时，“declared tools”检查失败，插件无法进入目录（catalog）。
 - **目录展示**：目录及仪表盘/桌面端插件页中的“N 个工具”标签和按工具名搜索。
-- **仪表盘认证提示**：只有已声明工具的可用性检查会用于显示“需要认证”及 `hermes auth <name>` 命令。
+- **仪表盘认证提示**：只有已声明工具的可用性检查会用于显示“需要认证”及 `tandem auth <name>` 命令。
 - **仅限内置的 `kind: platform` 插件**：该字段决定是否在 CLI/TUI 会话中加载 `tools.py`（适配器本身仍延迟加载）。参见 [添加平台适配器](../adding-platform-adapters.md)。
 
 可选字段示例：
@@ -236,7 +236,7 @@ def unit_convert(args: dict, **kwargs) -> str:
 1. **签名：** `def my_handler(args: dict, **kwargs) -> str`
 2. **返回值：** 始终返回 JSON 字符串。成功和错误均如此。
 3. **不要抛出异常：** 捕获所有异常，改为返回错误 JSON。
-4. **接受 `**kwargs`：** Hermes 未来可能传入额外上下文。
+4. **接受 `**kwargs`：** Tandem 未来可能传入额外上下文。
 
 ## 第五步：编写注册代码
 
@@ -280,7 +280,7 @@ def register(ctx):
 - `ctx.register_cli_command()` 注册 CLI 子命令（例如 `hermes my-plugin <subcommand>`）
 - `ctx.register_command()` 注册会话内斜杠命令（例如在 CLI / 网关聊天中输入 `/myplugin <args>`）——详见下方[注册斜杠命令](#注册斜杠命令)
 - `ctx.dispatch_tool(name, arguments)` ——以父代理的上下文（审批、凭证、task_id 自动连接）调用任意其他工具（内置或来自其他插件）。适用于需要直接调用 `terminal`、`read_file` 或其他工具的斜杠命令处理器，效果等同于模型直接调用。
-- 如果此函数崩溃，插件将被禁用，但 Hermes 继续正常运行
+- 如果此函数崩溃，插件将被禁用，但 Tandem 继续正常运行
 
 **`dispatch_tool` 示例——执行工具的斜杠命令：**
 
@@ -298,7 +298,7 @@ def register(ctx):
 
 ## 第六步：测试
 
-启动 Hermes：
+启动 Tandem：
 
 ```bash
 hermes
@@ -330,7 +330,7 @@ Plugins (1):
 如果你的插件没有出现，或出现了但未加载——设置 `HERMES_PLUGINS_DEBUG=1` 可在 stderr 获取详细的发现日志：
 
 ```bash
-HERMES_PLUGINS_DEBUG=1 hermes plugins list
+HERMES_PLUGINS_DEBUG=1 tandem plugins list
 ```
 
 你将看到每个插件来源（内置、用户、项目、entry-points）的以下信息：
@@ -345,12 +345,12 @@ HERMES_PLUGINS_DEBUG=1 hermes plugins list
 同样的日志始终写入 `~/.hermes/logs/agent.log`，失败时为 WARNING 级别，设置环境变量时为 DEBUG 级别（全部内容）。如果无法使用环境变量运行（例如从网关内部），可以改为追踪日志文件：
 
 ```bash
-hermes logs --level WARNING | grep -i plugin
+tandem logs --level WARNING | grep -i plugin
 ```
 
 插件未出现的常见原因：
 
-- **未在配置中启用**——插件需要手动启用。运行 `hermes plugins enable <name>`（名称来自 `plugins list` 输出，嵌套布局下可能是 `<category>/<plugin>`）。
+- **未在配置中启用**——插件需要手动启用。运行 `tandem plugins enable <name>`（名称来自 `plugins list` 输出，嵌套布局下可能是 `<category>/<plugin>`）。
 - **目录结构错误**——必须是 `~/.hermes/plugins/<plugin-name>/plugin.yaml`（扁平）或 `~/.hermes/plugins/<category>/<plugin-name>/plugin.yaml`（一级分类嵌套，最多）。更深层的目录会被忽略。
 - **缺少 `__init__.py`**——插件目录需要同时包含 `plugin.yaml` 和带有 `register(ctx)` 函数的 `__init__.py`。
 - **`kind` 错误**——网关适配器需要在清单中设置 `kind: platform`。记忆提供商会被自动检测为 `kind: exclusive`，并通过 `memory.provider` 配置路由，而非 `plugins.enabled`。
@@ -444,7 +444,7 @@ requires_env:
 
 如果 `WEATHER_API_KEY` 未设置，插件将被禁用并显示清晰的提示信息。不会崩溃，代理中也不会报错——只会显示"Plugin weather disabled (missing: WEATHER_API_KEY)"。
 
-用户运行 `hermes plugins install` 时，会**交互式提示**输入任何缺失的 `requires_env` 变量。值会自动保存到 `.env`。
+用户运行 `tandem plugins install` 时，会**交互式提示**输入任何缺失的 `requires_env` 变量。值会自动保存到 `.env`。
 
 为了获得更好的安装体验，使用带有描述和注册 URL 的富格式：
 
@@ -468,7 +468,7 @@ requires_env:
 
 ### 懒加载可选 Python 依赖 {#lazy-install-optional-python-dependencies}
 
-对于 Hermes 已声明的项目 extra，在实际需要 SDK 的操作中使用 `pm.ensure_import`。
+对于 Tandem 已声明的项目 extra，在实际需要 SDK 的操作中使用 `pm.ensure_import`。
 可用性检查使用只读的 `pm.available`。不要从频繁调用的 `check_fn` 安装依赖。
 
 以下示例请求现有的 `bedrock` extra：
@@ -562,7 +562,7 @@ def register(ctx):
 
 ### `pre_llm_call` 上下文注入
 
-这是唯一一个返回值有意义的钩子。当 `pre_llm_call` 回调返回包含 `"context"` 键的字典（或纯字符串）时，Hermes 会将该文本注入**当前轮次的用户消息**中。这是记忆插件、RAG 集成、护栏以及任何需要向模型提供额外上下文的插件所使用的机制。
+这是唯一一个返回值有意义的钩子。当 `pre_llm_call` 回调返回包含 `"context"` 键的字典（或纯字符串）时，Tandem 会将该文本注入**当前轮次的用户消息**中。这是记忆插件、RAG 集成、护栏以及任何需要向模型提供额外上下文的插件所使用的机制。
 
 #### 返回格式
 
@@ -585,7 +585,7 @@ return None
 
 - **保留提示词缓存**——系统提示词在各轮次之间保持不变。Anthropic 和 OpenRouter 会缓存系统提示词前缀，保持其稳定可在多轮对话中节省 75% 以上的输入 token。如果插件修改系统提示词，每轮都会缓存未命中。
 - **临时性**——注入仅在 API 调用时发生。会话历史中的原始用户消息不会被修改，也不会持久化到会话数据库。
-- **系统提示词是 Hermes 的领地**——它包含模型特定的指导、工具执行规则、个性指令和缓存的技能内容。插件在用户输入旁边贡献上下文，而非修改代理的核心指令。
+- **系统提示词是 Tandem 的领地**——它包含模型特定的指导、工具执行规则、个性指令和缓存的技能内容。插件在用户输入旁边贡献上下文，而非修改代理的核心指令。
 
 #### 示例：记忆召回插件
 
@@ -791,7 +791,7 @@ def register(ctx):
 
 ## 专用插件类型
 
-Hermes 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.hermes/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
+Tandem 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.hermes/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
 
 ### 模型提供商插件——添加 LLM 后端
 
@@ -858,7 +858,7 @@ def register(ctx):
         check_fn=check_requirements,
         required_env=["MYPLATFORM_TOKEN"],
         # 从环境变量自动填充 PlatformConfig.extra，使仅环境变量的设置
-        # 在 `hermes gateway status` 中显示，无需 SDK 实例化。
+        # 在 `tandem gateway status` 中显示，无需 SDK 实例化。
         env_enablement_fn=_env_enablement,
         # 启用 cron 投递：`deliver=myplatform` 路由到此变量。
         cron_deliver_env_var="MYPLATFORM_HOME_CHANNEL",
@@ -976,11 +976,11 @@ description: Custom image generation backend
 
 ## 非 Python 扩展接口
 
-Hermes 也接受完全不是 Python 插件的扩展。这些在[可插拔接口表](../../user-guide/features/plugins.md#可插拔接口--各场景对应文档)中有所展示；以下各节简要介绍每种编写方式。
+Tandem 也接受完全不是 Python 插件的扩展。这些在[可插拔接口表](../../user-guide/features/plugins.md#可插拔接口--各场景对应文档)中有所展示；以下各节简要介绍每种编写方式。
 
 ### MCP 服务器——注册外部工具
 
-Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 Hermes。在 `~/.hermes/config.yaml` 中声明：
+Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 Tandem。在 `~/.hermes/config.yaml` 中声明：
 
 ```yaml
 mcp_servers:
@@ -995,7 +995,7 @@ mcp_servers:
       type: "oauth"
 ```
 
-Hermes 在启动时连接到每个服务器，列出其工具，并与内置工具一起注册。LLM 看到它们的方式与其他工具完全相同。**完整指南：** [MCP](../../user-guide/features/mcp.md)。
+Tandem 在启动时连接到每个服务器，列出其工具，并与内置工具一起注册。LLM 看到它们的方式与其他工具完全相同。**完整指南：** [MCP](../../user-guide/features/mcp.md)。
 
 ### 网关事件钩子——在生命周期事件时触发
 
@@ -1042,9 +1042,9 @@ hooks:
 如果你维护了一个技能 GitHub 仓库（或想从内置来源之外的社区索引拉取），将其添加为 **tap**：
 
 ```bash
-hermes skills tap add myorg/skills-repo
-hermes skills search my-workflow --source myorg/skills-repo
-hermes skills install myorg/skills-repo/my-workflow
+tandem skills tap add myorg/skills-repo
+tandem skills search my-workflow --source myorg/skills-repo
+tandem skills install myorg/skills-repo/my-workflow
 ```
 
 发布你自己的 tap 只需一个包含 `skills/<skill-name>/SKILL.md` 目录的 GitHub 仓库——无需服务器或注册表注册。
@@ -1083,8 +1083,8 @@ my-plugin = "my_plugin_package"
 当安装所有者提供的环境中包含该发行包时（例如 Nix 派生），entry-point 发现仍受支持。
 发现机制不代表可以向 PM 选中的环境直接注入 pip 包。对于 PM 管理的安装，
 请分发带有 `pyproject.toml` 或清单 Python 依赖声明的目录插件，并使用
-`hermes plugins install` / `enable` 进行事务式准入。新环境选定后重启 Hermes。
-`hermes pm install` 接受托管工具名称，不接受任意 PyPI 包名。
+`tandem plugins install` / `enable` 进行事务式准入。新环境选定后重启 Tandem。
+`tandem pm install` 接受托管工具名称，不接受任意 PyPI 包名。
 
 ## 为 NixOS 分发
 
@@ -1138,7 +1138,7 @@ def handler(args, **kwargs):
 
 **处理器签名缺少 `**kwargs`：**
 ```python
-# 错误——Hermes 传入额外上下文时会报错
+# 错误——Tandem 传入额外上下文时会报错
 def handler(args):
     ...
 

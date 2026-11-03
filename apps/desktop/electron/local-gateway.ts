@@ -13,7 +13,7 @@ const GATEWAY_ENSURE_CLIENT_GRACE_MS = 15_000
 /** Run one bounded `hermes ... gateway <verb>` client (`ensure` by default; `restart` for a stale owner). */
 export function runGatewayEnsure(
   backend, cwd: string, home: string, parentEnv: NodeJS.ProcessEnv = process.env,
-  { timeoutMs = GATEWAY_ENSURE_PROTOCOL_DEADLINE_MS + GATEWAY_ENSURE_CLIENT_GRACE_MS, label = 'hermes gateway ensure' }: { timeoutMs?: number; label?: string } = {}
+  { timeoutMs = GATEWAY_ENSURE_PROTOCOL_DEADLINE_MS + GATEWAY_ENSURE_CLIENT_GRACE_MS, label = 'tandem gateway ensure' }: { timeoutMs?: number; label?: string } = {}
 ): Promise<{ code: number; stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     // shell: true hands cmd.exe one command line it cuts at the first unquoted space,
@@ -104,12 +104,12 @@ export function createStaleGatewayRestarter(
     }
 
     if (pending) {
-      log(`[gateway] owner still runs ${stale.gateway} (this Hermes is ${stale.client}) after a restart; attaching as-is`)
+      log(`[gateway] owner still runs ${stale.gateway} (this Tandem is ${stale.client}) after a restart; attaching as-is`)
 
       return false
     }
 
-    log(`[gateway] owner runs ${stale.gateway} but this Hermes is ${stale.client}; restarting it`)
+    log(`[gateway] owner runs ${stale.gateway} but this Tandem is ${stale.client}; restarting it`)
     const entry = { done: false, promise: restart(gatewayOwnerProfile(endpoint)) }
     restarts.set(key, entry)
 
@@ -139,7 +139,7 @@ export function parseGatewayEnsureOutput(result: { code: number; stdout: string;
 
   const reason = String(result.stderr ?? '').trim().split(/\r?\n/).filter(Boolean).pop()
 
-  throw new Error(`hermes gateway ensure produced no result (exit ${result.code})${reason ? `: ${reason}` : ''}. Update Hermes or check the profile, then retry.`)
+  throw new Error(`tandem gateway ensure produced no result (exit ${result.code})${reason ? `: ${reason}` : ''}. Update Tandem or check the profile, then retry.`)
 }
 
 /** `{ gateway, client }` commits when a ready owner provably runs other code than the ensure
@@ -188,7 +188,7 @@ export async function ensureLocalGateway(
     // `detail`; a start that died carries its own output there. Either beats a pointer elsewhere.
     const detail = typeof payload.detail === 'string' && payload.detail.trim() ? ` ${payload.detail.trim().split(/\r?\n/)[0]}.` : ''
 
-    throw new Error(`Gateway ${payload.state || 'inaccessible'} (${payload.reason_code || 'ensure_failed'}).${detail} Use hermes gateway status for recovery.`)
+    throw new Error(`Gateway ${payload.state || 'inaccessible'} (${payload.reason_code || 'ensure_failed'}).${detail} Use tandem gateway status for recovery.`)
   }
 
   const endpoint: GatewayEndpoint = payload.endpoint
@@ -294,7 +294,7 @@ async function privateNode(file: string, kind: 'directory' | 'socket' | 'file' |
     // The socket, pointer and fallback directory are the gateway's to recreate; a home is not.
     throw new Error(kind === 'home'
       ? `Unsafe gateway control path: profile home ${quoted} is ${found}, not a directory: move it aside and recreate the profile`
-      : `Unsafe gateway control path: ${quoted} should be a ${kind} but is ${found}: remove it, then run hermes gateway restart`)
+      : `Unsafe gateway control path: ${quoted} should be a ${kind} but is ${found}: remove it, then run tandem gateway restart`)
   }
 
   if (node.uid !== uid) {

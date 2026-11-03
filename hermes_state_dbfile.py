@@ -562,7 +562,7 @@ def capture_retired_wal_generation(
                 suffix: list(ident) for suffix, ident in _stat_sqlite_sidecar_identity(db_path).items()},
             "note": ("Frames in the captured WAL were committed by the retired generation. Whether they "
                      "belong on top of the main file now at the path is an operator decision; inspect "
-                     "the copied image with `hermes sessions recover --inspect-only` first."),
+                     "the copied image with `tandem sessions recover --inspect-only` first."),
         }
         shm_identity = tuple(sidecar_identity.get("-shm") or ())
         shm_fd = _own_descriptor_for_identity(shm_identity) if shm_identity else None
@@ -734,9 +734,9 @@ def quarantine_invalid_state_db(path: Path, *, already_locked: bool = False) -> 
         if not acquired:
             logger.error("quarantine lock for %s not acquired within 5s — refusing to "
                          "quarantine without the cross-process lock. The invalid file "
-                         "is left in place. If sessions fail to load, run `hermes sessions recover "
+                         "is left in place. If sessions fail to load, run `tandem sessions recover "
                          "--source <state.db> --inspect-only`, or restore a snapshot with "
-                         "`/snapshot list` / `/snapshot restore <id>` (terminal `hermes` chat only).",
+                         "`/snapshot list` / `/snapshot restore <id>` (terminal `tandem` chat only).",
                          path)
             return None
         return _do_quarantine()

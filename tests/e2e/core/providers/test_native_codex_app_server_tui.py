@@ -1,4 +1,4 @@
-"""codex_app_server on an interactive viewer: a real ``hermes --tui`` attached to the gateway.
+"""codex_app_server on an interactive viewer: a real ``tandem --tui`` attached to the gateway.
 
 The codex bridge hands every completed agentMessage (the final answer included) to the interim
 commentary path. On the gateway's local route that commentary used to reach only
@@ -6,7 +6,7 @@ commentary path. On the gateway's local route that commentary used to reach only
 arrived without ``item/agentMessage/delta`` frames was recorded as delivered, the final send was
 suppressed and ``message.complete`` carried empty text: the TUI showed the tool card and no reply.
 
-Real chain: ``hermes --tui`` on a real PTY (VT-rendered grid), its gateway daemon, a real AIAgent
+Real chain: ``tandem --tui`` on a real PTY (VT-rendered grid), its gateway daemon, a real AIAgent
 on the native codex runtime, and the fake ``codex app-server`` binary
 (``tests/fakes/providers/codex_app_server.py``) completing agentMessage items with no deltas.
 """

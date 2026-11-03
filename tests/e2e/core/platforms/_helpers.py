@@ -1,6 +1,6 @@
 """Harness for the messaging-adapter contract suite.
 
-``GatewayUnderTest`` runs the REAL ``hermes gateway run`` (``python -m hermes_cli.main gateway run``)
+``GatewayUnderTest`` runs the REAL ``tandem gateway run`` (``python -m hermes_cli.main gateway run``)
 in a child process on a throwaway HOME/HERMES_HOME, with the real platform adapter plugin loaded and
 its SDK pointed at a local stand-in platform server (``tests/fakes/platforms``). The model is
 ``tests/fakes/fake_llm_provider.FakeLLMServer`` driven by a ``Director`` that answers per inbound
@@ -101,7 +101,7 @@ class Director:
 
 
 class GatewayUnderTest:
-    """A real ``hermes gateway run`` child on its own fake HOME; SIGTERM stop + restart on the same state."""
+    """A real ``tandem gateway run`` child on its own fake HOME; SIGTERM stop + restart on the same state."""
 
     def __init__(self, root: Path, *, llm_base_url: str, config: dict[str, Any], env: dict[str, str],
                  ready: Callable[[], bool]) -> None:

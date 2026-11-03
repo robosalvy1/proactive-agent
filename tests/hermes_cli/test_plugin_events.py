@@ -47,7 +47,7 @@ def test_broadcast_reaches_a_registered_client_as_a_namespaced_global_event():
 def test_broadcast_from_a_turn_isolation_child_reaches_the_parent_gateways_clients(monkeypatch):
     """``dashboard.turn_isolation`` runs plugin agent-side code (tools, hooks, slash commands) in the
     compute-host child, where no client is connected: the frame must ride the host pipe to the parent
-    ``hermes serve`` and fan out there instead of dying at ``logger.debug``."""
+    ``tandem serve`` and fan out there instead of dying at ``logger.debug``."""
     import io
     import json
     import os
@@ -92,7 +92,7 @@ def test_broadcast_from_a_turn_isolation_child_reaches_the_parent_gateways_clien
 
 
 def test_broadcast_without_a_gateway_module_is_a_logged_no_op(monkeypatch, caplog):
-    """A plugin-only process (``hermes plugins validate`` importing the backend) has no
+    """A plugin-only process (``tandem plugins validate`` importing the backend) has no
     ``tui_gateway.server``; the documented "safe from any handler" promise must hold there too."""
     import builtins
     import logging

@@ -125,7 +125,7 @@ def load_user_credentials(email: Optional[str] = None) -> Optional[Any]:
     except ImportError:
         logger.warning(
             "[google_chat_user_oauth] google-auth not installed; user-OAuth "
-            "attachment delivery is disabled. Run `hermes setup` to install Google Chat support."
+            "attachment delivery is disabled. Run `tandem setup` to install Google Chat support."
         )
         return None
     try:
@@ -245,11 +245,11 @@ def install_deps() -> bool:
         remaining = _missing_required_packages()
         if remaining:
             raise RuntimeError("dependencies remain stale after install: " + " ".join(remaining))
-        print("Dependencies installed. Restart Hermes to activate any new dependency environment.")
+        print("Dependencies installed. Restart Tandem to activate any new dependency environment.")
         return True
     except Exception as exc:
         print(f"ERROR: Failed to install dependencies: {exc}")
-        print("Run `hermes setup` to repair the managed installation, then retry.")
+        print("Run `tandem setup` to repair the managed installation, then retry.")
         return False
 
 
@@ -415,7 +415,7 @@ def revoke(email: Optional[str] = None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Google Chat user-OAuth setup for Hermes (native attachment delivery)"
+        description="Google Chat user-OAuth setup for Tandem (native attachment delivery)"
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--check", action="store_true", help="Check if auth is valid (exit 0=yes, 1=no)")

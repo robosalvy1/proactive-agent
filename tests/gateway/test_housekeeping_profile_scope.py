@@ -111,7 +111,7 @@ def test_multiplexed_auto_archive_tick_sweeps_every_served_profile_store(two_hom
     """The auto-archive sweep reaches each served profile's OWN state.db.
 
     ``acquire()`` resolves through ``get_hermes_home()``, so an unscoped tick archived the
-    launch profile's store only — and `hermes serve`/the dashboard defer to the gateway for
+    launch profile's store only — and `tandem serve`/the dashboard defer to the gateway for
     every profile it owns, so a served secondary would have had no archiver at all.
     """
     from agent.secret_scope import set_multiplex_active

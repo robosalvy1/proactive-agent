@@ -607,7 +607,7 @@ class TestExtractMessagePayload:
         """Format 3: flat fields from a custom Cloud Run relay.
 
         Some self-hosted setups put a relay in front of Pub/Sub to keep
-        GCP credentials off the Hermes host. The relay flattens Chat
+        GCP credentials off the Tandem host. The relay flattens Chat
         events into top-level ``sender_email`` / ``text`` / ``space_name``
         / etc. The helper synthesizes a Chat-API-shaped ``message`` dict
         so downstream code (``_dispatch_message`` →
@@ -835,7 +835,7 @@ class TestTypingLifecycle:
         first call slow, the second arriving before the first stores
         its msg_id), only ONE create should hit the API. Without this
         guard the second call would create a duplicate card → orphan
-        'Hermes is thinking…' stuck in chat. Race fix via
+        'Tandem is thinking…' stuck in chat. Race fix via
         _typing_card_inflight Event.
         """
         call_count = 0
@@ -915,7 +915,7 @@ class TestTypingLifecycle:
         already populated the slot (race), the orphan id is tracked in
         _orphan_typing_messages. on_processing_complete must patch each
         orphan to a benign marker so users don't see stuck
-        'Hermes is thinking…' messages."""
+        'Tandem is thinking…' messages."""
         from plugins.platforms.google_chat.adapter import _TYPING_CONSUMED_SENTINEL
         adapter._orphan_typing_messages["spaces/S"] = [
             "spaces/S/messages/ORPHAN1",

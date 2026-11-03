@@ -420,7 +420,7 @@ def test_venv_layout_explicit_and_native(tmp_path, windows, folder, executable):
 @pytest.mark.platforms("macos")
 @pytest.mark.parametrize(("mechanism", "rebuilt"), [("self", True), ("electron-updater", False)])
 def test_installed_app_without_a_checkout_build_is_still_rebuilt(zip_update, monkeypatch, tmp_path, mechanism, rebuilt):
-    """#52339: an installed Hermes.app only ``hermes update`` refreshes needs a Desktop build even
+    """#52339: an installed Hermes.app only ``tandem update`` refreshes needs a Desktop build even
     when release/ is gone, or it never gets newer. A self-updating release is not ours to rebuild."""
     installed = tmp_path / "Applications" / "Hermes.app"
     (installed / "Contents" / "Resources").mkdir(parents=True)

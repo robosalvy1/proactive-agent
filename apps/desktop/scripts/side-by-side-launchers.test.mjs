@@ -21,7 +21,7 @@ test('the Store bundler rejects nonstable selectors before platform tools or sta
 test('nonstable MSIX CLI aliases each activate their own entrypoint, never the GUI', () => {
   const launchers = ['hermes-canary', 'hermes-canary-acp']
   const applications = msix.appExecutionAliasApplications(launchers, {
-    appNamePascal: 'HermesBundledCanary', displayName: 'Hermes Agent Canary'
+    appNamePascal: 'HermesBundledCanary', displayName: 'Tandem Agent Canary'
   })
   const apps = applications.match(/<Application[\s\S]*?<\/Application>/g)
   assert.equal(apps.length, launchers.length)

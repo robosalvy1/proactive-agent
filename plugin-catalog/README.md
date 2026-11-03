@@ -1,4 +1,4 @@
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 # Hermes Plugin Catalog
 

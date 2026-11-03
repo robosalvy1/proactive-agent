@@ -1,4 +1,4 @@
-"""Admission lint: name a plugin's imports of private Hermes core modules (a warning, never a refusal).
+"""Admission lint: name a plugin's imports of private Tandem core modules (a warning, never a refusal).
 
 Catalog rule 9 ("public surfaces only") is enforced for runtime rebinds by
 ``plugin_validate_core_override``; an import of a core internal (``tools.tirith_security``,
@@ -53,7 +53,7 @@ _SHOWN = 10
 
 @lru_cache(maxsize=1)
 def _hermes_packages() -> frozenset:
-    """Hermes-owned top-level names: pyproject's ``packages.find`` includes plus the root modules
+    """Tandem-owned top-level names: pyproject's ``packages.find`` includes plus the root modules
     setup.py ships as ``py-modules`` (every root ``*.py``)."""
     root = Path(__file__).resolve().parents[1]
     try:
@@ -96,7 +96,7 @@ def _imported(node: ast.AST) -> list[tuple[str, str]]:
 
 
 def _private_target(module: str, name: str, core: frozenset, local: set[str]) -> str:
-    """The dotted target to report, or "" when the import is public, local or not Hermes's."""
+    """The dotted target to report, or "" when the import is public, local or not Tandem's."""
     target = f"{module}.{name}" if name else module
     hermes = module.split(".")[0] in core and module not in local
     public = target in _PUBLIC or f"{module}:{name}" in _PUBLIC \
@@ -105,7 +105,7 @@ def _private_target(module: str, name: str, core: frozenset, local: set[str]) ->
 
 
 def private_import_findings(plugin_dir: Path) -> list[str]:
-    """``["<rel>:<line> <module>[.<name>]", ...]`` for every import of a private Hermes core module:
+    """``["<rel>:<line> <module>[.<name>]", ...]`` for every import of a private Tandem core module:
     the first site of each distinct module first (so a truncated list still shows the breadth),
     then the rest, each group in file/line order."""
     plugin_dir = Path(plugin_dir)
@@ -134,7 +134,7 @@ def private_import_findings(plugin_dir: Path) -> list[str]:
 
 
 def check_private_imports(report, plugin_dir: Path) -> None:
-    """Warn (never fail) when the plugin imports private Hermes core modules."""
+    """Warn (never fail) when the plugin imports private Tandem core modules."""
     hits = private_import_findings(plugin_dir)
     if hits:
         more = f"; and {len(hits) - _SHOWN} more" if len(hits) > _SHOWN else ""

@@ -1,4 +1,4 @@
-"""``hermes update --list-venv-holders``: read-only JSON twin of the Windows venv-holder refusal.
+"""``tandem update --list-venv-holders``: read-only JSON twin of the Windows venv-holder refusal.
 
 Drives ``cmd_update`` (the production entry point) so the wiring in ``_update_preflight_handled``
 is what is proven, not the helper alone.

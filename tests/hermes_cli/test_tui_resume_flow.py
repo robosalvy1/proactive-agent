@@ -103,7 +103,7 @@ def _stub_plugin_discovery(monkeypatch):
 
 
 def test_oneshot_wires_session_db_for_recall(monkeypatch):
-    """hermes -z bypasses HermesCLI, but recall still needs SessionDB."""
+    """tandem -z bypasses HermesCLI, but recall still needs SessionDB."""
     from hermes_cli.oneshot import _run_agent
 
     captured = {}
@@ -175,7 +175,7 @@ def test_oneshot_wires_session_db_for_recall(monkeypatch):
 
 @pytest.mark.parametrize("run_fails", [False, True], ids=["success", "failure"])
 def test_oneshot_closes_its_relay_root_before_agent_teardown(monkeypatch, run_fails):
-    """hermes -z hard-exits past atexit, so _run_agent itself must finalize the Relay root it opened:
+    """tandem -z hard-exits past atexit, so _run_agent itself must finalize the Relay root it opened:
     keyed to the id at turn entry (compression may rotate it), on failure too, before agent.close()."""
     from hermes_cli import lifecycle
     from hermes_cli.oneshot import _run_agent
@@ -268,9 +268,9 @@ def test_launch_tui_exports_model_provider_and_toolsets(monkeypatch, main_mod):
 
 
 def test_launch_tui_prefers_launch_cwd_over_inherited_hermes_cwd(monkeypatch, main_mod, tmp_path):
-    """The directory `hermes --tui` was run from outranks an inherited HERMES_CWD.
+    """The directory `tandem --tui` was run from outranks an inherited HERMES_CWD.
 
-    A shell export - or an outer `hermes --tui` - leaves HERMES_CWD naming a real but stale
+    A shell export - or an outer `tandem --tui` - leaves HERMES_CWD naming a real but stale
     directory, and ui-tui/src/gatewayClient.ts:478 starts the gateway in whatever it names,
     so the session reads files and completions from the wrong project (#49637).
     """
@@ -365,7 +365,7 @@ def test_launch_tui_local_session_starts_in_launch_dir_not_terminal_cwd(monkeypa
 
 @pytest.mark.parametrize("flag", ["HERMES_SAFE_MODE", "HERMES_IGNORE_USER_CONFIG"])
 def test_launch_tui_bypass_without_model_refuses_before_the_tui_starts(monkeypatch, main_mod, capsys, flag):
-    """`hermes --tui --safe-mode` (or an exported HERMES_IGNORE_USER_CONFIG=1) reads no profile
+    """`tandem --tui --safe-mode` (or an exported HERMES_IGNORE_USER_CONFIG=1) reads no profile
     default model: the owner refuses session.create with bare invalid_params, so the launcher must
     say "pass --model" before spawning the TUI, as classic chat does."""
     monkeypatch.setenv(flag, "1")

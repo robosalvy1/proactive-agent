@@ -3,7 +3,7 @@
 Split out of ``tools/terminal_tool.py`` (PR #95286, Jackal991): a pure,
 deterministic string rewrite — no subprocess calls at transform time — that
 appends a verified raise-ladder to file-opening ``open`` invocations so the
-opened document lands in front of the Hermes window instead of behind it.
+opened document lands in front of the Tandem window instead of behind it.
 """
 
 import platform
@@ -134,8 +134,8 @@ def _transform_macos_open_command(command: str | None, system: str | None = None
     """Append a frontmost raise-ladder to a macOS ``open`` command.
 
     On macOS, ``open <file>`` / ``open -a <App> <file>`` returns exit 0 and
-    genuinely opens the document, but the window can land BEHIND the Hermes
-    desktop window (Hermes is typically maximised), so the user sees nothing
+    genuinely opens the document, but the window can land BEHIND the Tandem
+    desktop window (Tandem is typically maximised), so the user sees nothing
     happen while the agent reports success. This transform appends a verified
     raise-ladder that brings the opened app to the front.
 

@@ -253,7 +253,7 @@ def _load_ledger(store: Path, dir_hash: str) -> dict[str, dict]:
     """Load the agent-write ledger: {relpath: {"sha256": ..., "ts": ...}}.
 
     The ledger records the content hash of every file the last successful
-    ``write_file`` / ``patch`` produced, so restores can tell "Hermes wrote
+    ``write_file`` / ``patch`` produced, so restores can tell "Tandem wrote
     this" apart from "the user hand-edited this afterwards".
     """
     try:
@@ -320,7 +320,7 @@ def _git_env(
 ) -> dict:
     """Build env dict that redirects git to the shared store.
 
-    The shared store is internal Hermes infrastructure — it must NOT inherit
+    The shared store is internal Tandem infrastructure — it must NOT inherit
     the user's global or system git config.  User-level settings like
     ``commit.gpgsign = true``, signing hooks, or credential helpers would
     either break background snapshots or, worse, spawn interactive prompts
@@ -466,7 +466,7 @@ def _migrate_legacy_store(base: Path) -> Optional[Path]:
     Rather than delete the old data (users might want to recover), rename
     everything except our own v2 entries into ``legacy-<timestamp>/``.  The
     legacy dir is subject to the same retention sweep and can be manually
-    cleared with ``hermes checkpoints clear-legacy``.
+    cleared with ``tandem checkpoints clear-legacy``.
 
     Returns the legacy-archive path, or None if nothing to migrate.
     """
@@ -500,7 +500,7 @@ def _migrate_legacy_store(base: Path) -> Optional[Path]:
     if legacy_root is not None:
         logger.info(
             "Migrated pre-v2 checkpoint repos to %s. "
-            "Clear with `hermes checkpoints clear-legacy` when safe.",
+            "Clear with `tandem checkpoints clear-legacy` when safe.",
             legacy_root,
         )
     return legacy_root
@@ -565,7 +565,7 @@ def _init_store(store: Path, working_dir: str) -> Optional[str]:
     # exists since we just created the store inside it.
     cfg_wd = str(base)
     _run_git(["config", "user.email", "hermes@local"], store, cfg_wd)
-    _run_git(["config", "user.name", "Hermes Checkpoint"], store, cfg_wd)
+    _run_git(["config", "user.name", "Tandem Checkpoint"], store, cfg_wd)
     _run_git(["config", "commit.gpgsign", "false"], store, cfg_wd)
     _run_git(["config", "tag.gpgSign", "false"], store, cfg_wd)
     _run_git(["config", "gc.auto", "0"], store, cfg_wd)
@@ -825,11 +825,11 @@ class CheckpointManager:
     # ------------------------------------------------------------------
 
     def record_agent_write(self, file_path: str) -> None:
-        """Record the content hash of a file Hermes just successfully wrote.
+        """Record the content hash of a file Tandem just successfully wrote.
 
         Feeds the agent-write ledger used by :meth:`restore` in safe mode:
         at restore time, a file whose current content no longer matches the
-        recorded hash was hand-edited by the user after Hermes last touched
+        recorded hash was hand-edited by the user after Tandem last touched
         it, and is skipped instead of clobbered.
 
         Never raises — the ledger is best-effort bookkeeping.
@@ -857,9 +857,9 @@ class CheckpointManager:
 
         Returns ``{"success", "restore": [rel...], "skipped": [rel...],
         "error"?}`` where ``restore`` lists files whose current content
-        still matches what Hermes last wrote (per the agent-write ledger)
-        and ``skipped`` lists files the user hand-edited after Hermes'
-        last write or that Hermes never wrote at all.
+        still matches what Tandem last wrote (per the agent-write ledger)
+        and ``skipped`` lists files the user hand-edited after Tandem'
+        last write or that Tandem never wrote at all.
         """
         hash_err = _validate_commit_hash(commit_hash)
         if hash_err:
@@ -1086,7 +1086,7 @@ class CheckpointManager:
     def session_diff(self, working_dir: str) -> dict:
         """Show the cumulative diff of everything changed in this directory.
 
-        This powers ``/diff session``.  It answers "what has Hermes changed
+        This powers ``/diff session``.  It answers "what has Tandem changed
         here?" by diffing the *earliest retained checkpoint* — the snapshot
         taken before the first recorded edit — against the current working
         tree.  Because checkpoints are captured just before each file-mutating
@@ -1096,7 +1096,7 @@ class CheckpointManager:
         Note: checkpoints are a persistent per-project ref, so the earliest
         *retained* checkpoint may predate the current session (or, after
         pruning, postdate its true start).  It is an approximation of "what
-        Hermes changed", not an exact per-session ledger.
+        Tandem changed", not an exact per-session ledger.
 
         Returns the same shape as :meth:`diff` (``{"success", "stat",
         "diff"}``).  When no checkpoints exist yet — nothing has been edited —
@@ -1125,8 +1125,8 @@ class CheckpointManager:
         """Restore files to a checkpoint state.
 
         With ``safe=True`` (full-directory restores only), files the user
-        hand-edited after Hermes' last write — per the agent-write ledger —
-        are left untouched, and only Hermes-authored changes are reverted.
+        hand-edited after Tandem' last write — per the agent-write ledger —
+        are left untouched, and only Tandem-authored changes are reverted.
         The result gains ``skipped_user_edits`` listing the preserved paths,
         ``skipped_oversize`` listing paths kept because the size cap excluded
         them from every checkpoint, and — only when a delete failed —

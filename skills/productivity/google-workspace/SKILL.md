@@ -19,7 +19,7 @@ metadata:
 
 # Google Workspace
 
-Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Hermes-managed OAuth and a thin CLI wrapper. When `gws` is installed, the skill uses it as the execution backend for broader Google Workspace coverage; otherwise it falls back to the bundled Python client implementation.
+Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Tandem-managed OAuth and a thin CLI wrapper. When `gws` is installed, the skill uses it as the execution backend for broader Google Workspace coverage; otherwise it falls back to the bundled Python client implementation.
 
 ## References
 
@@ -29,17 +29,17 @@ Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Hermes-managed OA
 ## Scripts
 
 - `scripts/setup.py` — OAuth2 setup (run once to authorize)
-- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Hermes' existing JSON output contract.
+- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Tandem' existing JSON output contract.
 
 ## First-Time Setup
 
 The setup is fully non-interactive — you drive it step by step so it works
 on CLI, Telegram, Discord, or any platform.
 
-Run the setup script with Python from the Hermes environment, not an unrelated
-system Python. `--install-deps` syncs Hermes' declared Google extra through PM;
-after syncing, restart Hermes and rerun the OAuth command. If Hermes is not
-importable, use `hermes setup` first rather than installing packages with pip.
+Run the setup script with Python from the Tandem environment, not an unrelated
+system Python. `--install-deps` syncs Tandem' declared Google extra through PM;
+after syncing, restart Tandem and rerun the OAuth command. If Tandem is not
+importable, use `tandem setup` first rather than installing packages with pip.
 
 Define a shorthand first:
 
@@ -106,7 +106,7 @@ Tell the user:
 >    Audience → Test users → Add users
 > 6. Download the JSON file and tell me the file path
 >
-> Important Hermes CLI note: if the file path starts with `/`, do NOT send only the bare path as its own message in the CLI, because it can be mistaken for a slash command. Send it in a sentence instead, like:
+> Important Tandem CLI note: if the file path starts with `/`, do NOT send only the bare path as its own message in the CLI, because it can be mistaken for a slash command. Send it in a sentence instead, like:
 > `The JSON file path is: ~/Downloads/client_secret_....json`
 
 Once they provide the path:

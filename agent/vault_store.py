@@ -221,7 +221,7 @@ class VaultStore:
     @contextmanager
     def _locked(self):
         """Serialize read-modify-write cycles across threads AND processes: the Desktop gateway, a CLI
-        `hermes vault add` and a TUI slash worker all write the same ``vault.json.enc``; two unlocked
+        `tandem vault add` and a TUI slash worker all write the same ``vault.json.enc``; two unlocked
         writers would drop each other's items."""
         with _LOCK:
             self._ensure_dir()

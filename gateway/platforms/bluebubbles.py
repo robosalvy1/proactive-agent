@@ -140,7 +140,7 @@ class BlueBubblesAdapter(BasePlatformAdapter):
     @staticmethod
     def _compile_mention_patterns(raw: Any) -> list[re.Pattern]:
         """Compile group-mention wake words; ``raw`` is a list, a raw env string (JSON list or
-        comma/newline-separated), or None (Hermes defaults)."""
+        comma/newline-separated), or None (Tandem defaults)."""
         return compile_mention_patterns(raw, log_prefix="bluebubbles", defaults=DEFAULT_MENTION_PATTERNS,
                                         logger_=logger)
 

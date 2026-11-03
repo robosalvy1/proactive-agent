@@ -130,7 +130,7 @@ Examples:
     tandem logs errors            View errors.log
     tandem logs --since 1h        Lines from the last hour
     tandem debug share             Upload debug report for support
-    tandem console                Open the safe Hermes command console
+    tandem console                Open the safe Tandem command console
     tandem update                 Update to latest version
     tandem dashboard              Start web UI dashboard (port 9119)
     tandem dashboard --stop       Stop running dashboard processes
@@ -227,7 +227,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
     """
     chat_parser = subparsers.add_parser(
         "chat", help="Interactive chat with the agent",
-        description="Start an interactive chat session with Hermes Agent")
+        description="Start an interactive chat session with Tandem Agent")
     add, inherited, SUPPRESS = chat_parser.add_argument, _inherited_flag, argparse.SUPPRESS
     _query_group = chat_parser.add_mutually_exclusive_group()
     _query_group.add_argument("-q", "--query", help=(
@@ -313,7 +313,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
     inherited(chat_parser, "--ignore-rules", action="store_true", default=SUPPRESS,
               help="Skip auto-injection of AGENTS.md, SOUL.md, .cursorrules, memory, and preloaded skills. Combine with --ignore-user-config for a fully isolated run.")
     inherited(chat_parser, "--safe-mode", action="store_true", default=SUPPRESS,
-              help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from Hermes itself.")
+              help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from Tandem itself.")
     add("--source", default=None,
         help="Session source tag for filtering (default: cli). Use 'tool' for third-party integrations that should not appear in user session lists.")
     inherited(chat_parser, "--tui", action="store_true", default=SUPPRESS,

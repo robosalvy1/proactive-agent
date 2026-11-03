@@ -140,7 +140,7 @@ def hard_kill(proc):
 
 
 def planned_stop(home, proc, desc):
-    """The ``hermes gateway stop`` contract: marker first, then the owner drains itself.
+    """The ``tandem gateway stop`` contract: marker first, then the owner drains itself.
 
     The marker names the gateway's own pid from ``identify`` (what the PID file carries), not
     the Popen handle: a Windows uv venv ``python.exe`` is a trampoline whose pid differs."""
@@ -476,7 +476,7 @@ def test_native_owner_hard_kill_recovers_queued_admission_once(harness):
 
 
 def test_native_safe_mode_cli_executes_in_managed_worker(harness):
-    """`hermes chat --safe-mode -q` over subprocess pipes: the turn runs in an out-of-process
+    """`tandem chat --safe-mode -q` over subprocess pipes: the turn runs in an out-of-process
     managed worker (pid != owner) that opens no writable canonical sqlite."""
     home, env, peer, url, audit = harness['home'], harness['env'], harness['peer'], harness['url'], harness['audit']
 

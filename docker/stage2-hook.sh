@@ -244,7 +244,7 @@ if [ "$needs_chown" = true ]; then
         chown hermes:hermes "$HERMES_HOME" 2>/dev/null || \
             echo "[stage2] Warning: chown $HERMES_HOME failed (rootless container?) — continuing"
     fi
-    # Hermes-owned subdirs: recursive chown is safe here because these are
+    # Tandem-owned subdirs: recursive chown is safe here because these are
     # created and managed exclusively by hermes (see the s6-setuidgid mkdir
     # -p block below for the canonical list).
     for sub in cron sessions logs hooks memories skills skins plans workspace home profiles pairing platforms/pairing; do
@@ -467,7 +467,7 @@ seed_one "SOUL.md" "docker/SOUL.md"
 #
 # OPERATOR-PROVIDED KEYS WIN: if the container environment already carries
 # API_SERVER_KEY (documented `docker run -e API_SERVER_KEY=...` flow), do
-# not generate one. Hermes loads $HERMES_HOME/.env with override=True, so
+# not generate one. Tandem loads $HERMES_HOME/.env with override=True, so
 # a generated key written here would silently SHADOW the operator's env
 # key and 401 every client still using the supplied credential.
 if [ -n "${API_SERVER_KEY:-}" ]; then
@@ -758,7 +758,7 @@ fi
 # resolved browser binary path into /etc/hermes/agent-browser-executable-path
 # (the layout differs per arch — chrome-linux64/chrome on amd64,
 # chromium-linux-arm64/chromium on arm64 — so it is resolved at build time,
-# not hard-coded). agent-browser (the runtime CLI Hermes spawns for the
+# not hard-coded). agent-browser (the runtime CLI Tandem spawns for the
 # browser tool) doesn't recognise Playwright's directory layout in its own
 # cache scan and fails with "Auto-launch failed: Chrome not found" — even
 # though the binary is right there (#15697).

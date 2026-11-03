@@ -150,7 +150,7 @@ export function packagedExe(facts: InstallFacts): string {
   const name = fs.readdirSync(dir).find(entry => /^hermes$/i.test(entry))
 
   if (!name) {
-    throw new Error(`no packaged Hermes executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
+    throw new Error(`no packaged Tandem executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
   }
 
   return path.join(dir, name)
@@ -402,11 +402,11 @@ export async function waitFor<T>(
 
 /** Copy of the first-run chooser / bootstrap installer overlay (the screens a healthy install must never show). */
 export const FIRST_RUN_SCREENS = [
-  'Set up Hermes Desktop',
-  'Hermes needs a one-time install',
-  'Setting up Hermes Agent',
-  'Install Hermes locally',
-  'Use Hermes on this computer'
+  'Set up Tandem Desktop',
+  'Tandem needs a one-time install',
+  'Setting up Tandem Agent',
+  'Install Tandem locally',
+  'Use Tandem on this computer'
 ]
 
 /**

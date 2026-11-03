@@ -7,7 +7,7 @@ a size note) is sent as `state`, two `noul` questions per candidate call ask
 whether the call and whether its verbatim result must stay, and the transcript
 is rebuilt with nothing rewritten. Text messages are never touched.
 
-Differences from the TypeScript original are format-only: Hermes transcripts
+Differences from the TypeScript original are format-only: Tandem transcripts
 carry `tool_calls` on assistant rows and one `role: tool` row per result, so a
 "message" here is one chat row and `preserve_recent_messages` counts rows.
 
@@ -383,7 +383,7 @@ def _truncated_result(text: str, is_error: bool, head: int) -> str:
 
 
 def apply_decisions(messages, decisions: list[Decision], calls: list[ToolCall], head: int):
-    """Rebuild the Hermes transcript: dropped calls vanish with their result row,
+    """Rebuild the Tandem transcript: dropped calls vanish with their result row,
     dropped results keep a bounded head + note, untouched rows are the same objects."""
     by_id = {c.id: c for c in calls}
     actions: dict[str, str] = {}

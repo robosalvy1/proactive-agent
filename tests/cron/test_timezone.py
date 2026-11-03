@@ -281,7 +281,7 @@ class TestCronTimezone:
         """_ensure_aware must preserve the absolute instant for naive datetimes.
 
         Regression: the old code used replace(tzinfo=hermes_tz) which shifted
-        absolute time when system-local tz != Hermes tz.  The fix interprets
+        absolute time when system-local tz != Tandem tz.  The fix interprets
         naive values as system-local wall time, then converts.
         """
         from cron.jobs import _ensure_aware
@@ -309,7 +309,7 @@ class TestCronTimezone:
 
 
     def test_get_due_jobs_naive_cross_timezone(self, tmp_path, monkeypatch):
-        """Naive past timestamps must be detected as due even when Hermes tz
+        """Naive past timestamps must be detected as due even when Tandem tz
         is behind system local tz — the scenario that triggered #806."""
         import cron.jobs as jobs_module
         monkeypatch.setattr(jobs_module, "CRON_DIR", tmp_path / "cron")
@@ -333,7 +333,7 @@ class TestCronTimezone:
 
         due = get_due_jobs()
         assert len(due) == 1, (
-            "Naive past timestamp should be due regardless of Hermes timezone"
+            "Naive past timestamp should be due regardless of Tandem timezone"
         )
 
     def test_create_job_stores_tz_aware_timestamps(self, tmp_path, monkeypatch):

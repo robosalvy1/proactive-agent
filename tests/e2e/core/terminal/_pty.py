@@ -1,4 +1,4 @@
-"""Drive a real ``hermes`` CLI / Ink TUI process under a real PTY, rendered through :mod:`._vt`.
+"""Drive a real ``tandem`` CLI / Ink TUI process under a real PTY, rendered through :mod:`._vt`.
 
 The child runs with an isolated HOME/HERMES_HOME (only the fake LLM provider configured, no
 inherited credentials) as the session leader of its own PTY, so SIGWINCH from a resize reaches the
@@ -100,7 +100,7 @@ def cmdline(pid: int) -> str:
 
 
 class PtyHermes:
-    """One interactive ``hermes`` process on a PTY with an emulated screen."""
+    """One interactive ``tandem`` process on a PTY with an emulated screen."""
 
     def __init__(self, root: Path, argv_tail: list[str], llm: FakeLLMServer | None, *, rows: int, cols: int,
                  extra_config: str = "") -> None:
@@ -110,7 +110,7 @@ class PtyHermes:
         self.hermes_home = self.home / ".hermes"
         operator = (_operator_home() / ".hermes").resolve()
         assert operator not in (self.hermes_home.resolve(), *self.hermes_home.resolve().parents), (
-            f"sandbox {self.hermes_home} sits inside the operator's Hermes home")
+            f"sandbox {self.hermes_home} sits inside the operator's Tandem home")
         if llm is not None:
             write_hermes_home(self.hermes_home, llm.base_url, extra_config=extra_config)
         self.llm = llm
@@ -285,7 +285,7 @@ class PtyHermes:
     def leftover_processes(self, timeout: float = 15.0) -> list[str]:
         """Processes still alive in the child's session, or seen as its descendants, after exit.
 
-        The profile's ``gateway run`` is not a leftover: ``hermes chat`` attaches to it and it
+        The profile's ``gateway run`` is not a leftover: ``tandem chat`` attaches to it and it
         keeps serving (cron, messaging, the next client) after the client exits; ``close()`` still
         tears it down with the rest of this harness's tree."""
         from gateway.status import looks_like_gateway_command_line

@@ -56,7 +56,7 @@ def _require_azure_identity():
         try:
             from pm import InstallError, ensure_import
         except ImportError as exc:
-            raise ImportError(_INSTALL_MSG + "Run: hermes pm repair") from exc
+            raise ImportError(_INSTALL_MSG + "Run: tandem pm repair") from exc
         try:
             ensure_import(_AZURE_IDENTITY_FEATURE)
         except InstallError as exc:
@@ -75,7 +75,7 @@ def reset_credential_cache() -> None:
 
 @dataclass(frozen=True)
 class EntraIdentityConfig:
-    """Hermes-managed Entra knobs; everything else (tenant, SP secret, federated token file, authority...) flows
+    """Tandem-managed Entra knobs; everything else (tenant, SP secret, federated token file, authority...) flows
     through azure-identity's standard ``AZURE_*`` env vars. ``exclude_interactive_browser`` keeps probes
     non-interactive (the setup wizard never writes it). Frozen: hashable for ``lru_cache``, picklable for workers."""
 
@@ -100,7 +100,7 @@ class EntraIdentityConfig:
 @functools.lru_cache(maxsize=1)
 def _default_chain_credential(config: EntraIdentityConfig) -> Any:
     """Cached ``DefaultAzureCredential`` for the unscoped process. ``maxsize=1`` is intentional: a process uses
-    one ``model.entra.*`` block at a time. Only Hermes knobs are passed as kwargs; the rest comes from ``AZURE_*``
+    one ``model.entra.*`` block at a time. Only Tandem knobs are passed as kwargs; the rest comes from ``AZURE_*``
     env vars."""
     ai = _require_azure_identity()
     # SDK default already excludes the browser; only pass the kwarg when opting in.
@@ -330,7 +330,7 @@ def build_bearer_http_client(
             # WARNING so the misconfiguration is visible at default levels.
             logger.warning("Bearer hook: Entra ID token provider returned empty (%s) "
                            "— stripping Authorization headers. Azure will respond 401. "
-                           "Run `hermes doctor` or `az login` to recover.", exc)
+                           "Run `tandem doctor` or `az login` to recover.", exc)
             _strip_auth_headers(request)
             return
         _strip_auth_headers(request)

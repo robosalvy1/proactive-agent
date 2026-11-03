@@ -180,7 +180,7 @@ The web builder reads `web/public/` beneath it and requires `favicon.ico`.
 The desktop builder reads `apps/desktop/public/` beneath it and requires
 `apple-touch-icon.png`.
 
-Run the generator with a Hermes runtime Python (Pillow and resvg-py are core
+Run the generator with a Tandem runtime Python (Pillow and resvg-py are core
 dependencies):
 
 ```sh
@@ -286,7 +286,7 @@ uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when t
 cache will not be packaged for offline installation.
 
 Native bundle staging keeps its HOME and PM state temporary, but not its uv
-cache. `scripts.bundles.stage --cache PATH` (or `hermes pm bundle --cache PATH`)
+cache. `scripts.bundles.stage --cache PATH` (or `tandem pm bundle --cache PATH`)
 selects the persistent cache explicitly. Direct staging also accepts the
 provider's `UV_CACHE_DIR`; otherwise it uses the output parent's `.uv-cache`.
 The PM runtime and application dependency builds receive this same cache.
@@ -374,7 +374,7 @@ match the supplied PM runtime. The assembler does not create that environment.
   from this map.
 
 Source-layout placement writes project distribution metadata without building
-a Hermes wheel. It also writes `site_packages/hermes-agent.pth` with a relative
+a Tandem wheel. It also writes `site_packages/hermes-agent.pth` with a relative
 code path. Source-layout placement therefore requires an output-owned dependency
 directory, including in `fixed` mode. Reference placement does not write this file.
 

@@ -1,9 +1,9 @@
-"""A `hermes update` killed while git writes the new tree must leave a recoverable install.
+"""A `tandem update` killed while git writes the new tree must leave a recoverable install.
 
 Git rewrites the checkout file by file and moves HEAD last, so a kill in between leaves HEAD on the
 old commit with some files already new — a mix that fails at import in every entry point. The
 updater brackets the move with a marker; the next launch (``_early_recovery``, before any other
-checkout import) puts the old tree back so ``hermes update`` can simply run again.
+checkout import) puts the old tree back so ``tandem update`` can simply run again.
 """
 
 from __future__ import annotations

@@ -136,7 +136,7 @@ it('sidebar edits fall back to the base write only when the backend lacks the fe
 // N21: an older headless `hermes serve` (SSH remotes) answers an unmatched GET with its own fixed
 // catch-all body, formatted by Electron's httpStatusError. That is the same route verdict.
 it('sidebar edits on an older headless serve fall back to the base write', async () => {
-  const headless = '404: {"error":"Headless backend (hermes serve): web UI disabled \u2014 use `hermes dashboard` for the browser UI."}'
+  const headless = '404: {"error":"Headless backend (tandem serve): web UI disabled \u2014 use `tandem dashboard` for the browser UI."}'
   const writes: Array<{ method?: string; body?: unknown }> = []
   vi.mocked(hermesApi).mockReset().mockImplementation(async request => {
     if (!request.method || request.method === 'GET') { throw new Error(headless) }

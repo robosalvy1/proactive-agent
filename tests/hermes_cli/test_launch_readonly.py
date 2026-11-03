@@ -49,7 +49,7 @@ assert after == before, 'launch reader created or mutated state.db'
     assert result.returncode == 0, result.stdout + result.stderr
     assert 'Error generating insights:' not in result.stdout
     if populated:
-        assert 'Hermes Insights' in result.stdout
+        assert 'Tandem Insights' in result.stdout
         assert 'Resume this session with:' in result.stdout
         assert 'Reader fixture' in result.stdout
     else:

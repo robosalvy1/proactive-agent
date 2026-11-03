@@ -2,6 +2,14 @@
 
 Last updated: 2026-10-27.
 
+## Tandem Agent rebrand
+
+The product is now **Tandem Agent** (short: Tandem), command `tandem`; `hermes` remains a compatibility alias. Changed: version banner and `--version` (`Tandem Agent v…`), CLI/TUI/dashboard/desktop copy and locales, the built-in identity prompt and default `SOUL.md`, new ASCII banner and ring-mark art, icons/favicon/README banner, docs, skills, installer text, nix/docker descriptions and the docs site. Not renamed (compatibility): package/module names, `~/.hermes` and `HERMES_*`, config keys, service names, the desktop packaging identity and userData folder, third-party plugin catalog entries, release history, license/upstream attribution. [BRANDING.md](BRANDING.md) lists every kept identifier and the rules for new text; [DECISIONS.md](DECISIONS.md) records the choice.
+
+Migration: an unedited earlier default `SOUL.md` (Hermes, Proactive or Tandem wording) upgrades in place; customised files, memories, sessions, skins and config are untouched. Code that matched the old name (relay stock-brand check, Claude OAuth prompt sanitiser, kanban log filter, contributor audit, skill linter, gateway/process detection by executable name) accepts both names.
+
+Verification (focused, not the full suite; the repository has ~43k Python tests and the environment lacks the `acp` module and `uv`): web `tsc` clean and 460 vitest tests pass; ui-tui `tsc` clean and 1794/1798 pass (`messages.test.ts` fails the same way on unmodified HEAD; 1 other failure was caused by this rename and fixed); about 1,000 Python tests across ~90 files in banner, soul/prompt, identity, status/process detection, relay, skill linter, left-core hints, desktop launch/update scripts, locales and generated contracts pass after fixes. Known pre-existing failures, unrelated: `tests/agent/test_i18n.py` (32; non-English catalogs miss `cli.commands.cron.*` keys), `test_cli_skin_integration` compact-banner colour test, two install-script tests needing `uv`. Not verified: desktop (Electron) typecheck/tests (dependencies not installed here; typecheck timed out), nix/PowerShell syntax, any live provider, a signed desktop build, and the repo-wide Python suite. Unchanged on purpose: the Windows/macOS/Linux desktop path fixtures and executable names, `Hermes Local Signing`, `SECURITY.md` upstream contacts (the project has no contact of its own yet), Windows Store/installer icons, `plugin-catalog/`.
+
 ## Memory v2 (in progress, branch `feature/memory-v2`)
 
 Phase 0: `evals/memory_recall/` holds a reproducible retrieval benchmark (synthetic history, local embedding server, upstream Hermes and OpenClaw drivers, scale scenario, and a LongMemEval-S retrieval runner plus an end-to-end answer/judge runner for the MIT-licensed dataset, which stays outside the repository) with baselines in its README. PR 1: semantic indexing is a separate opt-in (`memory.home_recall.auto_index: true`); with it, indexing runs after completed turns on the existing memory-sync worker (owner-side for managed workers), newest first, with a durable two-ended cursor. A database lease makes automatic and explicit steps single-flight across processes, with a compare-and-swap on the cursor. A full index evicts the oldest vectors and pauses backfill; a coverage generation (sharing/linking) and a shared eviction epoch restart passes so freed space and newly eligible history are refilled. A bounded sweep drops vectors of deleted, forgotten or excluded own sources and re-embeds edits; other principals' sources are untouched. Endpoint transport failures back off per profile (15 s doubling to 10 min) with one recovery probe at a time. `/home index` drains for up to 20 s; `/home index status` reports size, backfill and endpoint health. Profiles without automatic indexing keep the read-only provider.
@@ -81,7 +89,7 @@ Complete P0 in [ROADMAP.md](ROADMAP.md), then establish fork test/lint CI before
 
 ## Instruction cleanup
 
-Project instructions now stand on their own: no required upstream root guide, external contribution skill, blanket ban on new providers/integrations, or third-party approval workflow. Engineering contracts remain in area guides. Contributor entrypoints and persona Markdown identify Proactive Agent; provenance remains in maintenance records and the license. This cleanup changes Markdown only.
+Project instructions now stand on their own: no required upstream root guide, external contribution skill, blanket ban on new providers/integrations, or third-party approval workflow. Engineering contracts remain in area guides. Contributor entrypoints and persona Markdown identify Tandem Agent; provenance remains in maintenance records and the license. This cleanup changes Markdown only.
 
 ## PR babysitting workflow
 

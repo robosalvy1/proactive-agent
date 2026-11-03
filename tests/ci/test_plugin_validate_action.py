@@ -1,4 +1,4 @@
-"""The external action must never install Hermes into the plugin checkout."""
+"""The external action must never install Tandem into the plugin checkout."""
 import os
 from pathlib import Path
 import subprocess

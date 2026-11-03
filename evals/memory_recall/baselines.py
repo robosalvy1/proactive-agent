@@ -1,9 +1,9 @@
-"""Upstream Hermes and OpenClaw memory, replayed on a magic scenario for comparison.
+"""Upstream Tandem and OpenClaw memory, replayed on a magic scenario for comparison.
 
 Both are simulated generously with their own prompts and tools; only the model calls go through the
 cached eval client.
 
-* ``hermes``: after every past chat the background memory review runs (upstream fires it every 10
+* ``tandem``: after every past chat the background memory review runs (upstream fires it every 10
   user turns, so short chats would usually get none) with the real ``memory`` tool and its
   1,375/2,200-character USER.md/MEMORY.md stores. The answer turn sees the frozen memory snapshot
   plus the memory and session-search guidance, and may call the real ``session_search`` (FTS5) over
@@ -90,7 +90,7 @@ def hermes(scenario, sessions, workdir, *, system, writer_model, answer_model, p
 
     for sid, date, turns in sessions:
         memory = snapshot()
-        head = f'You are Hermes, a personal assistant. Current date: {date}.\n\n{MEMORY_GUIDANCE}' + \
+        head = f'You are Tandem, a personal assistant. Current date: {date}.\n\n{MEMORY_GUIDANCE}' + \
             (f'\n\n{memory}' if memory else '')
         messages = [{'role': 'system', 'content': head}, *_turns(turns),
                     {'role': 'user', 'content': _MEMORY_REVIEW_PROMPT}]

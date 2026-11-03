@@ -1,15 +1,15 @@
 ---
 sidebar_position: 3
 title: "创建 Skill"
-description: "如何为 Hermes Agent 创建 skill——SKILL.md 格式、规范与发布"
+description: "如何为 Tandem Agent 创建 skill——SKILL.md 格式、规范与发布"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # 创建 Skill
 
-Skill 是为 Hermes Agent 添加新能力的首选方式。与 tool 相比，skill 更易于创建，无需修改 agent 代码，且可与社区共享。
+Skill 是为 Tandem Agent 添加新能力的首选方式。与 tool 相比，skill 更易于创建，无需修改 agent 代码，且可与社区共享。
 
 ## 应该创建 Skill 还是 Tool？
 
@@ -163,7 +163,7 @@ macOS 专属 skill 示例请参见 `skills/apple/`。
 
 ## 加载时的安全配置
 
-当 skill 需要 API key 或 token 时，使用 `required_environment_variables`。缺少值**不会**将 skill 从发现列表中隐藏。Hermes 会在本地 CLI 加载 skill 时安全地提示用户输入。
+当 skill 需要 API key 或 token 时，使用 `required_environment_variables`。缺少值**不会**将 skill 从发现列表中隐藏。Tandem 会在本地 CLI 加载 skill 时安全地提示用户输入。
 
 ```yaml
 required_environment_variables:
@@ -173,7 +173,7 @@ required_environment_variables:
     required_for: full functionality
 ```
 
-用户可以跳过配置并继续加载 skill。Hermes 不会将原始密钥值暴露给模型。Gateway 和消息会话会显示本地配置指引，而不是在带内收集密钥。
+用户可以跳过配置并继续加载 skill。Tandem 不会将原始密钥值暴露给模型。Gateway 和消息会话会显示本地配置指引，而不是在带内收集密钥。
 
 :::tip 沙箱透传
 加载 skill 时，已设置的 `required_environment_variables` 会**自动透传**到 `execute_code` 和 `terminal` 沙箱——包括 Docker 和 Modal 等远程后端。Skill 的脚本无需用户额外配置即可访问 `$TENOR_API_KEY`（或 Python 中的 `os.environ["TENOR_API_KEY"]`）。详见 [环境变量透传](../user-guide/security.md#environment-variable-passthrough)。
@@ -203,7 +203,7 @@ metadata:
 - `key`（必需）——配置项的点路径（例如 `myplugin.path`）
 - `description`（必需）——说明该配置项的作用
 - `default`（可选）——用户未配置时的默认值
-- `prompt`（可选）——`hermes config migrate` 时显示的提示文本；若未设置则回退到 `description`
+- `prompt`（可选）——`tandem config migrate` 时显示的提示文本；若未设置则回退到 `description`
 
 **工作原理：**
 
@@ -215,7 +215,7 @@ metadata:
          path: ~/my-data
    ```
 
-2. **发现：** `hermes config migrate` 扫描所有已启用的 skill，找出未配置的项并提示用户。配置项也会在 `hermes config show` 的"Skill Settings"部分显示。
+2. **发现：** `tandem config migrate` 扫描所有已启用的 skill，找出未配置的项并提示用户。配置项也会在 `tandem config show` 的"Skill Settings"部分显示。
 
 3. **运行时注入：** Skill 加载时，其 config 值会被解析并追加到 skill 消息中：
    ```
@@ -227,7 +227,7 @@ metadata:
 
 4. **手动配置：** 用户也可直接设置值：
    ```bash
-   hermes config set skills.config.myplugin.path ~/my-data
+   tandem config set skills.config.myplugin.path ~/my-data
    ```
 
 :::tip 如何选择
@@ -250,7 +250,7 @@ required_credential_files:
 - `path`（必需）——相对于 `~/.hermes/` 的文件路径
 - `description`（可选）——说明该文件的用途及创建方式
 
-加载时，Hermes 会检查这些文件是否存在。缺少文件会触发 `setup_needed`。已存在的文件会自动：
+加载时，Tandem 会检查这些文件是否存在。缺少文件会触发 `setup_needed`。已存在的文件会自动：
 - **挂载到 Docker** 容器中作为只读绑定挂载
 - **同步到 Modal** 沙箱（在创建时及每次命令前同步，因此会话中途的 OAuth 也能正常工作）
 - 在**本地**后端无需任何特殊处理即可使用
@@ -265,7 +265,7 @@ required_credential_files:
 
 ### 无外部依赖
 
-优先使用标准库 Python、curl 以及现有 Hermes tool（`web_extract`、`terminal`、`read_file`）。若确实需要依赖项，请在 skill 中记录安装步骤。
+优先使用标准库 Python、curl 以及现有 Tandem tool（`web_extract`、`terminal`、`read_file`）。若确实需要依赖项，请在 skill 中记录安装步骤。
 
 ### 渐进式披露
 
@@ -323,26 +323,26 @@ skills:
 运行 skill 并验证 agent 是否正确遵循指令：
 
 ```bash
-hermes chat --toolsets skills -q "Use the X skill to do Y"
+tandem chat --toolsets skills -q "Use the X skill to do Y"
 ```
 
 ## Skill 应放在哪里？
 
-内置 skill（位于 `skills/`）随每次 Hermes 安装一起发布，应对**大多数用户广泛有用**：
+内置 skill（位于 `skills/`）随每次 Tandem 安装一起发布，应对**大多数用户广泛有用**：
 
 - 文档处理、网页研究、常见开发工作流、系统管理
 - 被广泛人群定期使用
 
-如果你的 skill 是官方的且有用，但并非所有人都需要（例如付费服务集成、重量级依赖），请放入 **`optional-skills/`**——它随仓库一起发布，可通过 `hermes skills browse` 发现（标记为"official"），并以内置信任级别安装。
+如果你的 skill 是官方的且有用，但并非所有人都需要（例如付费服务集成、重量级依赖），请放入 **`optional-skills/`**——它随仓库一起发布，可通过 `tandem skills browse` 发现（标记为"official"），并以内置信任级别安装。
 
-如果你的 skill 是专业化的、社区贡献的或小众的，更适合放在 **Skills Hub**——将其上传到注册表并通过 `hermes skills install` 分享。
+如果你的 skill 是专业化的、社区贡献的或小众的，更适合放在 **Skills Hub**——将其上传到注册表并通过 `tandem skills install` 分享。
 
 ## 发布 Skill
 
 ### 发布到 Skills Hub
 
 ```bash
-hermes skills publish skills/my-skill --to github --repo owner/repo
+tandem skills publish skills/my-skill --to github --repo owner/repo
 ```
 
 ### 发布到自定义仓库
@@ -350,7 +350,7 @@ hermes skills publish skills/my-skill --to github --repo owner/repo
 将你的仓库添加为 tap：
 
 ```bash
-hermes skills tap add owner/repo
+tandem skills tap add owner/repo
 ```
 
 用户随后可从你的仓库搜索并安装。
@@ -365,12 +365,12 @@ hermes skills tap add owner/repo
 - Shell 注入
 
 信任级别：
-- `builtin`——随 Hermes 一起发布（始终受信任）
+- `builtin`——随 Tandem 一起发布（始终受信任）
 - `official`——来自仓库中的 `optional-skills/`（内置信任，无第三方警告）
 - `trusted`——来自 openai/skills、anthropics/skills、huggingface/skills
 - `community`——非危险发现可通过 `--force` 覆盖；`dangerous` 判定仍会被阻止
 
-Hermes 现在可以通过多种外部发现模型使用第三方 skill：
+Tandem 现在可以通过多种外部发现模型使用第三方 skill：
 - 直接 GitHub 标识符（例如 `openai/skills/k8s`）
 - `skills.sh` 标识符（例如 `skills-sh/vercel-labs/json-render/json-render-react`）
 - 从 `/.well-known/skills/index.json` 提供的知名端点

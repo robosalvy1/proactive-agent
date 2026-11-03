@@ -783,7 +783,7 @@ class GatewayShutdownMixin(GatewaySessionEndMixin):
         )
         logger.warning(
             "%s paused after %d consecutive failures (%s) — fix the underlying issue then run `/platform "
-            "resume %s` to retry, or `hermes gateway restart` to restart the gateway.",
+            "resume %s` to retry, or `tandem gateway restart` to restart the gateway.",
             platform.value, info.get("attempts", 0), info["pause_reason"], platform.value,
         )
 
@@ -1582,7 +1582,7 @@ class GatewayShutdownMixin(GatewaySessionEndMixin):
 
     def _describe_active_work(self) -> list:
         """One dict per in-flight work unit the restart wait is holding for, so an observer
-        (``hermes update``, ``hermes gateway status``) can name it instead of printing a bare count.
+        (``tandem update``, ``tandem gateway status``) can name it instead of printing a bare count.
 
         ``kind`` ∈ ``chat`` (session turn), ``cron`` (job id + external worker pid when the run was
         handed to a restart-safe scope), ``managed`` / ``api`` / ``deferred`` (count only — those sources expose
@@ -1732,7 +1732,7 @@ class GatewayShutdownMixin(GatewaySessionEndMixin):
         if not watchdog.start():
             return False
         self._systemd_watchdog = watchdog
-        watchdog.ready("Hermes Gateway running")
+        watchdog.ready("Tandem Gateway running")
         return True
 
     async def _stop_systemd_watchdog(self) -> None:

@@ -515,7 +515,7 @@ class TestWaitForGatewayExit:
 
 
 class TestRestartWaitsForApiServerPort:
-    """Regression for #91547: ``hermes gateway restart`` waited only for the old PID; on macOS the
+    """Regression for #91547: ``tandem gateway restart`` waited only for the old PID; on macOS the
     replacement then hit EADDRINUSE and ran with no API server."""
 
     def test_port_is_reported_free_once_the_old_listener_closes(self):
@@ -710,7 +710,7 @@ class TestReapUnsupervisedGatewayOrphansMacOS:
 
     Regression guard: without the ``is_macos()`` exclusion of
     ``_get_service_pids()``, the reaper would SIGTERM the launchd-supervised
-    gateway every time Hermes Desktop opens (``hermes serve`` calls
+    gateway every time Tandem Desktop opens (``tandem serve`` calls
     ``_reap_unsupervised_gateway_orphans`` during startup).
     """
 
@@ -759,8 +759,8 @@ class TestReapUnsupervisedGatewayOrphansWindows:
 
     Regression guard: without the Windows exemption of the recorded healthy
     gateway PID (and its parent chain), the reaper would SIGTERM/SIGKILL a
-    Scheduled-Task-supervised gateway every time Hermes Desktop opens
-    (``hermes serve`` calls ``_reap_unsupervised_gateway_orphans`` during
+    Scheduled-Task-supervised gateway every time Tandem Desktop opens
+    (``tandem serve`` calls ``_reap_unsupervised_gateway_orphans`` during
     startup). The Scheduled-Task bootstrap's argv matches the gateway scan,
     so it is reaped as an "orphan" — and when the bootstrap dies, the
     detached gateway it spawned exits with it (#86098).
@@ -985,7 +985,7 @@ class TestWindowsScheduledTaskSupervisorGuard:
 def test_find_windows_gateway_services_ignores_task_scheduler_ancestor(monkeypatch):
     """gateway <- cmd.exe <- svchost.exe(Schedule) <- services.exe: the Task Scheduler host is not the
     gateway's supervisor, so a task-launched gateway is a plain process (#97208); the same tree under a
-    Hermes-owned service (by binary path) stays SCM-supervised."""
+    Tandem-owned service (by binary path) stays SCM-supervised."""
     import psutil
     from hermes_cli import gateway_windows
 

@@ -555,7 +555,7 @@ class TestGatewayRunStaysUnimported:
 
     relay_runtime._segments_config() must NEVER trigger ``gateway.run`` — its
     import-time env setup (_HERMES_GATEWAY, HERMES_QUIET, TERMINAL_CWD := home)
-    hangs CLI approvals (#87183) and runs ``hermes -z`` in $HOME (#95577). A
+    hangs CLI approvals (#87183) and runs ``tandem -z`` in $HOME (#95577). A
     monkeypatch can't catch a refactor re-adding the import, so this runs the
     real path in a fresh process with those vars unset.
     """

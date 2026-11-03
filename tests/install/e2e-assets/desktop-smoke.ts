@@ -91,7 +91,7 @@ function requireEmptyHermesHome(home: string): void {
   }
   const entries = fs.readdirSync(home)
   if (entries.length > 0) {
-    throw new Error(`Predicted Hermes home ${home} is not empty (${entries.length} entries); refusing to seed an existing profile`)
+    throw new Error(`Predicted Tandem home ${home} is not empty (${entries.length} entries); refusing to seed an existing profile`)
   }
 }
 
@@ -268,7 +268,7 @@ function assertResolvedIdentity(identity: ChatIdentity, options: SmokeOptions, p
   // (possibly real, pre-existing) profile.
   if (predictedHome) {
     if (!identity.hermesHome || fs.realpathSync(identity.hermesHome) !== fs.realpathSync(predictedHome)) {
-      throw new Error(`Desktop resolved Hermes home ${identity.hermesHome ?? '(unreported)'} instead of the predicted ${predictedHome}`)
+      throw new Error(`Desktop resolved Tandem home ${identity.hermesHome ?? '(unreported)'} instead of the predicted ${predictedHome}`)
     }
   }
 }

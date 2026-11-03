@@ -32,7 +32,7 @@ class TestGatewayGuard:
             _guard_corrupt_user_config()
 
         assert exc_info.value.code == 2
-        assert "Hermes stopped because your settings file" in capsys.readouterr().err
+        assert "Tandem stopped because your settings file" in capsys.readouterr().err
 
     def test_gateway_allows_valid_config(self, tmp_path):
         from gateway.run import _guard_corrupt_user_config
@@ -81,7 +81,7 @@ class TestCronRunJobGuard:
             "cron_job": self._job(), "extra_prompt": None, "request_id": "guard-fire"}))
         previous = current_execution()
         try:
-            with pytest.raises(RuntimeError, match="Hermes stopped because your settings file"):
+            with pytest.raises(RuntimeError, match="Tandem stopped because your settings file"):
                 await execute(owner, ref, admission, policy)
             success, _output_doc, final_response, error = owner.pending_results["guard-fire"]["result"]["cron_result"]
             assert current_execution() is previous
@@ -91,7 +91,7 @@ class TestCronRunJobGuard:
 
         assert success is False
         assert error is not None
-        assert "Hermes stopped because your settings file" in error
+        assert "Tandem stopped because your settings file" in error
         assert "config.yaml" in error
         assert final_response == ""
 
@@ -103,11 +103,11 @@ class TestCronRunJobGuard:
         _success, _output_doc, _final_response, error = run_job(
             self._job(no_agent=True, script="true", deliver="none")
         )
-        assert "Hermes stopped because your settings file" not in (error or "")
+        assert "Tandem stopped because your settings file" not in (error or "")
 
 class TestServeGuard:
     def test_serve_headless_refuses_corrupt_config(self, tmp_path, capsys):
-        """The `hermes serve` headless path fails closed before startup."""
+        """The `tandem serve` headless path fails closed before startup."""
         from argparse import Namespace
 
         from hermes_cli import main as main_mod
@@ -126,4 +126,4 @@ class TestServeGuard:
             main_mod.cmd_dashboard(args)
 
         assert exc_info.value.code == 2
-        assert "Hermes stopped because your settings file" in capsys.readouterr().err
+        assert "Tandem stopped because your settings file" in capsys.readouterr().err

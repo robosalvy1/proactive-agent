@@ -73,8 +73,8 @@ def _pre_runtime_snapshot(home: Path) -> str | None:
 
 
 def _named_profile(home: Path) -> str:
-    """The ``-p`` name that opens ``home`` (``hermes -p acme update`` passes ``profiles/acme``);
-    ``""`` for the default root or a custom HERMES_HOME, which bare ``hermes`` opens."""
+    """The ``-p`` name that opens ``home`` (``tandem -p acme update`` passes ``profiles/acme``);
+    ``""`` for the default root or a custom HERMES_HOME, which bare ``tandem`` opens."""
     from hermes_cli.profiles import _PROFILE_ID_RE, _get_profiles_root
     parent = _get_profiles_root().resolve()
     resolved = home.resolve()
@@ -97,11 +97,11 @@ def downgrade_refusal(git_cmd, root: Path, target_ref: str, home: Path | None = 
              "these session stores now use. Downgrading is unsupported.",
              *(f"  {h / 'state.db'} has gateway runtime history." for _name, h in ledgered),
              "  The older release could not delete or prune those sessions.",
-             "  To go back anyway: run `hermes gateway stop`, check out the older release with git, then put back "
+             "  To go back anyway: run `tandem gateway stop`, check out the older release with git, then put back "
              "each store's copy from before the upgrade:"]
     for name, h in ledgered:
         snapshot = _pre_runtime_snapshot(h)
-        hermes = f"hermes -p {name}" if name else "hermes"
+        hermes = f"tandem -p {name}" if name else "hermes"
         lines.append(f"    {h}: run `{hermes}` and enter `/snapshot restore {snapshot}`." if snapshot else
                      f"    {h}: no pre-update snapshot predates the upgrade; restore a full backup taken before "
                      f"it with `{hermes} import <backup.zip>`.")

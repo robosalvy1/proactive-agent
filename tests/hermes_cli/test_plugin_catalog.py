@@ -144,7 +144,7 @@ def _fresh_cache(tmp_path, monkeypatch, doc: dict):
 
 
 def test_newer_in_tree_pin_outranks_a_fresh_live_cache(tmp_path, monkeypatch):
-    """Right after `hermes update` bumps an in-tree pin, a live cache fetched BEFORE the bump must not
+    """Right after `tandem update` bumps an in-tree pin, a live cache fetched BEFORE the bump must not
     re-install the old sha: for the same entry the newer catalog wins (checkout catalog commit time vs
     the doc's generated_at). Live-only entries survive; an older checkout still defers to the doc."""
     old, new = SHA, "a" * 40
@@ -202,7 +202,7 @@ def test_curated_fields_the_published_doc_lacks_come_from_the_checkout(tmp_path,
 
 def test_in_tree_catalog_time_does_not_lazy_fetch_on_treeless_clones(tmp_path, monkeypatch):
     """``in_tree_catalog_time`` dates the checkout with a pathspec'd ``git log``; the pathspec makes git
-    open every commit's tree. On a treeless (``tree:0``) partial clone — the layout ``hermes update``
+    open every commit's tree. On a treeless (``tree:0``) partial clone — the layout ``tandem update``
     produces — none of those trees exist locally, so an unrestricted probe lazy-fetches each one against
     the remote: measured 40-80 s per inventory request, past the desktop's 30s RPC limit (#125683).
     The probe must scope ``GIT_NO_LAZY_FETCH`` to itself so missing objects fail fast into the

@@ -1,10 +1,10 @@
 #!/usr/bin/env -S bash -c 'exec "$BASH" "$(dirname "$0")/run-in-hermes-env" python3 "$0" "$@"'
-"""Build the Hermes Skills Index — a centralized JSON catalog of all skills.
+"""Build the Tandem Skills Index — a centralized JSON catalog of all skills.
 
 This script crawls every skill source (skills.sh, GitHub taps, official,
 clawhub, lobehub) and writes a JSON index with resolved
 GitHub paths. The index is served as a static file on the docs site so that
-`hermes skills search/install` can use it without hitting the GitHub API.
+`tandem skills search/install` can use it without hitting the GitHub API.
 
 Usage:
     # Local (uses gh CLI or GITHUB_TOKEN for auth)
@@ -265,7 +265,7 @@ def batch_resolve_paths(skills: list, auth: GitHubAuth) -> list:
 
 
 def main():
-    print("Building Hermes Skills Index...", flush=True)
+    print("Building Tandem Skills Index...", flush=True)
     overall_start = time.time()
 
     auth = GitHubAuth()

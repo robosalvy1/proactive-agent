@@ -1,7 +1,7 @@
 """``GET /api/health`` ``commit`` contract (review G4).
 
 The public health probe reports the backend's BOOT ``commit`` so an attaching client can refuse a
-backend whose boot commit differs from its checkout: a ``serve`` that outlived ``hermes update``
+backend whose boot commit differs from its checkout: a ``serve`` that outlived ``tandem update``
 is never re-adopted. The field must always be present
 (``null`` off git) and must come from ``get_version_info().commit``.
 """

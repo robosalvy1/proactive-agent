@@ -26,7 +26,7 @@ def fireworks_profile():
 
 class TestFireworksHeaders:
     def test_attribution_matches_canonical_hermes_values(self, fireworks_profile):
-        """Fireworks requests carry the same attribution identity Hermes sends
+        """Fireworks requests carry the same attribution identity Tandem sends
         everywhere else.
 
         Asserted against the shared constant rather than the literals so a

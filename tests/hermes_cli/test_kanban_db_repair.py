@@ -1,5 +1,5 @@
 """Tests for kanban DB corruption repair, backup retention, WAL checkpointing,
-and the ``hermes kanban repair`` CLI verb."""
+and the ``tandem kanban repair`` CLI verb."""
 
 from __future__ import annotations
 
@@ -243,7 +243,7 @@ def test_dispatch_tick_runs_wal_checkpoint_at_interval(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 
 def _run_kanban_cli(argv: list[str]) -> int:
-    """Drive the real argparse surface exactly like `hermes kanban …`."""
+    """Drive the real argparse surface exactly like `tandem kanban …`."""
     import argparse
 
     from hermes_cli import kanban as kc

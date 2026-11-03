@@ -1,5 +1,5 @@
 """Nous free tier: every way the account service or the wire can refuse the free tier, and what
-Hermes does with each (the failure-mode contract behind the desktop's onboarding copy).
+Tandem does with each (the failure-mode contract behind the desktop's onboarding copy).
 
 Driven through a fake NAS whose responses are the ones the real service sends (see the code table
 in ``hermes_cli.anon_auth``), never through mocked-away client code.
@@ -241,7 +241,7 @@ class TestSignInFailures:
         assert state.retryable is retryable
         assert state.retry_after == retry_after
         assert needle in state.copy
-        assert "Hermes " not in state.copy and "http" not in state.copy
+        assert "Tandem " not in state.copy and "http" not in state.copy
 
     def test_the_wire_failing_reads_as_unreachable(self):
         state = anon_sign_in._failed_from_exception(httpx.ReadTimeout("slow"))

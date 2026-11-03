@@ -6,7 +6,7 @@ CLI, TUI, messaging gateway):
   token is connectors-only; later actions create none, and the free model is never selected
 - tool_search sends nothing to the portal or gateway and points the model at ``manage_connections``
 - ``nous.guest: false`` keeps the old answer: no tool, no account
-Driven through the fake NAS (``anon_portal``) with Hermes' real client code.
+Driven through the fake NAS (``anon_portal``) with Tandem' real client code.
 """
 
 import json

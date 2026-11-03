@@ -1,10 +1,10 @@
-"""Replace a gateway left running by an older Hermes on this install's own home.
+"""Replace a gateway left running by an older Tandem on this install's own home.
 
 After an upgrade the old daemon keeps answering the home's control socket, but its ``identify`` has
 no ``runtime_protocol`` (it predates the session-authority runtime). Every client of this version
 ensures through :func:`hermes_cli.gateway_runtime.ensure_gateway_runtime` (the TUI bootstrap,
-Desktop's ``hermes gateway ensure``, ``hermes chat``), so ensure replaces that owner once, exactly as
-``hermes gateway stop`` would stop it (a planned-stop marker in the owner's home, then SIGTERM; a
+Desktop's ``tandem gateway ensure``, ``tandem chat``), so ensure replaces that owner once, exactly as
+``tandem gateway stop`` would stop it (a planned-stop marker in the owner's home, then SIGTERM; a
 bounded wait; a start-time-guarded force kill), and then starts the current one the normal way.
 
 Refused, never stopped:
@@ -27,11 +27,11 @@ _FORCED_STOP_SECONDS = 5.0
 
 # One line each, short enough for the TUI's activity row after its "gateway incompatible: " prefix.
 REFUSAL_DETAIL = {
-    "owner_newer": "a newer Hermes's gateway owns this profile; update Hermes or run: hermes gateway stop",
-    "foreign_install": "another Hermes install's gateway owns this profile; stop it there: hermes gateway stop",
-    "owner_unverified": "an older Hermes gateway owns this profile and was not verified; run: hermes gateway stop",
-    "owner_did_not_exit": "an older Hermes gateway owns this profile and did not stop; run: hermes gateway stop",
-    "owner_unreachable": "an older Hermes gateway owns this profile; run: hermes gateway stop",
+    "owner_newer": "a newer Tandem's gateway owns this profile; update Tandem or run: tandem gateway stop",
+    "foreign_install": "another Tandem install's gateway owns this profile; stop it there: tandem gateway stop",
+    "owner_unverified": "an older Tandem gateway owns this profile and was not verified; run: tandem gateway stop",
+    "owner_did_not_exit": "an older Tandem gateway owns this profile and did not stop; run: tandem gateway stop",
+    "owner_unreachable": "an older Tandem gateway owns this profile; run: tandem gateway stop",
 }
 
 
@@ -88,7 +88,7 @@ def _verified_owner(control: Path, payload: dict) -> tuple[int, Any] | str:
 
 
 def _write_planned_stop(control: Path, pid: int, start_time: Any) -> None:
-    """The marker ``hermes gateway stop`` writes, in the OWNER's home (it reads its own), so the old
+    """The marker ``tandem gateway stop`` writes, in the OWNER's home (it reads its own), so the old
     gateway exits as a planned stop: clean exit, ``stopped`` persisted, no supervisor revival."""
     from gateway.status import _PLANNED_STOP_MARKER_FILENAME, _utc_now_iso, _write_marker
     _write_marker(control / _PLANNED_STOP_MARKER_FILENAME, {

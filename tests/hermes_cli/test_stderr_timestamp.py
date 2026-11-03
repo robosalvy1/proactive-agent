@@ -75,7 +75,7 @@ def test_main_timestamps_each_stderr_line(tmp_path):
 
 def test_wrapper_timestamps_child_stdout_into_its_own_stdout(tmp_path):
     """launchd appends the wrapper's stdout to gateway.log; a raw print() there has no stamp,
-    so ``hermes logs gateway --since`` can never filter it out."""
+    so ``tandem logs gateway --since`` can never filter it out."""
     stdout_log = tmp_path / "gateway.log"
     error_log = tmp_path / "gateway.error.log"
     code = (
@@ -301,7 +301,7 @@ def test_main_maps_gateway_ex_config_to_clean_stop(tmp_path):
 
 @pytest.mark.platforms("posix")  # POSIX signals
 def test_wrapper_forwards_sigusr1_restart_request_to_child(tmp_path):
-    """Regression for #101426: launchd owns the wrapper's PID, so ``hermes update`` sends its
+    """Regression for #101426: launchd owns the wrapper's PID, so ``tandem update`` sends its
     drain-aware SIGUSR1 to the wrapper. It must reach the gateway child and the wrapper must
     report the child's planned exit code — not die of the signal itself (which makes launchd
     treat the restart as a crash and apply its back-off to every sibling profile)."""

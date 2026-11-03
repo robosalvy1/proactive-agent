@@ -1,6 +1,6 @@
-"""hermes desktop forwards an explicit profile into the packaged Electron launch.
+"""tandem desktop forwards an explicit profile into the packaged Electron launch.
 
-Electron boots from active-profile.json. ``hermes -p <name> desktop`` used to
+Electron boots from active-profile.json. ``tandem -p <name> desktop`` used to
 set only the CLI HERMES_HOME, so the packaged app still started the stored
 profile. A launch with no ``-p`` / ``--profile`` must not invent a flag.
 """

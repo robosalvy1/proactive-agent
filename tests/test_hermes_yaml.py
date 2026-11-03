@@ -1,4 +1,4 @@
-"""Contracts for Hermes' shared YAML reader and writer."""
+"""Contracts for Tandem' shared YAML reader and writer."""
 
 import io
 from concurrent.futures import ThreadPoolExecutor

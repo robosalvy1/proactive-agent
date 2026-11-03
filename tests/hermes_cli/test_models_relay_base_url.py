@@ -49,7 +49,7 @@ def test_canonical_url_preserves_native_catalog_but_other_paths_stay_relays(monk
 
 def test_registry_endpoint_is_canonical_when_the_profile_leaves_base_url_empty(monkeypatch):
     """TokenHub's profile leaves ``base_url`` to its auth-registry row. A ``model.base_url`` that
-    ``hermes model`` saved as that endpoint is not a relay: the picker keeps the curated Hy list
+    ``tandem model`` saved as that endpoint is not a relay: the picker keeps the curated Hy list
     instead of replacing it with a live probe of the same host."""
     from hermes_cli.auth import PROVIDER_REGISTRY
     from providers import get_provider_profile

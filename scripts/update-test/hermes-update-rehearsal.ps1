@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  hermes-update-rehearsal.ps1 -- for an EXISTING Hermes install (Windows).
+  hermes-update-rehearsal.ps1 -- for an EXISTING Tandem install (Windows).
 
 .DESCRIPTION
   Two steps:
@@ -41,7 +41,7 @@
 
 .EXAMPLE
   ./hermes-update-rehearsal.ps1 pre -Source <git-url>
-  # ... run `hermes update`, use Hermes, test ...
+  # ... run `hermes update`, use Tandem, test ...
   ./hermes-update-rehearsal.ps1 post
 
 .NOTES
@@ -107,7 +107,7 @@ function Get-ResolvedPaths {
   }
   else {
     $appData = if ($env:APPDATA) { $env:APPDATA } else { Join-Path $userProfile 'AppData\Roaming' }
-    $userData = Join-Path $appData "Hermes$suffix"
+    $userData = Join-Path $appData "Tandem$suffix"
     $userDataSource = 'default'
   }
   return [pscustomobject]@{
@@ -310,13 +310,13 @@ function Invoke-Pre {
   $volumes = @($volumes | Select-Object -Unique)
 
   Step 'before we start (nothing here is pass/fail, just read it)'
-  $procs = @(Get-Process -Name 'Hermes', 'hermes' -ErrorAction SilentlyContinue)
+  $procs = @(Get-Process -Name 'Tandem', 'hermes' -ErrorAction SilentlyContinue)
   if ($procs.Count) {
-    Warn 'Hermes looks like it is running -- close the desktop app and the gateway'
+    Warn 'Tandem looks like it is running -- close the desktop app and the gateway'
     Warn "before you run 'hermes update', or the dependency sync may fail:"
     $procs | ForEach-Object { Write-Host "    $($_.ProcessName) (pid $($_.Id))" }
   }
-  else { Ok 'no Hermes processes running' }
+  else { Ok 'no Tandem processes running' }
   $n = @(Invoke-GitCmd @('config', '--global', '--get-regexp', '^url\.')).Count + @(Invoke-GitCmd @('-C', $P.Install, 'config', '--local', '--get-regexp', '^url\.')).Count
   if ($n -eq 0) { Ok 'global git config has no URL rewrites' }
   else { Warn "$n existing url.* insteadOf entr(y/ies) in your git config; we add more and remove only ours" }
@@ -503,7 +503,7 @@ function Invoke-Post {
     Say "  hermes import `"$zip`""
     Say 'or, if hermes itself no longer starts, extract the zip over your home:'
     Say "  tar -xf `"$zip`" -C `"$($P.Home)`""
-    Say 'then reinstall Hermes to get the program back.'
+    Say 'then reinstall Tandem to get the program back.'
     Restore-ShadowStorage
     Fail 'the disk snapshot is gone'
   }
@@ -514,11 +514,11 @@ function Invoke-Post {
   Say "  to how they were at $($script:Snap)"
   Confirm-Action "Put everything back from $($script:Snap)?"
 
-  Step 'stopping Hermes'
-  foreach ($name in @('Hermes', 'hermes')) {
+  Step 'stopping Tandem'
+  foreach ($name in @('Tandem', 'hermes')) {
     Get-Process -Name $name -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
   }
-  Ok 'asked Hermes to stop (if anything was running)'
+  Ok 'asked Tandem to stop (if anything was running)'
 
   $mounts = @{}
   try {
@@ -575,7 +575,7 @@ switch ($Command) {
       Get-Help $PSCommandPath -Detailed | Out-String | Write-Host
     }
     else {
-      Write-Host 'hermes-update-rehearsal.ps1 -- run against an EXISTING Hermes install.'
+      Write-Host 'hermes-update-rehearsal.ps1 -- run against an EXISTING Tandem install.'
       Write-Host ''
       Write-Host '  pre     back up your data, snapshot the disk, point the update source at a fork'
       Write-Host '  post    restore both trees exactly as they were at the snapshot'

@@ -1,4 +1,4 @@
-"""Verify `hermes -c` picks the session the user most recently used."""
+"""Verify `tandem -c` picks the session the user most recently used."""
 
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def test_resolve_last_session_real_db_prefers_workspace(monkeypatch, tmp_path):
 
 
 def test_resolve_last_session_cli_continues_a_oneshot(monkeypatch, tmp_path):
-    """`hermes -z … --resume latest` / `hermes -c` chain on the previous one-shot: its distinct `oneshot`
+    """`tandem -z … --resume latest` / `tandem -c` chain on the previous one-shot: its distinct `oneshot`
     source hides it from pickers but it is still CLI history (#112550)."""
     monkeypatch.setenv("HERMES_HOME", str(tmp_path))
     monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)

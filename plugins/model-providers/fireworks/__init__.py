@@ -9,7 +9,7 @@ from providers.base import ProviderProfile
 
 
 class FireworksProfile(ProviderProfile):
-    """Map Hermes reasoning controls onto Fireworks' OpenAI-compatible wire."""
+    """Map Tandem reasoning controls onto Fireworks' OpenAI-compatible wire."""
 
     def build_api_kwargs_extras(
         self, *, reasoning_config: dict | None = None, **context: Any
@@ -35,7 +35,7 @@ fireworks = FireworksProfile(
     # survive switch_model and credential rotation.
     default_headers={
         "HTTP-Referer": "https://hermes-agent.nousresearch.com",
-        "X-Title": "Hermes Agent",
+        "X-Title": "Tandem Agent",
         "User-Agent": f"HermesAgent/{get_version_info().base_version}",
     },
     default_aux_model="accounts/fireworks/models/glm-5p2",

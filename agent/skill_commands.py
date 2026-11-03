@@ -224,7 +224,7 @@ def _resolve_skill_commands_platform() -> Optional[str]:
 
 
 def _resolve_skill_commands_home() -> str:
-    """Effective Hermes home the scan is scoped to (profiles carry their own
+    """Effective Tandem home the scan is scoped to (profiles carry their own
     ``skills.external_dirs``, so a profile switch must invalidate the cache).
 
     A gateway session can switch between profiles that each carry their own ``skills.external_dirs`` (via
@@ -495,7 +495,7 @@ def _scan_skill_md(skill_md: Path, disabled: set, seen_names: set, commands: dic
     # A collision with a core command (name or alias) skips auto-registration; the skill stays
     # loadable via /skill <name>. The same predicate feeds the /skills + palette notes.
     if skill_command_collision_note(name) is not None:
-        logger.warning("Skill %r generates slash command '/%s' which collides with a core Hermes command; "
+        logger.warning("Skill %r generates slash command '/%s' which collides with a core Tandem command; "
                        "skipping auto-registration. Use '/skill %s' instead.", name, cmd_name, name)
         return
     # Dedup on the slug too: "git_helper" and "git-helper" normalize the same.
@@ -870,7 +870,7 @@ def build_preloaded_skills_prompt(
 ) -> tuple[str, list[str], list[str]]:
     """Load skills for session-wide CLI/TUI preloading; returns (prompt_text,
     loaded_skill_names, missing_identifiers). Disabled skills count as missing:
-    this path bypasses the scan-time filter, and ``hermes -s <skill>`` must not
+    this path bypasses the scan-time filter, and ``tandem -s <skill>`` must not
     force-load an operator-disabled skill. *excluded_loaded_names* are canonical
     names the session already carries (skills.auto_load): they resolve as loaded
     but are not rendered again.

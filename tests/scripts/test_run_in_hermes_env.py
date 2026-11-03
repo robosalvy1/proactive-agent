@@ -1,4 +1,4 @@
-"""``scripts/run-in-hermes-env``: run a command in the Hermes environment, syncing only when needed.
+"""``scripts/run-in-hermes-env``: run a command in the Tandem environment, syncing only when needed.
 
 The runner is what repo scripts hand themselves to from their shebang and what
 ``scripts/run_tests.sh`` re-executes under. Its decision worth pinning is

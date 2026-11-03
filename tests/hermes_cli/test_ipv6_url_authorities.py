@@ -127,7 +127,7 @@ class TestBrowserOpenUrl:
 
         web_server.start_server(host="::1", port=9119, open_browser=False)
 
-        assert "Hermes Web UI → http://[::1]:9119" in capsys.readouterr().err
+        assert "Tandem Web UI → http://[::1]:9119" in capsys.readouterr().err
 
 
 class TestAttachUrl:

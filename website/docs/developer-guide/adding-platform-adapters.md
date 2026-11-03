@@ -2,12 +2,12 @@
 sidebar_position: 9
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Adding a Platform Adapter
 
-This guide covers adding a new messaging platform to the Hermes gateway. A platform adapter connects Hermes to an external messaging service (Telegram, Discord, WeCom, etc.) so users can interact with the agent through that service.
+This guide covers adding a new messaging platform to the Tandem gateway. A platform adapter connects Tandem to an external messaging service (Telegram, Discord, WeCom, etc.) so users can interact with the agent through that service.
 
 :::tip
 There are two ways to add a platform:
@@ -33,7 +33,7 @@ Inbound messages are received by the adapter and forwarded via `self.handle_mess
 
 ## Plugin Path (Recommended)
 
-The plugin system lets you add a platform adapter without modifying any core Hermes code. Your plugin is a directory with two files:
+The plugin system lets you add a platform adapter without modifying any core Tandem code. Your plugin is a directory with two files:
 
 ```
 ~/.hermes/plugins/my-platform/
@@ -43,7 +43,7 @@ The plugin system lets you add a platform adapter without modifying any core Her
 
 ### plugin.yaml
 
-Plugin metadata. The `requires_env` and `optional_env` blocks auto-populate `hermes config` UI entries (see [Surfacing Env Vars](#surfacing-env-vars-in-hermes-config) below).
+Plugin metadata. The `requires_env` and `optional_env` blocks auto-populate `tandem config` UI entries (see [Surfacing Env Vars](#surfacing-env-vars-in-hermes-config) below).
 
 ```yaml
 name: my-platform
@@ -79,7 +79,7 @@ provides_tools:
   - my_platform_list
 ```
 
-With `provides_tools` declared, Hermes imports only `tools.py` during plugin
+With `provides_tools` declared, Tandem imports only `tools.py` during plugin
 discovery and registers the client tools in every process — CLI and TUI
 included — while the adapter stays deferred. Keep the package `__init__.py`
 import-light and pull the adapter in from inside `register()` so the eager
@@ -87,7 +87,7 @@ import stays cheap. Without the field, nothing changes: the whole plugin stays
 deferred.
 
 Users enable the toolset per platform like any other, e.g.
-`hermes tools enable my_platform --platform cli`, or by listing the toolset
+`tandem tools enable my_platform --platform cli`, or by listing the toolset
 key under `platform_toolsets` in `config.yaml`. Plugin platform names are
 also valid `--platform` targets, so an inbound session on your platform can
 be granted its own outbound tools.
@@ -142,7 +142,7 @@ def _env_enablement() -> dict | None:
 
 
 def register(ctx):
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Tandem plugin system."""
     ctx.register_platform(
         name="my_platform",
         label="My Platform",
@@ -158,7 +158,7 @@ def register(ctx):
         # ensure_deps_fn=ensure_requirements,
         validate_config=validate_config,
         required_env=["MY_PLATFORM_TOKEN"],
-        install_hint="Declare my-platform-sdk in this plugin's Python dependencies, then retry hermes plugins enable my-platform",
+        install_hint="Declare my-platform-sdk in this plugin's Python dependencies, then retry tandem plugins enable my-platform",
         # Env-driven auto-configuration — seeds PlatformConfig.extra from
         # env vars before adapter construction. See "Env-Driven Auto-
         # Configuration" section below.
@@ -219,7 +219,7 @@ When you call `ctx.register_platform()`, the following integration points are ha
 | Env-only auto-enable | `env_enablement_fn` seeds `PlatformConfig.extra` + `home_channel` |
 | YAML config bridge | `apply_yaml_config_fn` translates `config.yaml` keys into env vars / extras |
 | Cron delivery | `cron_deliver_env_var` makes `deliver=<name>` work |
-| `hermes config` UI entries | `requires_env` / `optional_env` in `plugin.yaml` auto-populate |
+| `tandem config` UI entries | `requires_env` / `optional_env` in `plugin.yaml` auto-populate |
 | send engine (`tools/send_message_tool.py`) | Routes through live gateway adapter |
 | Webhook cross-platform delivery | Registry checked for known platforms |
 | `/update` command access | `allow_update_command` flag |
@@ -227,9 +227,9 @@ When you call `ctx.register_platform()`, the following integration points are ha
 | System prompt hints | `platform_hint` injected into LLM context |
 | Message chunking | `max_message_length` for smart splitting |
 | PII redaction | `pii_safe` flag |
-| `hermes status` | Lists plugin platforms alongside built-ins, one row each, using the gateway's own configured check |
-| `hermes gateway setup` | Plugin platforms appear in setup menu |
-| `hermes tools` / `hermes skills` | Plugin platforms in per-platform config |
+| `tandem status` | Lists plugin platforms alongside built-ins, one row each, using the gateway's own configured check |
+| `tandem gateway setup` | Plugin platforms appear in setup menu |
+| `tandem tools` / `tandem skills` | Plugin platforms in per-platform config |
 | Token lock (multi-profile) | Use `acquire_scoped_lock()` in your `connect()` |
 | Orphaned config warning | Descriptive log when plugin is missing |
 | Service-event authorization | `trusted_inbound=True` skips user allowlists/pairing (see below) |
@@ -272,12 +272,12 @@ def register(ctx):
 ```
 
 Feature-detect these fields with `dataclasses.fields(PlatformEntry)` as above so the plugin stays loadable on
-older Hermes cores that predate them.
+older Tandem cores that predate them.
 
 ## Standalone send-path extensions
 
 A standalone platform can participate in host-driven outbound delivery through
-direct `hermes send --to ...` and cron `deliver=platform:...` by declaring send
+direct `tandem send --to ...` and cron `deliver=platform:...` by declaring send
 behavior on the same `PlatformEntry` created by `ctx.register_platform()`.
 `send_message` is intentionally not an agent-callable model tool; plugins must
 not register an equivalent model surface that lets the agent initiate outbound
@@ -315,7 +315,7 @@ def register(ctx):
         check_fn=check_requirements,
         parse_target_ref_fn=_parse_address,
         validate_target_ref_fn=_validate_address,
-        # May be a regular function or async def. Hermes awaits any awaitable
+        # May be a regular function or async def. Tandem awaits any awaitable
         # result, including callable objects and functools.partial wrappers.
         send_message_handler=_send_request,
         # Prefer this lower-level hook when cron must send from a process
@@ -334,7 +334,7 @@ the next profile.
 
 ## Env-Driven Auto-Configuration
 
-Most users set up a platform by dropping env vars into `~/.hermes/.env` rather than editing `config.yaml`. The `env_enablement_fn` hook lets your plugin pick those env vars up **before** the adapter is constructed, so `hermes gateway status`, `get_connected_platforms()`, and cron delivery see the correct state without instantiating the platform SDK.
+Most users set up a platform by dropping env vars into `~/.hermes/.env` rather than editing `config.yaml`. The `env_enablement_fn` hook lets your plugin pick those env vars up **before** the adapter is constructed, so `tandem gateway status`, `get_connected_platforms()`, and cron delivery see the correct state without instantiating the platform SDK.
 
 Read env through `gateway.platforms._shared.get_scoped_secret` — never `os.getenv`. Under `gateway.multiplex_profiles` the process env holds the DEFAULT profile's values; a secondary profile's `.env` exists only in its secret scope, and a raw read would enable your platform for the wrong profile with the wrong credentials. `seed_extra_from_env` builds the seed dict from a `(ENV_VAR, extra_key, conv)` table through that reader.
 
@@ -435,7 +435,7 @@ The scheduler reads this env var when resolving the home target for `deliver=my_
 
 ### Out-of-process cron delivery
 
-`cron_deliver_env_var` makes your platform a recognized `deliver=` target. To make the actual send succeed when the cron job runs in a separate process from the gateway (i.e., `hermes cron run` separate from `hermes gateway`), register a `standalone_sender_fn`:
+`cron_deliver_env_var` makes your platform a recognized `deliver=` target. To make the actual send succeed when the cron job runs in a separate process from the gateway (i.e., `tandem cron run` separate from `tandem gateway`), register a `standalone_sender_fn`:
 
 ```python
 async def _standalone_send(
@@ -464,7 +464,7 @@ Why this hook is necessary: built-in platforms (Telegram, Discord, Slack, etc.) 
 
 The function receives the same `pconfig` and `chat_id` that the live adapter would, plus optional `thread_id`, `media_files`, and `force_document` keyword arguments. Returning `{"success": True, "message_id": ...}` is treated as a successful delivery; returning `{"error": "..."}` surfaces the message in cron's `delivery_errors`. Exceptions raised inside the function are caught by the dispatcher and reported as `Plugin standalone send failed: <reason>`. Reference implementations live in `plugins/platforms/{irc,teams,google_chat}/adapter.py`.
 
-## Surfacing Env Vars in `hermes config`
+## Surfacing Env Vars in `tandem config`
 
 `hermes_cli/config.py` scans `plugins/platforms/*/plugin.yaml` at import time and auto-populates `OPTIONAL_ENV_VARS` from `requires_env` and (optional) `optional_env` blocks. Use the rich-dict form to contribute proper descriptions, prompts, password flags, and URLs — the CLI setup UI picks them up for free.
 
@@ -475,7 +475,7 @@ label: My Platform
 kind: platform
 version: 1.0.0
 description: >
-  My Platform gateway adapter for Hermes Agent.
+  My Platform gateway adapter for Tandem Agent.
 author: Your Name
 requires_env:
   - name: MY_PLATFORM_TOKEN
@@ -600,7 +600,7 @@ See `plugins/platforms/irc/` in the repo for a complete working example — a fu
 ## Step-by-Step Checklist (Built-in Path)
 
 :::note
-This checklist is for adding a platform directly to the Hermes core codebase — typically done by core contributors for officially supported platforms. Community/third-party platforms should use the [Plugin Path](#plugin-path-recommended) above.
+This checklist is for adding a platform directly to the Tandem core codebase — typically done by core contributors for officially supported platforms. Community/third-party platforms should use the [Plugin Path](#plugin-path-recommended) above.
 :::
 
 ### 1. Platform Enum

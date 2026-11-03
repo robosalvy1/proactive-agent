@@ -6,13 +6,13 @@ A seeded property / matrix layer over every surface that writes ``config.yaml`` 
       one key changes that key's line(s) only (comments, quoting, unicode, ``${VAR}`` templates,
       explicit-default values, dotted provider names and nulls all survive);
 * P2  "set one key" changes exactly one key, on every writer: in-process ``set_config_value`` over
-      EVERY documented scalar leaf of ``DEFAULT_CONFIG``, the real ``hermes config set`` CLI
+      EVERY documented scalar leaf of ``DEFAULT_CONFIG``, the real ``tandem config set`` CLI
       subprocess, a real ``python -m tui_gateway.entry`` stdio JSON-RPC process (``config.set``),
       and the dashboard/Desktop ``PUT /api/config`` (partial bodies, like Desktop sends);
 * P3  a failed read never results in a clobbering write: for every single config read an
       operation performs, a transient ``EMFILE`` on exactly that read, plus unreadable, truncated
       and non-mapping files, must leave every section the operation did not target intact;
-* P4  Hermes's ``.env`` loaders are idempotent (self-references, placeholders, quoting), the
+* P4  Tandem's ``.env`` loaders are idempotent (self-references, placeholders, quoting), the
       sanitizer is a fixed point, and ``save_env_value`` changes exactly one line;
 * P5  every config migration is idempotent from every historical ``_config_version`` and never
       clobbers user-set values;
@@ -346,7 +346,7 @@ def _reset_config_caches(*, keep_lkg: bool = False) -> None:
 
 
 def _write_file(path: Path, text: str) -> None:
-    """Atomic replace (new inode), like every Hermes writer, so no cache can serve stale bytes."""
+    """Atomic replace (new inode), like every Tandem writer, so no cache can serve stale bytes."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f".{path.name}.c18tmp")
     tmp.write_text(text, encoding="utf-8")

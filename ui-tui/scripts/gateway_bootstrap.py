@@ -2,8 +2,8 @@
 
 ``--start`` ensures the owner (first launch). A reconnect discovers only, except ``--recover``
 (a bounded slot, ``gatewayClient.ts`` ``OWNER_RECOVERY_LIMIT`` per window) re-ensures whenever the
-owner is not ready: it crashed, ended by its idle exit, was stopped with ``hermes gateway stop``
-while this TUI was open, or an older Hermes's gateway answers (ensure replaces that one). Main's TUI
+owner is not ready: it crashed, ended by its idle exit, was stopped with ``tandem gateway stop``
+while this TUI was open, or an older Tandem's gateway answers (ensure replaces that one). Main's TUI
 ran its own sidecar and never depended on an external daemon, so an open TUI comes back on its own.
 """
 import contextlib

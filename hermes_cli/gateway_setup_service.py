@@ -6,7 +6,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 SERVICE_INSTALL_QUESTION = (
-    "Install the gateway service so Hermes starts automatically at login "
+    "Install the gateway service so Tandem starts automatically at login "
     "and keeps scheduled jobs and messaging available?"
 )
 
@@ -52,11 +52,11 @@ def ensure_gateway_service(context: str = "setup", *, interactive: bool = False,
     from hermes_constants import is_container
 
     if is_container():
-        gw.print_info("Run hermes gateway run as the container main process; use a Docker restart policy for persistence.")
+        gw.print_info("Run tandem gateway run as the container main process; use a Docker restart policy for persistence.")
         return False
     supports_systemd = gw.supports_systemd_services()
     if not (supports_systemd or gw.is_macos() or gw.is_windows()):
-        gw.print_info("No supported service manager found. Run: hermes gateway run")
+        gw.print_info("No supported service manager found. Run: tandem gateway run")
         return False
     try:
         if gw._is_service_running():
@@ -67,7 +67,7 @@ def ensure_gateway_service(context: str = "setup", *, interactive: bool = False,
             if context == "import" or not wants_service_install(
                 interactive=interactive, install=install, config=config
             ):
-                gw.print_info("No service installed. Run: hermes gateway run")
+                gw.print_info("No service installed. Run: tandem gateway run")
                 gw.print_info("Without a service, scheduled jobs and messaging stop at logout/reboot; jobs cannot run while the host is off.")
                 return False
             if supports_systemd and gw.has_conflicting_systemd_units():
@@ -81,7 +81,7 @@ def ensure_gateway_service(context: str = "setup", *, interactive: bool = False,
                 gw._gw_windows().install(force=False, start_now=True, start_on_login=True)
             # Installers can refuse without raising (e.g. temporary-home guard).
             if not gw._is_service_installed():
-                gw.print_warning("Gateway service install did not complete. Retry: hermes gateway install")
+                gw.print_warning("Gateway service install did not complete. Retry: tandem gateway install")
                 return False
             record_service_choice("install", config)
         if supports_systemd:
@@ -99,13 +99,13 @@ def ensure_gateway_service(context: str = "setup", *, interactive: bool = False,
         gw.print_warning(f"Gateway service needs root for this scope: {exc}")
         gw._print_system_scope_remediation("start")
     except SystemExit:
-        gw.print_warning("Gateway service install did not complete. Retry: hermes gateway install")
+        gw.print_warning("Gateway service install did not complete. Retry: tandem gateway install")
     except Exception as exc:
         # Setup/import boundary: a service-manager failure of any kind degrades to the printed
         # manual retry (False); it never aborts the setup wizard or a restore.
         logger.debug("gateway service setup failed", exc_info=True)
         gw.print_warning(f"Gateway service setup failed: {exc}")
-        gw.print_info("You can retry manually: hermes gateway install")
+        gw.print_info("You can retry manually: tandem gateway install")
     return False
 
 
@@ -125,9 +125,9 @@ def _wizard_install_service(backend: str) -> None:
             if result.state == "ready":
                 gw.print_success("Gateway runtime ready; no service was installed.")
             else:
-                gw.print_info(f"Gateway runtime: {result.state} ({result.reason_code or 'pending'}). Check: hermes gateway status")
+                gw.print_info(f"Gateway runtime: {result.state} ({result.reason_code or 'pending'}). Check: tandem gateway status")
         else:
-            gw.print_info("Run later: hermes gateway run. Install later: hermes gateway install")
+            gw.print_info("Run later: tandem gateway run. Install later: tandem gateway install")
         return
     try:
         scope, did_install = None, True
@@ -138,11 +138,11 @@ def _wizard_install_service(backend: str) -> None:
         else:
             gw._gw_windows().install(force=False, start_now=start_now, start_on_login=True)
         if not did_install or not gw._is_service_installed():
-            gw.print_warning("Gateway service install did not complete. Retry: hermes gateway install")
+            gw.print_warning("Gateway service install did not complete. Retry: tandem gateway install")
             return
         record_service_choice("install")
         if start_now and backend != "windows":
             gw._setup_service_action("start", failed_label="Start failed", system=scope == "system")
     except (subprocess.CalledProcessError, SystemExit) as exc:
         gw.print_error(f"Install failed: {exc}")
-        gw.print_info("You can try manually: hermes gateway install")
+        gw.print_info("You can try manually: tandem gateway install")

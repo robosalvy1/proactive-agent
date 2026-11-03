@@ -781,8 +781,8 @@ describe('secondary stalled-dial budget', () => {
     // What main's ensureLocalGateway / parseGatewayEnsureOutput / assertLocalGatewayEndpoint throw,
     // as they cross the IPC boundary. Each re-dial spawns another `hermes gateway ensure`.
     for (const permanent of [
-      "Error invoking remote method 'hermes:connection:get-for': Error: Gateway incompatible (runtime_protocol). Use hermes gateway status for recovery.",
-      'hermes gateway ensure produced no result (exit 2): invalid choice. Update Hermes or check the profile, then retry.',
+      "Error invoking remote method 'hermes:connection:get-for': Error: Gateway incompatible (runtime_protocol). Use tandem gateway status for recovery.",
+      'tandem gateway ensure produced no result (exit 2): invalid choice. Update Tandem or check the profile, then retry.',
       'Invalid local gateway endpoint'
     ]) {
       closeSecondaryGateways()
@@ -816,9 +816,9 @@ describe('secondary stalled-dial budget', () => {
       .fn()
       .mockResolvedValueOnce(descriptorFor('homelab', 'bot-a'))
       .mockRejectedValueOnce(stalled)
-      .mockRejectedValueOnce(new Error('Failed to connect to Hermes gateway'))
+      .mockRejectedValueOnce(new Error('Failed to connect to Tandem gateway'))
       .mockRejectedValueOnce(stalled)
-      .mockRejectedValueOnce(new Error('Failed to connect to Hermes gateway'))
+      .mockRejectedValueOnce(new Error('Failed to connect to Tandem gateway'))
       .mockRejectedValue(stalled)
 
     installDesktop({ getConnectionFor })
@@ -887,7 +887,7 @@ describe('secondary stalled-dial budget', () => {
     const getConnectionFor = vi
       .fn()
       .mockResolvedValueOnce(descriptorFor('homelab', 'bot-a'))
-      .mockRejectedValueOnce(new Error('Failed to connect to Hermes gateway'))
+      .mockRejectedValueOnce(new Error('Failed to connect to Tandem gateway'))
 
     installDesktop({ getConnectionFor })
 

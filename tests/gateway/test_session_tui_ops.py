@@ -70,7 +70,7 @@ def test_delegation_pause_toggles_the_spawn_gate_and_status_reports_it(tmp_path)
 
 
 async def _git_rpc(ws, method, **params):
-    """``rpc`` with room for checkpoint git calls: each one resolves Hermes' managed git first, which
+    """``rpc`` with room for checkpoint git calls: each one resolves Tandem' managed git first, which
     can take a second per call on a cold test home (the shared helper waits 20 s)."""
     await ws.send(json.dumps({'jsonrpc': '2.0', 'id': method, 'method': method, 'params': params}))
     async with asyncio.timeout(120):

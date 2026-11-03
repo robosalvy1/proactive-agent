@@ -4,7 +4,7 @@ A partial clone downloads objects when git first needs them, and git asks for th
 the server what it already has, so the same trees (and, for history downloads, commits) land again
 and again, each download as its own packfile that nothing removes: ``.git`` reached 39 GiB on a
 ~1 GiB repository. A full ``git gc`` over that is all-or-nothing and on a big checkout runs for tens
-of minutes, so ``hermes update`` instead spends at most ``TIDY_BUDGET_SECONDS`` per run and every
+of minutes, so ``tandem update`` instead spends at most ``TIDY_BUDGET_SECONDS`` per run and every
 unit of work it finishes is kept:
 
 1. Erase promisor packs whose every object is also in another promisor pack. Nothing is lost, and

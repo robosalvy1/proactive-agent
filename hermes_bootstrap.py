@@ -1,16 +1,16 @@
-"""Process bootstrap for Hermes entry points: Windows UTF-8 stdio and ANSI console, import-path
+"""Process bootstrap for Tandem entry points: Windows UTF-8 stdio and ANSI console, import-path
 hardening, durable lazy-install target, and dual-stack (Happy Eyeballs) connects.
 
 Windows binds stdio to the console code page (cp1252), so ``print("café")`` raises
 ``UnicodeEncodeError``, and Python children inherit the same default unless
 ``PYTHONUTF8``/``PYTHONIOENCODING`` are set. Import this module first in every entry
-point (``hermes``, ``hermes-agent``, ``hermes-acp``, ``gateway.run``, ``batch_runner``,
+point (``tandem``, ``hermes-agent``, ``hermes-acp``, ``gateway.run``, ``batch_runner``,
 ``cron/scheduler``). It does NOT re-exec with ``-X utf8``: ``open()`` in the current
 process still needs an explicit ``encoding="utf-8"`` (ruff ``PLW1514``). POSIX is left
 alone deliberately — users' ``LANG``/``LC_*`` choices are respected.
 
 Stdlib only: entry points import this before ``harden_import_path()`` runs, so nothing
-here may pull in a Hermes package that a project-local directory could shadow.
+here may pull in a Tandem package that a project-local directory could shadow.
 """
 
 from __future__ import annotations
@@ -166,7 +166,7 @@ def _patch_urllib3_create_connection(module) -> None:
 class _Urllib3ConnectionPatcher(importlib.abc.MetaPathFinder, importlib.abc.Loader):
     """One-shot import hook: patch urllib3's connect walker the moment the module loads.
 
-    Importing urllib3 eagerly costs ~50 ms on every CLI start, and ``hermes`` / the TUI
+    Importing urllib3 eagerly costs ~50 ms on every CLI start, and ``tandem`` / the TUI
     gateway never load it unless something actually calls ``requests``.
     """
 
@@ -260,7 +260,7 @@ def enable_windows_vt(streams=None) -> bool:
     """Opt the console behind stdout/stderr in to ANSI escape processing.
 
     ``hermes_cli.colors`` and the skins emit raw SGR codes whenever stdout is a TTY. A
-    conhost console (PowerShell 5.1, cmd.exe, the installer's ``hermes setup``) prints
+    conhost console (PowerShell 5.1, cmd.exe, the installer's ``tandem setup``) prints
     them as ``←[35m`` until the output handle has ENABLE_VIRTUAL_TERMINAL_PROCESSING, and
     shells hand native children a console with it off. The mode belongs to the console
     buffer, so setting it here also covers the relaunched child. Handles that are not a
@@ -339,7 +339,7 @@ def install_never_free_environ() -> None:
     On glibc < 2.41 adding a name reallocs ``environ`` and frees the old array while a
     thread that dropped the GIL (``getaddrinfo``, OpenSSL's ``SSL_CERT_FILE`` lookup) may
     still be walking it; the freed slots hold tcache pointers, so the walk segfaults the
-    whole process. Hermes writes new names at runtime from many places (``session.create``
+    whole process. Tandem writes new names at runtime from many places (``session.create``
     turns on gateway prompts, the agent build sets ``HERMES_SESSION_ID``) while background
     threads fetch catalogs, so the tui_gateway died with SIGSEGV. This is glibc 2.41's own
     fix: entry strings are cached per ``NAME=value`` and never freed; a new name is
@@ -432,13 +432,13 @@ def install_never_free_environ() -> None:
 
 
 def harden_import_path(src_root: str | None = None) -> None:
-    """Stop a package in the current directory from shadowing Hermes modules.
+    """Stop a package in the current directory from shadowing Tandem modules.
 
-    Hermes ships top-level modules with common names (``utils``, ``proxy``, ``ui``); a
+    Tandem ships top-level modules with common names (``utils``, ``proxy``, ``ui``); a
     project with its own ``utils/`` launched from its directory would win the import.
     The cwd reaches ``sys.path`` as ``""``/``"."`` (script/``-m`` launches) AND as an
     absolute path (venv activation, PYTHONPATH), so both are handled: relative forms are
-    dropped and the Hermes root is *relocated* to the front, not merely inserted when
+    dropped and the Tandem root is *relocated* to the front, not merely inserted when
     absent. ``src_root`` defaults to this module's directory (the repo root for every
     shipped entry point), so no spawner env var is required.
     """
@@ -456,7 +456,7 @@ def harden_import_path(src_root: str | None = None) -> None:
 def export_scratch_tmp_env() -> None:
     """Point ``TMPDIR``/``TMP``/``TEMP`` at ``HERMES_HOME/cache/scratch`` unless the user set them.
 
-    System temp is tmpfs on most Linux hosts and containers; Hermes' browser profiles, PTY
+    System temp is tmpfs on most Linux hosts and containers; Tandem' browser profiles, PTY
     probes and every ``tempfile`` default a child script makes would eat RAM there. Runs at
     import so every entry point and every child they spawn inherits it; ``hermes_cli.main``
     re-runs it after ``--profile`` re-homes the process. Never raises.
@@ -509,8 +509,8 @@ harden_import_path(str(_root))
 
 
 def _settle_interrupted_update() -> None:
-    """Put back the tree a killed ``hermes update`` left half-moved, before PM, launch preparation or
-    any Hermes package imports from it (``hermes_cli._early_recovery``; ``hermes_cli.main`` repeats the
+    """Put back the tree a killed ``tandem update`` left half-moved, before PM, launch preparation or
+    any Tandem package imports from it (``hermes_cli._early_recovery``; ``hermes_cli.main`` repeats the
     call for entries that never reach this module). A killed ZIP swap can leave ``hermes_cli/`` itself
     moved aside: the journal-driven restore then runs from that moved-aside copy, the code that wrote
     the journal. Root files are never absent mid-swap (``update_cmd_zip._commit_staged_replacements``)."""
@@ -606,7 +606,7 @@ if not _pm_repair:
         # usable Hermes plus a warning. Activation below is the real gate — a tree whose
         # dependencies cannot load still exits with the repair remedy.
         print(f"hermes: source-update completion failed: {exc}; "
-              "running with the previous dependencies — run `hermes update` to finish it",
+              "running with the previous dependencies — run `tandem update` to finish it",
               file=sys.stderr)
     try:
         recover_if_needed(_root)
@@ -616,7 +616,7 @@ if not _pm_repair:
             print(f"hermes: {message}", file=sys.stderr)
             raise SystemExit(1) from None
         if command_argv(sys.argv[1:])[:1] != ["pm"]:
-            print(f"hermes: {exc}; run `hermes pm repair`", file=sys.stderr)
+            print(f"hermes: {exc}; run `tandem pm repair`", file=sys.stderr)
             raise SystemExit(1) from None
 install_happy_eyeballs_socket_connect()
 export_scratch_tmp_env()

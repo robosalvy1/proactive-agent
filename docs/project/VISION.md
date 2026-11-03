@@ -1,6 +1,6 @@
 # Product vision
 
-Proactive Agent starts as Hermes Agent and evolves into a personal harness that understands ongoing work, follows through, and feels good to use. Hermes is the foundation, not a disposable prototype.
+Tandem Agent starts as Tandem Agent and evolves into a personal harness that understands ongoing work, follows through, and feels good to use. Tandem is the foundation, not a disposable prototype.
 
 ## Product outcomes
 
@@ -13,7 +13,7 @@ Proactive Agent starts as Hermes Agent and evolves into a personal harness that 
 
 **Polish is behavior.** Loading, streaming, interruptions, recovery, and task completion matter as much as appearance. Improve the existing interaction surfaces based on real flows before choosing a new UI.
 
-**Capability should be reachable.** Inventory Hermes's features and configuration first. Prefer surfacing an existing capability over adding another implementation.
+**Capability should be reachable.** Inventory Tandem's features and configuration first. Prefer surfacing an existing capability over adding another implementation.
 
 **Best context means the right context.** Prioritize accurate, relevant, current information. Maintain a small stable instruction layer, retrieve task-specific evidence, and compact completed work without losing decisions or unresolved obligations.
 

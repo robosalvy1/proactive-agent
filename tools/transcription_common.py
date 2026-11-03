@@ -86,7 +86,7 @@ class STTResponseError(ValueError):
 
 
 def normalize_xai_stt_model(model: Any) -> str:
-    """Return a valid xAI STT model: blank or Hermes' old ``grok-stt`` alias -> ``STT_XAI_MODEL`` (read
+    """Return a valid xAI STT model: blank or Tandem' old ``grok-stt`` alias -> ``STT_XAI_MODEL`` (read
     per call, so a profile's env applies), else the catalog default."""
     value = str(model or "").strip()
     if not value or value == LEGACY_XAI_STT_MODEL:

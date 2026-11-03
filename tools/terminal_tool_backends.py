@@ -281,7 +281,7 @@ def _check_vercel(config: dict[str, Any]) -> bool:
                        "Use the default shared setting (51200 MB).")
     if importlib.util.find_spec("vercel") is None:
 
-        return _reject("vercel is required for the Vercel Sandbox terminal backend. Run hermes setup terminal and select Vercel Sandbox.")
+        return _reject("vercel is required for the Vercel Sandbox terminal backend. Run tandem setup terminal and select Vercel Sandbox.")
     from agent.secret_scope import get_secret
     if get_secret("VERCEL_OIDC_TOKEN"):
         return True
@@ -308,7 +308,7 @@ def _ssh_pre(config: dict[str, Any]) -> bool:
     if config.get("ssh_host") and config.get("ssh_user"):
         return True
     return _reject("the SSH host and user are not configured (TERMINAL_SSH_HOST / TERMINAL_SSH_USER); "
-                   "run `hermes setup terminal` to enter them or pick the 'local' backend")
+                   "run `tandem setup terminal` to enter them or pick the 'local' backend")
 
 
 def _daytona_post(config: dict[str, Any]) -> bool:
@@ -324,7 +324,7 @@ _BACKEND_SPECS: dict[str, dict[str, Any]] = {
     "singularity": {"binary": (lambda: shutil.which("apptainer") or shutil.which("singularity"), "--version", None)},
     "ssh": {"pre": _ssh_pre},
     "modal": {"pre": _modal_pre,
-              "module": ("modal", "modal is required for direct modal terminal backend. Run hermes setup terminal and select Modal.")},
+              "module": ("modal", "modal is required for direct modal terminal backend. Run tandem setup terminal and select Modal.")},
     "vercel_sandbox": {"pre": _check_vercel},
     "daytona": {"post": _daytona_post},
 }

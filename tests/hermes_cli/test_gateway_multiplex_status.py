@@ -1,6 +1,6 @@
 """PR #69118: a named profile served by the default multiplexer reports as running.
 
-``hermes gateway status`` / ``gateway list`` / ``profile list`` keyed liveness
+``tandem gateway status`` / ``gateway list`` / ``profile list`` keyed liveness
 off the profile's own gateway.pid, so a satellite profile served by the default
 multiplexer showed "not running" even though the multiplexer was its live
 inbound process. All three now consult the same
@@ -81,7 +81,7 @@ def test_served_named_profile_reports_running_without_default_pid_file(monkeypat
     assert _run_status().startswith("✓ Gateway is running via the default-profile multiplexer")
 
 def test_standalone_profile_status_reports_standalone_by_config(monkeypatch, tmp_path):
-    """`hermes -p X gateway status` on a standalone X says so and never claims the multiplexer."""
+    """`tandem -p X gateway status` on a standalone X says so and never claims the multiplexer."""
     _fake_multiplexer(monkeypatch, tmp_path, multiplex=True)
     (tmp_path / "profiles" / "beta" / "config.yaml").write_text("gateway:\n  standalone: true\n", encoding="utf-8")
     from hermes_cli import gateway as gw

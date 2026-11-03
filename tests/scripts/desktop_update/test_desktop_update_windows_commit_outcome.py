@@ -1,7 +1,7 @@
 """Post-commit outcomes (contract C3) on the real Windows hand-off script.
 
-A real ``windows.ps1`` drives a real published launcher whose ``hermes``
-application is a scripted stand-in: once ``hermes update`` exits 0 the install
+A real ``windows.ps1`` drives a real published launcher whose ``tandem``
+application is a scripted stand-in: once ``tandem update`` exits 0 the install
 is on the new version, so nothing afterwards may report "still on the previous
 version", and the hand-off's own supervision (watchdog, probes, marker
 release) must not turn healthy work into a failure.
@@ -107,7 +107,7 @@ def test_verify_failure_after_a_committed_update_is_ok_with_warnings(tmp_path: P
     assert code == 0, out
     assert (result['ok'], result['exit_code'], result['manual']) == (True, 0, True), result
     assert [w.split(':')[0] for w in result['warnings']] == ['verify'], result
-    assert result['message'].startswith('Hermes was updated, but'), result
+    assert result['message'].startswith('Tandem was updated, but'), result
     assert 'previous version' not in result['message']
     # The fleet the Desktop stopped is still brought back.
     assert argv[-1] == ['gateway', 'start', '--all'], argv
@@ -144,7 +144,7 @@ def test_nonzero_exit_after_the_commit_point_is_installed_with_a_followup(tmp_pa
     if ok:
         assert code == 0, out
         assert (result['ok'], result['exit_code'], result['manual']) == (True, 0, True), result
-        assert result['message'].startswith('Hermes was updated, but'), result
+        assert result['message'].startswith('Tandem was updated, but'), result
         assert [w.split(':')[0] for w in result['warnings']] == ['update'], result
         assert argv[-1] == ['gateway', 'start', '--all'], argv   # the post-commit steps still run
     else:

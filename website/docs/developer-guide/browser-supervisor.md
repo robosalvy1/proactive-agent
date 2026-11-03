@@ -1,15 +1,15 @@
 ---
 sidebar_position: 18
 title: "Browser CDP Supervisor"
-description: "How Hermes detects and responds to native JS dialogs and interacts with cross-origin iframes via a persistent CDP connection."
+description: "How Tandem detects and responds to native JS dialogs and interacts with cross-origin iframes via a persistent CDP connection."
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Browser CDP Supervisor
 
-The CDP supervisor closes two long-standing gaps in Hermes' browser tooling:
+The CDP supervisor closes two long-standing gaps in Tandem' browser tooling:
 
 1. **Native JS dialogs** (`alert`/`confirm`/`prompt`/`beforeunload`) block the
    page's JS thread. Without supervision, the agent has no way to know a
@@ -52,7 +52,7 @@ Camofox is unsupported — no CDP surface, REST-only.
 
 ### CDPSupervisor
 
-One `asyncio.Task` running in a background daemon thread per Hermes `task_id`.
+One `asyncio.Task` running in a background daemon thread per Tandem `task_id`.
 Holds a persistent WebSocket to the backend's CDP endpoint. Maintains:
 
 - **Dialog queue** — `List[PendingDialog]` with `{id, type, message, default_prompt, session_id, opened_at}`

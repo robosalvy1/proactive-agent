@@ -338,7 +338,7 @@ def _request_agent_overrides(
 
     The virtual model (``hermes-agent``) means "gateway default". A bare ``model`` without
     ``provider`` is honored only when ``allow_bare_model`` (generic clients hardcode "gpt-4o";
-    OpenAI-compatible handlers pass the ``direct_model_requests`` opt-in, Hermes-native
+    OpenAI-compatible handlers pass the ``direct_model_requests`` opt-in, Tandem-native
     endpoints always allow it). An explicit ``provider`` is always honored.
     """
     if not isinstance(body, dict):
@@ -944,7 +944,7 @@ def _names_launch_profile(profile: str) -> bool:
 def _derive_chat_session_id(system_prompt: Optional[str], first_user_message: str,
                             profile: Optional[str] = None) -> str:
     """Stable session id from the system prompt + first user message (constant across all
-    turns of an Open WebUI-style conversation), so one Hermes session/sandbox is reused.
+    turns of an Open WebUI-style conversation), so one Tandem session/sandbox is reused.
     A routed ``/p/<profile>/`` prefix namespaces the seed: the id keys process-wide state
     (session store, per-session sandbox), so two profiles opening with identical text must not
     collide (#123989). Default/standalone ids are unchanged so live conversations survive, and
@@ -2486,7 +2486,7 @@ class APIServerAdapter(OpenAICompatRoutesMixin, BasePlatformAdapter):
             "runtime": {
                 "mode": "server_agent", "tool_execution": "server", "split_runtime": False,
                 "description": (
-                    "The API server creates a server-side Hermes AIAgent; "
+                    "The API server creates a server-side Tandem AIAgent; "
                     "tools execute on the API-server host unless a future "
                     "explicit split-runtime mode is enabled.")},
             "features": features,
@@ -3011,7 +3011,7 @@ class APIServerAdapter(OpenAICompatRoutesMixin, BasePlatformAdapter):
 
     @_require_auth
     async def _handle_list_sessions(self, request: web.Request) -> web.Response:
-        """GET /api/sessions — list persisted Hermes sessions."""
+        """GET /api/sessions — list persisted Tandem sessions."""
         db = await self._ensure_session_db_async()
         if db is None:
             return self._session_db_unavailable()
@@ -3066,7 +3066,7 @@ class APIServerAdapter(OpenAICompatRoutesMixin, BasePlatformAdapter):
 
     @_require_auth
     async def _handle_create_session(self, request: web.Request) -> web.Response:
-        """POST /api/sessions -- create an empty Hermes session row. Existence check, insert and
+        """POST /api/sessions -- create an empty Tandem session row. Existence check, insert and
         title handling run as ONE off-loop write so concurrent same-id creates can't both 201."""
         body, err = await self._read_json_body(request)
         if err:
@@ -3449,7 +3449,7 @@ class APIServerAdapter(OpenAICompatRoutesMixin, BasePlatformAdapter):
     async def _answer_through_live_bot_chat(self, ctx: dict[str, Any]) -> Optional[web.Response]:
         """Hand a turn aimed at a canonical Bot Chat that a Desktop holds live to that owner.
 
-        This is the ``hermes peer dm`` transport. Running the turn here would make this process a
+        This is the ``tandem peer dm`` transport. Running the turn here would make this process a
         second writer beside the lease holder: the open chat never shows the message or the reply,
         its live context never learns of them, and the two transcripts interleave in state.db.
         Local and relayed DMs already hand such a message to the owner's mailbox
@@ -3534,7 +3534,7 @@ class APIServerAdapter(OpenAICompatRoutesMixin, BasePlatformAdapter):
     @_admit_api_agent_request
     async def _handle_session_chat(self, request: web.Request) -> web.Response:
         """POST /api/sessions/{session_id}/chat — one synchronous agent turn (plus the delivery lanes'
-        one bounded re-run of a transient failure; ``hermes peer dm`` is the client)."""
+        one bounded re-run of a transient failure; ``tandem peer dm`` is the client)."""
         from tools.bot_failure_reasons import RETRY_NONE, result_retry_action
         # This turn runs through _run_agent, so it already COUNTS toward the cap (#7483).
         # Spending the budget without checking it refused every other caller while never

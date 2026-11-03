@@ -232,7 +232,7 @@ def test_resolve_modal_image_uses_snapshot_ids_and_registry_images(tmp_path):
 
 def test_persistent_cleanup_snapshots_without_expiry(tmp_path, monkeypatch):
     """The SDK default retains a filesystem snapshot for 30 days; an idle persistent
-    sandbox would then silently restart from the base image, so Hermes must opt out."""
+    sandbox would then silently restart from the base image, so Tandem must opt out."""
     state = _install_modal_test_modules(tmp_path, snapshot_id="im-fresh")
     modal_module = _load_module("tools.environments.modal", TOOLS_DIR / "environments" / "modal.py")
     monkeypatch.setattr(modal_module, "ensure_lazy_dep", lambda extra: None)

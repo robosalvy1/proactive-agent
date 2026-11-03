@@ -1,7 +1,7 @@
 """Solstice provider profile: a user's own per-user-quota Gemini subscription, signed in with OAuth.
 
 Pre-release (``hidden=True``): no picker, setup list or accounts tab offers it until the user signs in
-by name (``hermes auth add solstice``); after that it lists like any signed-in provider. Login and
+by name (``tandem auth add solstice``); after that it lists like any signed-in provider. Login and
 token refresh go through the generic PKCE plugin flow with a Nous-portal broker as the token endpoint
 (``auth.py``); inference goes straight to Google on the per-user-quota methods (``transport.py``).
 """

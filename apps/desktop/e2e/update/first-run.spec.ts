@@ -120,7 +120,7 @@ test('a healthy local install opens straight to chat on every launch: no setup c
           })
           .toEqual([])
         const stopped = stopInstallGateway(facts)
-        expect(stopped.code, `hermes gateway stop\n${stopped.output}`).toBe(0)
+        expect(stopped.code, `tandem gateway stop\n${stopped.output}`).toBe(0)
         await expect
           .poll(() => installProcesses(facts).map(p => `${p.pid} ${p.cmdline.slice(0, 160)}`), {
             timeout: 30_000,

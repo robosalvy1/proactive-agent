@@ -5,7 +5,7 @@ tests fail. If anyone adds a NEW kill primitive to the codebase without
 adding it to the guard, the corresponding test added here will fail too.
 
 The guard exists to protect the developer's live ``hermes-gateway`` process
-from being SIGTERMed by tests, and every live Hermes systemd unit
+from being SIGTERMed by tests, and every live Tandem systemd unit
 (``hermes-gateway*``, ``hermes-dashboard*``, ``hermes-serve*``) from being
 restarted or stopped by them. See PR #23397 for the original incident
 (5+ live gateway kills in 3 days). Per Teknium 2026-05-10:
@@ -183,7 +183,7 @@ def test_subprocess_run_systemctl_mutating_any_hermes_unit_blocked(cmd):
     ],
 )
 def test_subprocess_run_systemctl_read_only_or_foreign_unit_passes_guard(cmd):
-    """Read-only verbs on Hermes units and mutating verbs on other units reach the real
+    """Read-only verbs on Tandem units and mutating verbs on other units reach the real
     ``subprocess.run``; an empty PATH turns that into FileNotFoundError, never a real systemctl."""
     with pytest.raises(FileNotFoundError):
         subprocess.run(cmd, env={"PATH": "/nonexistent"}, check=False)
@@ -205,7 +205,7 @@ def test_subprocess_run_shell_escaped_or_nested_verb_blocked(cmd):
 
 
 def test_a_test_owned_unit_can_be_cleaned_up_but_no_other(request):
-    """A unit the test created under its own name may be stopped; every other Hermes unit stays refused."""
+    """A unit the test created under its own name may be stopped; every other Tandem unit stays refused."""
     owned = "hermes-worker-kanban-t_selftest-run-1.scope"
     request.node.live_system_guard_owned_units = {owned}
     with pytest.raises(FileNotFoundError):
@@ -222,11 +222,11 @@ def test_subprocess_run_setsid_systemctl_blocked():
 
 
 def test_host_gateway_start_blocked_but_container_exec_allowed():
-    """A host-side ``hermes gateway start`` spawns a real runtime; the same words addressed to
+    """A host-side ``tandem gateway start`` spawns a real runtime; the same words addressed to
     a container via ``docker exec`` stay inside it and are the Docker harness's business."""
-    with pytest.raises(RuntimeError, match="REAL hermes gateway runtime"):
+    with pytest.raises(RuntimeError, match="REAL tandem gateway runtime"):
         subprocess.run(["hermes", "-p", "p", "gateway", "start"], check=False)
-    argv = ["docker", "exec", "-u", "hermes", "hermes-test-x", "sh", "-c", "hermes -p p gateway start"]
+    argv = ["docker", "exec", "-u", "hermes", "hermes-test-x", "sh", "-c", "tandem -p p gateway start"]
     # Past the guard the call reaches the real subprocess.run; a missing binary is fine here.
     with pytest.raises(FileNotFoundError):
         subprocess.run(argv, env={"PATH": "/nonexistent"}, check=False)

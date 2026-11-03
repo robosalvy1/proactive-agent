@@ -350,7 +350,7 @@ class TestRestore:
 
 
 class TestSafeRestore:
-    """Safe restore: preserve user hand-edits, revert only Hermes-authored changes.
+    """Safe restore: preserve user hand-edits, revert only Tandem-authored changes.
 
     Inspired by Copilot CLI's /rewind, which "restores only the files Copilot
     changed, skipping any file whose contents no longer match what Copilot
@@ -1059,7 +1059,7 @@ class TestPruneCheckpointsOrphanAllowlist:
 
     def test_end_to_end_timing_change_during_confirmation_prompt(self, tmp_path, monkeypatch):
         """Reproduces the exact PR #69141 review scenario end-to-end through
-        `hermes checkpoints prune`: the preview shows one pre-v2 orphan; a
+        `tandem checkpoints prune`: the preview shows one pre-v2 orphan; a
         second project's workdir is removed by the input() callback while
         the human is "answering" the prompt. Only the previewed orphan may
         be deleted.

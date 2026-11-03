@@ -14,7 +14,7 @@ import pytest
 
 @pytest.fixture
 def fake_hermes(tmp_path, monkeypatch):
-    """Build a fake Hermes layout:
+    """Build a fake Tandem layout:
 
         <tmp>/
           skills/foo/SKILL.md           # default profile

@@ -43,7 +43,7 @@ test('a route that selects nothing fails instead of running an empty green matri
   expect(() => generate('windows: no-such-method')).toThrow()
 })
 
-test('the pr route runs one script install updated by hermes update per OS start, nothing else', () => {
+test('the pr route runs one script install updated by tandem update per OS start, nothing else', () => {
   const pr: Matrices = generate('pr')
 
   expect(legNames(pr).sort()).toEqual([

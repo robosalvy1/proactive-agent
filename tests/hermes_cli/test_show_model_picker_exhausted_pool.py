@@ -6,7 +6,7 @@
 credential pool was entirely rate-limited (entries present, none usable until
 ``last_error_reset_at``) was treated as "not authenticated" and its row
 vanished from the main picker until the cooldown elapsed or the user ran
-``hermes auth reset``. The gateway interactive picker (#66584) and the aux
+``tandem auth reset``. The gateway interactive picker (#66584) and the aux
 pickers (#66624) already forward the flag; this is the same contract for the
 CLI's main picker surface.
 """

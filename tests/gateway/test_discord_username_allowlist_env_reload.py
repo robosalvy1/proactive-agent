@@ -177,7 +177,7 @@ class TestDiscordAdapterResolvedAccessor:
 
 
 class TestRemovedNumericEntryIsNotResurrected:
-    """A numeric entry removed from DISCORD_ALLOWED_USERS after connect (``hermes pairing revoke``
+    """A numeric entry removed from DISCORD_ALLOWED_USERS after connect (``tandem pairing revoke``
     from the CLI/dashboard process, or a hand edit) must stop authorizing once the env reloads,
     not stay granted from the adapter's connect-time snapshot until a gateway restart."""
 

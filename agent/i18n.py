@@ -1,4 +1,4 @@
-"""Lightweight i18n for Hermes' static user-facing strings (approval prompts, gateway replies, CLI, tips).
+"""Lightweight i18n for Tandem' static user-facing strings (approval prompts, gateway replies, CLI, tips).
 
 Catalogs are flat dotted-key mappings resolved through layers, top first:
 
@@ -108,7 +108,7 @@ def supported_languages(home: str | None = None) -> tuple[str, ...]:
 
 def resolve_language_id(value: Any, home: str | None = None) -> str | None:
     """Canonical supported id for a user-supplied value (code, alias, regional tag), or ``None`` when no
-    layer supplies it — the validation ``hermes config set display.language`` runs."""
+    layer supplies it — the validation ``tandem config set display.language`` runs."""
     key = i18n_layers.normalize_language_id(value)
     if not key:
         return None

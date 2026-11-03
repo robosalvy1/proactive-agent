@@ -29,7 +29,7 @@ def _tree(root: Path) -> None:
     (root / "apps" / "bootstrap-installer" / "package.json").write_text(
         '{"name": "x", "version": "0.0.0"}\n', encoding="utf-8")
     (installer / "tauri.conf.json").write_text(
-        '{"productName": "Hermes", "version": "0.0.0"}\n', encoding="utf-8")
+        '{"productName": "Tandem", "version": "0.0.0"}\n', encoding="utf-8")
     (installer / "Cargo.toml").write_text('[package]\nversion = "0.0.0"\n', encoding="utf-8")
     (installer / "Cargo.lock").write_text(
         '[[package]]\nname = "bootstrap-installer"\nversion = "0.21.1"\n', encoding="utf-8")

@@ -1158,7 +1158,7 @@ describe('the roster loop forgets a machine that left', () => {
       }
 
       if (call.method === 'bot_relay.roster.sync' && clearFails && !(call.params.agents as unknown[]).length) {
-        throw new Error('Hermes gateway is not connected')
+        throw new Error('Tandem gateway is not connected')
       }
 
       return {}

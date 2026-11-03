@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: "安装"
-description: "在 Linux、macOS、WSL2 或原生 Windows 上安装 Hermes Agent"
+description: "在 Linux、macOS、WSL2 或原生 Windows 上安装 Tandem Agent"
 ---
 
 # 安装
 
-使用一行安装命令，两分钟内即可启动并运行 Hermes Agent。
+使用一行安装命令，两分钟内即可启动并运行 Tandem Agent。
 
 ## 快速安装
 
@@ -20,7 +20,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### Windows（原生，PowerShell）
 
-原生 Windows 无需 WSL 即可运行 Hermes——CLI、gateway、TUI 和工具均可原生运行。（原生安装与 WSL2 安装可干净共存；唯一仅限 WSL2 的功能见下方功能说明。）遇到 bug 请[提交 issue](https://github.com/NousResearch/hermes-agent/issues)。
+原生 Windows 无需 WSL 即可运行 Tandem——CLI、gateway、TUI 和工具均可原生运行。（原生安装与 WSL2 安装可干净共存；唯一仅限 WSL2 的功能见下方功能说明。）遇到 bug 请[提交 issue](https://github.com/NousResearch/hermes-agent/issues)。
 
 打开 PowerShell 并运行：
 
@@ -56,7 +56,7 @@ Dashboard 终端使用 `pywinpty`/ConPTY，不再是尚未实现的 POSIX-only �
 | POSIX 源码脚本 | `~/.hermes/hermes-agent/` | `~/.local/bin/hermes` 包装器 | `~/.hermes/` |
 | Windows 源码脚本 | `%LOCALAPPDATA%\hermes\hermes-agent\` | `%LOCALAPPDATA%\hermes\bin\` | `%LOCALAPPDATA%\hermes\` |
 | 桌面软件包 | 应用包内部 | 包内启动器；Windows 执行别名 | 平台默认数据目录 |
-| Docker | `/opt/hermes/` | 镜像入口和 `hermes` | 挂载的 `/opt/data/` |
+| Docker | `/opt/hermes/` | 镜像入口和 `tandem` | 挂载的 `/opt/data/` |
 | Termux APT | `$PREFIX/lib/hermes-agent/` | `$PREFIX/bin/` 符号链接 | `~/.hermes/` |
 
 `HERMES_HOME` 选择数据目录。POSIX 的 `--dir` 单独选择源码目录。
@@ -76,18 +76,18 @@ hermes             # 开始聊天！
 如需稍后重新配置单项设置，使用以下专用命令：
 
 ```bash
-hermes model          # 选择 LLM 提供商和模型
-hermes tools          # 配置启用的工具
-hermes gateway setup  # 配置消息平台
-hermes config set     # 设置单个配置项
-hermes setup          # 或运行完整的设置向导一次性配置所有内容
+tandem model          # 选择 LLM 提供商和模型
+tandem tools          # 配置启用的工具
+tandem gateway setup  # 配置消息平台
+tandem config set     # 设置单个配置项
+tandem setup          # 或运行完整的设置向导一次性配置所有内容
 ```
 
 :::tip 最快路径：Nous Portal
 一个订阅涵盖 300+ 个模型以及 [Tool Gateway](../user-guide/features/tool-gateway.md)（网络搜索、图像生成、TTS、云端浏览器）。无需逐一管理各工具的密钥：
 
 ```bash
-hermes setup --portal
+tandem setup --portal
 ```
 
 该命令一次性完成登录、设置 Nous 为提供商并开启 Tool Gateway。
@@ -98,7 +98,7 @@ hermes setup --portal
 ## 前置条件
 
 POSIX 源码脚本需要 Git、curl、tar 和 SHA-256 工具。源码构建还可能需要编译器和系统库。
-Hermes 要求 Python 3.14（`>=3.14,<3.15`），工具版本由 `pm/lock.json` 决定。
+Tandem 要求 Python 3.14（`>=3.14,<3.15`），工具版本由 `pm/lock.json` 决定。
 自包含桌面软件包不要求用户自行编译基础依赖。
 
 :::tip Nix 用户
@@ -118,7 +118,7 @@ Hermes 要求 Python 3.14（`>=3.14,<3.15`），工具版本由 `pm/lock.json` �
 以目标服务用户运行源码安装脚本。由管理员预先安装构建所需工具和 Chromium 的系统库。
 当前脚本不运行 Playwright 的 `--with-deps`，也不提供按发行版选择的 sudo 回退。
 
-安装后，将 `$HOME/.local/bin` 加入服务用户的 PATH，并运行 `hermes doctor`。
+安装后，将 `$HOME/.local/bin` 加入服务用户的 PATH，并运行 `tandem doctor`。
 请使用脚本生成的包装器，不要硬编码 `venv/bin/hermes`。
 Linux 用户服务需要在注销后继续运行时，由管理员为该用户启用 lingering。
 详见 [消息 Gateway](../user-guide/messaging/index.md)。
@@ -130,11 +130,11 @@ Linux 用户服务需要在注销后继续运行时，由管理员为该用户�
 | 问题                        | 解决方案                                                                           |
 | --------------------------- | ---------------------------------------------------------------------------------- |
 | `hermes: command not found` | 重新加载 shell（`source ~/.bashrc`）或检查 PATH                                    |
-| `API key not set`           | 运行 `hermes model` 配置提供商，或 `hermes config set OPENROUTER_API_KEY your_key` |
-| 更新后配置丢失              | 运行 `hermes config check`，然后运行 `hermes config migrate`                       |
+| `API key not set`           | 运行 `tandem model` 配置提供商，或 `tandem config set OPENROUTER_API_KEY your_key` |
+| 更新后配置丢失              | 运行 `tandem config check`，然后运行 `tandem config migrate`                       |
 
-如需更多诊断信息，运行 `hermes doctor`——它会告诉你确切缺少什么以及如何修复。
+如需更多诊断信息，运行 `tandem doctor`——它会告诉你确切缺少什么以及如何修复。
 
 ## 安装方式自动检测
 
-Hermes 会自动检测安装方式（git 安装程序、Docker 或 NixOS），`hermes update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（`~/.hermes/hermes-agent/` 检出、Docker 镜像标记或 Nix store 路径）。`hermes doctor` 也会在其环境摘要中显示检测到的安装方式。
+Tandem 会自动检测安装方式（git 安装程序、Docker 或 NixOS），`tandem update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（`~/.hermes/hermes-agent/` 检出、Docker 镜像标记或 Nix store 路径）。`tandem doctor` 也会在其环境摘要中显示检测到的安装方式。

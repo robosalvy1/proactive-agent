@@ -4,12 +4,12 @@ A bundled ``plugins/memory/<name>`` that becomes a standalone catalog plugin kee
 name, the settings it already read, its data directory and tool names, so the migration is only
 "the code now lives under ``HERMES_HOME/plugins/<name>``". Two hooks call :func:`migrate_home`:
 
-* ``hermes update`` — for every profile home that shares the venv (primary; runs where the venv was
+* ``tandem update`` — for every profile home that shares the venv (primary; runs where the venv was
   just rebuilt anyway).
 * agent init — when the configured provider cannot be found at all, once per process (Desktop
-  users update through the app and never run ``hermes update`` by hand). After a failed attempt,
+  users update through the app and never run ``tandem update`` by hand). After a failed attempt,
   starts skip it for :data:`STARTUP_RETRY_SECONDS`, doubling with each further failure up to
-  :data:`STARTUP_RETRY_MAX_SECONDS` (``hermes update`` always retries): every ``hermes chat``, cron
+  :data:`STARTUP_RETRY_MAX_SECONDS` (``tandem update`` always retries): every ``tandem chat``, cron
   run and Desktop restart otherwise paid the network round trip again and showed the same failure.
 
 Both install the catalog entry at its reviewed pin through the normal plugin install path (kill
@@ -48,7 +48,7 @@ def _failure_stamp(home: Path, plugin: str) -> Path:
 
 
 def _failure_count(stamp: Path) -> int:
-    """Consecutive failures recorded in *stamp*; the empty stamp an older Hermes touched counts once."""
+    """Consecutive failures recorded in *stamp*; the empty stamp an older Tandem touched counts once."""
     try:
         text = stamp.read_text(encoding="utf-8-sig").strip()
     except OSError:
@@ -88,7 +88,7 @@ def configured_provider(home: Path) -> str:
 
 
 def provider_present(name: str, home: Path) -> bool:
-    """True when the provider resolves anywhere Hermes looks for *home* (bundled, that home's user
+    """True when the provider resolves anywhere Tandem looks for *home* (bundled, that home's user
     plugins, entry point). The lookup reads the active home, so it is bound explicitly: the update
     hook walks several profile homes from one process."""
     from plugins.memory import find_provider_dir
@@ -135,7 +135,7 @@ def _pending_provider(home: Path, *, say: Callable[[str], None]) -> Optional[str
         return None
     if catalog_source(name) is None:
         say(f"  ⚠ Memory provider '{name}' is configured but not installed and not in the plugin catalog. "
-            f"Install it with `hermes plugins install <source>` or change memory.provider.")
+            f"Install it with `tandem plugins install <source>` or change memory.provider.")
         return None
     return name
 
@@ -143,13 +143,13 @@ def _pending_provider(home: Path, *, say: Callable[[str], None]) -> Optional[str
 def _install_command(name: str, home: Path) -> str:
     """The exact command that installs *name* into *home*. ``-p`` is dropped only for the default
     home while no sticky profile is set: a bare command run from a shell targets the sticky
-    profile, never the home of the agent (Desktop, gateway, ``hermes -p``) that printed it."""
+    profile, never the home of the agent (Desktop, gateway, ``tandem -p``) that printed it."""
     from hermes_cli.profiles import get_active_profile
     from hermes_constants import profile_name_for_home
     profile = profile_name_for_home(home)
     if profile is None or (profile == "default" and get_active_profile() == "default"):
-        return f"hermes plugins install {name}"
-    return f"hermes -p {profile} plugins install {name}"
+        return f"tandem plugins install {name}"
+    return f"tandem -p {profile} plugins install {name}"
 
 
 def _install_pending(home: Path, name: str, *, install: Callable[[str], dict],
@@ -161,7 +161,7 @@ def _install_pending(home: Path, name: str, *, install: Callable[[str], dict],
     if result.get("ok"):
         say(f"  ✓ Memory provider '{name}' moved out of core — installed its plugin from the catalog "
             f"(memory.provider and your stored memories are unchanged; check its settings with "
-            f"`hermes memory status`).")
+            f"`tandem memory status`).")
         return True
     error = str(result.get("error") or "unknown error").rstrip(". ")
     say(f"  ⚠ Memory provider '{name}' moved out of core and could not be installed automatically: "
@@ -187,7 +187,7 @@ def _interactive() -> bool:
 
 
 def _unattended_consent() -> bool:
-    """Without a terminal (Desktop, gateway, ``hermes update`` from a script) nobody can answer the
+    """Without a terminal (Desktop, gateway, ``tandem update`` from a script) nobody can answer the
     dependency prompt, so every provider that declares Python deps would fail to migrate. The
     configured ``memory.provider`` plus ``security.allow_lazy_installs`` (read for the active home,
     i.e. the one being migrated) is the same consent that let the bundled provider install its deps
@@ -227,7 +227,7 @@ def _home_label(home: Path) -> str:
 
 
 def migrate_all_homes(*, say: Callable[[str], None] = print) -> list[str]:
-    """``hermes update`` hook: every profile home sharing this venv. Returns installed plugin names.
+    """``tandem update`` hook: every profile home sharing this venv. Returns installed plugin names.
 
     Each line names the profile it is about. Homes missing the same provider share one environment,
     so they share one set of dependency answers (#125794): the first install asks, the rest reuse
@@ -274,7 +274,7 @@ def migrate_all_homes(*, say: Callable[[str], None] = print) -> list[str]:
                     break
     except KeyboardInterrupt:
         say("  ⚠ Memory provider migration cancelled. Profiles already migrated keep their plugin; "
-            "run `hermes plugins install <name>` (with `-p <profile>`) for the rest.")
+            "run `tandem plugins install <name>` (with `-p <profile>`) for the rest.")
     return installed
 
 
@@ -300,7 +300,7 @@ def recover_at_startup(name: str, *, say: Optional[Callable[[str], None]] = None
     from pm.install import lazy_installs_allowed
     if not lazy_installs_allowed():
         report(f"⚠ Memory provider '{name}' is not installed, so external memory is off for this session. "
-               f"security.allow_lazy_installs is off, so Hermes did not fetch it: "
+               f"security.allow_lazy_installs is off, so Tandem did not fetch it: "
                f"run `{_install_command(name, home)}`.")
         return False
     # Agent init cannot answer a dependency prompt: under the CLI the prompt_toolkit input owns the
@@ -310,7 +310,7 @@ def recover_at_startup(name: str, *, say: Optional[Callable[[str], None]] = None
     if name not in _LEFT_CORE:
         if _pending_provider(home, say=report) == name:
             report(f"⚠ Memory provider '{name}' is not installed, so external memory is off for this session. "
-                   f"It never shipped with Hermes, so Hermes installs it only when you ask: "
+                   f"It never shipped with Tandem, so Tandem installs it only when you ask: "
                    f"run `{_install_command(name, home)}`.")
         return False
     if _failed_recently(home, name):

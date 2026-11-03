@@ -1,9 +1,9 @@
 """The shared gateway's skin watcher repaints each attached TUI with ITS profile's skin.
 
-Main ran one gateway process per profile, so ``hermes -p work --tui`` only ever saw the work home's
+Main ran one gateway process per profile, so ``tandem -p work --tui`` only ever saw the work home's
 ``display.skin``. A multiplexed gateway has one watcher thread (no profile override) for every peer:
 it must not push the launch home's skin onto a work-profile TUI, and a work-profile skin switch made
-outside the TUI (``hermes -p work config set display.skin …``) must still repaint that TUI.
+outside the TUI (``tandem -p work config set display.skin …``) must still repaint that TUI.
 """
 from __future__ import annotations
 

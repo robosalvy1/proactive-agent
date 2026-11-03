@@ -142,7 +142,7 @@ def publish_plugins(world: PluginWorld, plugins: dict[str, list[str]]) -> Path:
 
 @pytest.fixture
 def boot(plugin_world, monkeypatch):
-    """``boot(environment)``: this test process imports from ``environment`` the way a Hermes process
+    """``boot(environment)``: this test process imports from ``environment`` the way a Tandem process
     booted on it does. Adoption rewrites sys.path and PATH (monkeypatch restores both); modules
     imported from the world are forgotten afterwards, so a later test imports its own."""
     from pm.environments import site_packages, venv_bin_dir

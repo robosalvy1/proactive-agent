@@ -1,4 +1,4 @@
-"""B1-17: an unattended (auto-approving) finite turn is ``hermes -z`` only. Main set HERMES_YOLO_MODE inside
+"""B1-17: an unattended (auto-approving) finite turn is ``tandem -z`` only. Main set HERMES_YOLO_MODE inside
 the one-shot's own process; over the wire only the local bootstrap principal on its own CLI session may
 ask for it. Every other submitter (dashboard identity, operator attach, a Desktop/TUI/Bot Chat session)
 gets invalid_params and nothing is admitted. Real SessionStore/SessionAuthority/AuthorityConnection."""

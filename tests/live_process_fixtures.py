@@ -1,4 +1,4 @@
-"""Sleeper script used by the live process-topology E2Es to stand in for real Hermes processes.
+"""Sleeper script used by the live process-topology E2Es to stand in for real Tandem processes.
 
 The fixtures spawn ``python <sleeper.py> <argv tail...>``: the tail is inert to the child but
 fully visible to psutil / ``Win32_Process`` cmdline scans, which is what the detection and

@@ -67,7 +67,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
                 f"            return\n"
                 f"            ;;")
     cases_str = "\n".join(cases)
-    return f"""# Hermes Agent bash completion
+    return f"""# Tandem Agent bash completion
 # Add to ~/.bashrc:
 #   eval "$(tandem completion bash)"
 
@@ -153,7 +153,7 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
                 f"                    ;;")
     sub_cases_str = "\n".join(sub_cases)
     return f"""#compdef hermes tandem
-# Hermes Agent zsh completion
+# Tandem Agent zsh completion
 # Add to ~/.zshrc:
 #   eval "$(tandem completion zsh)"
 
@@ -201,7 +201,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
     subcommands = _sorted_subcommands(parser)
     top_cmds_str = " ".join(cmd for cmd, _ in subcommands)
     lines: list[str] = [
-        "# Hermes Agent fish completion",
+        "# Tandem Agent fish completion",
         "# Add to your config:",
         "#   tandem completion fish | source",
         "",
@@ -219,7 +219,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
         "complete -c hermes -f",
         "",
         "# Complete profile names after -p / --profile",
-        "complete -c hermes -f -s p -l profile"
+        "complete -c tandem -f -s p -l profile"
         " -d 'Profile name' -xa '(__hermes_profiles)'",
         "",
         "# Top-level subcommands"]

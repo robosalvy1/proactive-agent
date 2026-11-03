@@ -218,7 +218,7 @@ phase_install() {
   # attach never works, and run bare it waits forever on its setup-choice
   # screen. Launch it in the background with our env (direct exec, not
   # `open`: launchd inherits NONE of the redirect env) and drive the
-  # "Install Hermes" button with native input.
+  # "Install Tandem" button with native input.
   local rc=0
   HERMES_SETUP_DEV_REPO_ROOT="$bootstrap_root" source_build_env bash "$ASSETS/drive-dmg-install.sh" \
     --app-bin "$app_bin" \

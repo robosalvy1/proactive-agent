@@ -1,12 +1,12 @@
 # Minimal responses
 
-The approved response cleanup uses Hermes' existing configuration and presentation paths. Explicit saved settings take precedence; there is no migration that rewrites a user's profile.
+The approved response cleanup uses Tandem' existing configuration and presentation paths. Explicit saved settings take precedence; there is no migration that rewrites a user's profile.
 
 ## Behavior
 
 - Scheduled deliveries contain the result by default. `cron.wrap_response: true` restores the technical header and management footer.
 - Creation/edit confirmations use the job name, schedule/timezone, and relevant delivery state. Local-only and paused jobs are labelled clearly.
-- `hermes cron list` and `/cron list` use compact name-first rows. `--details` exposes identifiers, prompts and technical fields; `--all` includes inactive jobs. Name lookup remains ambiguity-safe.
+- `tandem cron list` and `/cron list` use compact name-first rows. `--details` exposes identifiers, prompts and technical fields; `--all` includes inactive jobs. Name lookup remains ambiguity-safe.
 - Manual-run summaries omit IDs and repeat output only for local-only or failed runs. Queued, unverified and failed delivery never reads as confirmed delivery.
 - Missing personality settings inherit the existing concise overlay, unless a manual `agent.system_prompt` is present. Explicit neutral/custom selections remain effective. This is resolved through normal session setup, not a mid-conversation prompt rewrite.
 - Supported Responses transports default to low text verbosity. An explicit empty value leaves sizing to the provider; chat-completions transport remains unchanged.

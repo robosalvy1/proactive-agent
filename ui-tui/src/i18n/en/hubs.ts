@@ -176,7 +176,7 @@ export const hubsEn = {
       updating: 'updating…',
       empty: 'no plugins installed',
       // `hermes plugins install owner/repo` is a CLI command: keep it verbatim.
-      installHint: 'install: hermes plugins install owner/repo',
+      installHint: 'install: tandem plugins install owner/repo',
       status: {
         disabled: 'disabled',
         notEnabled: 'not enabled'

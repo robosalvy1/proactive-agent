@@ -181,7 +181,7 @@ class Installed:
         return "\n".join(out) or "(no logs)"
 
     def version_works(self) -> Result:
-        """The next ``hermes`` invocation, offline: the install must still start."""
+        """The next ``tandem`` invocation, offline: the install must still start."""
         return self.hermes("--version", edge=None, timeout=120)
 
 
@@ -242,7 +242,7 @@ def canonical(value: object) -> bytes:
 
 def _identity(name: str, token: str) -> dict:
     pascal = f"HermesChannel{token}"
-    return {"token": token, "displayName": f"Hermes {name}", "appId": f"ai.hermes.channel.h{token}",
+    return {"token": token, "displayName": f"Tandem {name}", "appId": f"ai.hermes.channel.h{token}",
             "appNamePascal": pascal, "artifactNamePascal": pascal, "cliName": f"hermes-{name}",
             "windowsExecutableName": pascal, "msixAppIdWithOrg": f"NousResearch.{pascal}"}
 
@@ -348,7 +348,7 @@ SUCCESS_BANNERS = ("Update complete", "Code updated", "Already up to date")
 
 def assert_nothing_changed(inst: Installed, before: dict, r: Result, what: str) -> None:
     """The failure contract: non-zero, says why, nothing reported as success, nothing moved,
-    and the next ``hermes`` still starts."""
+    and the next ``tandem`` still starts."""
     assert r.rc != 0, f"{what}: the command reported success\n" + r.report(inst)
     claimed = [b for b in SUCCESS_BANNERS if b in r.out]
     assert not claimed, f"{what}: failed run printed a success banner {claimed}\n" + r.report(inst)

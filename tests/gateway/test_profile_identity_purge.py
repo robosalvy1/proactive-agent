@@ -1,4 +1,4 @@
-"""Profile identity purge for `hermes profile delete`: the delete-only path, and what an unserve
+"""Profile identity purge for `tandem profile delete`: the delete-only path, and what an unserve
 must leave alone.
 
 `_unserve_profile()` runs for every name that leaves the served set — a rename's old name leaves it

@@ -1,4 +1,4 @@
-"""Real ``hermes serve`` backend + WebSocket JSON-RPC clients for the terminal lane E2E suites.
+"""Real ``tandem serve`` backend + WebSocket JSON-RPC clients for the terminal lane E2E suites.
 
 One backend per test module: a real ``python -m hermes_cli.main serve --port 0`` subprocess (the
 exact argv Desktop spawns, see ``apps/desktop/electron/backend-command.ts``) with an isolated
@@ -70,7 +70,7 @@ def _operator_home() -> str:
 
 
 def _minimal_env(home: Path, hermes_home: Path, token: str, extra: dict[str, str] | None) -> dict[str, str]:
-    """A clean child env: nothing Hermes-, provider- or credential-shaped leaks in from the test runner."""
+    """A clean child env: nothing Tandem-, provider- or credential-shaped leaks in from the test runner."""
     env = {k: os.environ[k] for k in ("PATH", "LANG", "LC_ALL", "TERM", "SYSTEMROOT") if k in os.environ}
     tmpdir = home.parent / "tmp"
     tmpdir.mkdir(parents=True, exist_ok=True)
@@ -88,7 +88,7 @@ def _minimal_env(home: Path, hermes_home: Path, token: str, extra: dict[str, str
 
 
 class Backend:
-    """One real ``hermes serve`` process wired to a :class:`FakeLLMServer`."""
+    """One real ``tandem serve`` process wired to a :class:`FakeLLMServer`."""
 
     def __init__(self, root: Path, responder, *, extra_config: str = "", env: dict[str, str] | None = None,
                  aux=None) -> None:
@@ -106,7 +106,7 @@ class Backend:
     def start(self, *, timeout: float = 90.0) -> Backend:
         operator_root = (Path(_operator_home()) / ".hermes").resolve()
         assert operator_root not in (self.hermes_home.resolve(), *self.hermes_home.resolve().parents), (
-            f"sandbox {self.hermes_home} sits inside the operator's Hermes home {operator_root}")
+            f"sandbox {self.hermes_home} sits inside the operator's Tandem home {operator_root}")
         self.llm.start()
         write_hermes_home(self.hermes_home, self.llm.base_url, extra_config=self.extra_config)
         self._stdout = open(self.root / "serve.stdout.log", "wb")
@@ -121,7 +121,7 @@ class Backend:
 
         def ready() -> int | None:
             if proc.poll() is not None:
-                raise AssertionError(f"hermes serve exited {proc.returncode} before ready:\n{self.logs()}")
+                raise AssertionError(f"tandem serve exited {proc.returncode} before ready:\n{self.logs()}")
             match = READY_RE.search((self.root / "serve.stdout.log").read_text(errors="replace"))
             return int(match.group(1)) if match else None
 

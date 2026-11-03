@@ -119,7 +119,7 @@ def _search_stdout_and_limit(result: ExecuteResult) -> tuple[str, Optional[str]]
 
 
 def _bundled_rg() -> Optional[str]:
-    """Hermes's pinned ripgrep, forward-slashed for the shell transports, or None."""
+    """Tandem's pinned ripgrep, forward-slashed for the shell transports, or None."""
     import pm
 
     try:

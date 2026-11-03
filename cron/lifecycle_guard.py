@@ -1,6 +1,6 @@
 """Gateway lifecycle guard for cron job creation.
 
-A cron job that restarts/stops the gateway from inside the gateway (``hermes gateway restart``,
+A cron job that restarts/stops the gateway from inside the gateway (``tandem gateway restart``,
 ``launchctl kickstart ai.hermes.gateway``, ``systemctl restart hermes-gateway``) kills the process,
 the supervisor revives it, auto-resume re-runs the turn: a SIGTERM-respawn loop.
 ``cron.jobs.create_job`` rejects such specs on every creation path. Patterns are command-shaped —
@@ -104,7 +104,7 @@ HOST_INTERPRETER_KILL_REJECTION = (
     "Blocked: this command kills every process whose image/name matches the Python "
     "interpreter, which is the process hosting this gateway (and this command). "
     "Stop only the process you own instead: process(action=\"kill\", session_id=\"proc_…\") "
-    "for a background job Hermes started, or kill/taskkill by its explicit PID."
+    "for a background job Tandem started, or kill/taskkill by its explicit PID."
 )
 
 
@@ -126,7 +126,7 @@ def _is_interpreter_image(value: str, *, substring: bool = False) -> bool:
 def _pattern_reaches_host_interpreter(pattern: str, *, full_cmdline: bool, exact: bool) -> bool:
     """pkill/pgrep/killall operand semantics: an ERE against the process NAME (or, with `-f`, the full
     command line). `python -m hermes_cli.main …` is the gateway's own cmdline, so a `-f` pattern
-    that names the interpreter and then only wildcards or a `hermes` token reaches it, while
+    that names the interpreter and then only wildcards or a `tandem` token reaches it, while
     `python mt_add.py` (a specific script) does not."""
     core = pattern.strip().strip("\"'").lstrip("^")
     core = core.removesuffix("$")
@@ -406,7 +406,7 @@ def contains_gateway_lifecycle_command(text: str) -> bool:
     pass alone lets a spliced verb reach ``launchctl``/``systemctl`` untouched while still executing as the
     blocked lifecycle command (#80269, reported against #80260's bootout parity fix). Tokenizing closes that
     gap while keeping the same gateway-label anchoring (``_GATEWAY_LIFECYCLE_PATTERN`` still requires a
-    ``hermes``/``gateway`` token) — this function is the single choke point
+    ``tandem``/``gateway`` token) — this function is the single choke point
     ``_contains_unsafe_gateway_action`` calls at every recursion level, so referenced-script and ``sh -c``
     payload scanning inherit the fix automatically.
     """
@@ -1288,6 +1288,6 @@ def check_gateway_lifecycle(prompt: Optional[str], script: Optional[str] = None)
             "Blocked: cron job contains a gateway lifecycle command or persistent "
             "launchctl submit operation. This is blocked to prevent agent-driven "
             "SIGTERM-respawn loops under launchd/systemd supervision "
-            "(#30719). Run `hermes gateway restart` from a shell outside "
+            "(#30719). Run `tandem gateway restart` from a shell outside "
             "the running gateway instead."
         )

@@ -464,7 +464,7 @@ describe('useComposerActions generated paste title metadata', () => {
     vi.clearAllMocks()
   })
 
-  it('marks only a Hermes-generated large paste with a bounded title preview', async () => {
+  it('marks only a Tandem-generated large paste with a bounded title preview', async () => {
     const savePastedText = vi.fn(async () => '/tmp/composer-pastes/pasted-content.txt')
     const add = vi.fn<(attachment: ComposerAttachment) => void>()
     Object.defineProperty(window, 'hermesDesktop', { configurable: true, value: { savePastedText } })

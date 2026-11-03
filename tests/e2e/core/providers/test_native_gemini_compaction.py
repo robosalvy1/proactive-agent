@@ -2,7 +2,7 @@
 
 Turn 1 (process A) reads two bulky files (two signed functionCall steps) and answers. Turn 2
 (process B, ``--resume``) reads a third file; that response reports a huge ``promptTokenCount``, so
-Hermes compacts mid-turn (tiny ``compression.threshold_tokens``) before the next step, then the
+Tandem compacts mid-turn (tiny ``compression.threshold_tokens``) before the next step, then the
 model makes one more signed call and answers.
 
 The fake validates every request like Google: roles alternate, every functionResponse follows

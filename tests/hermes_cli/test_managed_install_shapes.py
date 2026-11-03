@@ -96,7 +96,7 @@ def test_managed_install_names_its_system_and_offers_an_update(
     assert config_mod.detect_install_method(install_tree) == managed_value
     # `hermes update` cannot run on a managed install, so the advice must not
     # name it.
-    assert config_mod.recommended_update_command() != "hermes update"
+    assert config_mod.recommended_update_command() != "tandem update"
 
 
 @pytest.mark.parametrize("managed_value", ["nixos", "home-manager"])

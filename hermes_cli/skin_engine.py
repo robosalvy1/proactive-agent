@@ -1,4 +1,4 @@
-"""Hermes skin/theme engine — the theme SDK for every surface."""
+"""Tandem skin/theme engine — the theme SDK for every surface."""
 
 import logging
 from dataclasses import dataclass, field
@@ -58,11 +58,11 @@ def _wings(*glyphs) -> list[list[str]]:
 
 # Branding shared by every Hermes-named built-in (mono/daylight override help_header).
 _HERMES_BRANDING: dict[str, str] = _branding(
-    "Hermes", "☤", "Goodbye! ☤", prompt="❯", help_header="(^_^)? Available Commands")
+    "Tandem", "☤", "Goodbye! ☤", prompt="❯", help_header="(^_^)? Available Commands")
 
 _BUILTIN_SKINS: dict[str, dict[str, Any]] = {
     "default": {
-        "name": "default", "description": "Classic Hermes — gold and kawaii",
+        "name": "default", "description": "Classic Tandem — gold and kawaii",
         # Dark-authored violet-blue accents with a near-white lavender-gray body.
         "colors": {
             "banner_border": "#7B6CF6", "banner_title": "#E6E3FA", "banner_accent": "#9A8CFF",

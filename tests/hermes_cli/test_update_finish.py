@@ -208,7 +208,7 @@ def completion(tmp_path, monkeypatch):
                         assert isinstance(plan, UpdatePlan)
                         assert isinstance(plan.runtimes[0], RuntimeRecord)
                         assert plan.to_dict() == request['plan'] | {
-                            'updatable_in_place': True, 'update_mechanism': 'hermes update'}
+                            'updatable_in_place': True, 'update_mechanism': 'tandem update'}
                         (root / 'restarted-plan.json').write_text(json.dumps(plan.to_dict()))
                         return fleet._GatewayRestartOutcome(
                             incomplete=False, phase_errors=[], pre_restart_gateway_pids=[],

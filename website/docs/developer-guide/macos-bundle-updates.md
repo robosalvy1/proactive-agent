@@ -1,4 +1,4 @@
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 # macOS bundle updates
 
@@ -55,7 +55,7 @@ An unreadable feed prevents pruning.
 ## Client lifecycle
 
 Checks never download automatically. Apply rechecks the release, downloads it,
-and waits for Squirrel.Mac to accept the signed app. Only then does Hermes stop
+and waits for Squirrel.Mac to accept the signed app. Only then does Tandem stop
 its app-owned backends and request installation/relaunch. Unrelated quits do
 not trigger installation. Downloads and native-verification failures leave
 backends running. Concurrent checks cannot replace an apply operation's target.

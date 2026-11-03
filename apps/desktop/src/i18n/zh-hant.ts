@@ -46,7 +46,7 @@ export const zhHantOverrides = {
     consentTitle: '分享使用統計？',
     dialogTitle: '使用統計',
     consentBody:
-      'Hermes 可以統計你的使用方式：工作階段長度、執行了哪些模型和工具，以及何時發生失敗。它絕不記錄你的訊息、檔案、路徑或錯誤文字。',
+      'Tandem 可以統計你的使用方式：工作階段長度、執行了哪些模型和工具，以及何時發生失敗。它絕不記錄你的訊息、檔案、路徑或錯誤文字。',
     whatIsCollected: '統計哪些內容',
     collectedActivity: '工作階段：長度、結果、錯誤類型、每日活躍時間',
     collectedModels: '模型：使用哪些模型、token 總量',
@@ -54,9 +54,9 @@ export const zhHantOverrides = {
     collectedMilestones: '設定：完成了哪些步驟、提供方連線、技能、外掛和排程工作的數量',
     collectedReliability: '應用程式健康狀態：當機、啟動與回覆速度、更新、訊息平台連線',
     collectedUsage: '代理品質：未成功的編輯、損壞的工具呼叫、卡住的迴圈、每個任務的成本',
-    collectedMachine: '機器：作業系統、記憶體範圍、GPU 類型、Hermes 版本、本機模型使用情況',
+    collectedMachine: '機器：作業系統、記憶體範圍、GPU 類型、Tandem 版本、本機模型使用情況',
     sending:
-      '除非你選擇分享，否則統計資料只會保留在這台電腦上。分享的統計資料每天傳送給 Nous 一次，並附帶此設定檔的隨機 ID。除了一則 Hermes 已安裝的一次性記錄（僅在你同意後計入）之外，你同意之前的統計資料永遠不會被傳送。你可以隨時在設定中變更。',
+      '除非你選擇分享，否則統計資料只會保留在這台電腦上。分享的統計資料每天傳送給 Nous 一次，並附帶此設定檔的隨機 ID。除了一則 Tandem 已安裝的一次性記錄（僅在你同意後計入）之外，你同意之前的統計資料永遠不會被傳送。你可以隨時在設定中變更。',
     readDocs: '查看完整說明',
     share: '與 Nous 分享',
     local: '保留在這部電腦上',
@@ -67,7 +67,7 @@ export const zhHantOverrides = {
     sendLabel: '與 Nous 分享使用統計',
     sendDesc:
       '每天一次將統計資料連同此設定檔的隨機 ID 傳送給 Nous。除一次性的安裝記錄外，你同意之前的統計資料絕不會被傳送。需要先開啟收集。',
-    unavailable: '請更新 Hermes 後端以變更此設定。',
+    unavailable: '請更新 Tandem 後端以變更此設定。',
     stripBody: '僅限計數，絕不包含你的訊息或檔案。',
     stripReaskBody: '再次詢問：舊版本可能在你看到此問題之前就已儲存了「不用了」。',
     stripChoices: { share: '與 Nous 分享', local: '保留在這部電腦上', off: '不用了' },
@@ -95,7 +95,7 @@ export const zhHantOverrides = {
   messaging: zhHantCommandCenter.messaging,
   profiles: zhHantCommandCenter.profiles,
   modelAssignment: {
-    saveFailed: 'Hermes 未儲存該模型變更。',
+    saveFailed: 'Tandem 未儲存該模型變更。',
     confirmTitle: '模型選擇警告',
     confirmDetail: '僅在你接受此權衡時確認。',
     confirmAction: '確認',
@@ -126,11 +126,11 @@ export const zhHantOverrides = {
   preview: zhHantArtifacts.preview,
   interfaceMode: {
     title: '介面模式',
-    hint: '只改變顯示的內容，不改變 Hermes 的能力。',
+    hint: '只改變顯示的內容，不改變 Tandem 的能力。',
     sessionNote: '由簡潔模式設定。此處的變更僅在本次工作階段內生效；切換到進階模式即可保留為你的設定。',
     simple: {
       label: '簡潔',
-      description: '用於與 Hermes 對話。只有側邊欄和聊天；沒有終端機、檔案或差異面板。'
+      description: '用於與 Tandem 對話。只有側邊欄和聊天；沒有終端機、檔案或差異面板。'
     },
     advanced: {
       label: '進階',
@@ -147,8 +147,8 @@ export const zhHantOverrides = {
   ui: zhHantCommon.ui,
   freeTier: {
     offer: {
-      heading: '繼續使用 Hermes',
-      body: '你正在使用免費額度。繼續使用 Hermes 的話，你會開始遇到限制。登入免費的 Nous 帳戶，即可獲得更多額度。',
+      heading: '繼續使用 Tandem',
+      body: '你正在使用免費額度。繼續使用 Tandem 的話，你會開始遇到限制。登入免費的 Nous 帳戶，即可獲得更多額度。',
       signIn: '登入',
       notNow: '暫不'
     }

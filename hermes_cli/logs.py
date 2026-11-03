@@ -1,4 +1,4 @@
-"""``hermes logs`` — view and filter Hermes log files.
+"""``tandem logs`` — view and filter Tandem log files.
 
 Supports tailing, following, session filtering, level filtering,
 component filtering, and relative time ranges.  All log files live
@@ -6,19 +6,19 @@ under ``~/.hermes/logs/``.
 
 Usage examples::
 
-    hermes logs                    # last 50 lines of agent.log
-    hermes logs -f                 # follow agent.log in real time
-    hermes logs errors             # last 50 lines of errors.log
-    hermes logs gateway -n 100    # last 100 lines of gateway.log
-    hermes logs gui -f            # follow gui.log (dashboard/pty/ws)
-    hermes logs desktop -f        # follow desktop.log (Electron app boot/backend)
-    hermes logs update            # last 50 lines of update.log (hermes update mirror)
-    hermes logs handoff           # last 50 lines of desktop-update-handoff.log
-    hermes logs --level WARNING    # only WARNING+ lines
-    hermes logs --session abc123   # filter by session ID substring
-    hermes logs --component tools  # only tool-related lines
-    hermes logs --since 1h         # lines from the last hour
-    hermes logs --since 30m -f     # follow, starting 30 min ago
+    tandem logs                    # last 50 lines of agent.log
+    tandem logs -f                 # follow agent.log in real time
+    tandem logs errors             # last 50 lines of errors.log
+    tandem logs gateway -n 100    # last 100 lines of gateway.log
+    tandem logs gui -f            # follow gui.log (dashboard/pty/ws)
+    tandem logs desktop -f        # follow desktop.log (Electron app boot/backend)
+    tandem logs update            # last 50 lines of update.log (tandem update mirror)
+    tandem logs handoff           # last 50 lines of desktop-update-handoff.log
+    tandem logs --level WARNING    # only WARNING+ lines
+    tandem logs --session abc123   # filter by session ID substring
+    tandem logs --component tools  # only tool-related lines
+    tandem logs --since 1h         # lines from the last hour
+    tandem logs --since 30m -f     # follow, starting 30 min ago
 """
 
 import re
@@ -191,7 +191,7 @@ def tail_log(
     log_path = log_file_path(log_name)
     if not log_path.exists():
         print(f"Log file not found: {log_path}")
-        print("(Logs are created when Hermes runs — try 'hermes chat' first)")
+        print("(Logs are created when Tandem runs — try 'tandem chat' first)")
         sys.exit(1)
 
     since_dt = None
@@ -347,4 +347,4 @@ def list_logs() -> None:
             found = True
 
     if not found:
-        print("  (no log files yet — run 'hermes chat' to generate logs)")
+        print("  (no log files yet — run 'tandem chat' to generate logs)")

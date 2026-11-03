@@ -157,7 +157,7 @@ def test_unreadable_store_keeps_last_digest(watcher_home):
 def test_projects_db_move_broadcasts_projects_changed(watcher_home):
     """#53046 / #56757: the CLI and other windows write projects.db directly, in
     processes that never touch this gateway's transports. Without a watch, a
-    `hermes projects create` (or a set_primary / folder edit from another
+    `tandem projects create` (or a set_primary / folder edit from another
     window) leaves the Desktop's project tree stale until an unrelated refresh."""
     home, events = watcher_home
     server._broadcast_watched_changes(now=0.0)

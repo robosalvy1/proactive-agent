@@ -218,7 +218,7 @@ def _status(settings, now: datetime) -> str:
 
 
 _OFF_MESSAGE = (
-    "The proactive inbox is off. Turn it on with `hermes config set attention.enabled true` "
+    "The proactive inbox is off. Turn it on with `tandem config set attention.enabled true` "
     "(starts at level \"quiet\": digests only). See /inbox status after enabling."
 )
 

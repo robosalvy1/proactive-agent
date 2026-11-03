@@ -4,7 +4,7 @@ title: "CLI Internals"
 description: "How hermes_cli is shaped: slash dispatch, config loaders, the skin engine, the transactional update pipeline, and process-identity rules"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # CLI Internals
@@ -19,7 +19,7 @@ User-facing behaviour (receipts, `--plan`, snapshot modes) is in
 Fleet-update campaign #91277 (Aug 2026). A PR that weakens a stage must answer for the failure class
 it guards. `plan → snapshot → apply → restart-per-kind → verify → report`
 
-- **Plan** (`update_inventory.py`, `hermes update --plan`): read-only inventory — install kind, all
+- **Plan** (`update_inventory.py`, `tandem update --plan`): read-only inventory — install kind, all
   profiles, every live gateway with supervisor + running code version. Deployment kinds are
   first-class: `git` updates in place; `docker`/`nix`/`apt` are NOT in-place-updatable and the
   updater reports the correct external command instead of fighting the deployment model.
@@ -55,11 +55,11 @@ it guards. `plan → snapshot → apply → restart-per-kind → verify → repo
 - **Verify**: gateways stamp `code_sha`/`code_version` into `gateway_state.json` on every
   runtime-status write (`gateway/status.py`); the updater compares each live gateway against the
   fresh checkout and prints a fleet version matrix. After the commit point (the tree moved) nothing
-  fails `hermes update` (exit 0 unless the code was rolled back): a provably-stale or stopped
+  fails `tandem update` (exit 0 unless the code was rolled back): a provably-stale or stopped
   gateway, a failed build/launcher/config migration/bytecode sweep/channel adoption/Windows resume
   each print `⚠`, land in the receipt as `outcome: "success"` with `followups: [{step, reason}]`,
   and keep their own obligation armed (`source-completion-pending` for the tail, the fleet-restart
-  obligation for gateways) so the next launch or `hermes update` — including "Already up to date" —
+  obligation for gateways) so the next launch or `tandem update` — including "Already up to date" —
   retries them. The owed-fleet-restart CLI startup warning is what keeps a mixed-version fleet from
   ever looking healthy. A completion process that could not be started (temporary directory,
   request file, spawn) or died without a correlated result (OOM, SIGKILL) is the same kind of
@@ -73,7 +73,7 @@ it guards. `plan → snapshot → apply → restart-per-kind → verify → repo
   steps, skips WITH reasons, restart outcome, plan, fleet snapshot, `followups`. The receipt is on
   disk as `outcome: "running"` from the start and refreshed at each stage boundary; the next
   update marks a `running` record whose processes are gone `interrupted` and says so. Readers
-  (`hermes logs update`, debug bundle, dashboard status, pm receipts) use the root home too.
+  (`tandem logs update`, debug bundle, dashboard status, pm receipts) use the root home too.
   A dependency-sync failure in the completion bootstrap is a `dependencies` follow-up (A6), and
   Ctrl-C after the commit point finalizes `interrupted` (exit 130), never `failed`.
   Before a source swap, the parent captures plan/snapshots/receipt and its Windows pause token.
@@ -133,13 +133,13 @@ The sign-in itself is one composition: `anon_auth.run_sign_in()` yields `SignInS
 across both waits, persists only after a completed promotion **and** a token grant, runs
 `settle_after_upgrade` exactly once per completion, and never lets a persist or settle failure
 escape as an exception — it becomes `Failed`. Every state carries its own `.copy` (the chat form,
-which never contains a raw exception, a URL or a `hermes` verb) and `.copy_terminal`, so no caller
+which never contains a raw exception, a URL or a `tandem` verb) and `.copy_terminal`, so no caller
 maps a reason to a string. `cancelled()` stops an attempt; `cancel_wins_after_promotion` decides
 what happens when the server had already completed the transfer — the desktop keeps `True` (a
 DELETE means "not on this machine"), the gateway passes `False` (a supersede must not discard a
 transfer the user actually approved). `scope` is entered only around the precondition and persist
 blocks, never across a `yield` or a network wait, because `run_in_executor` does not carry
-contextvars. `upgrade_guest` (`hermes auth upgrade`), the CLI `/login` handler and the desktop
+contextvars. `upgrade_guest` (`tandem auth upgrade`), the CLI `/login` handler and the desktop
 promotion poller are renderers over it; a surface that needs the cancel check and the save to be
 atomic passes `persist_guard`. The desktop's plain "connect another Nous account" device-code login
 is a separate path (`_nous_plain_poller`) and must stay one.
@@ -152,7 +152,7 @@ classifying a process by `"serve" in cmdline` or similar. `kanban --preserve-cac
 subcommand. Rules:
 
 - Use the canonical matchers: `gateway.status.looks_like_gateway_command_line` (gateway run),
-  `hermes_cli.update_cmd._hermes_holder_subcommand` (top-level subcommand of any Hermes argv). Never
+  `hermes_cli.update_cmd._hermes_holder_subcommand` (top-level subcommand of any Tandem argv). Never
   hand-roll token scans.
 - Flag sets must be DERIVED from the parser (`_holder_value_flags()` introspects
   `build_top_level_parser()`), never hand-written lists — they drift.
@@ -183,8 +183,8 @@ User skins are `~/.hermes/skins/<name>.yaml` with the same keys, activated with 
 
 ## Profiles: multi-instance support
 
-Hermes supports profiles — fully isolated instances, each with its own `HERMES_HOME` (config, API
-keys, memory, sessions, skills, gateway). For single-profile commands (`hermes -p x <cmd>`),
+Tandem supports profiles — fully isolated instances, each with its own `HERMES_HOME` (config, API
+keys, memory, sessions, skills, gateway). For single-profile commands (`tandem -p x <cmd>`),
 `_apply_profile_override()` in `hermes_cli/main.py` sets `HERMES_HOME` before any module imports, so
 every `get_hermes_home()` reference scopes to the active profile. The multiplex gateway and the
 Desktop/dashboard `serve` backend serve several profiles from one process instead: the active
@@ -193,6 +193,6 @@ profile's, and a module-level constant derived from the home freezes to that lau
 [Gateway Internals § Multiplexed profiles](./gateway-internals.md#multiplexed-profiles)). Profile
 operations are HOME-anchored (`_get_profiles_root()` returns
 `Path.home() / ".hermes" / "profiles"`, not `get_hermes_home() / "profiles"`) so
-`hermes -p coder profile list` sees all profiles regardless of which one is active — intentional.
+`tandem -p coder profile list` sees all profiles regardless of which one is active — intentional.
 Profile-safe coding rules are in the root `AGENTS.md`; multiplex secret-scope rules in
 `gateway/AGENTS.md`.

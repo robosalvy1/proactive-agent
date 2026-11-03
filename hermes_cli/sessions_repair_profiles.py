@@ -1,4 +1,4 @@
-"""``hermes sessions repair-profiles`` — settle crossed-profile durable state across every store.
+"""``tandem sessions repair-profiles`` — settle crossed-profile durable state across every store.
 
 The per-profile store model (#88734) and the identity fences that followed are forward-only: they
 put NEW rows in the right place and refuse to widen existing damage, but nothing walks the stores
@@ -237,7 +237,7 @@ class RepairPlan:
             self._add(Finding(
                 "unclaimed_namespace", store.profile, sid, detail,
                 reason=f"no live profile named {key_profile!r}; create it, then rerun, or "
-                       f"`hermes profile migrate-identity {key_profile} <target>`"))
+                       f"`tandem profile migrate-identity {key_profile} <target>`"))
             return
         moving.add(sid)
         self._add(Finding(

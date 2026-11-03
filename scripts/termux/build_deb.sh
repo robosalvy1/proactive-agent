@@ -234,7 +234,7 @@ Package: $PKG
 Version: $DEB_VERSION
 Architecture: aarch64
 Maintainer: Nous Research
-Description: Hermes Agent CLI for Termux (self-contained bundled python/node/venv)
+Description: Tandem Agent CLI for Termux (self-contained bundled python/node/venv)
 Installed-Size: $(du -sk "$STAGE/$ROOT_IN_DEB" | cut -f1)
 EOF
 # Self-contained: no Depends line at all. Our python, node and venv ship inside.

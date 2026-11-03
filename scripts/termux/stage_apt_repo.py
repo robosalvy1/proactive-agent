@@ -271,7 +271,7 @@ def stage(
                 "Architecture": arch,
                 "Maintainer": fields.get("Maintainer", "Hermes Agent <noreply@nousresearch.com>"),
                 "Installed-Size": fields.get("Installed-Size", "0"),
-                "Description": fields.get("Description", "Hermes Agent"),
+                "Description": fields.get("Description", "Tandem Agent"),
                 "Filename": filename,
                 "Size": str(size),
                 "SHA256": sha256,
@@ -299,14 +299,14 @@ def stage(
     # line ends the record, and apt then never sees the hashes ("weak
     # security information"). One paragraph, no blank lines.
     release_fields = [
-        "Origin: Hermes Agent",
+        "Origin: Tandem Agent",
         "Label: hermes-agent",
         f"Suite: {suite}",
         f"Codename: {suite}",
         f"Architectures: {ARCH}",
         f"Components: {COMPONENT}",
         "Acquire-By-Hash: yes",
-        f"Description: Hermes Agent apt repository ({suite})",
+        f"Description: Tandem Agent apt repository ({suite})",
         "Date: " + time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime()),
     ]
     checksums = []

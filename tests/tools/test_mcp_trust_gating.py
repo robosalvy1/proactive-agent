@@ -270,7 +270,7 @@ class TestTrustGateApprovalRouting:
 
     @pytest.mark.parametrize("context", ["single_query", "cron", "webhook"])
     def test_cli_panel_callback_is_never_asked_without_a_user(self, monkeypatch, context):
-        """`hermes chat -q`, cron and unattended platforms can keep the CLI panel callback registered, but
+        """`tandem chat -q`, cron and unattended platforms can keep the CLI panel callback registered, but
         nobody answers it: consent declines at once instead of waiting the approval timeout (the e2e
         hang after ef1faa4cf8)."""
         from gateway.session_context import clear_session_vars, set_session_vars

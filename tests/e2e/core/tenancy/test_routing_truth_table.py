@@ -13,8 +13,8 @@ env-configured identities ``decoy`` = OPENAI_BASE_URL/OPENAI_API_KEY, ``cloud`` 
 OPENROUTER_BASE_URL/OPENROUTER_API_KEY and ``vendor`` = ANTHROPIC_API_KEY). Each accepts only its
 own random key. A loopback CONNECT trap (HTTPS_PROXY) records any egress to a real inference API. EVERY scenario
 configures ALL identities (the full config a real user accumulates) and differs only in the
-selection, so a misroute always has somewhere to land and be caught. Hermes runs for real in a
-child process (``hermes chat -q``, ``hermes -z``, the stdio ``tui_gateway`` the TUI/Desktop
+selection, so a misroute always has somewhere to land and be caught. Tandem runs for real in a
+child process (``tandem chat -q``, ``tandem -z``, the stdio ``tui_gateway`` the TUI/Desktop
 drive) with a tmp HOME/HERMES_HOME and every credential env var stripped.
 
 One invariant (``check_routing``) after every leg: requests exist only on the selected hosts,

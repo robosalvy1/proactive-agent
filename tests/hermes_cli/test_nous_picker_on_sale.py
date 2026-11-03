@@ -98,7 +98,7 @@ def test_gui_picker_org_policy_still_narrows_on_sale_models(monkeypatch):
 
 
 def test_cli_setup_flow_and_gui_picker_agree(monkeypatch):
-    """``hermes model`` and the GUI/in-chat picker list the same Nous models for a paid account."""
+    """``tandem model`` and the GUI/in-chat picker list the same Nous models for a paid account."""
     pricing = {"nous/a": dict(_LIST), "sale/x": _sale(80), "sale/y": _sale(30)}
     _stub_portal(monkeypatch, free_tier=False, pricing=pricing)
     monkeypatch.setattr(mp, "nous_policy_allowed_ids", lambda **kw: None)
@@ -109,7 +109,7 @@ def test_cli_setup_flow_and_gui_picker_agree(monkeypatch):
 
 
 def _login_picker_ids(monkeypatch, *, free_tier: bool, pricing: dict, allowed=None) -> list:
-    """Model ids the post-login picker (``hermes auth add nous`` / re-auth) offers."""
+    """Model ids the post-login picker (``tandem auth add nous`` / re-auth) offers."""
     from hermes_cli import auth_nous
 
     _stub_portal(monkeypatch, free_tier=free_tier, pricing=pricing, allowed=allowed)
@@ -128,7 +128,7 @@ def _login_picker_ids(monkeypatch, *, free_tier: bool, pricing: dict, allowed=No
 
 
 def test_post_login_picker_paid_tier_shows_on_sale_model(monkeypatch):
-    """The sign-in picker applies the same on-sale union as ``hermes model`` (review on #121906)."""
+    """The sign-in picker applies the same on-sale union as ``tandem model`` (review on #121906)."""
     pricing = {"curated/only": dict(_LIST), "vendor/sale": _sale(80)}
     assert _login_picker_ids(monkeypatch, free_tier=False, pricing=pricing) == ["curated/only", "vendor/sale"]
 
@@ -146,7 +146,7 @@ def test_post_login_picker_org_policy_still_narrows_on_sale_models(monkeypatch):
 
 
 def test_all_three_paid_pickers_agree(monkeypatch):
-    """Sign-in picker, ``hermes model`` and the GUI/in-chat picker list the same paid Nous models."""
+    """Sign-in picker, ``tandem model`` and the GUI/in-chat picker list the same paid Nous models."""
     pricing = {"curated/only": dict(_LIST), "sale/x": _sale(80), "sale/y": _sale(30)}
     login = _login_picker_ids(monkeypatch, free_tier=False, pricing=pricing)
     cli = model_setup_flows._nous_model_catalog(False, "", ["curated/only"], pricing)

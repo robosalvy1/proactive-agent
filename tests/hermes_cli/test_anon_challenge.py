@@ -1,6 +1,6 @@
 """Nous free tier: the browser challenge in front of a token exchange (``hermes_cli.anon_challenge``).
 
-Driven through the fake NAS with Hermes' real client code: the exchange hits a 428, the challenge is
+Driven through the fake NAS with Tandem' real client code: the exchange hits a 428, the challenge is
 presented and polled OUTSIDE the auth locks, and the exchange runs once more.
 """
 
@@ -253,7 +253,7 @@ class TestWhoWaits:
         assert len(presented) == 1                       # the 429 did not skip presenting
 
     def test_an_inherited_desktop_flag_is_not_the_desktop_surface(self, nas, monkeypatch, capsys):
-        """A ``hermes`` run in the desktop's terminal pane inherits HERMES_DESKTOP but not the spawn
+        """A ``tandem`` run in the desktop's terminal pane inherits HERMES_DESKTOP but not the spawn
         credential: it reports ``cli`` to the service and prints the link where its user is."""
         import webbrowser
         monkeypatch.setenv("HERMES_DESKTOP", "1")

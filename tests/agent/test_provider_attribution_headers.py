@@ -26,7 +26,7 @@ def test_ai_gateway_base_url_applies_attribution_headers(mock_openai):
 
     headers = agent._client_kwargs["default_headers"]
     assert headers["HTTP-Referer"] == "https://hermes-agent.nousresearch.com"
-    assert headers["X-Title"] == "Hermes Agent"
+    assert headers["X-Title"] == "Tandem Agent"
     assert headers["User-Agent"] == f"HermesAgent/{get_version_info().base_version}"
 
 
@@ -55,7 +55,7 @@ def test_nvidia_cloud_base_url_applies_billing_origin_header(mock_openai):
 def test_opencode_go_applies_attribution_via_profile_fallback(mock_openai):
     """OpenCode (Zen/Go) attributes traffic by header like OpenRouter does.
     Without profile.default_headers the relay only sees the OpenAI SDK's
-    generic User-Agent and Hermes Agent traffic shows up unattributed."""
+    generic User-Agent and Tandem Agent traffic shows up unattributed."""
     mock_openai.return_value = MagicMock()
     agent = AIAgent(
         api_key="test-key",
@@ -71,7 +71,7 @@ def test_opencode_go_applies_attribution_via_profile_fallback(mock_openai):
 
     headers = agent._client_kwargs["default_headers"]
     assert headers["HTTP-Referer"] == "https://hermes-agent.nousresearch.com"
-    assert headers["X-Title"] == "Hermes Agent"
+    assert headers["X-Title"] == "Tandem Agent"
     assert headers["User-Agent"] == f"HermesAgent/{get_version_info().base_version}"
 
 

@@ -1,7 +1,7 @@
 """POSIX pre-swap gateway pause: what survives a killed updater, and what a paused update asks.
 
 Real processes and a real record; the live stop/restart of real gateways is proven by
-``tests/e2e/core/upgrade/git/test_hostile_pause.py`` (a real ``hermes update`` in a sandbox).
+``tests/e2e/core/upgrade/git/test_hostile_pause.py`` (a real ``tandem update`` in a sandbox).
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ _UNIT = {"kind": "systemd", "scope": "user", "unit": "hermes-gateway-p2probe.ser
 @pytest.mark.platforms("posix")
 @pytest.mark.live_system_guard_bypass
 def test_a_killed_updaters_supervised_units_are_adopted_by_the_next_update(tmp_path):
-    """The updater stopped a systemd unit and was SIGKILLed: the next ``hermes update`` must own
+    """The updater stopped a systemd unit and was SIGKILLed: the next ``tandem update`` must own
     restarting that unit (the record's only debt), never drop it."""
     owner = _child(f"""
         import time

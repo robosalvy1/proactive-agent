@@ -59,7 +59,7 @@ def render_sessions_export(sessions: Iterable[dict[str, Any]], *, fmt: str = "js
         headings = (lambda s: f"User prompts for session {_heading_text(_session_id(s))}",
                     lambda s: f"Session {_heading_text(_session_id(s))}")
     else:
-        multi_title, append_body = "Hermes sessions export", _append_session_messages
+        multi_title, append_body = "Tandem sessions export", _append_session_messages
         headings = (lambda s: f"Session: {_heading_text(_session_title_or_id(s))}",) * 2
     lines: list[str] = []
     single = len(session_list) == 1
@@ -230,7 +230,7 @@ def drop_undone_rows(export: dict[str, Any]) -> dict[str, Any]:
 def load_save_snapshot(db: Any, session_id: str, fmt: str) -> Optional[dict[str, Any]]:
     """The stored session a ``/save <fmt>`` writes, or None when it has no row. A JSON snapshot loads every
     stored row in memory, so it is refused past ``sessions.max_export_messages`` (raises
-    ``SessionExportTooLargeError``), like ``hermes sessions export``."""
+    ``SessionExportTooLargeError``), like ``tandem sessions export``."""
     transcript = fmt in SAVE_TRANSCRIPT_FORMATS
     if not transcript:
         db.assert_export_safe(session_id)

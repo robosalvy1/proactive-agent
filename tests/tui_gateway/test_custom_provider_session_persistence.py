@@ -9,7 +9,7 @@ or ``_reset_session_agent``, ``_stored_session_runtime_overrides`` fed
 provider="custom" back into ``_make_agent`` →
 ``resolve_runtime_provider(requested="custom")``, which cannot match an entry
 named "mimo-v2.5-pro". Depending on config the rebuild either raised
-"No LLM provider configured. Run `hermes model`..." (resume failed) or
+"No LLM provider configured. Run `tandem model`..." (resume failed) or
 silently resolved placeholder credentials ("no-key-required") against the
 patched-back base_url.
 
@@ -175,7 +175,7 @@ class TestResumeRoundTrip:
 class TestMakeAgentForwardsProviderRequestBody:
     """#103738 hole 1: the resolver lifts a custom entry's ``extra_body`` onto ``request_overrides``; the
     TUI/Desktop build must hand it to AIAgent like the CLI and cron do, or a proxy that requires a body field
-    (``user``) 400s in the app while ``hermes chat`` works."""
+    (``user``) 400s in the app while ``tandem chat`` works."""
 
     def test_entry_extra_body_reaches_agent(self, monkeypatch):
         entry = {**LEGACY_LIST_CONFIG["custom_providers"][0], "extra_body": {"user": "proxy-user"}}

@@ -1,4 +1,4 @@
-"""Desktop (Electron) app: build/stamp, stage-and-swap pack, exe integrity gate, macOS signing, Linux sandbox, launch (hermes gui/desktop).
+"""Desktop (Electron) app: build/stamp, stage-and-swap pack, exe integrity gate, macOS signing, Linux sandbox, launch (tandem gui/desktop).
 
 Split out of ``hermes_cli/main.py``. Names that still live in main (``PROJECT_ROOT``, ...)
 are imported lazily inside the functions that use them (avoids an import cycle).
@@ -460,7 +460,7 @@ def _desktop_ancestor_in(desktop_dir: Path) -> Optional[int]:
     """PID of a Desktop from this build's ``release`` tree that is one of OUR ancestors, else None.
 
     That Desktop is running this process (its backend's launch-time update tail, or a
-    `hermes update` it spawned). On Windows it holds the exe lock the promotion rename
+    `tandem update` it spawned). On Windows it holds the exe lock the promotion rename
     needs, and it cannot be stopped without killing this process first. Never raises."""
     try:
         import psutil
@@ -793,7 +793,7 @@ def _desktop_macos_relaunchable_fixup(
     """Re-sign a locally-built macOS app so in-place self-update doesn't reset TCC grants.
 
     A rebuilt ad-hoc bundle (new cdhash, no stable Designated Requirement) reports
-    "Hermes is damaged" and loses every grant. Clear quarantine xattrs, then sign
+    "Tandem is damaged" and loses every grant. Clear quarantine xattrs, then sign
     with ``desktop.macos_signing_identity`` or identifier-pinned ad-hoc, keeping
     entitlements. When a configured identity fails (#121857): over a locally-signed
     install, retry identifier-pinned ad-hoc before the cdhash-only legacy sign;
@@ -858,7 +858,7 @@ def _desktop_macos_relaunchable_fixup(
                     f"  ✗ macOS signing identity {configured!r} did not produce a verified "
                     f"signature, and the installed app is publisher-signed (Team ID "
                     f"{target_sig['team']}); keeping it (no ad-hoc fallback). Fix the identity "
-                    "(e.g. `hermes desktop --setup-tcc-identity` or edit "
+                    "(e.g. `tandem desktop --setup-tcc-identity` or edit "
                     "desktop.macos_signing_identity in config.yaml) and update again."
                 )
                 return False
@@ -933,7 +933,7 @@ def _swap_in_new_macos_bundle(tmp: Path, target: Path, old: Path) -> None:
 
 
 def _running_macos_app_bundles() -> set[Path]:
-    """``.app`` bundles of every live Hermes Desktop process. A running bundle is never swapped
+    """``.app`` bundles of every live Tandem Desktop process. A running bundle is never swapped
     under: Electron loads ``app.asar`` chunks and helper apps lazily, so renaming its bundle away
     and deleting the old tree crashes the live app (the detached updater waits for it to exit)."""
     import psutil
@@ -955,7 +955,7 @@ def _install_rebuilt_desktop_app(desktop_dir: Path, candidates: list[Path]) -> t
     """Copy the rebuilt macOS bundle into every stale or missing installed ``Hermes.app`` in
     *candidates* (``_installed_desktop_apps()``) (#52339).
 
-    ``hermes desktop --build-only`` (what ``hermes update`` runs) packages into
+    ``tandem desktop --build-only`` (what ``tandem update`` runs) packages into
     ``apps/desktop/release/`` only. Finder, the Dock and Spotlight launch the copy in
     ``/Applications`` (or ``~/Applications``), so without this step every update leaves the
     installed shell one build behind the backend it boots. The detached Desktop updater swaps
@@ -987,7 +987,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
     for app in installed:
         if app in missing:
             print(f"  ✓ Reinstalled the Desktop app at {app}: it had been removed, so Finder, "
-                  "the Dock and Spotlight could not find Hermes")
+                  "the Dock and Spotlight could not find Tandem")
         else:
             print(f"  ✓ Installed the rebuilt Desktop app at {app}")
     for problem in problems:
@@ -1006,7 +1006,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
 
 
 def _update_owned_macos_bundles(candidates: list[Path]) -> list[Path]:
-    """The existing bundles in *candidates* that only ``hermes update`` keeps current (#52339).
+    """The existing bundles in *candidates* that only ``tandem update`` keeps current (#52339).
 
     Ownership comes from the bundle's own ``install-stamp.json``. ``updateMechanism: self`` is a
     bootstrap build (a local pack or the bootstrap download), and stamps older than the field
@@ -1025,7 +1025,7 @@ def _update_owned_macos_bundles(candidates: list[Path]) -> list[Path]:
 
 
 def _owns_installed_desktop_apps() -> bool:
-    """A packaged app runs the checkout under the default Hermes home, so only that checkout (on
+    """A packaged app runs the checkout under the default Tandem home, so only that checkout (on
     macOS) may build for it: a bundle from any other tree (a dev worktree) would split shell from
     backend."""
     if sys.platform != "darwin":
@@ -1040,8 +1040,8 @@ def _installed_desktop_apps() -> list[Path]:
 
     When no owned copy is left, a recorded one that has gone missing still counts: its ownership
     stamp left with the bundle, and without the record nothing would ever put it back (Finder, the
-    Dock and Spotlight lose Hermes for good). A copy moved to the other Applications folder keeps
-    its stamp, so it is found instead of doubled. Hermes' GUI uninstall deletes the record.
+    Dock and Spotlight lose Tandem for good). A copy moved to the other Applications folder keeps
+    its stamp, so it is found instead of doubled. Tandem' GUI uninstall deletes the record.
     """
     if not _owns_installed_desktop_apps():
         return []
@@ -1057,7 +1057,7 @@ def _installed_desktop_apps() -> list[Path]:
 
 
 def _installed_desktop_launch_target(desktop_dir: Path, packaged_executable: Path) -> Path:
-    """The executable ``hermes desktop`` launches: the installed app once it IS the checkout build.
+    """The executable ``tandem desktop`` launches: the installed app once it IS the checkout build.
 
     Finder, the Dock and Spotlight open the installed ``Hermes.app``; launching the ``release/``
     bundle beside it ran the same app from a second path while the installed copy went stale
@@ -1099,8 +1099,8 @@ def _install_rebuilt_macos_bundles(
             continue
         if app.resolve() in running:
             problems.append(
-                f"{app} is running and was not refreshed; quit Hermes Desktop and run "
-                "`hermes update` again (or update from inside the app)")
+                f"{app} is running and was not refreshed; quit Tandem Desktop and run "
+                "`tandem update` again (or update from inside the app)")
             continue
         if codesign:
             installed_sig = _macos_signature_summary(codesign, app)
@@ -1201,7 +1201,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sandbox, st = _sandbox_helper_lstat(packaged_executable)
     if not sandbox.exists():
-        print(f"✗ Hermes Desktop is missing Electron's Linux sandbox helper: {sandbox}")
+        print(f"✗ Tandem Desktop is missing Electron's Linux sandbox helper: {sandbox}")
         return False
     # Reject symlinks — chown/chmod must not follow an attacker-controlled link.
     if st is None:
@@ -1220,7 +1220,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sudo = shutil.which("sudo")
     if not sudo:
-        print("✗ Hermes Desktop requires sudo to configure Electron's Linux sandbox helper.")
+        print("✗ Tandem Desktop requires sudo to configure Electron's Linux sandbox helper.")
         return False
 
     print("→ Configuring Electron Linux sandbox helper (sudo required)...")
@@ -1342,10 +1342,10 @@ def _desktop_launch_options() -> tuple[list[str], str, str, str, bool]:
 
 
 def _register_linux_desktop_entry(defer: bool = False):
-    """Install the XDG desktop entry for Hermes Desktop (Linux only, best-effort).
+    """Install the XDG desktop entry for Tandem Desktop (Linux only, best-effort).
 
     ``Exec`` and ``Icon`` are absolute so the entry works outside a login shell.
-    ``hermes uninstall --gui`` removes it.
+    ``tandem uninstall --gui`` removes it.
 
     ``defer=True`` (app-grid launch) returns a ``DeferredDesktopEntryInstall`` that writes the
     entry only once the Electron window is on screen (#111906); ``None`` when nothing is
@@ -1438,7 +1438,7 @@ def build_prepared_desktop(desktop_dir: Path, *, source_mode: bool, npm: str, en
         # stamp stays stale, so `hermes desktop` run outside the app rebuilds it
         # (_desktop_build_needed), and the in-app update completes with desktop=True.
         print(f"  ⚠ Skipped rebuilding the desktop app: this update is running inside it (pid {ancestor}),")
-        print("    and Windows locks a running app's files. Quit Hermes Desktop and run `hermes desktop`")
+        print("    and Windows locks a running app's files. Quit Tandem Desktop and run `tandem desktop`")
         print("    from a terminal, or use Update now in Settings → About, to rebuild and reopen it.")
         return None
     build_label = "source build" if source_mode else "packaged app"
@@ -1623,7 +1623,7 @@ def _launch_installed_macos_desktop_app() -> bool:
     from hermes_cli.bundled_app import launch_detached
 
     pid = launch_detached([str(executable)], cwd=executable.parent)
-    print(f"→ Launched the installed Hermes Desktop app: {executable} (pid {pid})")
+    print(f"→ Launched the installed Tandem Desktop app: {executable} (pid {pid})")
     return True
 
 
@@ -1650,10 +1650,10 @@ def cmd_gui(args: argparse.Namespace):
         print(f"Desktop GUI source not found at: {desktop_dir}")
         if install_kind == "homebrew":
             print(
-                "  This Hermes came from Homebrew, which does not ship the desktop app's\n"
+                "  This Tandem came from Homebrew, which does not ship the desktop app's\n"
                 "  source tree, so it cannot be built from this install.\n"
                 "  Install the desktop app from https://hermes-agent.nousresearch.com,\n"
-                "  or run `hermes desktop` from a source checkout."
+                "  or run `tandem desktop` from a source checkout."
             )
         sys.exit(1)
 
@@ -1696,7 +1696,7 @@ def cmd_gui(args: argparse.Namespace):
             print("  Refusing to run npm without serialization; check the checkout permissions and retry.")
             sys.exit(1)
         if not acquired:
-            print("✗ A Hermes update or another desktop dependency install or build is already running.")
+            print("✗ A Tandem update or another desktop dependency install or build is already running.")
             print("  Wait for it to finish, then retry.")
             sys.exit(2)
 
@@ -1759,7 +1759,7 @@ def cmd_gui(args: argparse.Namespace):
         return
 
     if source_mode:
-        print("→ Launching Hermes Desktop from source build...")
+        print("→ Launching Tandem Desktop from source build...")
         # Launch only the prepared runtime. npm exec can provision a missing
         # Electron package, including when --skip-build was requested.
         electron = _electron_dir(PROJECT_ROOT)
@@ -1789,7 +1789,7 @@ def cmd_gui(args: argparse.Namespace):
         launch_command.append("--close-preview")
     launch_command.extend(_explicit_profile_args())
     if not source_mode:
-        desktop_launch_notice(f"→ Launching packaged Hermes Desktop: {' '.join(launch_command)}")
+        desktop_launch_notice(f"→ Launching packaged Tandem Desktop: {' '.join(launch_command)}")
     # The launch target is ready; the fixups above finished mutating the
     # packaged tree. Electron is the long-lived handoff, so release the build
     # lock now — an open Desktop window must never block a future rebuild.
@@ -1839,7 +1839,7 @@ def cmd_gui(args: argparse.Namespace):
             )
         if deferred_entry is not None:
             deferred_entry.finish()
-        desktop_launch_notice("✓ Hermes Desktop launched in a detached window; you can close this shell.")
+        desktop_launch_notice("✓ Tandem Desktop launched in a detached window; you can close this shell.")
         sys.exit(0)
     with desktop_console_output(source_mode=source_mode) as streams:
         try:
@@ -1851,7 +1851,7 @@ def cmd_gui(args: argparse.Namespace):
             # closing the Desktop, not a launcher crash. Exit cleanly instead
             # of dumping a KeyboardInterrupt traceback from subprocess.run
             # (#59848).
-            print("\n✓ Hermes Desktop closed.")
+            print("\n✓ Tandem Desktop closed.")
             sys.exit(0)
     if deferred_entry is not None:
         deferred_entry.finish()
@@ -1861,7 +1861,7 @@ def cmd_gui(args: argparse.Namespace):
 def _explicit_profile_args() -> list[str]:
     """``--profile <name>`` for Electron when ``-p``/``--profile`` was on argv.
 
-    Explicit flag only. A bare `hermes desktop` must not forward the sticky CLI
+    Explicit flag only. A bare `tandem desktop` must not forward the sticky CLI
     profile — Electron would persist it over the stored desktop one.
     """
     from hermes_cli.main import explicit_cli_profile
@@ -1897,7 +1897,7 @@ def _launch_bundled_desktop(
         if getattr(args, name, False)
     ]
     if refused:
-        print(f"✗ {', '.join(refused)} cannot apply to a bundled Hermes install.")
+        print(f"✗ {', '.join(refused)} cannot apply to a bundled Tandem install.")
         print("  This app ships prebuilt and has no desktop source tree to build.")
         sys.exit(2)
 
@@ -1907,13 +1907,13 @@ def _launch_bundled_desktop(
         # The stamp says bundled, so a tree that is not one is a damaged or
         # mispackaged install. Report it — degrading to the build ladder
         # would run npm inside the app's own resources.
-        print(f"✗ This Hermes is stamped as a bundled desktop install, but {exc}.")
-        print("  The install is damaged — reinstall Hermes from the website.")
+        print(f"✗ This Tandem is stamped as a bundled desktop install, but {exc}.")
+        print("  The install is damaged — reinstall Tandem from the website.")
         sys.exit(1)
 
     if layout.launcher is None:
-        print(f"✗ Found no Hermes Desktop launcher in {layout.app_root}.")
-        print("  The install is damaged — reinstall Hermes from the website.")
+        print(f"✗ Found no Tandem Desktop launcher in {layout.app_root}.")
+        print("  The install is damaged — reinstall Tandem from the website.")
         sys.exit(1)
 
     launch_command = [str(layout.launcher)]
@@ -1927,7 +1927,7 @@ def _launch_bundled_desktop(
     launch_command.extend(electron_flags)
     launch_command.extend(_explicit_profile_args())
     pid = launch_detached(launch_command, env=env, cwd=layout.app_root)
-    print(f"→ Launched Hermes Desktop: {' '.join(launch_command)} (pid {pid})")
+    print(f"→ Launched Tandem Desktop: {' '.join(launch_command)} (pid {pid})")
     sys.exit(0)
 
 

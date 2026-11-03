@@ -1,4 +1,4 @@
-"""POSIX advisory locks must survive Hermes' own database inspection.
+"""POSIX advisory locks must survive Tandem' own database inspection.
 
 close() on ANY file descriptor for a SQLite database cancels every POSIX
 advisory lock the process holds on that file -- including a running VACUUM's
@@ -6,14 +6,14 @@ EXCLUSIVE lock and an in-flight BEGIN IMMEDIATE's RESERVED lock:
 
     https://sqlite.org/howtocorrupt.html#_posix_advisory_locks_canceled_by_a_separate_thread_doing_close_
 
-Hermes used to byte-probe live databases in several places (kanban's
+Tandem used to byte-probe live databases in several places (kanban's
 post-commit page-count check, the zeroed-state.db detector run on every
-SessionDB construction, backup header verification). Under `hermes sessions
+SessionDB construction, backup header verification). Under `tandem sessions
 optimize` this let an external process write into a database while VACUUM was
 rewriting it, producing "database disk image is malformed".
 
 These tests pin the behavioural contract: an external process must stay locked
-out across Hermes' inspection calls.
+out across Tandem' inspection calls.
 """
 
 from __future__ import annotations
@@ -330,7 +330,7 @@ def test_repair_connections_are_tracked_for_byte_probe_safety(tmp_path, clean_re
 
 
 def test_byte_probe_never_cancels_the_repair_exclusion(tmp_path, clean_registry):
-    """A live repair's EXCLUSIVE lock must survive Hermes' own inspection (#63386).
+    """A live repair's EXCLUSIVE lock must survive Tandem' own inspection (#63386).
 
     With the connection tracked the probe is refused, so nothing closes an fd and
     the exclusion keeps holding; if the probe were allowed through, its ``close()``

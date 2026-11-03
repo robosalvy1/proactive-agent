@@ -129,10 +129,10 @@ def test_stable_branded_channel_reuses_the_published_stable_identity(monkeypatch
     is held to."""
     from hermes_cli.release_channels import ChannelError, canonical_json
     from scripts.releases import channel_releases
-    product = {"token": "f204dc6857361e33", "displayName": "Hermes Agent",
+    product = {"token": "f204dc6857361e33", "displayName": "Tandem Agent",
                "appId": "com.nousresearch.hermes-bundled", "appNamePascal": "HermesBundled",
                "artifactNamePascal": "HermesBundled", "cliName": "hermes",
-               "windowsExecutableName": "Hermes Agent", "msixAppIdWithOrg": "NousResearch.HermesBundled"}
+               "windowsExecutableName": "Tandem Agent", "msixAppIdWithOrg": "NousResearch.HermesBundled"}
     monkeypatch.setattr(channel_releases, "product_identity", lambda tag: dict(product))
     with object_server() as (url, objects, _headers, _requests, _faults):
         pub = publisher(url)

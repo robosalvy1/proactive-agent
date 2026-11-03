@@ -945,13 +945,13 @@ def test_dir_child_completion_unblocks_deferred_scratch_parent(kanban_home, tmp_
 
 
 def test_is_managed_scratch_path_rejects_kanban_metadata_subtrees(kanban_home):
-    """Hermes' own DB/metadata/log subtrees under ``<kanban_home>/kanban`` are NOT managed.
+    """Tandem' own DB/metadata/log subtrees under ``<kanban_home>/kanban`` are NOT managed.
 
     Regression guard for the Copilot finding on #28819: a scratch task whose
     ``workspace_path`` was mis-set to the kanban home, the logs dir, or a
     board's metadata dir (i.e. the board root itself, not its ``workspaces/``
     child) must be refused. Without this, the containment check would happily
-    ``shutil.rmtree`` Hermes' DB/metadata/logs on task completion.
+    ``shutil.rmtree`` Tandem' DB/metadata/logs on task completion.
     """
     kanban_root = kanban_home / "kanban"
     kanban_root.mkdir(parents=True, exist_ok=True)
@@ -1449,7 +1449,7 @@ def test_unlink_tasks_triggers_recompute_ready(kanban_home):
     complete_task and unblock_task.
 
     Before the fix, child stayed 'todo' indefinitely after unlink; only the
-    next dispatcher tick or a manual 'hermes kanban recompute' would promote it.
+    next dispatcher tick or a manual 'tandem kanban recompute' would promote it.
     """
     with kbc.connect() as conn:
         # A is done.
@@ -1576,7 +1576,7 @@ def test_connect_heals_reduced_tasks_schema_seeded_by_external_harness(kanban_ho
 
 
 def test_resolve_hermes_argv_prefers_module_form_over_path_shim(monkeypatch):
-    """A `hermes` on PATH must not shadow the running install (#111569):
+    """A `tandem` on PATH must not shadow the running install (#111569):
     the module argv wins whenever ``hermes_cli`` is importable; only an
     explicit ``$HERMES_BIN`` overrides it."""
     import shutil
@@ -1623,10 +1623,10 @@ def test_default_spawn_pins_repo_root_on_module_worker_pythonpath(tmp_path, monk
     """The dispatcher's worker must carry the import context of the install that spawned it.
 
     The worker is always ``sys.executable -m hermes_cli.kanban_worker_client`` (it only submits
-    the claim to the profile owner), and the worker env scrub strips Hermes-owned PYTHONPATH
+    the claim to the profile owner), and the worker env scrub strips Tandem-owned PYTHONPATH
     entries, so a bare module child died on import and the board auto-blocked (#122299,
     #122487, #122500). The spawned env must put the running install's root first on
-    PYTHONPATH. Main's carve-out for a resolved ``hermes`` shim path does not apply here: the
+    PYTHONPATH. Main's carve-out for a resolved ``tandem`` shim path does not apply here: the
     worker never runs the resolved CLI argv, so a ``$HERMES_BIN``/PATH shim can neither replace
     the module child nor drop the pin.
     """

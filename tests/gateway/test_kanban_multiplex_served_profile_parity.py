@@ -1,6 +1,6 @@
 """Standalone-vs-served parity for the kanban dispatcher and notifier under
 ``gateway.multiplex_profiles``: a worker spawned for served profile X gets the env a standalone
-``hermes -p X`` dispatcher would build, and X's notifications are rendered/filtered under X's
+``tandem -p X`` dispatcher would build, and X's notifications are rendered/filtered under X's
 config.
 """
 

@@ -1,7 +1,7 @@
 """Live plugin-catalog lookups must not multiply per installed plugin.
 
 A slow or unreachable catalog host used to cost one request timeout per plugin row, on the
-dashboard plugins-hub rebuild (inline on the event loop) and on ``hermes plugins list``.
+dashboard plugins-hub rebuild (inline on the event loop) and on ``tandem plugins list``.
 """
 
 from __future__ import annotations

@@ -90,7 +90,7 @@ def test_every_owed_identity_requires_current_evidence(monkeypatch, bad):
 
 @pytest.mark.parametrize("supervisor", ["desktop", "launchd", "systemd"])
 def test_supervised_serve_row_never_vetoes_gateway_discharge(monkeypatch, supervisor):
-    """A host that also runs a supervised ``hermes dashboard``/``serve`` carries that row in every
+    """A host that also runs a supervised ``tandem dashboard``/``serve`` carries that row in every
     receipt; it must not make gateway coverage unverifiable (#115090). The gateways restarted at
     the pulled SHA and the fleet has since moved on to a newer checkout: nothing is owed.
     """

@@ -5,7 +5,7 @@ registration requests as bare ``httpx.Request`` objects inside
 ``async_auth_flow``. The client's default headers never apply to them, so
 they leave with NO ``User-Agent`` at all. Some WAFs reject header-less
 requests outright: coda.io answers 403 on every discovery and registration
-call, which Hermes then misreports as "only allows pre-approved OAuth
+call, which Tandem then misreports as "only allows pre-approved OAuth
 clients". (``oauth.user_agent`` does not help — it is stamped only on
 token-endpoint requests.)
 
@@ -62,7 +62,7 @@ async def _make_flow(tmp_path, monkeypatch, *, registered=True):
         server_url="https://example.com/mcp",
         client_metadata=OAuthClientMetadata(
             redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-            client_name="Hermes Agent",
+            client_name="Tandem Agent",
         ),
         storage=storage,
         redirect_handler=_noop_redirect,

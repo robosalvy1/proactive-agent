@@ -212,7 +212,7 @@ def _get_named_custom_provider(
     if isinstance(config.get("custom_providers"), dict):
         logger.warning("custom_providers in config.yaml is a dict, not a list. "
                        "Each entry must be prefixed with '-' in YAML. "
-                       "Run 'hermes doctor' for details.")
+                       "Run 'tandem doctor' for details.")
         return None
     custom_providers = rp.get_compatible_custom_providers(config)
     return _match_legacy_custom_provider(requested_norm, custom_providers) if custom_providers else None

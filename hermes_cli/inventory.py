@@ -728,7 +728,7 @@ def _append_unconfigured_rows(
             warning = (
                 f"Configured provider missing usable credentials; paste {key_env} to reactivate. {tail}"
                 if auth_type == "api_key" and key_env
-                else f"Configured provider is not authenticated; run `hermes model` to reactivate. {tail}"
+                else f"Configured provider is not authenticated; run `tandem model` to reactivate. {tail}"
             )
             extras.append(_canonical_row(
                 entry, cur, models=[saved_model] if saved_model else [], total_models=1 if saved_model else 0,
@@ -741,7 +741,7 @@ def _append_unconfigured_rows(
 
 
 def _anthropic_oauth_credentials_present() -> bool:
-    """True when the user explicitly authenticated Anthropic via OAuth (Hermes device flow or Claude Code
+    """True when the user explicitly authenticated Anthropic via OAuth (Tandem device flow or Claude Code
     login) — those leave no trace in active_provider / model.provider / API-key env vars."""
     try:
         from agent.anthropic_credentials import read_claude_code_credentials, read_hermes_oauth_credentials
@@ -848,7 +848,7 @@ def _apply_picker_hints(rows: list[dict]) -> None:
         row["auth_type"] = auth_type
         row["key_env"] = key_env
         row["warning"] = (f"paste {key_env} to activate" if auth_type == "api_key" and key_env
-                          else f"run `hermes model` to configure ({auth_type})")
+                          else f"run `tandem model` to configure ({auth_type})")
 
 
 def _reorder_canonical(rows: list[dict]) -> list[dict]:

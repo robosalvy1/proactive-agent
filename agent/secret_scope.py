@@ -130,9 +130,9 @@ class UnscopedSecretError(RuntimeError):
             secret_name, developer_detail = "", secret_name
         what = f"this profile's {secret_name}" if secret_name else "this profile's API key"
         super().__init__(
-            f"Hermes could not read {what} (an internal profile-scoping bug on the multiplexed "
-            "gateway, not your configuration). Run `hermes gateway restart`; if it keeps happening, "
-            "report it with `hermes debug share`."
+            f"Tandem could not read {what} (an internal profile-scoping bug on the multiplexed "
+            "gateway, not your configuration). Run `tandem gateway restart`; if it keeps happening, "
+            "report it with `tandem debug share`."
         )
         self.secret_name = secret_name
         self.developer_detail = developer_detail
@@ -278,7 +278,7 @@ def _strip_inline_comment(value: str) -> str:
 
 
 def _parse_env_value(raw_value: str) -> str:
-    """Parse the small .env value subset Hermes writes itself (bare, 'single', or "double" with
+    """Parse the small .env value subset Tandem writes itself (bare, 'single', or "double" with
     ``\\"`` / ``\\\\`` escapes)."""
     value = raw_value.strip()
     if len(value) >= 2 and value[0] == value[-1] == '"':

@@ -233,7 +233,7 @@ class _FakeCreateStream:
 def _codex_request_kwargs():
     return {
         "model": "gpt-5-codex",
-        "instructions": "You are Hermes.",
+        "instructions": "You are Tandem.",
         "input": [{"role": "user", "content": "Ping"}],
         "tools": None,
         "store": False,
@@ -261,13 +261,13 @@ def test_build_api_kwargs_codex(monkeypatch):
     agent = _build_agent(monkeypatch)
     kwargs = agent._build_api_kwargs(
         [
-            {"role": "system", "content": "You are Hermes."},
+            {"role": "system", "content": "You are Tandem."},
             {"role": "user", "content": "Ping"},
         ]
     )
 
     assert kwargs["model"] == "gpt-5-codex"
-    assert kwargs["instructions"] == "You are Hermes."
+    assert kwargs["instructions"] == "You are Tandem."
     assert kwargs["store"] is False
     assert isinstance(kwargs["input"], list)
     assert kwargs["input"][0]["role"] == "user"
@@ -313,7 +313,7 @@ def _azure_reasoning_item():
 
 def _azure_post_tool_messages():
     return [
-        {"role": "system", "content": "You are Hermes."},
+        {"role": "system", "content": "You are Tandem."},
         {"role": "user", "content": "Create a marker"},
         {
             "role": "assistant",
@@ -362,7 +362,7 @@ def test_build_api_kwargs_azure_foundry_non_tool_preserves_reasoning(monkeypatch
     agent = _build_azure_foundry_agent(monkeypatch)
 
     messages = [
-        {"role": "system", "content": "You are Hermes."},
+        {"role": "system", "content": "You are Tandem."},
         {"role": "user", "content": "Explain recursion"},
         {
             "role": "assistant",
@@ -484,7 +484,7 @@ def test_run_codex_stream_strips_nested_request_override_retention(
     request = ResponsesApiTransport().build_kwargs(
         model="gpt-5.6-sol",
         messages=[
-            {"role": "system", "content": "You are Hermes."},
+            {"role": "system", "content": "You are Tandem."},
             {"role": "user", "content": "Ping"},
         ],
         tools=[],
@@ -1404,7 +1404,7 @@ def test_build_api_kwargs_xai_oauth_sends_cache_key_via_extra_body(monkeypatch):
     agent = _build_xai_oauth_agent(monkeypatch)
     kwargs = agent._build_api_kwargs(
         [
-            {"role": "system", "content": "You are Hermes."},
+            {"role": "system", "content": "You are Tandem."},
             {"role": "user", "content": "Ping"},
         ]
     )
@@ -1618,7 +1618,7 @@ def test_preflight_codex_api_kwargs_strips_optional_function_call_id(monkeypatch
     preflight = _preflight_codex_api_kwargs(
         {
             "model": "gpt-5-codex",
-            "instructions": "You are Hermes.",
+            "instructions": "You are Tandem.",
             "input": [
                 {"role": "user", "content": "hi"},
                 {
@@ -1647,7 +1647,7 @@ def test_preflight_codex_api_kwargs_rejects_function_call_output_without_call_id
         _preflight_codex_api_kwargs(
             {
                 "model": "gpt-5-codex",
-                "instructions": "You are Hermes.",
+                "instructions": "You are Tandem.",
                 "input": [{"type": "function_call_output", "output": "{}"}],
                 "tools": [],
                 "store": False,
@@ -1739,7 +1739,7 @@ def test_run_conversation_compresses_mid_turn_before_output_budget_exhaustion(mo
         compress_calls.append(approx_tokens)
         return [
             {"role": "user", "content": "[summary of prior tool-heavy work]"},
-        ], "You are Hermes."
+        ], "You are Tandem."
 
     monkeypatch.setattr(agent, "_execute_tool_calls", _fake_execute_tool_calls)
     monkeypatch.setattr(agent, "_compress_context", _fake_compress_context)
@@ -1808,7 +1808,7 @@ def test_mid_turn_compaction_does_not_double_persist_in_place_rows(monkeypatch, 
         compacted = [{"role": "user", "content": "[summary of prior tool-heavy work]"}]
         agent._session_db.archive_and_compact(agent.session_id, compacted)
         agent._flushed_db_message_ids = set()
-        return compacted, "You are Hermes."
+        return compacted, "You are Tandem."
 
     monkeypatch.setattr(agent, "_execute_tool_calls", _fake_execute_tool_calls)
     monkeypatch.setattr(agent, "_compress_context", _fake_compress_context)

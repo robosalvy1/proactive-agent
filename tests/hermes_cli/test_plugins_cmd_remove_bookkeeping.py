@@ -57,7 +57,7 @@ def test_remove_forgets_every_config_trace_and_resets_the_memory_provider(home):
 
 def test_remove_clears_the_toolset_of_a_plugin_without_provides_tools(home):
     """``remove`` drops the plugin's toolset from a saved ``platform_toolsets`` list even when
-    plugin.yaml never declared ``provides_tools``; otherwise ``hermes config check`` warns about an
+    plugin.yaml never declared ``provides_tools``; otherwise ``tandem config check`` warns about an
     unknown toolset forever."""
     from tools.registry import registry
 

@@ -2,7 +2,7 @@
 
 Capture via sounddevice, WAV via stdlib wave, STT via tools.transcription_tools,
 playback via sounddevice or system players. Optional deps: the ``audio-io`` / ``stt-whisper``
-extras, installed through PM (``hermes tools`` configures speech-to-text).
+extras, installed through PM (``tandem tools`` configures speech-to-text).
 """
 
 import logging
@@ -308,7 +308,7 @@ def detect_audio_environment() -> dict:
         report("Running over SSH with a reachable PulseAudio/PipeWire sound server",
                "Running over SSH -- no audio devices available.\n"
                "  If a sound server (PulseAudio/PipeWire) is running on this host,\n"
-               "  point Hermes at it, e.g.:\n"
+               "  point Tandem at it, e.g.:\n"
                "    export XDG_RUNTIME_DIR=/run/user/$(id -u)\n"
                "    # or: export PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native")
 
@@ -1523,7 +1523,7 @@ def check_voice_requirements() -> dict[str, Any]:
         else f"Audio capture: MISSING ({_audio_unavailable_reason()})",
         "STT provider: DISABLED in config (stt.enabled: false)" if not stt_enabled
         else f"STT provider: {stt_label}" if stt_label
-        else ("STT provider: MISSING (run `hermes tools` and configure "
+        else ("STT provider: MISSING (run `tandem tools` and configure "
               "Speech-to-Text: Local Whisper or a cloud provider)"),
     ]
     details += [f"Environment: {w}" for w in env_check["warnings"]]

@@ -129,7 +129,7 @@ def test_limit_hit_keeps_drained_matches_when_group_kill_is_refused(tree, ops_fa
 
 
 def test_local_search_runs_the_pinned_ripgrep_not_the_first_on_path(_local_env, tmp_path, monkeypatch):
-    """The terminal PATH puts the user's tools first; Hermes's own search still runs PM's rg."""
+    """The terminal PATH puts the user's tools first; Tandem's own search still runs PM's rg."""
     import pm
     from pm.install import InstalledPackage
 

@@ -62,7 +62,7 @@ def test_sessions_delete_with_unfinished_turn_points_to_discard(tmp_path, monkey
         main_mod.main()
     output = capsys.readouterr().out
     assert exited.value.code == 1
-    assert ('hermes sessions discard s1' in output) == (status == 'unknown'), output
+    assert ('tandem sessions discard s1' in output) == (status == 'unknown'), output
     assert 'queued or running turn' in output or status == 'unknown', output
     reopened = SessionDB(tmp_path / 'state.db')
     assert reopened.get_session('s1') is not None
@@ -70,7 +70,7 @@ def test_sessions_delete_with_unfinished_turn_points_to_discard(tmp_path, monkey
 
 
 def _run_prune(monkeypatch, capsys, argv_tail, candidates=None, skipped_open=0):
-    """Run `hermes sessions prune <argv_tail>` against a FakeDB, capturing
+    """Run `tandem sessions prune <argv_tail>` against a FakeDB, capturing
     the filter kwargs passed to list_prune_candidates. Auto-confirms."""
     import hermes_cli.main as main_mod
     import hermes_state
@@ -128,7 +128,7 @@ def _run_prune(monkeypatch, capsys, argv_tail, candidates=None, skipped_open=0):
     return seen, capsys.readouterr().out
 
 def test_sessions_prune_bare_keeps_90_day_default(monkeypatch, capsys):
-    """A truly bare `hermes sessions prune` keeps the implicit 90-day cutoff."""
+    """A truly bare `tandem sessions prune` keeps the implicit 90-day cutoff."""
     import time as _time
 
     filters, _out = _run_prune(monkeypatch, capsys, [])

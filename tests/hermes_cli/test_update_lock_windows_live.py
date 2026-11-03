@@ -505,8 +505,8 @@ def test_a_refusal_the_readers_swallow_is_what_the_update_reports(tmp_path):
                          env={**os.environ, "HERMES_HOME": str(home), "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}, check=False)
     text = out.stdout + out.stderr
     assert out.returncode == 1, text
-    assert "`hermes update` stopped: Windows would not put `git` in this update's process job" in text, text
-    assert "Nothing was changed" in text and "Run `hermes update` again from a regular terminal" in text, text
+    assert "`tandem update` stopped: Windows would not put `git` in this update's process job" in text, text
+    assert "Nothing was changed" in text and "Run `tandem update` again from a regular terminal" in text, text
 
 
 # --- F03/N11: both historical takeover hops are bound to the job (or leased and receipted) -----

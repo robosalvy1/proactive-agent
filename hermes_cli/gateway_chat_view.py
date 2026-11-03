@@ -40,7 +40,7 @@ class GatewayChatView:
         self.generation = snapshot.get("execution_generation", 0)
         self.prompts = {p["prompt_id"]: p for p in snapshot.get("prompts", [])}
         self.pending = snapshot.get("pending", [])
-        self.model = str((snapshot.get("info") or {}).get("model") or "Hermes").split("/")[-1]
+        self.model = str((snapshot.get("info") or {}).get("model") or "Tandem").split("/")[-1]
         # ``--format stream-json``: stdout belongs to the JSONL protocol, so every human line is
         # replaced by an emitter event and the terminal record carries the exit code.
         self.emitter = emitter
@@ -416,7 +416,7 @@ class GatewayChatView:
             # submitting so nothing is left queued for the next interactive resume to find.
             lost = " ".join(self.unknown_admissions())
             return self._detach("Unknown execution blocks this session; nothing was submitted. Resolve it "
-                                f"with `hermes sessions discard {self.session_id} --yes` (or /discard {lost} "
+                                f"with `tandem sessions discard {self.session_id} --yes` (or /discard {lost} "
                                 "interactively; both are prompt.resolve_unknown), then retry.")
         renderer = asyncio.create_task(self.render())
         try:
@@ -468,7 +468,7 @@ class GatewayChatView:
             from prompt_toolkit import PromptSession
             from prompt_toolkit.patch_stdout import patch_stdout
             from hermes_cli.skin_engine import get_active_prompt_symbol, get_active_skin
-            welcome = "Welcome to Hermes Agent! Type your message or /help for commands."
+            welcome = "Welcome to Tandem Agent! Type your message or /help for commands."
             print(get_active_skin().get_branding("welcome", welcome), flush=True)
             # The classic status bar's leading segments: model, then the attached session.
             prompt = PromptSession(erase_when_done=True,
@@ -511,4 +511,4 @@ def resume_footer(session_id):
     from hermes_cli.profiles import get_active_profile_name
     profile = get_active_profile_name()
     flag = "" if profile in ("default", "custom") else f" -p {profile}"
-    return f"\n{t('cli.session.exit_resume_hint')}\n  hermes --resume {session_id}{flag}"
+    return f"\n{t('cli.session.exit_resume_hint')}\n  tandem --resume {session_id}{flag}"

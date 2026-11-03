@@ -5,7 +5,7 @@ Regression coverage for the cua-driver silent-no-op bug (issue #22737).
 When a no-key provider's only install side-effect is a `post_setup` hook
 (cua-driver, etc.), the gate function used to fall through to the
 `_toolset_has_keys` catch-all, which returned True for any provider with
-empty `env_vars` — causing `hermes tools` to write the toolset to config
+empty `env_vars` — causing `tandem tools` to write the toolset to config
 and exit `✓ Saved` without ever invoking the post_setup install. These
 tests pin the new predicate-aware behaviour so the regression doesn't
 sneak back in.
@@ -62,7 +62,7 @@ class TestBrowserBackendPrompt:
     """Regression: `_toolset_needs_configuration_prompt` for the browser toolset
     only checked `browser.cloud_provider` (set by `browser_provider` rows),
     ignoring `browser.backend` (set by the `browser_backend` "Browser Use" row).
-    This made the provider picker re-appear every time `hermes tools` was
+    This made the provider picker re-appear every time `tandem tools` was
     opened, even when Browser Use was already configured.
     """
 
@@ -97,7 +97,7 @@ class TestBrowserBackendPromptThroughLoader:
 
     `load_config()` merges ``DEFAULT_CONFIG``, where ``browser.backend`` is ``""`` — so the key is
     present on every install and a presence test would suppress the picker everywhere. These pin the
-    behaviour against the merged dict a real ``hermes tools`` run feeds the gate.
+    behaviour against the merged dict a real ``tandem tools`` run feeds the gate.
     """
 
     def _home(self, tmp_path, body: str):

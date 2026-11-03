@@ -408,7 +408,7 @@ class TestMatrixDmDetection:
 # ---------------------------------------------------------------------------
 
 class TestMatrixBangCommandAlias:
-    """Matrix clients may reserve /commands, so Hermes supports !commands."""
+    """Matrix clients may reserve /commands, so Tandem supports !commands."""
 
     def setup_method(self):
         self.adapter = _make_adapter()

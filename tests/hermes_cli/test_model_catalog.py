@@ -339,7 +339,7 @@ class TestIntegrationWithModelsModule:
 
     def test_picker_nous_row_uses_curated_list(self, tmp_path, monkeypatch):
         """The /model picker surfaces the curated ``_PROVIDER_MODELS["nous"]``
-        list in curated order — matching the ``hermes model`` CLI — not the live
+        list in curated order — matching the ``tandem model`` CLI — not the live
         ``/v1/models`` catalog or the manifest. Portal free/paid recommendations
         are unioned in when reachable; offline (as here, with the Portal calls
         stubbed out) it's exactly the curated list.
@@ -603,7 +603,7 @@ class TestManifestMatchesInRepoLists:
     def test_inclusion_ling_free_is_curated_and_published(self):
         """inclusionai/ling-3.0-flash:free must reach the picker from BOTH sources (#73686).
 
-        The model works when named explicitly via ``hermes config set model.default`` but was
+        The model works when named explicitly via ``tandem config set model.default`` but was
         absent from the curated fallback list, so the runtime fetcher's stale-while-revalidate
         and offline floors never offered it in the Desktop model picker. The static list is
         the floor; the published manifest is what fresh installs fetch — both must carry it.

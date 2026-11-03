@@ -152,7 +152,7 @@ def test_hook_captures_on_a_background_thread(home, model):
 
 
 def test_oneshot_exit_waits_for_a_started_capture(home, model, monkeypatch):
-    """`hermes -z` hard-exits after the reply; its cleanup must let the capture commit first."""
+    """`tandem -z` hard-exits after the reply; its cleanup must let the capture commit first."""
     import threading
 
     from hermes_cli import oneshot

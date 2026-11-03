@@ -81,7 +81,7 @@ def test_remove_desktop_app_leftovers_removes_hermes_library_entries(fake_home):
     ours = []
     for parent, name in (
         ("Caches", "com.nousresearch.hermes"),
-        ("Logs", "Hermes"),
+        ("Logs", "Tandem"),
         ("WebKit", "com.nousresearch.hermes"),
         ("HTTPStorages", "com.nousresearch.hermes"),
         ("Saved Application State", "com.nousresearch.hermes.savedState"),

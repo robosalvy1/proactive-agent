@@ -271,7 +271,7 @@ def test_empty_key_error_names_actual_provider(monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "fireworks" in out
     assert "OPENROUTER_API_KEY" not in out
-    assert "hermes model" in out or "hermes setup" in out
+    assert "tandem model" in out or "tandem setup" in out
 
 
 # ---------------------------------------------------------------------------
@@ -311,7 +311,7 @@ def test_benched_credential_prints_cooldown_instead_of_wizard(monkeypatch, capsy
     shell.requested_provider = "nous"
 
     def _raise(**kwargs):
-        raise AuthError("Hermes is not logged into Nous Portal.", provider="nous",
+        raise AuthError("Tandem is not logged into Nous Portal.", provider="nous",
                         code="nous_auth_missing", relogin_required=True)
 
     monkeypatch.setattr("hermes_cli.runtime_provider.resolve_runtime_provider", _raise)
@@ -328,7 +328,7 @@ def test_benched_credential_prints_cooldown_instead_of_wizard(monkeypatch, capsy
                          cause=t("cli.startup.cooldown_cause_rate_limit"), minutes=1))
     assert t("cli.startup.cooldown_cause_token_refresh") not in out
     assert "not logged into Nous Portal" in out
-    assert "re-authenticate" not in out and "hermes model" not in out
+    assert "re-authenticate" not in out and "tandem model" not in out
 
 
 def test_auth_json_only_login_explains_instead_of_wizard(monkeypatch, capsys, tmp_path):
@@ -346,7 +346,7 @@ def test_auth_json_only_login_explains_instead_of_wizard(monkeypatch, capsys, tm
         monkeypatch.delenv(key, raising=False)
 
     def _nous_fail():
-        raise AuthError("Hermes is not logged into Nous Portal.", provider="nous",
+        raise AuthError("Tandem is not logged into Nous Portal.", provider="nous",
                         code="nous_auth_missing", relogin_required=True)
 
     monkeypatch.setattr(rp, "resolve_provider", lambda *a, **kw: "nous")
@@ -369,7 +369,7 @@ def test_auth_json_only_login_explains_instead_of_wizard(monkeypatch, capsys, tm
     offered = []
     monkeypatch.setattr(shell, "_offer_first_run_setup", lambda: offered.append(True) or True)
     monkeypatch.setattr("hermes_cli.runtime_provider.resolve_runtime_provider", lambda **kw: (_ for _ in ()).throw(
-        AuthError("Hermes is not connected to any AI provider yet.", code="no_provider_configured")))
+        AuthError("Tandem is not connected to any AI provider yet.", code="no_provider_configured")))
     shell._maybe_offer_first_run_setup()
     assert offered == [True]
     assert "not logged into" not in capsys.readouterr().out

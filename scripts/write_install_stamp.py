@@ -1,4 +1,4 @@
-"""Generate canonical install-stamp.json for packaged Hermes builds.
+"""Generate canonical install-stamp.json for packaged Tandem builds.
 
 All packagers (Docker, Nix, desktop) call this script to produce the same
 ``install-stamp.json`` file. Runtime surfaces (CLI, TUI, desktop) read the
@@ -305,7 +305,7 @@ def main() -> int:
         "--update-mechanism",
         required=True,
         choices=UPDATE_MECHANISMS,
-        help="Who applies the next update: 'self' (hermes update), "
+        help="Who applies the next update: 'self' (tandem update), "
         "'app-installer' (Windows App Installer), 'electron-updater' (in-app updater), "
         "'external' (nix/docker/store)",
     )

@@ -41,7 +41,7 @@ from hermes_constants import get_hermes_home
 
 
 def _launch_cwd_for_session(source: str) -> Optional[str]:
-    """cwd to stamp on a new session row (``hermes -c`` / ``--resume``), or None.
+    """cwd to stamp on a new session row (``tandem -c`` / ``--resume``), or None.
 
     Only local CLI sessions record one: gateway/cron/remote backends (non-"local" ``TERMINAL_ENV``) have no
     stable host cwd for the agent's tools.
@@ -308,7 +308,7 @@ class AIAgent(
 
     def _session_row_model_config(self) -> Any:
         """``model_config`` for the lazily created session row: the init config plus a live /yolo toggled
-        before the first turn (``hermes --resume`` restores it)."""
+        before the first turn (``tandem --resume`` restores it)."""
         from tools.approval_yolo import with_session_yolo
         return with_session_yolo(self._session_init_model_config, self.session_id)
 

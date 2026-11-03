@@ -128,7 +128,7 @@ class TestProfileScopedHubActions:
     def test_hub_install_spawns_with_profile_flag(
         self, client, isolated_profiles, monkeypatch
     ):
-        """Hub installs must go through a fresh ``hermes -p <profile>``
+        """Hub installs must go through a fresh ``tandem -p <profile>``
         subprocess — the in-process scope can't reach skills_hub's
         import-time SKILLS_DIR binding."""
         from hermes_cli import web_server
@@ -167,7 +167,7 @@ class TestProfileScopedHubActions:
         self, client, isolated_profiles, monkeypatch
     ):
         """``default`` is a real named profile, not an alias for "the dashboard's own".
-        A pooled ``hermes -p worker_alpha serve`` dashboard answering a hub action with
+        A pooled ``tandem -p worker_alpha serve`` dashboard answering a hub action with
         ``profile=default`` must still emit ``-p default``: without it the child's env
         carries this process's home verbatim and the install lands on worker_alpha."""
         calls = []

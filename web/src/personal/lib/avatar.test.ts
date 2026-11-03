@@ -8,7 +8,7 @@ describe("agent avatar palette", () => {
   });
 
   it("spreads different names across the palette", () => {
-    const names = ["Muse", "Juniper", "Hermes", "Atlas", "Pip", "Nova", "Sage", "Echo"];
+    const names = ["Muse", "Juniper", "Tandem", "Atlas", "Pip", "Nova", "Sage", "Echo"];
     expect(new Set(names.map(paletteFor)).size).toBeGreaterThan(2);
     for (const name of names) expect(Object.values(AVATAR_PALETTES)).toContain(paletteFor(name));
   });

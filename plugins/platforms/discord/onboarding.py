@@ -193,7 +193,7 @@ def _print_invite(check: DiscordBotCheck) -> None:
     if check.server_count == 0:
         print_info("📨 The bot isn't in any server yet. Open this link to add it to yours:")
     else:
-        print_info("📨 Invite link (adds the bot to a server with the permissions Hermes uses):")
+        print_info("📨 Invite link (adds the bot to a server with the permissions Tandem uses):")
     print_info(f"   {check.invite_url}")
     print_info("   Once you share a server with the bot you can also DM it directly.")
 
@@ -263,7 +263,7 @@ def interactive_setup() -> None:
     for line in (
         "1. Open https://discord.com/developers/applications → New Application",
         "2. Open the Bot page → Reset Token → copy the token",
-        "Hermes checks the token, the intents and the invite link for you next.",
+        "Tandem checks the token, the intents and the invite link for you next.",
         "Guide: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/discord",
     ):
         print_info(line)
@@ -281,7 +281,7 @@ def interactive_setup() -> None:
     _prompt_allowlist(check, prompt, prompt_yes_no)
     print()
     for line in (
-        "📬 Home Channel: where Hermes delivers cron job results,",
+        "📬 Home Channel: where Tandem delivers cron job results,",
         "   cross-platform messages, and notifications.",
         "   Easiest: type /set-home in a Discord channel once the bot is running.",
         "   Or paste a channel ID (Developer Mode → right-click a channel → Copy Channel ID).",

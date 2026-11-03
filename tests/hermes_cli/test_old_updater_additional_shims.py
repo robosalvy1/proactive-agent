@@ -16,7 +16,7 @@ from tests.compat.old_updater_support import (
 
 
 @pytest.mark.parametrize("command,profile", [
-    ("", None), ("hermes -p ops gateway run", "ops"), ("hermes --profile=ops gateway run", "ops"),
+    ("", None), ("tandem -p ops gateway run", "ops"), ("tandem --profile=ops gateway run", "ops"),
 ])
 def test_live_profile_parser_does_no_external_work(command, profile, no_external_work):
     from gateway.status import profile_flag_value

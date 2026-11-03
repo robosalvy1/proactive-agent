@@ -73,7 +73,7 @@ def test_complete_names_unsatisfied_parent(running_child_with_parent):
 
 
 def test_cli_complete_names_unsatisfied_parent(running_child_with_parent, monkeypatch, capsys):
-    """`hermes kanban complete` (operator, --force) reports the same blockers."""
+    """`tandem kanban complete` (operator, --force) reports the same blockers."""
     import argparse
 
     from hermes_cli import kanban as kc

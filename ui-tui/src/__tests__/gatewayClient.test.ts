@@ -298,7 +298,7 @@ describe('GatewayClient websocket attach mode', () => {
     } finally { gw.kill(); vi.useRealTimers() }
   })
 
-  it('pins the launcher tool-progress mode (hermes --tui -v) on the created session before returning it', async () => {
+  it('pins the launcher tool-progress mode (tandem --tui -v) on the created session before returning it', async () => {
     vi.useFakeTimers()
     delete process.env.HERMES_TUI_GATEWAY_URL
     vi.stubEnv('HERMES_TUI_TOOL_PROGRESS', 'verbose')

@@ -136,7 +136,7 @@ def _parse_manifest_v2_fields(data: Mapping, key: str) -> dict[str, Any]:
                        "Plugin %s: manifest_version %r is not an integer; treating as 1", 1)
     if mv > SUPPORTED_MANIFEST_VERSION:
         logger.warning(
-            "Plugin %s: manifest_version %d is newer than this Hermes "
+            "Plugin %s: manifest_version %d is newer than this Tandem "
             "supports (%d); loading anyway and ignoring unknown fields", key, mv, SUPPORTED_MANIFEST_VERSION,
         )
     raw_api = data.get("api_version")
@@ -240,7 +240,7 @@ def resolve_plugin_load_order(manifests: Mapping[str, PluginManifest]) -> list[s
                 logger.warning(
                     "Plugin %s requires plugin '%s' which is not enabled/"
                     "installed; loading anyway (probe availability at runtime "
-                    "via ctx.has_plugin). Run `hermes plugins enable %s` if it is installed.",
+                    "via ctx.has_plugin). Run `tandem plugins enable %s` if it is installed.",
                     k, dep_id, dep_id,
                 )
             elif resolved == k:
@@ -435,7 +435,7 @@ _VERSION_COMPARATOR_RE = re.compile(r"^\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
 
 
 def running_hermes_version() -> str:
-    """Base release version of the Hermes code that is running."""
+    """Base release version of the Tandem code that is running."""
     from hermes_cli.version_info import get_version_info
 
     return get_version_info().base_version

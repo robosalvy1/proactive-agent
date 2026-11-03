@@ -124,7 +124,7 @@ class TestForeignHarnessManifestDirs:
         ``plugin.json`` per OTHER agent harness inside ``.claude-plugin/``,
         ``.codex-plugin/`` etc. Those manifests can never satisfy the Agent
         Plugins v1 schema, so scanning them warned on every discovery pass.
-        They must be skipped silently; the plugin's real Hermes manifest
+        They must be skipped silently; the plugin's real Tandem manifest
         (``.hermes-plugin/plugin.yaml``) is still discovered."""
         import os
         hermes_home = Path(os.environ["HERMES_HOME"])  # set by hermetic conftest fixture

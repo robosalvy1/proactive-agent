@@ -472,7 +472,7 @@ def _replay_reasoning_items(
     ids, ``compaction`` checkpoints unless THIS request carries ``context_management`` (else a persisted
     checkpoint erases pre-checkpoint history on a model that cannot decrypt it), and items stamped by
     another issuer or model (HTTP 400). Items without a model stamp (legacy or unstamped) replay on a
-    matching issuer. ``id`` (store=False lookups 404) and the Hermes provenance fields are stripped."""
+    matching issuer. ``id`` (store=False lookups 404) and the Tandem provenance fields are stripped."""
     global _CROSS_ISSUER_WARN_EMITTED
     replayed: list[dict[str, Any]] = []
     for ri in _as_list(msg.get("codex_reasoning_items")):
@@ -628,7 +628,7 @@ def _chat_messages_to_responses_input(
 
     Earlier (PR #26644, May 2026) we believed xAI's OAuth/SuperGrok ``/v1/responses`` surface rejected
     replayed ``encrypted_content`` reasoning items minted by prior turns, and we stripped them. That
-    decision was wrong — xAI explicitly relies on Hermes threading encrypted reasoning back across turns for
+    decision was wrong — xAI explicitly relies on Tandem threading encrypted reasoning back across turns for
     cross-turn coherence (the whole point of their partnership integration). We now replay encrypted
     reasoning on every Responses transport (xAI, native Codex, custom relays) and let xAI tell us explicitly
     if a specific surface ever rejects a payload.
@@ -647,7 +647,7 @@ def _chat_messages_to_responses_input(
     pre-checkpoint item from every later request, on a model that cannot decrypt the blob (#85914). Default
     False = pre-feature wire, which is also correct for every caller that never sends ``context_management``
     (auxiliary/compression client, ad-hoc ``convert_messages``). Dropping the checkpoint costs nothing:
-    Hermes' local history is never truncated by native compaction, so the full conversation is still on the
+    Tandem' local history is never truncated by native compaction, so the full conversation is still on the
     wire.
     """
     items: list[dict[str, Any]] = []

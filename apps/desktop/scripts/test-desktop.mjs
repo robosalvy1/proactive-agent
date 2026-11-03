@@ -118,10 +118,10 @@ function ensurePackagedApp() {
 
 function resolveDmgPath() {
   if (!exists(RELEASE_ROOT)) {
-    return path.join(RELEASE_ROOT, `Hermes-${PACKAGE_JSON.version}-${ARCH}.dmg`)
+    return path.join(RELEASE_ROOT, `Tandem-${PACKAGE_JSON.version}-${ARCH}.dmg`)
   }
 
-  const prefix = `Hermes-${PACKAGE_JSON.version}`
+  const prefix = `Tandem-${PACKAGE_JSON.version}`
   const candidates = fs
     .readdirSync(RELEASE_ROOT)
     .filter(name => name.endsWith('.dmg'))
@@ -135,7 +135,7 @@ function resolveDmgPath() {
 
   return candidates.length > 0
     ? path.join(RELEASE_ROOT, candidates[0])
-    : path.join(RELEASE_ROOT, `Hermes-${PACKAGE_JSON.version}-${ARCH}.dmg`)
+    : path.join(RELEASE_ROOT, `Tandem-${PACKAGE_JSON.version}-${ARCH}.dmg`)
 }
 
 function resolveMsixPath() {
@@ -551,7 +551,7 @@ function printArtifacts(options = {}) {
 
 function help() {
   console.log(`Usage:
-  npm run test:desktop:existing  # build packaged app, launch with normal PATH/existing Hermes
+  npm run test:desktop:existing  # build packaged app, launch with normal PATH/existing Tandem
   npm run test:desktop:fresh     # build packaged app, launch with temp userData + HERMES_HOME
   npm run test:desktop:dmg       # (macOS only) build DMG and open it
   npm run test:desktop:msix      # (win32 only) build MSIX package

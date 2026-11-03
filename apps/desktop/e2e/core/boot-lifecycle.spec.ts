@@ -178,7 +178,7 @@ test('boot handshake, supervised respawn, and zero orphans on quit', async () =>
             [...sandboxProcesses(sandbox), ...processesTagged(TOOL_TAG)].map(
               p => `${p.pid} ${p.cmdline.slice(0, 120)}`
             ),
-          { timeout: 60_000, message: 'no sandbox process (gateway, tool child) survives hermes gateway stop' }
+          { timeout: 60_000, message: 'no sandbox process (gateway, tool child) survives tandem gateway stop' }
         )
         .toEqual([])
     })
@@ -269,7 +269,7 @@ test('relaunching the same home: one gateway across every boot, transcript intac
     await expect
       .poll(() => sandboxProcesses(sandbox).map(p => `${p.pid} ${p.cmdline.slice(0, 120)}`), {
         timeout: 60_000,
-        message: 'no sandbox process survives hermes gateway stop'
+        message: 'no sandbox process survives tandem gateway stop'
       })
       .toEqual([])
   } finally {

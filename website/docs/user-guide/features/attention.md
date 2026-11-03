@@ -15,7 +15,7 @@ The attention layer gives the agent one place to put things it notices without b
 It is **off by default**. Nothing is held, digested or extracted until you enable it.
 
 ```bash
-hermes config set attention.enabled true
+tandem config set attention.enabled true
 ```
 
 When enabled it starts at level `quiet`, which means digests only and no interruptions.
@@ -95,7 +95,7 @@ attention:
   deliver: telegram   # any cron deliver value: telegram, discord:<chat>, bot-chat, ...
 ```
 
-Interruptions and digests are sent by the cron ticker, so the gateway, Desktop backend or `hermes cron tick` must be running. A digest slot is recorded before it is sent: a crash can skip one digest but never repeats it. Items that could not be delivered wait for the next slot.
+Interruptions and digests are sent by the cron ticker, so the gateway, Desktop backend or `tandem cron tick` must be running. A digest slot is recorded before it is sent: a crash can skip one digest but never repeats it. Items that could not be delivered wait for the next slot.
 
 ## Configuration
 

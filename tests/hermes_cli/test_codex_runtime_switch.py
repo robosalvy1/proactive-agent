@@ -129,7 +129,7 @@ class TestApply:
 
 
     def test_enable_triggers_mcp_migration(self):
-        """Enabling codex_app_server should auto-migrate Hermes mcp_servers
+        """Enabling codex_app_server should auto-migrate Tandem mcp_servers
         to ~/.codex/config.toml so the spawned subprocess sees them."""
         cfg = {
             "mcp_servers": {

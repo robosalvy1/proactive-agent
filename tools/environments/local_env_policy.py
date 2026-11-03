@@ -1,5 +1,5 @@
-"""Secret-scrub policy for Hermes child processes: pure data + predicates for which env
-names are Hermes-managed credentials. The env *builders* applying it (``_make_run_env``,
+"""Secret-scrub policy for Tandem child processes: pure data + predicates for which env
+names are Tandem-managed credentials. The env *builders* applying it (``_make_run_env``,
 ``_sanitize_subprocess_env``, ``hermes_subprocess_env``) live in ``tools.environments.local``."""
 
 import functools
@@ -102,7 +102,7 @@ def _build_adapter_secret_env() -> frozenset:
     """Secrets the messaging adapters declare, process-wide: core ``password`` messaging entries
     of OPTIONAL_ENV_VARS, the bundled platform plugin manifests' secret entries, and the
     secret-named keys the gateway env-override table reads (WEIXIN_TOKEN, FEISHU_ENCRYPT_KEY, ...).
-    Declared names only: a user's own ``SLACK_USER_TOKEN`` or ``LOCAL_LLM_API_KEY`` is not Hermes's.
+    Declared names only: a user's own ``SLACK_USER_TOKEN`` or ``LOCAL_LLM_API_KEY`` is not Tandem's.
     A profile's user-installed platform plugins are per home: :func:`_home_adapter_secret_env`.
     Nothing here fails soft: an unreadable bundled manifest or env table fails the import rather
     than dropping its secrets from the policy."""
@@ -274,7 +274,7 @@ _ACTIVE_VENV_MARKER_VARS = ("VIRTUAL_ENV", "CONDA_PREFIX", "PYTHONHOME")
 
 
 def _is_hermes_internal_secret(key: str) -> bool:
-    """True for Hermes-internal secrets injected under *dynamic* names the static
+    """True for Tandem-internal secrets injected under *dynamic* names the static
     blocklist cannot enumerate: ``AUXILIARY_<TASK>_API_KEY``/``_BASE_URL`` (per-task
     side-LLM credentials) and ``GATEWAY_RELAY_*_SECRET``/``_KEY``/``_TOKEN`` (relay
     auth; non-secret routing hints stay visible). Stripped on every spawn path

@@ -27,7 +27,7 @@ def multiplexer_root_for(home: Path) -> Path | None:
 def implied_host_root(home: Path) -> Path | None:
     """The root whose gateway must serve named profile *home* when nothing records a verdict.
 
-    ``hermes gateway run`` refuses a ``profiles/<name>`` home a gateway of its own unless it authored
+    ``tandem gateway run`` refuses a ``profiles/<name>`` home a gateway of its own unless it authored
     ``gateway.standalone: true`` (or passes ``--force``); the retired ``multiplex_profiles: false``
     no longer opts out, so only a standalone profile keeps its own daemon.
     """

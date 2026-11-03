@@ -1,7 +1,7 @@
 """A dead Kanban worker is booked the same way whichever process notices it.
 
 ``_recent_worker_exits`` is filled by ``os.waitpid`` and so only knows children of
-the process running the sweep; a per-tick ``hermes kanban dispatch`` process finds it
+the process running the sweep; a per-tick ``tandem kanban dispatch`` process finds it
 empty. The worker's own exit trailer in its log is the durable witness the sweep reads
 instead, and a tripped protocol-violation budget must hold the card until an operator
 unblocks it.
@@ -45,7 +45,7 @@ def _dead_worker_with_log(conn, tid: str, pid: int, rc: int) -> None:
     log = kb.worker_log_path(tid)
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "a", encoding="utf-8") as f:
-        f.write(f"the model said something\n\nResume this session with:\n  hermes --resume x\n\n{KANBAN_WORKER_EXIT_TRAILER}{rc}\n")
+        f.write(f"the model said something\n\nResume this session with:\n  tandem --resume x\n\n{KANBAN_WORKER_EXIT_TRAILER}{rc}\n")
 
 
 @pytest.mark.parametrize(

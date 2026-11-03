@@ -204,7 +204,7 @@ def test_prompt_rebuild_names_a_model_switch_apart_from_other_rebuilds(monkeypat
     causes = []
     monkeypatch.setattr(eff, "record_cache_break", lambda agent, cause: causes.append(cause))
     agent = _agent(model="model-b")
-    stored = "You are Hermes.\nModel: model-a\nProvider: openrouter\n"
+    stored = "You are Tandem.\nModel: model-a\nProvider: openrouter\n"
     eff.record_prompt_rebuild(agent, stored, "stale_runtime", stored.replace("model-a", "model-b"))
     eff.record_prompt_rebuild(_agent(model="model-a"), stored, "stale_runtime", stored + "Host: x\n")
     eff.record_prompt_rebuild(agent, None, "null", "rebuilt")

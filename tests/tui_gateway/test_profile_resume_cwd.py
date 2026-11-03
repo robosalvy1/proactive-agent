@@ -27,7 +27,7 @@ class _ImmediateThread:
 
 @pytest.fixture
 def profile(monkeypatch):
-    """A named local profile under the Hermes root (``/opt/data/profiles/austin``), placeholder ``terminal.cwd``."""
+    """A named local profile under the Tandem root (``/opt/data/profiles/austin``), placeholder ``terminal.cwd``."""
     root = server.get_hermes_home()
     home = _write_profile_cfg(root / "profiles" / "austin", ".")
     monkeypatch.setattr(server, "_profile_home", lambda name: home if name else None)

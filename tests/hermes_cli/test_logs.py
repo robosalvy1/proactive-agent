@@ -190,7 +190,7 @@ def _update_log_line() -> str:
     """The update.log run banner hermes_cli.main_dashboard writes on every update."""
     import datetime as dt
 
-    return f"\n=== hermes update started {dt.datetime.now().isoformat(timespec='seconds')} ===\n".lstrip()
+    return f"\n=== tandem update started {dt.datetime.now().isoformat(timespec='seconds')} ===\n".lstrip()
 
 
 def _handoff_log_line() -> str:
@@ -239,7 +239,7 @@ def test_update_logs_are_read_from_the_root_home_under_a_profile(tmp_path, monke
     profile = root / "profiles" / "coder"
     (root / "logs").mkdir(parents=True)
     (profile / "logs").mkdir(parents=True)
-    (root / "logs" / "update.log").write_text("=== hermes update started 2026-10-03T10:00:00 ===\n✓ Update complete!\n")
+    (root / "logs" / "update.log").write_text("=== tandem update started 2026-10-03T10:00:00 ===\n✓ Update complete!\n")
     (profile / "logs" / "agent.log").write_text("2026-10-03 10:00:00,000 INFO run_agent: hi\n")
     monkeypatch.setenv("HERMES_HOME", str(profile))
 

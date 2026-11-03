@@ -128,7 +128,7 @@ def test_turn_end_publishes_the_agents_banner_info():
     from gateway.session_local_inventory import publish_settled_info
     published = []
     agent = _agent()
-    agent._cached_system_prompt = 'You are Hermes.' * 10
+    agent._cached_system_prompt = 'You are Tandem.' * 10
     agent.tools = [{'function': {'name': 'terminal'}}]
     turn = _turn(Platform.LOCAL, published, agent)
     turn._approval_owner = (SimpleNamespace(profile_id='p'), 's', 1)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plugin upgrade-preservation verifier (Hermes release-harness hook).
+"""Plugin upgrade-preservation verifier (Tandem release-harness hook).
 
 Standalone and stdlib-only. Snapshot/verify are read-only against the home;
 the explicit seed command creates controlled fixtures in a disposable home.

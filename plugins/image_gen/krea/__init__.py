@@ -412,7 +412,7 @@ def _submit_job(
                     "Krea's shared-key concurrency cap was hit — retry shortly." if status == 429 else
                     f"Model '{model_id}' may not be enabled/priced on the Nous Portal's Krea gateway. "
                     "Set KREA_API_KEY to use Krea directly, or pick a different model via "
-                    "`hermes tools` → Image Generation.")
+                    "`tandem tools` → Image Generation.")
                 return None, submit_fail(
                     f"Nous Subscription Krea gateway rejected '{model_id}' "
                     f"(HTTP {status}): {err_msg}. {hint}",
@@ -502,11 +502,11 @@ class KreaImageGenProvider(StaticImageGenProvider):
             auth_token = get_secret("KREA_API_KEY")
             if not auth_token:
                 return error_factory("krea", aspect)(
-                    "KREA_API_KEY not set. Run `hermes tools` → Image "
+                    "KREA_API_KEY not set. Run `tandem tools` → Image "
                     "Generation → Krea to configure, get a key at "
                     "https://www.krea.ai/settings/api-tokens, or sign in to "
                     "a Nous account with the managed Krea gateway enabled "
-                    "(`hermes setup`).",
+                    "(`tandem setup`).",
                     "auth_required")
 
         model_id, meta = _resolve_model(kwargs.get("model"))

@@ -27,7 +27,7 @@ _RETIRED_MODELS: dict[str, dict[str, Optional[str]]] = {
 
 @dataclass(frozen=True)
 class RetirementIssue:
-    """A reference to a retired xAI model found in a Hermes config."""
+    """A reference to a retired xAI model found in a Tandem config."""
 
     config_path: str            # e.g. "principal.model" or "auxiliary.vision.model"
     current_model: str          # exact value found in config (preserves casing/prefix)
@@ -50,7 +50,7 @@ def _looks_like_xai(model_id: Optional[str]) -> bool:
 
 
 def find_retired_xai_refs(config: dict[str, Any]) -> list[RetirementIssue]:
-    """Walk all model slots in a Hermes config and return retirement issues.
+    """Walk all model slots in a Tandem config and return retirement issues.
 
     Slots scanned: ``principal.model``, ``auxiliary.<any>.model`` (introspective, covers future
     aux slots), ``delegation.model``, ``tts.xai.model``, ``plugins.image_gen.xai.model``.

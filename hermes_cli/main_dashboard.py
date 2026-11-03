@@ -24,7 +24,7 @@ def _find_stale_dashboard_pids(*, exclude_pids: set[int] | None = None,
                                scope_home: str | None = None) -> list[int]:
     """PIDs of running ``dashboard``/``serve`` backends the caller may stop.
 
-    *scope_home*: keep only backends whose resolved Hermes home (see
+    *scope_home*: keep only backends whose resolved Tandem home (see
     ``_hermes_home_for_pid``) is this home; unreadable ownership is spared, never guessed.
     ``--stop`` and the post-update cleanup pass their own home so another install's or
     profile's backend on the same machine is never a target (#113978).
@@ -265,7 +265,7 @@ def _loaded_launchd_backend_jobs(
     plist_dirs: list[tuple[str, Path]] | None = None,
 ) -> list[tuple[str, str, list[str], int | None]]:
     """``(domain, label, program_arguments, live_pid)`` for every LOADED launchd job whose
-    ``ProgramArguments`` is a ``hermes dashboard`` / ``hermes serve`` backend. macOS only (empty
+    ``ProgramArguments`` is a ``tandem dashboard`` / ``tandem serve`` backend. macOS only (empty
     elsewhere). Reads the plists (unreadable/malformed ones are skipped) and asks ``launchctl print``
     per candidate label — a job that is not loaded in any domain is not returned, so an operator's
     stale plist never claims a process."""
@@ -387,7 +387,7 @@ def _respawnable_command_for_current_install(argv: list[str]) -> list[str]:
     script, so the kernel recorded a manual backend as ``[<old venv python>, <launcher>, dashboard,
     ...]``. The takeover then rewrote that launcher into a POSIX shell shim, and replaying the
     captured argv verbatim asks the old interpreter to parse a shell script (#124778). This
-    checkout's own ``hermes`` entry script stays Python, so it and every other shape replay unchanged.
+    checkout's own ``tandem`` entry script stays Python, so it and every other shape replay unchanged.
     """
     root = Path(__file__).resolve().parents[1]
     if (len(argv) > 2 and os.path.basename(argv[0]).startswith("python")
@@ -399,7 +399,7 @@ def _respawnable_command_for_current_install(argv: list[str]) -> list[str]:
 
 
 def _respawn_dashboard_processes(commands: list[list[str]]) -> list[list[str]]:
-    """Respawn manually-started dashboards after ``hermes update``, detached, logging to
+    """Respawn manually-started dashboards after ``tandem update``, detached, logging to
     ``logs/dashboard-restart.log``; returns the argvs that failed to spawn. Callers pre-filter via
     ``_filter_dashboard_respawn_candidates`` (no Desktop ``--port 0`` backends, capped per profile).
 
@@ -450,7 +450,7 @@ def _respawn_dashboard_processes(commands: list[list[str]]) -> list[list[str]]:
 
 
 class _UpdateOutputStream:
-    """stdout/stderr wrapper for ``hermes update``: mirrors to ``logs/update.log`` and, once the
+    """stdout/stderr wrapper for ``tandem update``: mirrors to ``logs/update.log`` and, once the
     terminal vanishes (BrokenPipe/OSError/ValueError), drops screen output instead of the update."""
 
     _BROKEN = (BrokenPipeError, OSError, ValueError)
@@ -527,7 +527,7 @@ def _install_hangup_protection(gateway_mode: bool = False):
         import datetime as _dt
 
         stage = "continued on the pulled code" if os.environ.get("HERMES_UPDATE_POST_SWAP") == "1" else "started"
-        log_file.write(f"\n=== hermes update {stage} {_dt.datetime.now().isoformat(timespec='seconds')} ===\n")
+        log_file.write(f"\n=== tandem update {stage} {_dt.datetime.now().isoformat(timespec='seconds')} ===\n")
 
         state["log_file"] = log_file
         sys.stdout = _UpdateOutputStream(state["prev_stdout"], log_file)
@@ -582,10 +582,10 @@ def _report_dashboard_status() -> int:
         live.append((pid, command, mode))
 
     if not live:
-        print("No hermes dashboard or serve processes running.")
+        print("No tandem dashboard or serve processes running.")
         return 0
 
-    print(f"{len(live)} hermes dashboard/serve process(es) running:")
+    print(f"{len(live)} tandem dashboard/serve process(es) running:")
     for pid, command, mode in live:
         print(f"    PID {pid} [{mode}]: {command}")
     return len(live)
@@ -641,7 +641,7 @@ def _maybe_setup_dashboard_auth_interactively(args) -> None:
     print()
     print("  How do you want to authenticate the dashboard?")
     print("    [1] Username & password (quickest; for a trusted LAN / VPN)")
-    print("    [2] OAuth via Nous Portal (run `hermes dashboard register`)\n    [3] Cancel\n")
+    print("    [2] OAuth via Nous Portal (run `tandem dashboard register`)\n    [3] Cancel\n")
 
     try:
         choice = input("  Choice [1]: ").strip() or "1"
@@ -653,7 +653,7 @@ def _maybe_setup_dashboard_auth_interactively(args) -> None:
         print(
             "  Run this on the host where the dashboard lives, then start "
             "the dashboard again:\n"
-            "    hermes dashboard register\n"
+            "    tandem dashboard register\n"
             "  It provisions a Nous Portal OAuth client and writes "
             "HERMES_DASHBOARD_OAUTH_CLIENT_ID into ~/.hermes/.env for you.\n"
             "  Docs: https://hermes-agent.nousresearch.com/docs/"
@@ -808,7 +808,7 @@ def _read_ssh_session_token_file(path: str) -> str:
 def _is_electron_packaged_web_dist(path: str) -> bool:
     """True when *path* is an Electron-packaged renderer dist (``app.asar[.unpacked]/dist``).
 
-    A standalone ``hermes dashboard`` inheriting that ``HERMES_WEB_DIST`` would
+    A standalone ``tandem dashboard`` inheriting that ``HERMES_WEB_DIST`` would
     serve the desktop frontend in the browser ("Desktop IPC bridge is unavailable").
     """
     if not path:
@@ -872,7 +872,7 @@ def _endpoint_conflict(args, record, typed: set) -> str:
 
 
 def _attach_to_host_backend(args, headless_backend: bool) -> None:
-    """Multiplex-only: a second `hermes serve`/`dashboard` attaches to the host backend.
+    """Multiplex-only: a second `tandem serve`/`dashboard` attaches to the host backend.
 
     Exactly ONE backend runs per host and multiplexes every profile, so a second invocation —
     for ANY profile, the default included — reports the live one and exits 0 instead of binding
@@ -883,13 +883,13 @@ def _attach_to_host_backend(args, headless_backend: bool) -> None:
 
     * the owner must ANSWER on its recorded port and identify itself (a record alone cannot see a
       graceful-shutdown window or a foreign listener that inherited the port) — a supervisor or
-      `hermes update` relaunch landing in that window would otherwise exit 0 with NOTHING
+      `tandem update` relaunch landing in that window would otherwise exit 0 with NOTHING
       listening, reporting success for a dead service;
     * an explicitly typed ``--port``/``--host`` the owner cannot serve is a REFUSAL naming the
       owner, never a silent redirect. It exits 78 (EX_CONFIG), the deliberate-refusal code
       ``RestartPreventExitStatus=78`` parks on: exit 1 under ``Restart=always`` was an infinite
       restart loop with nothing listening on the ingress port (#119824);
-    * a `hermes dashboard` user is never handed a headless backend's URL (no SPA behind it).
+    * a `tandem dashboard` user is never handed a headless backend's URL (no SPA behind it).
 
     Returns normally — leaving the caller to BIND — when no owner answers.
     """
@@ -918,8 +918,8 @@ def _attach_to_host_backend(args, headless_backend: bool) -> None:
 
     if not headless_backend and not identity.get("servesSpa"):
         print(f"Refusing to start: this host is already served by {hr.describe(record)}, "
-              "which is a headless `hermes serve` backend with no dashboard UI.")
-        print("  Stop it and run `hermes dashboard`, or use --isolated for a dedicated server.")
+              "which is a headless `tandem serve` backend with no dashboard UI.")
+        print("  Stop it and run `tandem dashboard`, or use --isolated for a dedicated server.")
         sys.exit(GATEWAY_FATAL_CONFIG_EXIT_CODE)
 
     try:
@@ -933,7 +933,7 @@ def _attach_to_host_backend(args, headless_backend: bool) -> None:
     url = f"http://{format_url_host(hr.dial_host(record))}:{record.port}/?profile={wanted}"
 
     kind = "backend" if headless_backend else "dashboard"
-    print(f"Hermes {kind} already running on this host: PID {record.pid}, port {record.port}.")
+    print(f"Tandem {kind} already running on this host: PID {record.pid}, port {record.port}.")
     print(f"  Managing profile '{wanted}': {url}")
     if not headless_backend and not args.no_open:
         with contextlib.suppress(Exception):

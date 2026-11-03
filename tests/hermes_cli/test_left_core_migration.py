@@ -253,7 +253,7 @@ def test_gateway_start_outcome_waits_for_the_first_agent(tmp_path, monkeypatch):
 
 
 def test_the_migration_installs_once_so_a_removal_sticks(tmp_path, monkeypatch):
-    """At most one automatic install per home: after `hermes plugins remove`, neither `hermes update`
+    """At most one automatic install per home: after `tandem plugins remove`, neither `tandem update`
     nor startup reinstalls it. Until an install succeeds (catalog miss, failed install) it retries."""
     import hermes_cli.memory_provider_migration as mpm
     import pm.install
@@ -285,7 +285,7 @@ def test_the_migration_installs_once_so_a_removal_sticks(tmp_path, monkeypatch):
 
 def test_a_failed_startup_install_backs_off_and_reports_one_line(tmp_path, monkeypatch):
     """With the catalog or git unreachable, only the first agent start in a while pays the network
-    round trip, and its notice is one line naming the cause; `hermes update` always retries."""
+    round trip, and its notice is one line naming the cause; `tandem update` always retries."""
     import hermes_cli.memory_provider_migration as mpm
     import pm.install
     home = _home(tmp_path, env="HASS_TOKEN=abc\n")
@@ -366,11 +366,11 @@ def test_spotify_in_use_is_a_stored_login_or_the_toolset(tmp_path, auth_json, co
 
 
 def test_old_spotify_commands_point_at_the_plugin(tmp_path, monkeypatch):
-    """`hermes auth spotify` / `hermes spotify` name the new command and how to get it for this home."""
+    """`tandem auth spotify` / `tandem spotify` name the new command and how to get it for this home."""
     home = _home(tmp_path)
     monkeypatch.setenv("HERMES_HOME", str(home))
-    hint = lcm.moved_command_hint("hermes auth", "spotify", "status")
-    assert "`hermes auth status spotify` is now `hermes spotify status`" in hint
+    hint = lcm.moved_command_hint("tandem auth", "spotify", "status")
+    assert "`tandem auth status spotify` is now `tandem spotify status`" in hint
     assert "plugins install spotify" in hint
     assert "plugins install spotify" in lcm.moved_command_hint("hermes", "spotify")
     (home / "plugins" / "spotify").mkdir(parents=True)  # installed but disabled
@@ -410,7 +410,7 @@ def test_old_langfuse_plugin_key_keeps_naming_the_catalog_plugin(tmp_path, monke
     for name in ("observability/langfuse", "langfuse"):
         message = _unknown_plugin_message(name)
         assert "moved out of core into the 'langfuse' plugin" in message
-        assert "hermes plugins install langfuse" in message
+        assert "tandem plugins install langfuse" in message
     assert "moved out of core" not in _unknown_plugin_message("nonexistent")
 
     plugin_dir = home / "plugins" / "langfuse"

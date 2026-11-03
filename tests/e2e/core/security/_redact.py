@@ -2,7 +2,7 @@
 
 Secrets are allocated so that every scenario owns disjoint values: the values a scenario leaves raw
 BY DESIGN (a tool argument, the user's own prompt) never coincide with the values another scenario
-asserts are masked, so one Hermes home can serve every scenario and each sink is scanned once.
+asserts are masked, so one Tandem home can serve every scenario and each sink is scanned once.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ def _alnum(n: int) -> str:
 
 @dataclass(frozen=True)
 class Secrets:
-    """Every secret value one Hermes home sees; see the module docstring for the allocation."""
+    """Every secret value one Tandem home sees; see the module docstring for the allocation."""
 
     provider: str = field(default_factory=lambda: "sk-proj-" + _alnum(40))   # .env OPENAI_API_KEY
     env_opaque: str = field(default_factory=lambda: secrets.token_hex(20))   # .env ACME_SERVICE_TOKEN
@@ -187,7 +187,7 @@ def echo_preconditions(ws: Path, k: Secrets, llm_gets: list[dict], logs: str) ->
 
 @dataclass
 class Sinks:
-    """Raw text of every persisted/egress sink of one Hermes home, keyed by sink name."""
+    """Raw text of every persisted/egress sink of one Tandem home, keyed by sink name."""
 
     texts: dict[str, dict[str, str]] = field(default_factory=dict)  # sink -> {location: text}
 
@@ -245,7 +245,7 @@ def assert_harness_sane(sinks: Sinks, *, gateway: bool = False) -> None:
 
 @dataclass
 class World:
-    """One Hermes home after every scenario ran: its sinks and each scenario's travel evidence."""
+    """One Tandem home after every scenario ran: its sinks and each scenario's travel evidence."""
 
     keys: Secrets
     sinks: Sinks

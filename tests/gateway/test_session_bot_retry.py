@@ -165,7 +165,7 @@ async def test_context_overflow_retries_once_unless_the_failed_dm_is_still_an_op
 
 @pytest.mark.asyncio
 async def test_peer_dm_waiter_follows_the_retry_admission_to_its_answer(bot):
-    """``hermes peer dm`` waits on the delivery, not on the original admission id: once that
+    """``tandem peer dm`` waits on the delivery, not on the original admission id: once that
     fails transiently its future never fires again, and the answer is the retry's."""
     from gateway.platforms.api_server_bot_chat import await_peer_receipt
     from gateway import session_bot

@@ -91,7 +91,7 @@ def _runner_scratch_root() -> str:
     """Per-run temp roots live on DISK, never the system temp dir: a full-suite run writes
     gigabytes of tmp_path fixtures and /tmp is RAM-backed tmpfs on many Linux hosts. /var/tmp is
     the FHS disk-backed temp root and is used because the alternatives fail tests that assume
-    the root's shape: under the Hermes home conftest relocates the basetemp; under a dot-dir
+    the root's shape: under the Tandem home conftest relocates the basetemp; under a dot-dir
     (~/.cache) the hidden-dir search tests see every fixture as hidden; anything longer than
     the old /tmp root pushes AF_UNIX test sockets past sun_path.
 

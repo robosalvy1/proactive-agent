@@ -114,7 +114,7 @@ class DiscordStandin(StandinServer):
 
     @staticmethod
     def _bot_user() -> dict[str, Any]:
-        return {"id": BOT_ID, "username": BOT_USERNAME, "discriminator": "0", "global_name": "Hermes",
+        return {"id": BOT_ID, "username": BOT_USERNAME, "discriminator": "0", "global_name": "Tandem",
                 "avatar": None, "bot": True, "flags": 0, "public_flags": 0, "verified": True,
                 "mfa_enabled": False}
 
@@ -263,7 +263,7 @@ class DiscordStandin(StandinServer):
 
     def _r_get_app(self, _p: dict[str, Any]) -> tuple[int, Any]:
         owner = {"id": "1", "username": "owner", "discriminator": "0", "global_name": None, "avatar": None}
-        return 200, {"id": APP_ID, "name": "Hermes Standin", "icon": None, "description": "", "summary": "",
+        return 200, {"id": APP_ID, "name": "Tandem Standin", "icon": None, "description": "", "summary": "",
                      "type": None, "bot_public": True, "bot_require_code_grant": False, "verify_key": "0" * 64,
                      "flags": (1 << 19) | (1 << 15), "owner": owner, "team": None, "bot": self._bot_user(),
                      "interactions_endpoint_url": None, "redirect_uris": [], "tags": [],

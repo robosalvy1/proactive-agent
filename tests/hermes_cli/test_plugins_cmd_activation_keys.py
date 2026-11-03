@@ -59,7 +59,7 @@ def _lists():
 
 
 def test_disable_bundled_platform_by_manifest_name_gates_the_loader(home):
-    """`hermes plugins disable photon-platform` must produce a key the loader's gate matches; the
+    """`tandem plugins disable photon-platform` must produce a key the loader's gate matches; the
     CLI wrote ``platforms/photon`` while discovery keyed the adapter ``photon-platform``."""
     plugins_cmd.cmd_disable("photon-platform")
 
@@ -155,7 +155,7 @@ def test_dashboard_reenable_restores_the_toolset_in_a_saved_list(saved_list_plug
 
 
 def test_cli_disable_and_enable_round_trip_the_toolset_in_a_saved_list(saved_list_plugin):
-    """``hermes plugins disable`` / ``enable`` edit a saved list the same way the dashboard does, each
+    """``tandem plugins disable`` / ``enable`` edit a saved list the same way the dashboard does, each
     in its own process; they never touched it, so a toolset the dashboard dropped stayed off."""
     plugins_cmd.cmd_disable("zzre")
     assert _saved_cli_list() == ["hermes-cli"]

@@ -1,5 +1,5 @@
-"""Launch-profile policy for a process that hosts several profile homes (``hermes serve`` /
-``hermes dashboard`` pooling, ``?profile=``, hosted rooms; the multiplexed gateway's own worker).
+"""Launch-profile policy for a process that hosts several profile homes (``tandem serve`` /
+``tandem dashboard`` pooling, ``?profile=``, hosted rooms; the multiplexed gateway's own worker).
 
 Two facts anchor this module:
 
@@ -56,7 +56,7 @@ def _servable_profile_homes() -> set:
     carrying a real servability marker.
 
     ``named_profile_has_identity`` accepts an EMPTY ``.env``, which is all a crashed
-    ``hermes profile create`` leaves behind — counting it would flip a single-profile host
+    ``tandem profile create`` leaves behind — counting it would flip a single-profile host
     fail-closed at its next boot.
     """
     from hermes_constants import named_profile_has_servable_identity
@@ -75,7 +75,7 @@ def activate_multi_profile_hosting_eagerly() -> bool:
     home. Everything the host had already done by then (idle-reaper ticks, cron start, adapter
     connects, MCP discovery) ran under single-profile assumptions and is never re-scoped, and the
     launch profile's env had already been mutated by then, so ``capture_launch_env`` froze a
-    polluted snapshot. One ``hermes serve`` / ``hermes gateway run`` per host means the process
+    polluted snapshot. One ``tandem serve`` / ``tandem gateway run`` per host means the process
     knows at boot whether it can be asked for a second home: decide there, once. Call it as the LAST
     boot step: the frozen snapshot is the only source for launch keys with no ``.env`` to rebuild
     from, so every credential the boot still injects must already be in ``os.environ``.

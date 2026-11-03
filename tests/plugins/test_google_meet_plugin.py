@@ -214,11 +214,11 @@ def test_enqueue_say_requires_text():
 
 
 def test_cli_register_includes_node_subcommand():
-    """`hermes meet` argparse tree includes the node subtree."""
+    """`tandem meet` argparse tree includes the node subtree."""
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="tandem meet")
     register_cli(parser)
 
     # Parse a known-good node invocation to prove the subtree is wired.
@@ -240,11 +240,11 @@ def test_looks_like_human_speaker():
     from plugins.google_meet.meet_bot import _looks_like_human_speaker
 
     # Blank, "unknown", "you", and the bot's own name → not human (no barge-in)
-    for s in ("", "   ", "Unknown", "unknown", "You", "you", "Hermes Agent", "hermes agent"):
-        assert not _looks_like_human_speaker(s, "Hermes Agent"), f"{s!r} should NOT be human"
+    for s in ("", "   ", "Unknown", "unknown", "You", "you", "Tandem Agent", "hermes agent"):
+        assert not _looks_like_human_speaker(s, "Tandem Agent"), f"{s!r} should NOT be human"
     # Real names → human (barge-in)
     for s in ("Alice", "Bob Lee", "@teknium"):
-        assert _looks_like_human_speaker(s, "Hermes Agent"), f"{s!r} SHOULD be human"
+        assert _looks_like_human_speaker(s, "Tandem Agent"), f"{s!r} SHOULD be human"
 
 
 def test_detect_admission_returns_false_on_error():
@@ -410,7 +410,7 @@ def test_cmd_install_uses_declared_dependencies_and_pm_chromium(monkeypatch, cap
     from pm.features import declared_extras
 
     assert set(calls[0][1]) <= set(declared_extras(Path(__file__).resolve().parents[2]))
-    assert "hermes meet setup" in capsys.readouterr().out
+    assert "tandem meet setup" in capsys.readouterr().out
 
 
 @pytest.mark.platforms("linux", "macos")

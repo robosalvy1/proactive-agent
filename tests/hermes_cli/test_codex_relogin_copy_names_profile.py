@@ -1,6 +1,6 @@
 """Codex credential-failure copy sends the user to THIS profile's own sign-in.
 
-Profiles are islands (93889b770da): a bare ``hermes auth`` / ``hermes model`` from a named
+Profiles are islands (93889b770da): a bare ``tandem auth`` / ``tandem model`` from a named
 profile's error text re-signs the ROOT store, which is exactly the loop #114012 measured.
 Every relogin hint raised by ``hermes_cli/auth_codex.py`` and appended by
 ``format_auth_error`` must carry the ``-p <profile>`` selector under a profile HERMES_HOME.
@@ -34,13 +34,13 @@ def test_missing_and_reused_codex_credential_copy_names_the_profile(codex_profil
     ))
     for err in (missing.value, reused):
         text = str(err)
-        assert "`hermes -p codex auth add openai-codex --type oauth`" in text, text
-        assert "`hermes auth`" not in text, text
+        assert "`tandem -p codex auth add openai-codex --type oauth`" in text, text
+        assert "`tandem auth`" not in text, text
 
 
 def test_format_auth_error_relogin_suffix_names_the_profile(codex_profile_home):
     err = AuthError("Codex token refresh failed: invalid_grant", provider="openai-codex",
                     code="invalid_grant", relogin_required=True)
     rendered = format_auth_error(err)
-    assert "`hermes -p codex model`" in rendered, rendered
-    assert "`hermes model`" not in rendered, rendered
+    assert "`tandem -p codex model`" in rendered, rendered
+    assert "`tandem model`" not in rendered, rendered

@@ -85,7 +85,7 @@ class TestCA:
         self.dir = directory
         directory.mkdir(parents=True, exist_ok=True)
         self._key = ec.generate_private_key(ec.SECP256R1())
-        name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Hermes E2E TLS Inspection Root")])
+        name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Tandem E2E TLS Inspection Root")])
         now = datetime.datetime.now(datetime.UTC)
         self._cert = (
             x509.CertificateBuilder().subject_name(name).issuer_name(name)

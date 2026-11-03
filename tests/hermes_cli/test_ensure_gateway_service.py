@@ -26,7 +26,7 @@ class TestEnsureGatewayService:
         _patch_host(monkeypatch, systemd=False)
         assert ensure_gateway_service(install=True) is False
         out = capsys.readouterr().out
-        assert "hermes gateway" in out
+        assert "tandem gateway" in out
 
     def test_already_running_short_circuits(self, monkeypatch):
         _patch_host(monkeypatch)
@@ -80,7 +80,7 @@ class TestEnsureGatewayService:
 
         assert ensure_gateway_service(install=True) is False
         out = capsys.readouterr().out
-        assert "hermes gateway install" in out
+        assert "tandem gateway install" in out
 
     def test_never_raises_on_sys_exit(self, monkeypatch, capsys):
         """Install paths that sys.exit() must not abort setup/import."""
@@ -96,7 +96,7 @@ class TestEnsureGatewayService:
 
         assert ensure_gateway_service(install=True) is False
         out = capsys.readouterr().out
-        assert "hermes gateway install" in out
+        assert "tandem gateway install" in out
 
     def test_user_systemd_unreachable_reports_remediation(self, monkeypatch, capsys):
         _patch_host(monkeypatch)

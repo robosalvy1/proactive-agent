@@ -5,7 +5,7 @@ Hermetic-test invariants enforced here (see AGENTS.md for rationale):
 1. **No credential env vars.** All provider/credential-shaped env vars
    (ending in _API_KEY, _TOKEN, _SECRET, _PASSWORD, _CREDENTIALS, etc.)
    are unset before every test. Local developer keys cannot leak in.
-2. **Isolated Hermes homes.** HERMES_HOME and the platform-default root
+2. **Isolated Tandem homes.** HERMES_HOME and the platform-default root
    resolve inside a per-test tempdir. Profile/root resolution can inspect
    both without probing production state. HOME and Path.home() stay intact
    for subprocesses and non-Hermes paths. Explicit test overrides still win.
@@ -622,7 +622,7 @@ def _capture_real_kanban_root() -> Path:
     deny-list keeps pointing at the operator's actual root. Mirrors
     ``kanban_db.kanban_home()`` resolution order:
     1. ``HERMES_KANBAN_HOME`` env var when set and non-empty
-    2. the real (pre-sandbox) Hermes root otherwise
+    2. the real (pre-sandbox) Tandem root otherwise
     """
     if _PRE_SANDBOX_KANBAN_OVERRIDE:
         return Path(_PRE_SANDBOX_KANBAN_OVERRIDE).expanduser().resolve()
@@ -860,7 +860,7 @@ def tmp_dir(tmp_path):
 
 @pytest.fixture()
 def mock_config():
-    """Return a minimal hermes config dict suitable for unit tests."""
+    """Return a minimal tandem config dict suitable for unit tests."""
     return {
         "model": "test/mock-model",
         "toolsets": ["terminal", "file"],
@@ -931,9 +931,9 @@ _REQUIRES_WAL_MARK = "requires_wal"
 
 
 def _wal_is_usable() -> bool:
-    """True when Hermes will actually put a database into WAL mode here.
+    """True when Tandem will actually put a database into WAL mode here.
 
-    Hermes refuses journal_mode=WAL on SQLite builds carrying the upstream
+    Tandem refuses journal_mode=WAL on SQLite builds carrying the upstream
     WAL-reset corruption bug (3.7.0–3.51.2, excluding backports 3.50.7 /
     3.44.6) and falls back to DELETE. On such a build NO ``-wal`` sidecar is
     ever created, so a test asserting on WAL frames, ``-wal`` file size, or
@@ -941,8 +941,8 @@ def _wal_is_usable() -> bool:
     declined to enable, not a regression.
 
     This matters because the interpreter running the tests and the interpreter
-    running Hermes can link DIFFERENT SQLite versions: a repo ``.venv`` on
-    3.50.4 (vulnerable → DELETE) alongside a Hermes managed runtime on 3.53.1
+    running Tandem can link DIFFERENT SQLite versions: a repo ``.venv`` on
+    3.50.4 (vulnerable → DELETE) alongside a Tandem managed runtime on 3.53.1
     (fixed → WAL). The same test then passes in one and fails in the other.
 
     IMPORTANT: this must NOT import ``hermes_state``. That module computes
@@ -1015,7 +1015,7 @@ _ALLOW_MACOS_KEYCHAIN_MARK = "allow_macos_keychain"
 
 
 def _relocate_basetemp_outside_operator_home(config) -> None:
-    """Move pytest's basetemp out of the operator's platform-native Hermes home.
+    """Move pytest's basetemp out of the operator's platform-native Tandem home.
 
     Every per-test sandbox is ``<basetemp>/.../hermes_test``. ``get_default_hermes_root()``
     prefers the platform-native home whenever ``HERMES_HOME`` sits *under* it, so a basetemp
@@ -1042,7 +1042,7 @@ def _relocate_basetemp_outside_operator_home(config) -> None:
     # and, for runs that were killed before that, swept once it is 24h idle.
     safe = Path(tempfile.mkdtemp(prefix="b-", dir=_pytest_disk_temp_root(native)))
     assert not safe.resolve().is_relative_to(native), (
-        f"pytest basetemp {safe} still resolves inside the operator's Hermes home {native}; "
+        f"pytest basetemp {safe} still resolves inside the operator's Tandem home {native}; "
         "refusing to run the suite against the live install (pass --basetemp outside it)"
     )
     factory._given_basetemp = safe
@@ -1103,9 +1103,9 @@ def _processes_with_hermes_home_under(roots) -> list[int]:
 
 
 def _reap_session_hermes_processes(config) -> list[int]:
-    """SIGTERM every process still running against a Hermes home this session created.
+    """SIGTERM every process still running against a Tandem home this session created.
 
-    Tests that run a real ``hermes chat -q`` child get a grandchild ``gateway run`` (detached, own
+    Tests that run a real ``tandem chat -q`` child get a grandchild ``gateway run`` (detached, own
     session) that no per-test subprocess patch can see, and pytest's tmp cleanup removes only
     directories: each one used to outlive the run at ~250 MB. The session basetemp and the session
     sandbox home bound exactly what this run created, so nothing else is ever signalled.
@@ -1194,7 +1194,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers",
         f"{_REQUIRES_WAL_MARK}: test needs the runtime to actually enable "
-        "SQLite WAL mode; skipped on builds where Hermes falls back to "
+        "SQLite WAL mode; skipped on builds where Tandem falls back to "
         "journal_mode=DELETE for the WAL-reset bug.",
     )
     config.addinivalue_line(
@@ -1321,7 +1321,7 @@ def pytest_collection_modifyitems(config, items):
         return
 
     reason = (
-        f"SQLite {sqlite3.sqlite_version} has the WAL-reset bug — Hermes uses "
+        f"SQLite {sqlite3.sqlite_version} has the WAL-reset bug — Tandem uses "
         "journal_mode=DELETE here, so no -wal sidecar exists to assert on"
     )
     skip_marker = pytest.mark.skip(reason=reason)

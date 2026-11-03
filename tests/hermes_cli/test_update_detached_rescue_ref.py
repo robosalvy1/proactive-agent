@@ -1,4 +1,4 @@
-"""`hermes update` must not orphan commits made on a detached HEAD.
+"""`tandem update` must not orphan commits made on a detached HEAD.
 
 Both update shapes move HEAD off a detached commit: the branch update checks out ``main``, the
 release update checks out the release commit. A commit made there is on no branch, so after the

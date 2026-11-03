@@ -3,7 +3,7 @@
 # (POSIX + macOS). Sourced by tests/install/installer-script-e2e.sh and
 # tests/install/macos-desktop-e2e.sh.
 #
-# The contract under test: a tagged Hermes upgrade must NOT delete or modify
+# The contract under test: a tagged Tandem upgrade must NOT delete or modify
 # anything in the active home's plugins/** tree or any profile's plugins/**
 # tree — including directory wrapper markers (mnemosyne-wrapper.json),
 # symlinked runtimes, and the externally-owned sidecar witness file that

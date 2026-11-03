@@ -1,6 +1,6 @@
 """Vertex AI documented errors through the real CLI: retried per semantics or surfaced exactly once.
 
-Each scenario is one ``hermes chat -q`` turn against its own fake (``tests/fakes/providers/vertex.py``);
+Each scenario is one ``tandem chat -q`` turn against its own fake (``tests/fakes/providers/vertex.py``);
 all run concurrently. Vertex's OpenAI-compatible endpoint returns google.rpc errors in a list-wrapped
 envelope (``[{"error": {"code", "message", "status"}}]``); the fake uses exactly that.
 
@@ -116,7 +116,7 @@ def test_terminal_error_surfaced_once_without_retry(results: dict[str, Any], nam
 
 
 def test_rejected_bearer_refreshes_once_then_surfaces(results: dict[str, Any]) -> None:
-    """Every bearer 401s: Hermes may re-mint and retry once, never loop, and shows the error once."""
+    """Every bearer 401s: Tandem may re-mint and retry once, never loop, and shows the error once."""
     res = results["unauthenticated"]
     fake, turn = res["fake"], res["turn"]
     statuses = [r.get("status") for r in fake.requests]

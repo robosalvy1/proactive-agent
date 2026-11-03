@@ -75,7 +75,7 @@ RestartPreventExitStatus=78
         from hermes_cli import gateway as gw
 
         installed = """[Unit]
-Description=Hermes Gateway
+Description=Tandem Gateway
 
 [Service]
 Type=simple

@@ -274,7 +274,7 @@ def _load_json_file(path: Path) -> dict:
         euid = os.geteuid() if hasattr(os, "geteuid") else "n/a"  # no geteuid on Windows
         logger.warning(
             "Pairing file %s exists but is not readable as uid=%s (%s; %s). "
-            "If you ran `docker exec <container> hermes pairing approve ...` as root, "
+            "If you ran `docker exec <container> tandem pairing approve ...` as root, "
             "re-run with `docker exec -u hermes <container> ...` and "
             "chown the existing file to the hermes user, or restart the "
             "container so the entrypoint can fix ownership.",
@@ -327,7 +327,7 @@ class PairingStore:
 
     Files per platform: ``{platform}-pending.json``, ``{platform}-approved.json``, plus
     shared ``_rate_limits.json``. With ``profile="<name>"`` storage resolves from that
-    profile's HERMES_HOME exactly as ``hermes -p <name> pairing ...`` does, so multiplex
+    profile's HERMES_HOME exactly as ``tandem -p <name> pairing ...`` does, so multiplex
     gateways and profile-scoped CLI approvals share one whitelist.
     """
 

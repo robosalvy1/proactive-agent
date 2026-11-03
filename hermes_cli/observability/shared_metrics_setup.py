@@ -5,7 +5,7 @@ ran it (``completed`` / ``failed`` + a closed failure class). A flow nobody fini
 itself, so ``started`` also drops a small marker under the owning profile's store dir (the
 process-exit pattern): the finisher claims it by rename, and a marker whose process is gone (or that
 has been pending longer than any real flow takes) is reported ``abandoned`` by the next setup start
-or Hermes start in that profile. Whoever claims the marker records, so each flow ends exactly once.
+or Tandem start in that profile. Whoever claims the marker records, so each flow ends exactly once.
 
 Only the catalog provider name leaves (custom endpoints read ``custom``); never a key, token, base
 URL or error text. Rows are saved synchronously: a setup killed right after ``started`` must still
@@ -333,7 +333,7 @@ def _model_route() -> tuple[Any, ...]:
 
 @contextlib.contextmanager
 def provider_setup_surface(surface: str) -> Iterator[None]:
-    """Name the surface whose provider picker runs inside (``hermes model``, the setup wizard, the
+    """Name the surface whose provider picker runs inside (``tandem model``, the setup wizard, the
     first-run chat prompt). The picker is shared, so only these entry points know which one it is."""
     previous = getattr(_cli, "surface", None)
     _cli.surface = surface

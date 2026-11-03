@@ -1,5 +1,5 @@
 """s6 container: the unset multiplex default resolves ON when the boot has parked every named
-slot, ``hermes gateway migrate --multiplex`` folds an UP slot in-process, a guard refusal on a
+slot, ``tandem gateway migrate --multiplex`` folds an UP slot in-process, a guard refusal on a
 multi-profile host is loud, and the resolved default is written back to config.yaml."""
 from __future__ import annotations
 

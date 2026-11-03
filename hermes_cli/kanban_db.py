@@ -1,6 +1,6 @@
 """SQLite-backed Kanban board shared across profiles (the cross-profile coordination primitive).
 
-Lives under the shared Hermes root: ``default`` board DB at ``<root>/kanban.db`` (pre-boards
+Lives under the shared Tandem root: ``default`` board DB at ``<root>/kanban.db`` (pre-boards
 back-compat), other boards at ``<root>/kanban/boards/<slug>/``; a worker on one board never sees
 another. Board resolution: ``board=`` arg > ``HERMES_KANBAN_BOARD`` > ``HERMES_KANBAN_DB`` (pins the
 file path) > ``<root>/kanban/current`` > ``default`` — but only for unfenced callers; the dispatcher
@@ -521,7 +521,7 @@ def board_exists(board: Optional[str] = None) -> bool:
 
 def _explicit_board_slug(board: Optional[str]) -> Optional[str]:
     """Explicit caller intent: a direct ``board=`` argument, else the scoped
-    ``--board`` context (CLI ``hermes kanban --board``, dashboard plugin_api);
+    ``--board`` context (CLI ``tandem kanban --board``, dashboard plugin_api);
     ``None`` when the caller expressed neither."""
     if board is not None:
         return _normalize_board_slug(board)
@@ -603,7 +603,7 @@ def task_attachments_dir(task_id: str, board: Optional[str] = None) -> Path:
 
 
 def worker_logs_dir(board: Optional[str] = None) -> Path:
-    """Per-board worker log dir (logs follow the board so ``hermes kanban log``
+    """Per-board worker log dir (logs follow the board so ``tandem kanban log``
     is unambiguous when two boards share a task id)."""
     return _board_path(None, board, ("kanban", "logs"), "logs")
 
@@ -3525,7 +3525,7 @@ def promote_task(
             f"unsatisfied parent dependencies: {', '.join(unsatisfied)} "
             f"(the ready -> running claim re-checks parents, so promotion cannot "
             f"bypass them; complete the parents or drop the link with "
-            f"`hermes kanban unlink <parent_id> {task_id}`)"
+            f"`tandem kanban unlink <parent_id> {task_id}`)"
         )
 
     if dry_run:

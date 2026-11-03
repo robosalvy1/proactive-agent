@@ -1,4 +1,4 @@
-"""Flat-install runtime state must be gitignored so ``hermes update``'s untracked
+"""Flat-install runtime state must be gitignored so ``tandem update``'s untracked
 autostash cannot sweep the live state.db (#110648).
 
 On a flat install (checkout root == $HERMES_HOME) the profile's runtime files
@@ -132,7 +132,7 @@ def flat_install_repo(tmp_path: Path) -> Path:
 
 def test_flat_install_runtime_state_is_ignored(flat_install_repo):
     """`git status --porcelain` must stay empty with the full runtime state present,
-    so `hermes update` never enters its stash step for runtime state alone."""
+    so `tandem update` never enters its stash step for runtime state alone."""
     status = _run_git(
         flat_install_repo, "status", "--porcelain", "--untracked-files=all"
     )

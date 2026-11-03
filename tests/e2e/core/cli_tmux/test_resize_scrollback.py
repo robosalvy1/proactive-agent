@@ -1,7 +1,7 @@
 """#95375 on a reflowing terminal: resizing the classic CLI leaves every transcript line in
 tmux's scrollback + screen exactly once, with no stray blank or prompt rows.
 
-A real ``hermes chat --cli`` runs in a private tmux server against the scripted fake provider.
+A real ``tandem chat --cli`` runs in a private tmux server against the scripted fake provider.
 One session goes through a resize storm while a reply streams, a shrink while idle, and a
 two-step shrink while the next reply streams; ``capture-pane -J`` then joins tmux's re-wrapped
 rows back into lines. Reply lines are 146 columns, so each one wraps at every width here, and
@@ -107,7 +107,7 @@ def test_resizes_keep_each_transcript_line_once_in_tmux_scrollback(tmp_path: Pat
         try:
             tmux("set", "-g", "window-size", "manual")
             tmux("set", "-g", "remain-on-exit", "on")  # keeps a crash or the diagnostics' dump readable
-            wait_for("Welcome to Hermes", timeout=120)
+            wait_for("Welcome to Tandem", timeout=120)
             # The welcome line is printed before the input loop exists. Keys typed then land in the
             # still-cooked tty: the kernel echoes them (a plain transcript row) and hands the app
             # text + Enter in one read, which it takes for a pasted newline — the question sits

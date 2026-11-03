@@ -78,7 +78,7 @@ _ACP_FLAGS = (
 
 
 def cmd_acp(args):
-    """Launch Hermes Agent as an ACP server."""
+    """Launch Tandem Agent as an ACP server."""
     import os
     # The gateway-backed ACP server forwards launch flags from their documented env equivalents
     # (main() already exported --yolo / --safe-mode / --ignore-user-config).
@@ -95,9 +95,9 @@ def cmd_acp(args):
         acp_main([flag for attr, flag in _ACP_FLAGS if getattr(args, attr, False)])
     except ImportError as e:
         print("The ACP server can't start: its protocol packages are missing from this install.", file=sys.stderr)
-        print("From the Hermes environment, run: "
+        print("From the Tandem environment, run: "
               f"{install_hint('acp')}", file=sys.stderr)
-        print("Then restart Hermes.", file=sys.stderr)
+        print("Then restart Tandem.", file=sys.stderr)
         print(f"Details: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -200,7 +200,7 @@ def cmd_skills(args):
 
 
 def _cmd_skills_trust(args):
-    """``hermes skills trust|untrust [path]`` — manage ``skills.trusted_project_dirs``.
+    """``tandem skills trust|untrust [path]`` — manage ``skills.trusted_project_dirs``.
 
     With no path, operates on the project root enclosing the current directory
     (nearest ancestor with ``.git``).

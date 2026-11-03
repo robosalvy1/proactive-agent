@@ -139,7 +139,7 @@ def test_set_paused_roundtrip(curator_env):
 def test_non_positive_archive_after_days_falls_back_to_default(curator_env, monkeypatch, bad_days):
     """``curator.archive_after_days: 0`` (or negative) collapses archive_cutoff onto or past "now",
     which would mass-archive every skill with any past activity on the very next automatic pass.
-    ``hermes curator prune --days`` already refuses the same value; apply_automatic_transitions()
+    ``tandem curator prune --days`` already refuses the same value; apply_automatic_transitions()
     runs unconfirmed on an idle tick, so it must fall back to the default instead."""
     c = curator_env["curator"]
     u = curator_env["usage"]
@@ -975,7 +975,7 @@ def test_review_fork_restricts_toolsets_to_skills_only(curator_env, monkeypatch)
     ``terminal`` was removed from this fork for issue #96962: a terminal
     mv/cp/rm under the skills tree bypasses the skill ledger entirely, so the
     archive that followed snapshotted an already-stripped package and
-    ``hermes curator rollback`` restored a hollow skill. Removing the toolset
+    ``tandem curator rollback`` restored a hollow skill. Removing the toolset
     (rather than guarding terminal commands) closes every shell bypass by
     construction. Without ``enabled_toolsets=["skills"]`` on the AIAgent(...)
     call in ``_run_llm_review``, ``enabled_toolsets`` defaults to None and
@@ -1026,7 +1026,7 @@ def test_review_fork_toolset_surface_excludes_execution_tools():
     ``terminal`` and ``process`` must stay out of the curator fork's resolved
     surface (issue #96962): a shell mv/cp/rm under the skills tree bypasses
     the skill ledger entirely, the archive that follows snapshots an
-    already-stripped package, and ``hermes curator rollback`` restores a
+    already-stripped package, and ``tandem curator rollback`` restores a
     hollow skill. The call-site kwarg is pinned to ``["skills"]`` by the test
     above; this test pins the RESOLUTION, so an ``includes: ["terminal"]``
     added to the skills toolset definition — or a new execution tool merged

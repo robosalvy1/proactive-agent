@@ -140,6 +140,6 @@ def test_undeclared_plugin_and_non_plugin_callers_are_refused(stubs):
 
 def test_not_signed_in_names_the_sign_in_command(stubs):
     allowed, _ = stubs
-    with pytest.raises(ppr.ProviderNotSignedIn, match="hermes auth add openai-codex"):
+    with pytest.raises(ppr.ProviderNotSignedIn, match="tandem auth add openai-codex"):
         _plugin(declares=True).mint(allowed.url)
     assert allowed.seen == []

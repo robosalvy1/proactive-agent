@@ -2,7 +2,7 @@
 
 The installer runs before the user is asked about shared metrics and must never send anything, so a
 full-ladder run only leaves ONE small local receipt (closed tokens plus two epoch timestamps) under
-the profile's store dir. A later Hermes start that runs the process-exit reporter reads it:
+the profile's store dir. A later Tandem start that runs the process-exit reporter reads it:
 
 - collection off: ``shared_metrics_process.begin_process`` (and every opt-out answer) deletes every
   receipt unreported, the same rule as parked update receipts;

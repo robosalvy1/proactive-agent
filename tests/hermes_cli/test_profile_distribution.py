@@ -170,7 +170,7 @@ class TestVersionRequires:
         if ok:
             check_hermes_requires(spec, cur)
         else:
-            with pytest.raises(DistributionError, match="requires Hermes"):
+            with pytest.raises(DistributionError, match="requires Tandem"):
                 check_hermes_requires(spec, cur)
 
     def test_parse_semver_handles_prerelease(self):
@@ -416,7 +416,7 @@ class TestInstall:
             hermes_requires=">=99.0.0",
         )
         staged = _make_staging_dir(profile_env, "future", manifest=mf)
-        with pytest.raises(DistributionError, match="requires Hermes"):
+        with pytest.raises(DistributionError, match="requires Tandem"):
             install_distribution(str(staged), name="future")
 
 
@@ -477,7 +477,7 @@ class TestUpdate:
 
     def test_an_owned_category_keeps_skills_the_installer_added_to_it(self, profile_env):
         """``distribution_owned: [skills/research/]`` owns the author's research skills, not the
-        category: ``hermes skills install`` and agent-created skills land in ``skills/<category>/``
+        category: ``tandem skills install`` and agent-created skills land in ``skills/<category>/``
         too. The category was replaced wholesale, deleting them (the #25120 loss, still live for
         the explicit form the docs show)."""
         staged, plan = self._owned_category(profile_env, "rb")
@@ -691,7 +691,7 @@ class TestDescribe:
 
 
     def test_describe_missing_profile_raises(self, profile_env):
-        with pytest.raises(DistributionError, match="No profile named .*hermes profile list"):
+        with pytest.raises(DistributionError, match="No profile named .*tandem profile list"):
             describe_distribution("nonexistent")
 
 

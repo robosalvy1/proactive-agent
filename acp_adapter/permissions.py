@@ -1,4 +1,4 @@
-"""ACP permission bridging for Hermes dangerous-command approvals."""
+"""ACP permission bridging for Tandem dangerous-command approvals."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def _permission_option_supports_kind(kind: str) -> bool:
 def _build_permission_options(
     *, allow_permanent: bool, allow_session: bool = True, smart_denied: bool = False,
 ) -> list[PermissionOption]:
-    """Return ACP options that match Hermes approval semantics."""
+    """Return ACP options that match Tandem approval semantics."""
     # A gate that re-asks every time (allow_session=False, e.g. protected
     # agent-instruction writes) collapses to the same two options as a Smart
     # DENY override — offering a scope Hermes discards would re-prompt every write.
@@ -65,7 +65,7 @@ def _build_permission_tool_call(command: str, description: str):
 
 
 def _map_outcome_to_hermes(outcome: object, *, allowed_option_ids: set[str]) -> str:
-    """Map an ACP permission outcome into Hermes approval strings."""
+    """Map an ACP permission outcome into Tandem approval strings."""
     if not isinstance(outcome, AllowedOutcome):
         return "deny"
     if outcome.option_id not in allowed_option_ids:
@@ -117,7 +117,7 @@ def await_permission(
 def resolve_permission_timeout(timeout: float | None) -> float:
     """``None`` → the user's ``approvals.timeout`` (same knob as CLI/gateway prompts, default
     300 s). The ACP bridges used to hardcode 60 s, so a host whose approval card was still
-    waiting saw Hermes self-deny under it (#73403)."""
+    waiting saw Tandem self-deny under it (#73403)."""
     if timeout is not None:
         return float(timeout)
     from tools.approval_context import _get_approval_timeout
@@ -128,7 +128,7 @@ def resolve_permission_timeout(timeout: float | None) -> float:
 def make_approval_callback(request_permission_fn: Callable, loop: asyncio.AbstractEventLoop,
                            session_id: str, timeout: float | None = None,
                            send_update: Callable[[object], None] | None = None) -> Callable[..., str]:
-    """Return a Hermes approval callback (``command, description, **kw`` as used by
+    """Return a Tandem approval callback (``command, description, **kw`` as used by
     ``tools.approval.prompt_dangerous_approval()``) that bridges to the ACP
     connection's ``request_permission`` coroutine on ``loop``; auto-denies after ``timeout`` s
     (``None`` → ``approvals.timeout``, read per request)."""

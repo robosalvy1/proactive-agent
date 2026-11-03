@@ -61,7 +61,7 @@ async def test_resume_displays_unknown_and_queue_then_discards_with_refreshed_ge
             assert "without replay" in output.err.lower()
             # stdout holds the REPL banner only: no transcript or replay is rendered before
             # the operator has chosen what to do with the unknown admission.
-            assert output.out.strip().splitlines() == ["Welcome to Hermes Agent! Type your message or /help for commands."]
+            assert output.out.strip().splitlines() == ["Welcome to Tandem Agent! Type your message or /help for commands."]
             assert calls == [
                 ("runtime.describe", {}),
                 ("session.resume", {"session_id": snapshot["stored_session_id"]}),

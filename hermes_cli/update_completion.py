@@ -265,7 +265,7 @@ def settle_lost_completion(request: dict, reason: str) -> dict:
             print(f"  ⚠ Could not record the owed source-update tail: {exc}")
         _report_desktop_build_owed(request, _running_record(request), "the update completion did not finish")
         update_receipt.resume_run_record()  # the child's persisted stages, never this stale snapshot
-        update_receipt.record_followup("completion", reason, retry="the next launch or `hermes update` finishes it")
+        update_receipt.record_followup("completion", reason, retry="the next launch or `tandem update` finishes it")
         parked = not _record_owed_user_action(request)
         if parked:
             print(_owed_user_action(request))  # the completion child that prints it may never have run
@@ -301,7 +301,7 @@ def _settle_after_commit(request: dict, result_path: Path, step: str, reason: st
         _resume_receipt(record)
         update_receipt.record_stage("deps" if step == "dependencies" else "build", "failed")
         update_receipt.record_followup(step, reason, retry="dependencies not installed yet — the next launch retries"
-                                       if step == "dependencies" else "the next launch or `hermes update` retries it")
+                                       if step == "dependencies" else "the next launch or `tandem update` retries it")
         if not _record_owed_user_action(request):
             print(_owed_user_action(request))  # the completion child that would print it never ran
         update_receipt.finalize_pending_update_receipt(0, f"{step} owed after the code was updated")
@@ -374,7 +374,7 @@ def _complete_selected(request: dict) -> bool:
 
     Each step is independent; a failed one prints ``⚠``, lands on the receipt as a follow-up
     and keeps its own obligation armed (``source-completion-pending`` for the tail, the fleet
-    restart obligation for gateways), so the next launch or ``hermes update`` retries it.
+    restart obligation for gateways), so the next launch or ``tandem update`` retries it.
     Returns False only when the user's local changes were left parked in the stash: nothing
     retries that, so the run is ``partial`` and exits 1 (#122557), never "Update complete".
     """

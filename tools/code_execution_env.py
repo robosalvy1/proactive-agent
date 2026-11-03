@@ -178,7 +178,7 @@ def _build_child_env(*, rpc_endpoint: str, rpc_token: str, tmpdir: str,
     elif child_python not in _external_env_logged:
         # Surface once per interpreter so "import hermes_constants fails" is diagnosable.
         _external_env_logged.add(child_python)
-        logger.info("execute_code: child interpreter %s is outside the Hermes "
+        logger.info("execute_code: child interpreter %s is outside the Tandem "
                     "environment; hermes root omitted from PYTHONPATH", child_python)
     if _existing_pp:
         _pp_parts.append(_existing_pp)
@@ -244,7 +244,7 @@ def _python_environment_prefix(python_path: str) -> str:
 
 
 def _uses_hermes_python_environment(python_path: str) -> bool:
-    """Whether *python_path* belongs to Hermes's active Python environment. Short-circuits when
+    """Whether *python_path* belongs to Tandem's active Python environment. Short-circuits when
     it IS the running interpreter (by path or realpath — covers ``uv run`` venvs) so no probe
     runs on the default strict path and a flaky probe can never drop the hermes root."""
     if python_path == sys.executable or os.path.realpath(python_path) == os.path.realpath(sys.executable):

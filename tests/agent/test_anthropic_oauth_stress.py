@@ -180,7 +180,7 @@ def hermes_home(tmp_path, monkeypatch):
 def test_high_concurrency_anthropic_refresh_no_lost_updates_no_deadlock(
     hermes_home, monkeypatch
 ):
-    """CONCURRENCY 'Hermes processes' race the same stale refresh token
+    """CONCURRENCY 'Tandem processes' race the same stale refresh token
     against the real cross-process lock + real on-disk pool persistence.
 
     Every participant must end up with a usable, non-exhausted credential and

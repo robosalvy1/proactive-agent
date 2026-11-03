@@ -11,8 +11,8 @@ history and each turn submits only the new user message), so:
 * the fix routes hygiene and manual /compress to the LIVE cached agent's
   ``thread/compact/start`` (asserted here at the compact_thread RPC-stub
   boundary) and keeps that agent cached;
-* ``compression.codex_app_server_auto`` semantics hold: only ``hermes``
-  lets Hermes' threshold start a compaction; ``native``/``off`` skip
+* ``compression.codex_app_server_auto`` semantics hold: only ``tandem``
+  lets Tandem' threshold start a compaction; ``native``/``off`` skip
   cleanly, and no mode ever runs the local transcript compressor.
 """
 

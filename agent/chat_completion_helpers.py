@@ -729,7 +729,7 @@ def _bedrock_reasoning_stale_floor(model_id: object) -> float | None:
 
 
 def _bedrock_converse_call(api_kwargs: dict, *, stream: bool, on_stream_denied=None):
-    """Pop the Hermes routing keys and call ``converse`` / ``converse_stream`` (boto3
+    """Pop the Tandem routing keys and call ``converse`` / ``converse_stream`` (boto3
     directly) with the shared recovery: a cachePoint rejection (Nova: toolConfig.tools,
     #97281) drops the marker and resends once inside the same attempt; a streaming IAM
     denial hands off to ``on_stream_denied(client, kwargs, exc)``; a stale connection
@@ -1936,7 +1936,7 @@ def _log_fallback_activated(agent, reason, old_model, old_provider, fb_model, fb
         return
     from hermes_constants import get_hermes_home, profile_name_for_home
     profile = profile_name_for_home(get_hermes_home()) or "default"
-    remedy = "hermes model" if profile == "default" else f"hermes -p {profile} model"
+    remedy = "tandem model" if profile == "default" else f"tandem -p {profile} model"
     logger.warning(
         "Profile %s: %s via %s refused for billing/credits — using fallback %s via %s. "
         "Top up credits, or run `%s` to pick a model this account can use.",

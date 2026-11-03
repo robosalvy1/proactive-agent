@@ -1780,7 +1780,7 @@ def _plugins_update(rid, params):
 
 
 def _plugins_remove(rid, params):
-    """Uninstall a user install (``<HERMES_HOME>/plugins/<name>``) — the same core as ``hermes plugins
+    """Uninstall a user install (``<HERMES_HOME>/plugins/<name>``) — the same core as ``tandem plugins
     remove`` and the dashboard; bundled plugins and paths outside the plugins dir are refused there."""
     name = (params.get("name") or "").strip()
     if not name:
@@ -1827,7 +1827,7 @@ _PLUGINS_ACTIONS = {"list": _plugins_list, "onboarding": _plugins_onboarding, "p
 
 @_scoped_rpc("plugins.manage", 5026, catch_resolve=False)
 def _(rid, params: dict) -> dict:
-    """TUI Plugins Hub backend (shares primitives with ``hermes plugins`` / the dashboard):
+    """TUI Plugins Hub backend (shares primitives with ``tandem plugins`` / the dashboard):
     ``list`` → {plugins, user_count, bundled_count}; ``toggle`` flips ``key``/``name`` per ``enable``;
     ``install`` git-clones ``identifier``/``repo`` or a curated ``catalog_name`` (``force``, ``enable``
     default True); ``update`` re-pins a catalog install to the current catalog SHA; ``remove`` deletes

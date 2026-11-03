@@ -127,7 +127,7 @@ def reset_screenshot_dedup(session_id: str) -> None:
     _reset_screenshot_dedup(_scoped_sid(session_id))
 
 def _cua_permission_mode(session_id: str) -> str:
-    """Map Hermes's approval bypass onto Cua's immutable mode; fails closed. Both identity namespaces are consulted
+    """Map Tandem's approval bypass onto Cua's immutable mode; fails closed. Both identity namespaces are consulted
     (DB ``session_id`` and gateway ``session_key`` contextvar) or a gateway ``/yolo`` would be invisible here.
     Warns once per session that ``-z``/``--yolo`` swapped the driver onto a private ``unrestricted`` daemon, dropping
     the configured ceiling: deliberate (``unrestricted`` is not a config value) but easy to trigger by accident."""
@@ -190,7 +190,7 @@ def _stop_backend(backend: ComputerUseBackend, call_lock: Optional[threading.RLo
         on_error(e)
 
 def _scoped_sid(session_id: str) -> str:
-    """Cache key for one Hermes session's backend. Outside a served-profile scope it is the bare id
+    """Cache key for one Tandem session's backend. Outside a served-profile scope it is the bare id
     (legacy keys byte-identical); under a multiplexed turn the routed profile's home key is appended
     so two profiles that share a session id (or a DISPLAY) never share one cua-driver (#110032).
     Every cache path — lookup, install, release — goes through this, so release finds what lookup made."""
@@ -271,7 +271,7 @@ def _shutdown_backend_atexit() -> None:
     Never raises. Drops the global lock before stop(): teardown budgets 5s and must not block spawns.
 
     Each session backend holds a long-lived ``cua-driver`` subprocess, so without this a driver can survive
-    the Hermes process that spawned it (#28152 item 3). #69903 kept the orphan from burning a core by
+    the Tandem process that spawned it (#28152 item 3). #69903 kept the orphan from burning a core by
     disabling the cursor overlay; the process itself still lingered.
     """
     global _backend
@@ -345,7 +345,7 @@ def handle_computer_use(args: dict[str, Any], **kwargs) -> Any:
         backend = call.enter_context(_backend_for_call(session_id))
     except Exception as e:
         from plugins.computer_use import DEFAULT_BACKEND, configured_backend_name
-        hint = ({"hint": "If the cua-driver binary is missing, run `hermes computer-use install`. If a Python "
+        hint = ({"hint": "If the cua-driver binary is missing, run `tandem computer-use install`. If a Python "
                          "dependency is missing, the error above shows the exact install command."}
                 if configured_backend_name() == DEFAULT_BACKEND else {})
         return json.dumps({"error": f"computer_use backend unavailable: {e}", **hint})
@@ -762,14 +762,14 @@ def _maybe_follow_capture(backend: ComputerUseBackend, res: ActionResult, do_cap
 
 # ── Cache files (screenshots, element spills, vision temps) ─────────────────
 def _secure_dir_policy(cache_dir) -> None:
-    """Create/reconcile a Hermes media-cache dir owner-only (0700), except managed.
+    """Create/reconcile a Tandem media-cache dir owner-only (0700), except managed.
 
     A capture is as sensitive as the screen it came from — an open password
     manager, a private chat, a bank tab. The umask-derived 0755 these dirs
     used to get made every local account able to list (and read) those
     frames whenever ``HERMES_HOME`` itself is traversable, which is exactly
     what the documented ``HERMES_HOME_MODE=0701`` web-server escape hatch
-    arranges. Delegates to the same house policy as every Hermes secret dir —
+    arranges. Delegates to the same house policy as every Tandem secret dir —
     ``hermes_cli.config._secure_dir`` — with the mode passed to ``mkdir`` so
     there is no window between mkdir and chmod; managed/NixOS installs keep
     their group-share design (the mode is left to the configured umask/setgid
@@ -844,7 +844,7 @@ def _write_cache_file(what: str, subdir: str, legacy: str, name: str, pattern: s
         return None
 
 def _persist_capture_image(cap: CaptureResult) -> Optional[str]:
-    """Copy of the capture in Hermes' media cache so attachment surfaces can deliver it (None without an image)."""
+    """Copy of the capture in Tandem' media cache so attachment surfaces can deliver it (None without an image)."""
     return _write_cache_file(
         "screenshot persistence", "cache/images", "image_cache", f"computer_use_{uuid.uuid4().hex}{_capture_image_format(cap)[1]}",
         "computer_use_*.*", _MAX_CAPTURE_FILES,

@@ -1,4 +1,4 @@
-"""The bare ``hermes plugins`` picker writes only the rows the user flipped.
+"""The bare ``tandem plugins`` picker writes only the rows the user flipped.
 
 Bundled platforms are active without a ``plugins.enabled`` entry; the picker used to open them unticked
 and save every unticked row into ``plugins.disabled`` on any exit, so opening and closing it silenced

@@ -3,14 +3,14 @@
 Failure class: users and permissions. A second uid sharing an install (a root gateway whose
 workers run as other uids, #120151's topology), an admin-provisioned machine or an image leaves
 the code and PM state (checkout, tool store, ``installs/``) readable but not writable by the user
-who runs Hermes, while their own data under HERMES_HOME stays writable. On such a tree:
+who runs Tandem, while their own data under HERMES_HOME stays writable. On such a tree:
 
 * a turn must work: deciding that an install is current is a read, and nothing on the launch
   path may need write access to the install, or the launch fails once saying the install is not
   writable by this user, never pointing at a remedy that needs the same access;
-* ``hermes update`` must exit non-zero with a message that names the permission problem, never
+* ``tandem update`` must exit non-zero with a message that names the permission problem, never
   report success, never crash with a traceback, and leave the install on its old commit;
-* once the tree is writable again, the same ``hermes update`` succeeds: the refused attempt left
+* once the tree is writable again, the same ``tandem update`` succeeds: the refused attempt left
   nothing behind that blocks the next one.
 
 One real install through HEAD's ``scripts/install.sh``; upstream then publishes a release. The
@@ -111,13 +111,13 @@ def test_update_on_a_read_only_tree_refuses_with_a_reason_and_recovers(world, pr
     assert world["install"].returncode == 0, "install.sh failed:\n" + I.describe(world["install"])
     up = world["ro_update"]
     out = up.stdout + up.stderr
-    assert up.returncode != 0, "hermes update reported success on an install tree it cannot write:\n" + I.describe(up)
-    assert I.TRACEBACK not in out, "hermes update crashed on a read-only install tree:\n" + I.describe(up)
-    assert ACTIONABLE.search(out), "hermes update failed on a read-only tree without saying why:\n" + I.describe(up)
+    assert up.returncode != 0, "tandem update reported success on an install tree it cannot write:\n" + I.describe(up)
+    assert I.TRACEBACK not in out, "tandem update crashed on a read-only install tree:\n" + I.describe(up)
+    assert ACTIONABLE.search(out), "tandem update failed on a read-only tree without saying why:\n" + I.describe(up)
     assert world["ro_head"] == world["before"], "a refused update still moved the checkout"
     again = world["rw_update"]
     assert again.returncode == 0 and I.TRACEBACK not in again.stdout + again.stderr, (
-        "after the tree became writable again, hermes update still failed:\n" + I.describe(again))
+        "after the tree became writable again, tandem update still failed:\n" + I.describe(again))
     assert I.git("rev-parse", "HEAD", cwd=world["sb"].checkout) == world["target"], (
         "update exited 0 but HEAD is not the new release")
     X.turn(world["sb"], provider, "turn after the recovered update")

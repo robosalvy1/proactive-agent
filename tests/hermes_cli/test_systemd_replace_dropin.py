@@ -1,8 +1,8 @@
-"""A Hermes-authored systemd ``--replace`` drop-in must not survive unit refresh.
+"""A Tandem-authored systemd ``--replace`` drop-in must not survive unit refresh.
 
-An older Hermes wrote ``<unit>.d/20-replace.conf`` to end a respawn storm; it overrides ExecStart
+An older Tandem wrote ``<unit>.d/20-replace.conf`` to end a respawn storm; it overrides ExecStart
 with ``gateway run --replace``. Combined with the cross-profile ownership guard, that override turns
-a per-profile fleet's unit into one that can never start (#119467). Refresh retires the Hermes file,
+a per-profile fleet's unit into one that can never start (#119467). Refresh retires the Tandem file,
 and only that file: a drop-in the operator wrote is theirs.
 """
 
@@ -48,7 +48,7 @@ def test_refresh_retires_the_hermes_replace_dropin_even_when_the_unit_text_is_cu
 
 
 def test_refresh_keeps_an_operator_written_dropin_of_the_same_name(tmp_path, monkeypatch):
-    """Only the file Hermes authored (recognised by its own comment) is retired."""
+    """Only the file Tandem authored (recognised by its own comment) is retired."""
     _unit, dropin, calls = _current_unit_with_dropin(
         tmp_path, monkeypatch, "[Service]\nExecStart=\nExecStart=/opt/hermes gateway run --replace\n")
 

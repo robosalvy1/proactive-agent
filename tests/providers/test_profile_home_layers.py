@@ -2,7 +2,7 @@
 
 One process serves several profiles (multiplex gateway, Desktop ``serve``); discovery used to read the
 plugins of whichever home was bound first and never look again, so a plugin installed in a secondary
-profile was ``Unknown provider`` from Desktop while ``hermes -p <profile>`` in a terminal worked.
+profile was ``Unknown provider`` from Desktop while ``tandem -p <profile>`` in a terminal worked.
 """
 
 from __future__ import annotations

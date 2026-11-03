@@ -1,5 +1,5 @@
 """Desktop `serve` starts background MCP discovery only after the socket binds; a standalone
-`hermes dashboard` arms it at boot and the first /api/ws client (or agent build) fires it (#58733).
+`tandem dashboard` arms it at boot and the first /api/ws client (or agent build) fires it (#58733).
 
 The MCP SDK import (~350ms) used to run on a thread started BEFORE
 web_server was imported, holding the GIL against the main thread's own
@@ -92,7 +92,7 @@ def _stub_dashboard_runtime(monkeypatch):
 
 
 def test_standalone_dashboard_boot_arms_discovery_without_starting_it(monkeypatch):
-    """#58733: an idle, unvisited `hermes dashboard` must not spawn the configured MCP servers."""
+    """#58733: an idle, unvisited `tandem dashboard` must not spawn the configured MCP servers."""
     _reset_discovery_state(monkeypatch)
     monkeypatch.delenv("HERMES_DESKTOP", raising=False)
     main_mod = _stub_dashboard_runtime(monkeypatch)

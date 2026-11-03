@@ -21,7 +21,7 @@ class DependencyConflict(AdmissionRefused):
         self.plugin = plugin
         who = f"Plugin '{plugin}'" if plugin else "The plugin selection"
         super().__init__(
-            f"{who} conflicts with the dependencies pinned by Hermes core or an enabled plugin, "
+            f"{who} conflicts with the dependencies pinned by Tandem core or an enabled plugin, "
             f"so it was not admitted. Resolver: {cause}")
 
 

@@ -1,12 +1,12 @@
 ---
 sidebar_position: 3
 title: "Persistent Memory"
-description: "How Hermes Agent remembers across sessions — MEMORY.md, USER.md, and session search"
+description: "How Tandem Agent remembers across sessions — MEMORY.md, USER.md, and session search"
 ---
 
 # Persistent Memory
 
-Hermes Agent has bounded, curated memory that persists across sessions. This lets it remember your preferences, your projects, your environment, and things it has learned.
+Tandem Agent has bounded, curated memory that persists across sessions. This lets it remember your preferences, your projects, your environment, and things it has learned.
 
 ## How It Works
 
@@ -19,8 +19,8 @@ Two files make up the agent's memory:
 
 Both are stored in `~/.hermes/memories/` and are injected into the system prompt as a frozen snapshot at session start. The agent manages its own memory via the `memory` tool — it can add, patch, or remove entries.
 
-:::caution One agent per Hermes home
-Don't point two agent processes at the same Hermes home directory. Memory writes are automatic and load back into the system prompt at session start, so two writers sharing one home will compound each other's entries into state neither of them (nor you) authored. Memory is scoped per [profile](../profiles.md) by design — give a second agent its own profile, and if they need shared memory, use an [external memory provider](./memory-providers.md) instead.
+:::caution One agent per Tandem home
+Don't point two agent processes at the same Tandem home directory. Memory writes are automatic and load back into the system prompt at session start, so two writers sharing one home will compound each other's entries into state neither of them (nor you) authored. Memory is scoped per [profile](../profiles.md) by design — give a second agent its own profile, and if they need shared memory, use an [external memory provider](./memory-providers.md) instead.
 :::
 
 :::info
@@ -79,7 +79,7 @@ The most common report looks like this: you tell the agent where something lives
 
 2. **Check the write wasn't staged.** With `write_approval: true`, writes outside the interactive CLI are held for review and never reach the file until approved — run `/memory pending` and `/memory approve all`. See [Controlling memory writes](#controlling-memory-writes-write_approval).
 
-3. **Check you are reading the same memory you wrote.** Memory is per [profile](../profiles.md): `hermes -p work` (or `work chat` / `work gateway start`) reads `~/.hermes/profiles/work/memories/`, not `~/.hermes/memories/`. A CLI session in the default profile and a Telegram bot on another profile do not share notes. `hermes profile list` shows what exists.
+3. **Check you are reading the same memory you wrote.** Memory is per [profile](../profiles.md): `tandem -p work` (or `work chat` / `work gateway start`) reads `~/.hermes/profiles/work/memories/`, not `~/.hermes/memories/`. A CLI session in the default profile and a Telegram bot on another profile do not share notes. `tandem profile list` shows what exists.
 
 4. **Check memory is enabled.** `memory.memory_enabled: false` (or `memory` under `agent.disabled_toolsets`) removes the tool entirely — the model cannot save anything, whatever it says. See [Configuration](#configuration).
 
@@ -242,7 +242,7 @@ Beyond MEMORY.md and USER.md, the agent can search its past conversations using 
 - The agent can also scroll forward/backward inside any session it finds
 
 ```bash
-hermes sessions list    # Browse past sessions
+tandem sessions list    # Browse past sessions
 ```
 
 See [Session Search Tool](../sessions.md#session-search-tool) for the three calling shapes (discovery / scroll / browse) and the response format.
@@ -262,21 +262,21 @@ See [Session Search Tool](../sessions.md#session-search-tool) for the three call
 
 ## Learning Journey (`/journey`)
 
-The learning journey is a timeline view of everything Hermes has learned — saved skills and memory entries plotted over time (oldest at top, newest at bottom), with a playable "constellation" scrubber that replays the build-up. The same graph data drives three surfaces:
+The learning journey is a timeline view of everything Tandem has learned — saved skills and memory entries plotted over time (oldest at top, newest at bottom), with a playable "constellation" scrubber that replays the build-up. The same graph data drives three surfaces:
 
-- **Classic CLI / standalone** — `hermes journey` (aliases: `hermes learning`, `hermes memory-graph`) renders the timeline in the terminal. Flags: `--play` animates the build-up (`--fps` to tune it), `--width`/`--height` override the render size, `--no-color` disables color, and `--json` dumps the raw graph payload.
+- **Classic CLI / standalone** — `tandem journey` (aliases: `hermes learning`, `tandem memory-graph`) renders the timeline in the terminal. Flags: `--play` animates the build-up (`--fps` to tune it), `--width`/`--height` override the render size, `--no-color` disables color, and `--json` dumps the raw graph payload.
 - **TUI** — `/journey` (aliases: `/learning`, `/memory-graph`) opens the timeline as an overlay.
 - **Desktop app** — `/journey` opens the Star Map / memory-graph panel, an interactive visual of the same nodes.
 
 A skill appears on the timeline as soon as it has a learning signal: it was created in this profile (a `/learn` result or a foreground `skill_manage` create), created by the background review, or used at least once. Bundled skills and hand-written skills that have never been used stay out of the timeline.
 
-Beyond viewing, the journey is also where you **prune and correct** what Hermes has learned:
+Beyond viewing, the journey is also where you **prune and correct** what Tandem has learned:
 
 | Command | What it does |
 |---------|--------------|
-| `hermes journey list` | List node ids — skill names and `memory:<source>:<index>:<fingerprint>` ids for memory chunks (pass one back exactly as printed). |
-| `hermes journey delete <node> [-y]` | Delete a node. Skills are **archived** (restorable), memory chunks are removed. `-y` skips the confirmation. |
-| `hermes journey edit <node>` | Open the node's content (a skill's `SKILL.md` or the memory chunk) in `$EDITOR`. |
+| `tandem journey list` | List node ids — skill names and `memory:<source>:<index>:<fingerprint>` ids for memory chunks (pass one back exactly as printed). |
+| `tandem journey delete <node> [-y]` | Delete a node. Skills are **archived** (restorable), memory chunks are removed. `-y` skips the confirmation. |
+| `tandem journey edit <node>` | Open the node's content (a skill's `SKILL.md` or the memory chunk) in `$EDITOR`. |
 
 The same `list` / `delete <id>` / `edit <id>` subcommands work from the in-chat `/journey` command on the CLI, and the desktop panel offers edit/delete on nodes directly.
 
@@ -322,7 +322,7 @@ visible to the model. Prefer your provider's own recall budget when available.
 The opt-in uses the shared `hooks.output_spill` threshold, preview lengths, and
 directory; `hooks.output_spill.enabled: false` still disables it. Normal plugin
 hooks continue to spill by default, independently of the memory opt-in. Settings
-are captured at provider registration: restart Hermes after changing them.
+are captured at provider registration: restart Tandem after changing them.
 See [oversized prefetch results](../../developer-guide/memory-provider-plugin.md#oversized-prefetch-results)
 for the configuration details.
 
@@ -549,13 +549,13 @@ Full details in [Gating agent skill writes](./skills.md#gating-agent-skill-write
 
 ## External Memory Providers
 
-For deeper, persistent memory that goes beyond MEMORY.md and USER.md, Hermes ships with 2 external memory provider plugins — RetainDB and ByteRover — and more, such as Honcho, Hindsight, Supermemory, Mem0, OpenViking and Holographic, are available from the [plugin catalog](plugins.md) via `hermes plugins install <name>`.
+For deeper, persistent memory that goes beyond MEMORY.md and USER.md, Tandem ships with 2 external memory provider plugins — RetainDB and ByteRover — and more, such as Honcho, Hindsight, Supermemory, Mem0, OpenViking and Holographic, are available from the [plugin catalog](plugins.md) via `tandem plugins install <name>`.
 
 External providers run **alongside** built-in memory (never replacing it) and add capabilities like knowledge graphs, semantic search, automatic fact extraction, and cross-session user modeling.
 
 ```bash
-hermes memory setup      # pick a provider and configure it
-hermes memory status     # check what's active
+tandem memory setup      # pick a provider and configure it
+tandem memory status     # check what's active
 ```
 
 See the [Memory Providers](./memory-providers.md) guide for full details on each provider, setup instructions, and comparison.

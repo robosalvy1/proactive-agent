@@ -97,7 +97,7 @@ describe('connected external provider row', () => {
     listOAuthProviders.mockResolvedValue({
       providers: [
         {
-          cli_command: 'hermes auth add nous',
+          cli_command: 'tandem auth add nous',
           disconnectable: true,
           docs_url: '',
           flow: 'device_code',

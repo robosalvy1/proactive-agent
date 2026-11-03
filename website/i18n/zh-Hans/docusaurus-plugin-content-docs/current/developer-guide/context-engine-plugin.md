@@ -4,7 +4,7 @@ title: "Context Engine 插件"
 description: "如何构建替换内置 ContextCompressor 的 context engine 插件"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # 构建 Context Engine 插件
@@ -160,7 +160,7 @@ def register(ctx):
 
 ## 配置
 
-用户通过 `hermes plugins` → Provider Plugins → Context Engine 选择引擎，或直接编辑 `config.yaml`：
+用户通过 `tandem plugins` → Provider Plugins → Context Engine 选择引擎，或直接编辑 `config.yaml`：
 
 ```yaml
 context:

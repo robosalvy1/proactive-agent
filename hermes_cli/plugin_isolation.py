@@ -1,12 +1,12 @@
 """Where third-party Python plugin code is allowed to run (``plugins.isolation``).
 
-``in_process`` (default) imports every plugin into the Hermes process, as always. ``host`` keeps
+``in_process`` (default) imports every plugin into the Tandem process, as always. ``host`` keeps
 third-party plugin code OUT of it: general plugins load in one plugin-host process per profile
-(:mod:`hermes_cli.plugin_host`) and talk to Hermes only through ``ctx``; every other path that would
+(:mod:`hermes_cli.plugin_host`) and talk to Tandem only through ``ctx``; every other path that would
 import a user-supplied module in-process (category providers, model-provider profiles, dashboard
-plugin APIs) refuses with a stated reason. Bundled plugins ship with Hermes and stay in-process.
+plugin APIs) refuses with a stated reason. Bundled plugins ship with Tandem and stay in-process.
 
-That second half is the property a pooled deployment needs: one Hermes process serving many
+That second half is the property a pooled deployment needs: one Tandem process serving many
 profiles must never share an interpreter with a profile's plugin code. The same boundary gives a
 single-user install crash isolation (a plugin that segfaults or hangs takes down its host, not the
 gateway), which is why it is a plain config value and not a cloud-only switch.
@@ -115,13 +115,13 @@ def in_process_import_refusal(what: str, *, source: str = "user",
                               config: Optional[Mapping[str, Any]] = None) -> Optional[str]:
     """Reason an in-process import of third-party code must not happen, or ``None`` when allowed.
 
-    Every loader that imports a user-supplied module into the Hermes process asks this first;
+    Every loader that imports a user-supplied module into the Tandem process asks this first;
     bundled code always passes.
     """
     if source == "bundled" or isolation_mode(config) != ISOLATION_HOST:
         return None
     return (f"{what} runs only in-process, and plugins.isolation is 'host' (third-party plugin code "
-            f"never runs inside the Hermes process); set plugins.isolation: in_process to load it")
+            f"never runs inside the Tandem process); set plugins.isolation: in_process to load it")
 
 
 def user_plugin_host() -> Any:

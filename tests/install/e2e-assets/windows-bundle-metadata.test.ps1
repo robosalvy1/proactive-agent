@@ -5,7 +5,7 @@ Set-StrictMode -Version Latest
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('bundle-metadata-' + [Guid]::NewGuid())
 New-Item -ItemType Directory -Path $temp | Out-Null
-$expected = [pscustomobject]@{ msixIdentity='Fixture.Hermes'; publisher='CN=Fixture'; applicationId='Hermes' }
+$expected = [pscustomobject]@{ msixIdentity='Fixture.Hermes'; publisher='CN=Fixture'; applicationId='Tandem' }
 function Archive([string]$Name, [string]$Entry, [string]$Xml, [string[]]$Extra = @()) {
     $file = Join-Path $temp $Name
     $zip = [IO.Compression.ZipFile]::Open($file, [IO.Compression.ZipArchiveMode]::Create)
@@ -22,7 +22,7 @@ function Reject([scriptblock]$Action) {
     if (-not $rejected) { throw 'Admission unexpectedly accepted invalid metadata' }
 }
 try {
-    $xml = '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="Fixture.Hermes" Publisher="CN=Fixture" Version="1.2.3.0" ProcessorArchitecture="arm64"/><Applications><Application Id="Hermes" Executable="app\Hermes.exe"/></Applications></Package>'
+    $xml = '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="Fixture.Hermes" Publisher="CN=Fixture" Version="1.2.3.0" ProcessorArchitecture="arm64"/><Applications><Application Id="Tandem" Executable="app\Hermes.exe"/></Applications></Package>'
     $file = Archive 'native.msix' 'AppxManifest.xml' $xml
     $got = Read-BundleSmokeMetadata $file 'arm64' $expected
     if ($got.Version -cne '1.2.3.0' -or $got.Executable -cne 'app\Hermes.exe') { throw 'MSIX metadata lost' }

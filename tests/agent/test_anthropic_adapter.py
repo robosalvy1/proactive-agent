@@ -40,7 +40,7 @@ def test_missing_sdk_error_reports_why_the_lazy_install_did_not_land(monkeypatch
     from agent import anthropic_adapter
     from pm.package import InstallError
 
-    restart = InstallError("venv", "anthropic installed; restart Hermes to activate the new dependency environment")
+    restart = InstallError("venv", "anthropic installed; restart Tandem to activate the new dependency environment")
 
     def ensure_import(extra):
         raise restart
@@ -88,7 +88,7 @@ class TestBuildAnthropicClient:
             kwargs = mock_sdk.Anthropic.call_args[1]
             headers = kwargs["default_headers"]
             assert headers["HTTP-Referer"] == "https://hermes-agent.nousresearch.com"
-            assert headers["X-Title"] == "Hermes Agent"
+            assert headers["X-Title"] == "Tandem Agent"
             from hermes_cli.version_info import get_version_info
             assert headers["User-Agent"] == f"HermesAgent/{get_version_info().base_version}"
             # Auth branch is unchanged: x-api-key via api_key, betas kept.

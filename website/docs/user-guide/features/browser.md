@@ -7,14 +7,14 @@ sidebar_position: 5
 
 # Browser Automation
 
-Hermes Agent includes a full browser automation toolset with multiple backend options:
+Tandem Agent includes a full browser automation toolset with multiple backend options:
 
 - **Browser Use cloud mode** via [Browser Use](https://browser-use.com) for managed Chromium with stealth, residential proxies, CAPTCHA solving, and reusable browser profiles
 - **Browserbase cloud mode** via [Browserbase](https://browserbase.com) as an alternative cloud browser provider with anti-bot tooling
 - **Browser Use mode** via the [Browser Use CLI 3.0](https://github.com/browser-use/browser-use), the default browser driver for local Chrome and Browser Use cloud browsers
 - **Firecrawl cloud mode** via [Firecrawl](https://firecrawl.dev) for cloud browsers with built-in scraping
 - **Camofox local mode** via [Camofox](https://github.com/jo-inc/camofox-browser) for local anti-detection browsing (Firefox-based fingerprint spoofing)
-- **Lightpanda local engine** via [Lightpanda](https://lightpanda.io) — a headless browser built from scratch in Zig for machines; instant start up, 16x lower memory and 9x faster than Chrome. Works in Browser Use mode (Hermes spawns it, no Chromium or Node needed) and with the built-in tools (automatic Chrome fallback for actions it doesn't support yet)
+- **Lightpanda local engine** via [Lightpanda](https://lightpanda.io) — a headless browser built from scratch in Zig for machines; instant start up, 16x lower memory and 9x faster than Chrome. Works in Browser Use mode (Tandem spawns it, no Chromium or Node needed) and with the built-in tools (automatic Chrome fallback for actions it doesn't support yet)
 - **Local Chromium-family CDP** — connect browser tools to your own Chrome, Brave, Chromium, or Edge instance using `/browser connect`
 - **Local browser mode** via the `agent-browser` CLI and a local Chromium installation
 
@@ -37,7 +37,7 @@ Key capabilities:
 ## Setup
 
 :::tip Nous Subscribers
-If you have a paid [Nous Portal](https://portal.nousresearch.com) subscription, you can use browser automation through the **[Tool Gateway](tool-gateway.md)** without any separate API keys. New installs can run `hermes setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Nous Subscription** as the browser provider via `hermes model` or `hermes tools`.
+If you have a paid [Nous Portal](https://portal.nousresearch.com) subscription, you can use browser automation through the **[Tool Gateway](tool-gateway.md)** without any separate API keys. New installs can run `tandem setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Nous Subscription** as the browser provider via `tandem model` or `tandem tools`.
 :::
 
 ### Browser Use cloud mode
@@ -66,18 +66,18 @@ BROWSERBASE_PROJECT_ID=your-project-id-here
 Get your credentials at [browserbase.com](https://browserbase.com).
 
 :::note Selecting the provider
-The `.env` keys above supply **credentials only**. The active cloud browser is chosen by the `browser.cloud_provider` selection written by `hermes tools` → Browser Automation (`browserbase`, `browser-use`, `camofox`, or `nous` for the Nous Subscription). Once a selection exists, adding or removing a key does not switch providers — and a selected provider with a missing key errors with guidance to run `hermes tools` instead of silently rerouting. Never-configured setups still autodetect from available credentials.
+The `.env` keys above supply **credentials only**. The active cloud browser is chosen by the `browser.cloud_provider` selection written by `tandem tools` → Browser Automation (`browserbase`, `browser-use`, `camofox`, or `nous` for the Nous Subscription). Once a selection exists, adding or removing a key does not switch providers — and a selected provider with a missing key errors with guidance to run `tandem tools` instead of silently rerouting. Never-configured setups still autodetect from available credentials.
 :::
 
 ### Browser Use mode (default)
 
 Browser Use mode uses the [Browser Use CLI 3.0](https://github.com/browser-use/browser-use) instead of the built-in browser tools. The agent writes and executes Python in the browser to click, type, drag, scrape, and interact with webpages.
 
-**This is the default browser mode**: when `browser.backend` is unset, the agent gets the single `browser_exec` tool. Its engine is browser-harness (the Browser Use CLI is a thin wrapper around it), a regular Python dependency of Hermes, so every install ships it, including the Desktop app, with no separate download. If it is ever missing from Hermes's environment, Hermes falls back to the built-in browser tools and `hermes update` restores it.
+**This is the default browser mode**: when `browser.backend` is unset, the agent gets the single `browser_exec` tool. Its engine is browser-harness (the Browser Use CLI is a thin wrapper around it), a regular Python dependency of Tandem, so every install ships it, including the Desktop app, with no separate download. If it is ever missing from Tandem's environment, Tandem falls back to the built-in browser tools and `tandem update` restores it.
 
-The mode is a **driver** that composes with your configured browser backend: it drives Hermes' own headless Chromium, a Nous-subscription cloud browser, Browserbase, Firecrawl, or Browser Use cloud browsers — whichever browser source is selected in `hermes tools` → Browser Automation. The one exception is Camofox, which has no CDP endpoint for the harness to attach to; Camofox setups automatically keep the built-in browser tools.
+The mode is a **driver** that composes with your configured browser backend: it drives Tandem's own headless Chromium, a Nous-subscription cloud browser, Browserbase, Firecrawl, or Browser Use cloud browsers — whichever browser source is selected in `tandem tools` → Browser Automation. The one exception is Camofox, which has no CDP endpoint for the harness to attach to; Camofox setups automatically keep the built-in browser tools.
 
-**Local browsing uses the packaged Chromium, not your own Chrome.** With no cloud provider or `/browser connect` endpoint configured, Hermes launches the same Chromium that the built-in tools use (installed via `hermes tools` → Browser Automation, driven through agent-browser) and points the Browser Use CLI at it. Your installed Chrome is never touched, so there is no `chrome://inspect` remote-debugging toggle to enable and no "Allow remote debugging?" popup — and it works on headless hosts with no Chrome at all. The browser is shared with the built-in stack's lifecycle: it is closed after `browser.inactivity_timeout`, at exit, and by the orphan sweep. To drive a browser you're signed in to, use `/browser connect` or the [real-profile toggle](#real-profile-browsing-use-your-own-logins).
+**Local browsing uses the packaged Chromium, not your own Chrome.** With no cloud provider or `/browser connect` endpoint configured, Tandem launches the same Chromium that the built-in tools use (installed via `tandem tools` → Browser Automation, driven through agent-browser) and points the Browser Use CLI at it. Your installed Chrome is never touched, so there is no `chrome://inspect` remote-debugging toggle to enable and no "Allow remote debugging?" popup — and it works on headless hosts with no Chrome at all. The browser is shared with the built-in stack's lifecycle: it is closed after `browser.inactivity_timeout`, at exit, and by the orphan sweep. To drive a browser you're signed in to, use `/browser connect` or the [real-profile toggle](#real-profile-browsing-use-your-own-logins).
 
 **Concurrent sessions:** `browser_exec` accepts a `session=<name>` argument that isolates browser work per name on every backend. Each name gets its own harness daemon (its own IPC socket, log, and state) and its own browser (a separate packaged Chromium locally, a separate cloud browser on cloud backends) — so parallel subagents or simultaneous chats no longer clobber a single shared connection. Omitting `session` uses the shared default daemon, which is fine for one-at-a-time browsing.
 
@@ -112,7 +112,7 @@ FIRECRAWL_API_KEY=fc-***
 Get your API key at [firecrawl.dev](https://firecrawl.dev). Then select Firecrawl as your browser provider:
 
 ```bash
-hermes setup tools
+tandem setup tools
 # → Browser Automation → Firecrawl
 ```
 
@@ -128,7 +128,7 @@ FIRECRAWL_BROWSER_TTL=600
 
 ### Hybrid routing: cloud for public URLs, local for LAN/localhost
 
-When a cloud provider is configured, Hermes auto-spawns a **local Chromium sidecar**
+When a cloud provider is configured, Tandem auto-spawns a **local Chromium sidecar**
 for URLs that resolve to a private/loopback/LAN address (`localhost`, `127.0.0.1`,
 `192.168.x.x`, `10.x.x.x`, `172.16-31.x.x`, `*.local`, `*.lan`, `*.internal`,
 IPv6 loopback `::1`, link-local `169.254.x.x`). Public URLs continue to use the
@@ -155,7 +155,7 @@ With auto-routing disabled, private URLs are rejected with
 usually won't work since Browserbase etc. can't reach your LAN).
 
 Requirements: the local sidecar uses the same `agent-browser` CLI as pure local
-mode, so you need it installed (`hermes setup tools → Browser Automation`
+mode, so you need it installed (`tandem setup tools → Browser Automation`
 auto-installs it). Post-navigation redirects from a public URL onto a private
 address are still blocked (you can't use a redirect-to-internal trick to reach
 your LAN through the public path).
@@ -172,7 +172,7 @@ browser:
   use_real_profile: true
 ```
 
-When enabled, Hermes copies your default browser's **active** profile — the one
+When enabled, Tandem copies your default browser's **active** profile — the one
 you actually browse (`Local State → profile.last_used`), with its cookies, saved
 logins, and preferences — into a managed snapshot under
 `~/.hermes/browser-profile/<browser>/`, then launches your **real browser
@@ -213,13 +213,13 @@ browser:
 A pin naming a profile directory that doesn't exist fails closed with a
 fixable message — it never silently falls back to the last-used profile.
 
-When you turn the toggle back off, Hermes deletes the snapshot store
+When you turn the toggle back off, Tandem deletes the snapshot store
 (`~/.hermes/browser-profile/`) on the next browser use, so the copied
 credentials don't linger after you revoke consent.
 
 :::note A running browser can block the login/autofill databases
 On Windows a running Chrome/Edge/Brave holds its cookie and login databases with
-an exclusive (deny-all) lock, so Hermes cannot copy them while the browser is
+an exclusive (deny-all) lock, so Tandem cannot copy them while the browser is
 open — it fails fast with a "fully quit the browser and retry" message rather
 than hang or produce a signed-out session. Real-profile browsing on Windows
 therefore requires the browser **fully quit**, including any background/tray
@@ -230,25 +230,25 @@ On macOS and Linux the profile is not file-locked, but each authentication
 database is snapshotted through SQLite's online backup with a five-second
 budget, and a running Chrome typically holds `Login Data`, `Login Data For
 Account` and `Web Data` with a hot write lock that never yields within that
-budget (`Cookies` usually snapshots fine). When that happens Hermes stops the
+budget (`Cookies` usually snapshots fine). When that happens Tandem stops the
 launch and names the databases it could not read — for example "chrome is
 running and holds the profile's Login Data, Login Data For Account, Web Data
 with a write lock" — so in practice **quit the browser before launching a
 real-profile session on macOS/Linux too**. You can reopen it once the session is
 up (the snapshot is a separate directory), but the auth files are re-synced on
 every fresh session launch, so a browser left running then hits the same lock.
-Hermes preserves committed
+Tandem preserves committed
 WAL data through SQLite rather than falling back to a raw file copy, which could
 silently lose recent logins. Unreadable or corrupt databases also stop the
 launch, with the SQLite error named in the message.
 
-Set `browser.real_profile_autoclose: true` to let Hermes **offer to close the
-browser for you** when it's holding the profile lock (the Windows case). Even with this on, Hermes never
+Set `browser.real_profile_autoclose: true` to let Tandem **offer to close the
+browser for you** when it's holding the profile lock (the Windows case). Even with this on, Tandem never
 closes it automatically — when the profile is locked it always stops and the
 agent asks you first; only on your approval does it run `hermes browser
 close-profile` (terminates the browser process tree bound to that profile,
 losing unsaved tabs), then retries. If the profile is still locked after that
-(e.g. a background/tray instance relaunched), Hermes stays blocked and tells you
+(e.g. a background/tray instance relaunched), Tandem stays blocked and tells you
 to fully quit the browser — it won't loop or kill again on its own.
 :::
 
@@ -285,14 +285,14 @@ Three things to set up before scheduling one:
   list wins over the cron-platform config
   ([details](./cron.md#toolsets-available-to-cron-jobs)).
 - **Assume nothing can be prompted for.** A cron, webhook, API or
-  `hermes chat -q` session has nobody to answer a prompt, so a site that is not
+  `tandem chat -q` session has nobody to answer a prompt, so a site that is not
   usable on the synced cookies alone — a login form, a fresh 2FA challenge —
   needs its credentials saved ahead of time, authenticator key included. That is
   the [credential vault's](./credential-vault.md#headless-sessions) job, and it
   is what carries a run after your own session has expired.
 
 **Windows prerequisite:** the browser has to be fully quit before a snapshot can
-be taken at all, so a scheduled tick needs it closed beforehand — Hermes never
+be taken at all, so a scheduled tick needs it closed beforehand — Tandem never
 closes it without asking you first (see the note above).
 
 The bundled `product-price-monitor` skill is a worked example of the recurring
@@ -384,9 +384,9 @@ CAMOFOX_LOOPBACK_HOST_ALIAS=host.docker.internal
 
 The rewrite only applies to page navigation URLs with loopback hosts (`localhost`, `127.0.0.1`, `::1`). It does not change `CAMOFOX_URL`. Leave it disabled for non-Docker Camofox installs, where the browser already runs on the host and loopback URLs are correct.
 
-Or configure via `hermes tools` → Browser Automation → Camofox.
+Or configure via `tandem tools` → Browser Automation → Camofox.
 
-Camofox is selected like any other browser backend: pick **Camofox** in `hermes tools` → Browser Automation, which writes `browser.cloud_provider: camofox` to `config.yaml`. `CAMOFOX_URL` is only the server address — setting it no longer selects the backend by itself once a browser selection exists (never-configured setups still autodetect it).
+Camofox is selected like any other browser backend: pick **Camofox** in `tandem tools` → Browser Automation, which writes `browser.cloud_provider: camofox` to `config.yaml`. `CAMOFOX_URL` is only the server address — setting it no longer selects the backend by itself once a browser selection exists (never-configured setups still autodetect it).
 
 #### Persistent browser sessions
 
@@ -398,53 +398,53 @@ browser:
     managed_persistence: true
 ```
 
-Then fully restart Hermes so the new config is picked up.
+Then fully restart Tandem so the new config is picked up.
 
 :::warning Nested path matters
-Hermes reads `browser.camofox.managed_persistence`, **not** a top-level `managed_persistence`. A common mistake is writing:
+Tandem reads `browser.camofox.managed_persistence`, **not** a top-level `managed_persistence`. A common mistake is writing:
 
 ```yaml
-# ❌ Wrong — Hermes ignores this
+# ❌ Wrong — Tandem ignores this
 managed_persistence: true
 ```
 
-If the flag is placed at the wrong path, Hermes silently falls back to a random ephemeral `userId` and your login state will be lost on every session.
+If the flag is placed at the wrong path, Tandem silently falls back to a random ephemeral `userId` and your login state will be lost on every session.
 :::
 
-##### What Hermes does
+##### What Tandem does
 - Sends a deterministic profile-scoped `userId` to Camofox so the server can reuse the same Firefox profile across sessions.
 - Skips server-side context destruction on cleanup, so cookies and logins survive between agent tasks.
-- Scopes the `userId` to the active Hermes profile, so different Hermes profiles get different browser profiles (profile isolation).
+- Scopes the `userId` to the active Tandem profile, so different Tandem profiles get different browser profiles (profile isolation).
 
-##### What Hermes does not do
-- It does not force persistence on the Camofox server. Hermes only sends a stable `userId`; the server must honor it by mapping that `userId` to a persistent Firefox profile directory.
-- If your Camofox server build treats every request as ephemeral (e.g. always calls `browser.newContext()` without loading a stored profile), Hermes cannot make those sessions persist. Make sure you are running a Camofox build that implements userId-based profile persistence.
+##### What Tandem does not do
+- It does not force persistence on the Camofox server. Tandem only sends a stable `userId`; the server must honor it by mapping that `userId` to a persistent Firefox profile directory.
+- If your Camofox server build treats every request as ephemeral (e.g. always calls `browser.newContext()` without loading a stored profile), Tandem cannot make those sessions persist. Make sure you are running a Camofox build that implements userId-based profile persistence.
 
 ##### Verify it's working
 
-1. Start Hermes and your Camofox server.
+1. Start Tandem and your Camofox server.
 2. Open Google (or any login site) in a browser task and sign in manually.
 3. End the browser task normally.
 4. Start a new browser task.
 5. Open the same site again — you should still be signed in.
 
-If step 5 logs you out, the Camofox server isn't honoring the stable `userId`. Double-check your config path, confirm you fully restarted Hermes after editing `config.yaml`, and verify your Camofox server version supports persistent per-user profiles.
+If step 5 logs you out, the Camofox server isn't honoring the stable `userId`. Double-check your config path, confirm you fully restarted Tandem after editing `config.yaml`, and verify your Camofox server version supports persistent per-user profiles.
 
 ##### Where state lives
 
-Hermes derives the stable `userId` from the profile-scoped directory `~/.hermes/browser_auth/camofox/` (or the equivalent under `$HERMES_HOME` for non-default profiles). The actual browser profile data lives on the Camofox server side, keyed by that `userId`. To fully reset a persistent profile, clear it on the Camofox server and remove the corresponding Hermes profile's state directory.
+Tandem derives the stable `userId` from the profile-scoped directory `~/.hermes/browser_auth/camofox/` (or the equivalent under `$HERMES_HOME` for non-default profiles). The actual browser profile data lives on the Camofox server side, keyed by that `userId`. To fully reset a persistent profile, clear it on the Camofox server and remove the corresponding Tandem profile's state directory.
 
 #### Externally managed Camofox sessions
 
-When another app drives the visible Camofox browser (a desktop assistant, a custom integration, another agent), configure Hermes to operate inside that same identity instead of spawning its own isolated profile.
+When another app drives the visible Camofox browser (a desktop assistant, a custom integration, another agent), configure Tandem to operate inside that same identity instead of spawning its own isolated profile.
 
 Three knobs control the behavior:
 
 | Setting | Env var | Effect |
 |---------|---------|--------|
-| `browser.camofox.user_id` | `CAMOFOX_USER_ID` | Camofox `userId` Hermes uses when creating tabs. Setting this opts the session into "externally managed" mode. |
+| `browser.camofox.user_id` | `CAMOFOX_USER_ID` | Camofox `userId` Tandem uses when creating tabs. Setting this opts the session into "externally managed" mode. |
 | `browser.camofox.session_key` | `CAMOFOX_SESSION_KEY` | `sessionKey` (a.k.a. `listItemId`) sent on tab creation. Used to match an existing tab during adoption. Defaults to a per-task value if unset. |
-| `browser.camofox.adopt_existing_tab` | `CAMOFOX_ADOPT_EXISTING_TAB` | When true, Hermes calls `GET /tabs?userId=<user_id>` on first use and reuses an existing tab before creating a new one. |
+| `browser.camofox.adopt_existing_tab` | `CAMOFOX_ADOPT_EXISTING_TAB` | When true, Tandem calls `GET /tabs?userId=<user_id>` on first use and reuses an existing tab before creating a new one. |
 
 Env vars take precedence over `config.yaml`. Either form works:
 
@@ -464,31 +464,31 @@ CAMOFOX_ADOPT_EXISTING_TAB=true
 
 **What changes when `user_id` is set:**
 
-- Hermes skips destructive cleanup at task end (same as `managed_persistence: true`). The other app's tab/cookies/profile survive.
-- Hermes does **not** call `DELETE /sessions/<user_id>` — that endpoint wipes all user data, so it would nuke the external app's session if it fired.
+- Tandem skips destructive cleanup at task end (same as `managed_persistence: true`). The other app's tab/cookies/profile survive.
+- Tandem does **not** call `DELETE /sessions/<user_id>` — that endpoint wipes all user data, so it would nuke the external app's session if it fired.
 
 **How tab adoption works (when `adopt_existing_tab: true`):**
 
-1. On the first browser tool call after a process start, Hermes issues `GET /tabs?userId=<user_id>` (5-second timeout).
-2. If any tab in the response has `listItemId == session_key`, Hermes adopts the most recently created one in that group.
-3. Otherwise, Hermes adopts the most recently created tab for the user (any `listItemId`).
-4. If no tabs exist or the request fails, Hermes falls back to creating a new tab on the next operation.
+1. On the first browser tool call after a process start, Tandem issues `GET /tabs?userId=<user_id>` (5-second timeout).
+2. If any tab in the response has `listItemId == session_key`, Tandem adopts the most recently created one in that group.
+3. Otherwise, Tandem adopts the most recently created tab for the user (any `listItemId`).
+4. If no tabs exist or the request fails, Tandem falls back to creating a new tab on the next operation.
 
-Adoption only fires until `tab_id` is populated for the session. If the external app closes the adopted tab mid-run, the next browser tool call will surface a Camofox error — Hermes does not re-poll for a fresh tab on every call.
+Adoption only fires until `tab_id` is populated for the session. If the external app closes the adopted tab mid-run, the next browser tool call will surface a Camofox error — Tandem does not re-poll for a fresh tab on every call.
 
-**Picking `session_key`:** if you want Hermes to reliably attach to a *specific* existing tab, set `session_key` to the `listItemId` the external app used when creating it. If you leave `session_key` unset and only set `user_id`, Hermes generates a per-task `session_key` (`task_<id>`) — Hermes will share cookies and the profile with the external app, but will open its own tab alongside instead of reusing one.
+**Picking `session_key`:** if you want Tandem to reliably attach to a *specific* existing tab, set `session_key` to the `listItemId` the external app used when creating it. If you leave `session_key` unset and only set `user_id`, Tandem generates a per-task `session_key` (`task_<id>`) — Tandem will share cookies and the profile with the external app, but will open its own tab alongside instead of reusing one.
 
-**Concurrency note:** the external app and Hermes can drive the same Camofox `userId` simultaneously, but Camofox does not coordinate per-tab focus between clients. Coordinate ownership at the application layer (e.g. the external app pauses while Hermes runs).
+**Concurrency note:** the external app and Tandem can drive the same Camofox `userId` simultaneously, but Camofox does not coordinate per-tab focus between clients. Coordinate ownership at the application layer (e.g. the external app pauses while Tandem runs).
 
 #### VNC live view
 
-When Camofox runs in headed mode (with a visible browser window), it exposes a VNC port in its health check response. Hermes automatically discovers this and includes the VNC URL in navigation responses, so the agent can share a link for you to watch the browser live.
+When Camofox runs in headed mode (with a visible browser window), it exposes a VNC port in its health check response. Tandem automatically discovers this and includes the VNC URL in navigation responses, so the agent can share a link for you to watch the browser live.
 
 ### Lightpanda local engine
 
 [Lightpanda](https://lightpanda.io) is an open-source headless browser written from scratch. It starts instantly, runs 9x faster and uses 16x less memory than Chrome, which matters for agents that live on small VMs for long stretches.
 
-Lightpanda is a **local engine** (a browser source, like "Local Browser"), not a cloud provider. Install the binary and put it on your `PATH` (see the [Lightpanda installation guide](https://lightpanda.io/docs/run-locally/installation/one-liner)), then pick **Lightpanda** in `hermes tools` → Browser Automation, or set:
+Lightpanda is a **local engine** (a browser source, like "Local Browser"), not a cloud provider. Install the binary and put it on your `PATH` (see the [Lightpanda installation guide](https://lightpanda.io/docs/run-locally/installation/one-liner)), then pick **Lightpanda** in `tandem tools` → Browser Automation, or set:
 
 ```yaml
 # Add to ~/.hermes/config.yaml
@@ -505,17 +505,17 @@ AGENT_BROWSER_ENGINE=lightpanda
 
 The engine works with both browser drivers:
 
-- **Browser Use mode (the default).** Hermes launches `lightpanda serve --host 127.0.0.1 --port <free>` itself — one process per `browser_exec` session name (or per task) — and points the Browser Use CLI at it. No Chromium, Playwright or Node.js is needed. The process is reaped after `browser.inactivity_timeout`, on exit, and by the orphan sweep if Hermes crashes. All of these processes share one on-disk HTTP cache at `$HERMES_HOME/cache/browser-use/lightpanda/http-cache`, so repeat visits skip re-downloading assets. Hermes passes the cache flag only when the installed Lightpanda supports it (0.3.x+); older binaries simply run without a cache. To clear it, stop your Lightpanda sessions first, then delete that directory. Lightpanda has no graphical renderer, so `capture_screenshot()` is unavailable and the tool description tells the model to work text-first; it also holds one page per session, so the model is told to call `new_tab()` once and `goto_url()` afterwards (tracked upstream in [lightpanda-io/browser#1962](https://github.com/lightpanda-io/browser/issues/1962)).
-- **Built-in browser tools** (`/browser use off`). Hermes drives Lightpanda through `agent-browser --engine lightpanda` over CDP, the same way it drives local Chrome, with **automatic Chrome fallback**: Lightpanda handles the actions it supports (navigate, snapshot, click, type, scroll, back, press, eval) and Hermes transparently retries on Chrome for anything it doesn't. Screenshots and `browser_vision` are routed straight to Chrome.
+- **Browser Use mode (the default).** Tandem launches `lightpanda serve --host 127.0.0.1 --port <free>` itself — one process per `browser_exec` session name (or per task) — and points the Browser Use CLI at it. No Chromium, Playwright or Node.js is needed. The process is reaped after `browser.inactivity_timeout`, on exit, and by the orphan sweep if Tandem crashes. All of these processes share one on-disk HTTP cache at `$HERMES_HOME/cache/browser-use/lightpanda/http-cache`, so repeat visits skip re-downloading assets. Tandem passes the cache flag only when the installed Lightpanda supports it (0.3.x+); older binaries simply run without a cache. To clear it, stop your Lightpanda sessions first, then delete that directory. Lightpanda has no graphical renderer, so `capture_screenshot()` is unavailable and the tool description tells the model to work text-first; it also holds one page per session, so the model is told to call `new_tab()` once and `goto_url()` afterwards (tracked upstream in [lightpanda-io/browser#1962](https://github.com/lightpanda-io/browser/issues/1962)).
+- **Built-in browser tools** (`/browser use off`). Tandem drives Lightpanda through `agent-browser --engine lightpanda` over CDP, the same way it drives local Chrome, with **automatic Chrome fallback**: Lightpanda handles the actions it supports (navigate, snapshot, click, type, scroll, back, press, eval) and Tandem transparently retries on Chrome for anything it doesn't. Screenshots and `browser_vision` are routed straight to Chrome.
 
-**When the engine is ignored.** `browser.engine` is the lowest-precedence browser setting: a cloud provider (including the Nous subscription browser — and on never-configured setups, any `BROWSERBASE_API_KEY` / `BROWSER_USE_API_KEY` in `~/.hermes/.env` auto-selects one), Camofox, a `browser.cdp_url` / `/browser connect` override, or `browser.use_real_profile` all take precedence. Picking Lightpanda in `hermes tools` writes `cloud_provider: local` for you; `/browser status` and `hermes doctor` report when the engine is configured but shadowed, and by what.
+**When the engine is ignored.** `browser.engine` is the lowest-precedence browser setting: a cloud provider (including the Nous subscription browser — and on never-configured setups, any `BROWSERBASE_API_KEY` / `BROWSER_USE_API_KEY` in `~/.hermes/.env` auto-selects one), Camofox, a `browser.cdp_url` / `/browser connect` override, or `browser.use_real_profile` all take precedence. Picking Lightpanda in `tandem tools` writes `cloud_provider: local` for you; `/browser status` and `tandem doctor` report when the engine is configured but shadowed, and by what.
 
 ### Local Chromium-family browser via CDP (`/browser connect`)
 
-Instead of a cloud provider, you can attach Hermes browser tools to your own running Chrome, Brave, Chromium, or Edge instance via the Chrome DevTools Protocol (CDP). This is useful when you want to see what the agent is doing in real-time, interact with pages that require your own cookies/sessions, or avoid cloud browser costs.
+Instead of a cloud provider, you can attach Tandem browser tools to your own running Chrome, Brave, Chromium, or Edge instance via the Chrome DevTools Protocol (CDP). This is useful when you want to see what the agent is doing in real-time, interact with pages that require your own cookies/sessions, or avoid cloud browser costs.
 
 :::note
-`/browser connect` is an **interactive-CLI slash command** — it is not dispatched by the gateway. If you try to run it inside a WebUI, Telegram, Discord, or other gateway chat, the message will be sent to the agent as plain text and the command will not execute. Start Hermes from the terminal (`hermes` or `hermes chat`) and issue `/browser connect` there.
+`/browser connect` is an **interactive-CLI slash command** — it is not dispatched by the gateway. If you try to run it inside a WebUI, Telegram, Discord, or other gateway chat, the message will be sent to the agent as plain text and the command will not execute. Start Tandem from the terminal (`tandem` or `tandem chat`) and issue `/browser connect` there.
 :::
 
 In the CLI, use:
@@ -527,7 +527,7 @@ In the CLI, use:
 /browser disconnect              # Detach and return to cloud/local mode
 ```
 
-If a browser isn't already running with remote debugging, Hermes will attempt to auto-launch a supported Chromium-family browser with `--remote-debugging-port=9222`. Detection includes Brave, Brave Origin/Nightly, Google Chrome, Chromium, and Microsoft Edge, with common Linux install paths and binary names such as `brave-origin`, `brave-origin-nightly`, `/opt/brave.com/brave-origin/brave-origin`, `/opt/brave.com/brave-origin-nightly/brave-origin`, `/opt/brave-bin/brave`, and `/snap/bin/brave`.
+If a browser isn't already running with remote debugging, Tandem will attempt to auto-launch a supported Chromium-family browser with `--remote-debugging-port=9222`. Detection includes Brave, Brave Origin/Nightly, Google Chrome, Chromium, and Microsoft Edge, with common Linux install paths and binary names such as `brave-origin`, `brave-origin-nightly`, `/opt/brave.com/brave-origin/brave-origin`, `/opt/brave.com/brave-origin-nightly/brave-origin`, `/opt/brave-bin/brave`, and `/snap/bin/brave`.
 
 :::tip
 To start a Chromium-family browser manually with CDP enabled, use a dedicated user-data-dir so the debug port actually comes up even if the browser is already running with your normal profile:
@@ -562,7 +562,7 @@ google-chrome \
   --no-default-browser-check &
 ```
 
-Then launch the Hermes CLI and run `/browser connect`.
+Then launch the Tandem CLI and run `/browser connect`.
 
 **Why `--user-data-dir`?** Without it, launching a Chromium-family browser while a regular instance is already running typically opens a new window on the existing process — and that existing process was not started with `--remote-debugging-port`, so port 9222 never opens. A dedicated user-data-dir forces a fresh browser process where the debug port actually listens. `--no-first-run --no-default-browser-check` skips the first-launch wizard for the fresh profile.
 
@@ -575,23 +575,23 @@ When connected via CDP, all browser tools (`browser_navigate`, `browser_click`, 
 
 ### WSL2 + Windows Chrome: prefer MCP over `/browser connect`
 
-If Hermes runs inside WSL2 but the Chrome window you want to control runs on the Windows host, `/browser connect` is often not the best path.
+If Tandem runs inside WSL2 but the Chrome window you want to control runs on the Windows host, `/browser connect` is often not the best path.
 
 Why:
 
-- `/browser connect` expects Hermes itself to reach a usable CDP endpoint
+- `/browser connect` expects Tandem itself to reach a usable CDP endpoint
 - modern Chrome live-debugging sessions often expose a host-local endpoint that is not directly reachable from WSL the same way a classic `9222` port is
-- even when Windows Chrome is debuggable, the cleanest integration is often to let a Windows-side browser MCP server attach to Chrome and let Hermes talk to that MCP server
+- even when Windows Chrome is debuggable, the cleanest integration is often to let a Windows-side browser MCP server attach to Chrome and let Tandem talk to that MCP server
 
-For that setup, prefer `chrome-devtools-mcp` through Hermes MCP support.
+For that setup, prefer `chrome-devtools-mcp` through Tandem MCP support.
 
 See the MCP guide for the practical setup:
 
-- [Use MCP with Hermes](../../guides/use-mcp-with-hermes.md#wsl2-bridge-hermes-in-wsl-to-windows-chrome)
+- [Use MCP with Tandem](../../guides/use-mcp-with-hermes.md#wsl2-bridge-hermes-in-wsl-to-windows-chrome)
 
 ### Local browser mode
 
-If you do **not** set any cloud credentials and don't use `/browser connect`, Hermes can still use the browser tools through a local Chromium install driven by `agent-browser`.
+If you do **not** set any cloud credentials and don't use `/browser connect`, Tandem can still use the browser tools through a local Chromium install driven by `agent-browser`.
 
 ### Optional Environment Variables
 
@@ -613,29 +613,29 @@ BROWSERBASE_SESSION_TIMEOUT=1800
 BROWSER_INACTIVITY_TIMEOUT=120
 
 # Local browser engine. Equivalent to browser.engine in config.yaml. In
-# Browser Use mode (default) "lightpanda" makes Hermes spawn `lightpanda serve`;
+# Browser Use mode (default) "lightpanda" makes Tandem spawn `lightpanda serve`;
 # with the built-in tools it is passed to agent-browser as --engine.
 #   auto       — Chrome (default)
 #   lightpanda — Lightpanda
 #   chrome     — force Chrome explicitly
 AGENT_BROWSER_ENGINE=auto
 
-# Extra Chromium launch flags (comma- or newline-separated). Hermes auto-injects
+# Extra Chromium launch flags (comma- or newline-separated). Tandem auto-injects
 # `--no-sandbox,--disable-dev-shm-usage` when it detects root or AppArmor-restricted
 # unprivileged user namespaces (Ubuntu 23.10+, DGX Spark, many container images),
 # so most users don't need to set this. Set it manually only if you need a flag
-# Hermes doesn't add automatically; setting it disables the auto-injection.
+# Tandem doesn't add automatically; setting it disables the auto-injection.
 AGENT_BROWSER_ARGS=--no-sandbox
 ```
 
 ### Install agent-browser CLI
 
-The installers and `hermes update` install `agent-browser` and its pinned
-Chromium through Hermes's package manager by default. If you installed with
+The installers and `tandem update` install `agent-browser` and its pinned
+Chromium through Tandem's package manager by default. If you installed with
 `--skip-browser` / `-SkipBrowser`, or the download failed, install them with:
 
 ```bash
-hermes pm install agent-browser
+tandem pm install agent-browser
 ```
 
 This also undoes an earlier `--skip-browser` choice, so updates keep the
@@ -645,7 +645,7 @@ On Linux, Chromium may also need system libraries
 `npm install -g agent-browser && agent-browser install` instead.
 
 :::info
-The `browser` toolset must be included in your config's `toolsets` list or enabled via `hermes config set toolsets '["hermes-cli", "browser"]'`.
+The `browser` toolset must be included in your config's `toolsets` list or enabled via `tandem config set toolsets '["hermes-cli", "browser"]'`.
 :::
 
 ## Available Tools
@@ -679,7 +679,7 @@ browser:
   snapshot_threshold: 30000
 ```
 
-You can also run `hermes config set browser.snapshot_threshold 30000`. The setting applies to both explicit `browser_snapshot` calls and the automatic snapshot returned after navigation, including the Camofox backend (minimum 1000). Restart the current Hermes session after changing it so the browser config cache reloads.
+You can also run `tandem config set browser.snapshot_threshold 30000`. The setting applies to both explicit `browser_snapshot` calls and the automatic snapshot returned after navigation, including the Camofox backend (minimum 1000). Restart the current Tandem session after changing it so the browser config cache reloads.
 
 ### `browser_click`
 
@@ -897,7 +897,7 @@ Browserbase provides automatic stealth capabilities:
 | Keep Alive | On | Session reconnection after network hiccups |
 
 :::note
-If paid features aren't available on your plan, Hermes automatically falls back — first disabling `keepAlive`, then proxies — so browsing still works on free plans.
+If paid features aren't available on your plan, Tandem automatically falls back — first disabling `keepAlive`, then proxies — so browsing still works on free plans.
 :::
 
 ## Session Management

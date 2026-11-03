@@ -141,7 +141,7 @@ _NEW_REQUEST = "What is the capital of France?"
 def test_acp_refusal_closes_the_turn_and_is_not_replayed_into_the_next_prompt(acp):
     """Turn 1: HTTP-200 ``content_filter`` refusal. Turn 2: unrelated request.
 
-    Invariant: the durable tail after a failed turn is a Hermes-authored assistant row (never
+    Invariant: the durable tail after a failed turn is a Tandem-authored assistant row (never
     provider text), and the next prompt reaches the provider as its own user row.
     """
     from agent.turn_failure_copy import FAILED_TURN_DISPLAY_KIND, FAILED_TURN_NOTICE

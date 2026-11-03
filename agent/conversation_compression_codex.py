@@ -54,7 +54,7 @@ def _compress_context_via_codex_app_server(
 ) -> tuple[list, str]:
     """Route compaction to Codex app-server for Codex-owned threads.
     Rewriting the local transcript would not shrink the Codex thread, so Codex compacts its own thread and
-    Hermes' transcript is left unchanged. Every exit, raising ones included, logs one attempt record."""
+    Tandem' transcript is left unchanged. Every exit, raising ones included, logs one attempt record."""
     from agent.conversation_compression import (
         COMPACTION_STATUS, _CompressionActivityHeartbeat, _emit_compaction_done, _existing_system_prompt,
         _reset_read_dedup_caches, _swallow,

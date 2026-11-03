@@ -96,7 +96,7 @@ class TestCompactBannerSkinIntegration:
         skin = get_active_skin()
 
         with patch("cli.shutil.get_terminal_size", return_value=SimpleNamespace(columns=90)), \
-             patch.dict(_build_compact_banner.__globals__, {"format_banner_version_label": lambda: "Hermes Agent v0.1.0 (test)"}):
+             patch.dict(_build_compact_banner.__globals__, {"format_banner_version_label": lambda: "Tandem Agent v0.1.0 (test)"}):
             banner = _build_compact_banner()
 
         assert skin.get_branding("agent_name") in banner

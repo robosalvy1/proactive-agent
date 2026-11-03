@@ -1569,7 +1569,7 @@ class SlackAdapter(BasePlatformAdapter):
                     "is missing the 'mpim:history' scope and 'message.mpim' event. Add "
                     "'mpim:history' (and 'mpim:read') to bot scopes, add 'message.mpim' to event "
                     "subscriptions, then REINSTALL the app to the workspace. Regenerating the app "
-                    "from `hermes slack` produces a manifest with these already included.",
+                    "from `tandem slack` produces a manifest with these already included.",
                     team_key or "this workspace")
         except Exception:  # pragma: no cover - diagnostics must never break connect
             pass
@@ -1658,8 +1658,8 @@ class SlackAdapter(BasePlatformAdapter):
         async def handle_unhandled_event(event, body, logger):
             logger.debug(
                 "[Slack] Ignoring unhandled event type=%s (no listener registered; subscribed "
-                "events not handled by Hermes can be removed from the Slack app manifest via "
-                "`hermes slack manifest`)",
+                "events not handled by Tandem can be removed from the Slack app manifest via "
+                "`tandem slack manifest`)",
                 (event or {}).get("type", (body or {}).get("event", {}).get("type", "unknown")))
 
         # Every COMMAND_REGISTRY command is a native slash via one regex matcher. Commands must
@@ -1847,12 +1847,12 @@ class SlackAdapter(BasePlatformAdapter):
     def _fatal_missing_env(self, env_name: str) -> None:
         """Log + record the permanent config error for a missing SLACK_* token."""
         logger.error(
-            "[Slack] %s not set — this is a permanent config error; set %s via `hermes "
+            "[Slack] %s not set — this is a permanent config error; set %s via `tandem "
             "gateway setup` or in the active profile's ~/.hermes/.env file, then restart the "
             "gateway.", env_name, env_name)
         self._set_fatal_error(
             f"missing_{env_name.lower()}",
-            f"{env_name} not configured. Use `hermes gateway setup` "
+            f"{env_name} not configured. Use `tandem gateway setup` "
             "or add it to your active profile's ~/.hermes/.env file, then restart the gateway.",
             retryable=False)
 
@@ -1873,7 +1873,7 @@ class SlackAdapter(BasePlatformAdapter):
             logger.info(
                 "[Slack] allow_bots=%s — for bot-to-bot interop also ensure: (a) the Slack "
                 "app manifest subscribes to message.channels / message.groups / message.im as "
-                "appropriate (run 'hermes slack manifest' if unsure), and (b) the other bot's "
+                "appropriate (run 'tandem slack manifest' if unsure), and (b) the other bot's "
                 "Slack user id is in SLACK_ALLOWED_USERS or GATEWAY_ALLOW_ALL_USERS=true. "
                 "Without these, bot events are silently dropped upstream of the allow_bots "
                 "gate.", _allow_bots_cfg)
@@ -6798,7 +6798,7 @@ _SETUP_STEPS = (
     "   3. Install to Workspace: Settings → Install App",
     "   4. After installing, invite the bot to channels: /invite @YourBot",)
 _SETUP_HOME_CHANNEL_HELP = (
-    "📬 Home Channel: where Hermes delivers cron job results,",
+    "📬 Home Channel: where Tandem delivers cron job results,",
     "   cross-platform messages, and notifications.",
     "   To get a channel ID: open the channel in Slack, then right-click",
     "   the channel name → Copy link — the ID starts with C (e.g. C01ABC2DE3F).",
@@ -6812,7 +6812,7 @@ def _write_slack_manifest_and_instruct() -> None:
         from hermes_cli.slack_cli import _build_full_manifest
         from hermes_constants import get_hermes_home
         manifest = _build_full_manifest(
-            bot_name="Hermes", bot_description="Your Hermes agent on Slack")
+            bot_name="Tandem", bot_description="Your Tandem agent on Slack")
         target = _Path(get_hermes_home()) / "slack-manifest.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(
@@ -6823,8 +6823,8 @@ def _write_slack_manifest_and_instruct() -> None:
             "→ App Manifest → Edit, then Save.  Slack will prompt to "
             "reinstall if scopes or slash commands changed.")
         print_info(
-            "   Re-run `hermes slack manifest --write` anytime to refresh after "
-            "Hermes adds new commands.")
+            "   Re-run `tandem slack manifest --write` anytime to refresh after "
+            "Tandem adds new commands.")
     except Exception as e:
         print_warning(f"Could not write Slack manifest: {e}")
 
@@ -6842,7 +6842,7 @@ def interactive_setup() -> None:
         # Still offer a manifest refresh so new commands get registered.
         if prompt_yes_no(
             "Regenerate the Slack app manifest with the latest command "
-            "list? (recommended after `hermes update`)", True):
+            "list? (recommended after `tandem update`)", True):
             _write_slack_manifest_and_instruct()
         return
     for line in _SETUP_STEPS:
@@ -6910,7 +6910,7 @@ _is_connected = _env_is_connected("SLACK_BOT_TOKEN")
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Tandem plugin system."""
     ctx.register_platform(
         name="slack",
         label="Slack",
@@ -6919,7 +6919,7 @@ def register(ctx) -> None:
         ensure_deps_fn=check_slack_requirements,
         is_connected=_is_connected,
         required_env=["SLACK_BOT_TOKEN", "SLACK_APP_TOKEN"],
-        install_hint="Run `hermes setup` to install Slack support.",
+        install_hint="Run `tandem setup` to install Slack support.",
         setup_fn=interactive_setup,
         # YAML→env bridge: config.yaml slack: keys → SLACK_* env vars read via os.getenv().
         # YAML→env config bridge — owns the translation of config.yaml slack: keys (require_mention,

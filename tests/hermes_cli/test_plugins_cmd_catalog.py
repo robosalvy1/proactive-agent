@@ -1,4 +1,4 @@
-"""Catalog-aware ``hermes plugins`` surface (hermes_cli/plugins_cmd_catalog.py): a bare catalog name installs
+"""Catalog-aware ``tandem plugins`` surface (hermes_cli/plugins_cmd_catalog.py): a bare catalog name installs
 the PINNED sha and records provenance; the kill list blocks every install path (CLI needs an explicit
 bypass, dashboard/TUI have none); ``update`` re-pins instead of pulling. Real git, file:// repos."""
 
@@ -393,7 +393,7 @@ def test_memory_category_install_activates_via_memory_provider_not_plugins_enabl
                                                                                   init, enable):
     """A memory provider activates through memory.provider alone — the loader never consults
     plugins.enabled — so "Enable now?" must select the provider, and a decline must point at
-    `hermes memory setup`, never at the dead-end `plugins enable` hint. Catalog category "memory" also
+    `tandem memory setup`, never at the dead-end `plugins enable` hint. Catalog category "memory" also
     holds hook plugins: those enable normally and leave the user's memory.provider alone, even when their
     docstring names MemoryProvider (the loader would return None for them)."""
     repo = world["repo"]
@@ -422,7 +422,7 @@ def test_memory_category_install_activates_via_memory_provider_not_plugins_enabl
     pc.cmd_install("cat-plugin", enable=enable)
     assert pc._get_current_memory_provider() == ("cat-plugin" if enable else "")
     assert pc._get_enabled_set() == set()
-    assert any("hermes memory setup" in line for line in printed)
+    assert any("tandem memory setup" in line for line in printed)
     assert not any("plugins enable cat-plugin" in line for line in printed)
 
 

@@ -1,4 +1,4 @@
-"""`hermes update` must not drop local commits without leaving a named way back.
+"""`tandem update` must not drop local commits without leaving a named way back.
 
 When the checkout sits on the update's target branch and its history has
 diverged, the update resets hard to ``origin/<branch>``. Divergence there has

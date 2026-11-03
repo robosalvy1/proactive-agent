@@ -2,7 +2,7 @@
 
 The Desktop's Models page reaches the same inventory through ``model.options`` /
 ``model.save_key`` that the browser dashboard reaches through the guarded
-``/api/model/options``; a backend kept alive across ``hermes update`` serves stale
+``/api/model/options``; a backend kept alive across ``tandem update`` serves stale
 ``sys.modules`` and would resolve a post-update model string against them (the
 reporter's ``agent_init_failed``). Both RPCs must answer the same "restart" error
 the gateway's ``/model`` switch already returns, and never reach the payload build.

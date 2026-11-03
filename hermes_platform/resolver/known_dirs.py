@@ -1,6 +1,6 @@
 """Directories where tools install outside PATH, grouped by the ecosystem that owns them.
 
-Every table in Hermes lives here. A directory literal outside this module fails the ratchet in
+Every table in Tandem lives here. A directory literal outside this module fails the ratchet in
 `tests/test_managed_runtime_resolution.py`. Each table is empty on an OS where the ecosystem
 does not install there, so callers compose tables without OS branches.
 """
@@ -34,7 +34,7 @@ def hermes_vendored_dirs() -> tuple[str, ...]:
 
 
 def machine_marker_files() -> tuple[str, ...]:
-    """Where Hermes records that this OS user has used it. No Hermes data-dir setting moves these.
+    """Where Tandem records that this OS user has used it. No Tandem data-dir setting moves these.
     The first entry is the one written; the rest are read too (Windows: MSIX builds that ran with
     filesystem virtualisation wrote under the package's LocalCache)."""
     if _WIN:
@@ -46,7 +46,7 @@ def machine_marker_files() -> tuple[str, ...]:
 
 
 def hermes_home_globs() -> tuple[str, ...]:
-    """Every place a Hermes data root can sit by default: suffixed channel roots, the legacy Windows
+    """Every place a Tandem data root can sit by default: suffixed channel roots, the legacy Windows
     root, and the per-package roots of MSIX builds that ran with filesystem virtualisation."""
     if _WIN:
         return ("%LOCALAPPDATA%/hermes*", "%USERPROFILE%/.hermes",

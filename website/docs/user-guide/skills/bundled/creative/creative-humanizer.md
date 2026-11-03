@@ -26,7 +26,7 @@ Humanize text: strip AI-isms and add real voice.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Humanizer: Remove AI Writing Patterns
@@ -44,9 +44,9 @@ Load this skill whenever the user asks to:
 - match their voice in writing they're producing
 - review text for AI tells before publishing
 
-Also apply this skill to **your own** output when writing user-facing prose such as release notes, PR descriptions, docs, and summaries. Hermes's baseline voice already strips most of these, but a focused pass catches what slips through.
+Also apply this skill to **your own** output when writing user-facing prose such as release notes, PR descriptions, docs, and summaries. Tandem's baseline voice already strips most of these, but a focused pass catches what slips through.
 
-## How to use it in Hermes
+## How to use it in Tandem
 
 The text usually arrives one of three ways:
 1. **Inline.** The user pastes the text into the message. Work on it in place and reply with the rewrite.

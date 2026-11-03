@@ -18,7 +18,7 @@ token acquisition (re-exchange the ``anon_`` credential; there is no refresh tok
 
 Users are never shown the words guest / anonymous / account for this state: surfaces say
 "Nous · free tier". Two user-facing verbs reach the same flow, both keeping the identity's
-connectors: ``hermes auth upgrade`` in a terminal and ``/login`` inside a chat.
+connectors: ``tandem auth upgrade`` in a terminal and ``/login`` inside a chat.
 
 Lifecycle lives in ONE primitive, :func:`_reconcile_and_provision`: adopt what the shared store already
 holds, else mint under the shared-store lock. :func:`ensure_portal_identity` (connectors) and the
@@ -59,10 +59,10 @@ PREVIEW_FULL_CONNECTORS_ENV = "HERMES_PREVIEW_FULL_CONNECTORS"
 GUEST_MINT_TIMEOUT_SECONDS = 5.0
 # Copy shared by every surface that names the free tier (R-USR-1): never guest / anonymous / account.
 FREE_TIER_LABEL = "Nous · free tier"
-UPGRADE_HINT = "Run `hermes auth upgrade` to sign in with a Nous account, or /login inside a chat."
+UPGRADE_HINT = "Run `tandem auth upgrade` to sign in with a Nous account, or /login inside a chat."
 FREE_TIER_NOT_SIGNED_IN = (
     "You're not signed in. Free inference and connectors are always on. "
-    "Run `hermes auth` to sign in with a Nous account.")
+    "Run `tandem auth` to sign in with a Nous account.")
 
 
 class AnonCredentialDead(AuthError):
@@ -116,7 +116,7 @@ ANON_UNREACHABLE_CODES = frozenset({ANON_UNREACHABLE, ANON_SERVER_ERROR})
 _SIGNIN_IS_FREE = "Signing in is free."
 ANON_FAILURE_COPY = {
     ANON_GATE_CLOSED: f"This version can't be used without a Nous account. {_SIGNIN_IS_FREE}",
-    ANON_GATE_PAUSED: f"Using Hermes without signing in is paused for a moment. {_SIGNIN_IS_FREE}",
+    ANON_GATE_PAUSED: f"Using Tandem without signing in is paused for a moment. {_SIGNIN_IS_FREE}",
     ANON_RATE_LIMITED: "Lots of people are getting started right now. Try again in {wait}. "
                        "Signing in is free and skips the wait.",
     ANON_POW_REQUIRED: "The Nous server asked for a proof of work, but that isn't implemented in your "
@@ -613,7 +613,7 @@ def _reconcile_and_provision(*, timeout_seconds: float, force: bool = False,
                              welcome_claim: bool = False) -> Optional[dict[str, Any]]:
     """The lifecycle body, run under profile lock THEN shared lock (the documented order).
 
-    1. The shared store is the identity of record for this Hermes root. If it holds an identity
+    1. The shared store is the identity of record for this Tandem root. If it holds an identity
        that differs from the profile's, the profile adopts it (a stale guest never outlives a
        sibling profile's sign-in, and never overwrites it).
     2. Otherwise the profile's own identity stands.
@@ -718,7 +718,7 @@ def refresh_guest_state(state: dict[str, Any], client: httpx.Client, *, purpose:
     if purpose == "inference" and not free_inference_active(state):
         # The one place a guest's inference token is minted: only the welcome trial on the desktop's
         # local backend carries one. Not terminal: the guest stays for connectors.
-        raise AuthError("Hermes is not logged into Nous Portal.", provider="nous", code="nous_auth_missing")
+        raise AuthError("Tandem is not logged into Nous Portal.", provider="nous", code="nous_auth_missing")
     anon_token = state.get("anon_token")
     if not isinstance(anon_token, str) or not anon_token:
         raise AnonCredentialDead(ANON_FAILURE_COPY[ANON_CREDENTIAL_DEAD], code=ANON_CREDENTIAL_DEAD)
@@ -790,17 +790,17 @@ _WELCOME_ROUTE_COPY = {
     "anon_on_paid_host": "This install is set to use a different Nous server (NOUS_INFERENCE_BASE_URL). "
                          "Unset it to use the free model, or sign in. {signin}",
     "named_on_welcome_host": "This Nous account needs to reconnect. {model_hint}",
-    "tier_disabled": "Using Hermes without signing in is switched off right now. "
+    "tier_disabled": "Using Tandem without signing in is switched off right now. "
                      "Sign in to keep chatting, it's free. {signin}",
     # Only reachable when re-exchanging the free credential failed (``turn_recovery._recover_welcome_tier``).
-    "session_expired": "Hermes couldn't renew its connection to the free model. "
+    "session_expired": "Tandem couldn't renew its connection to the free model. "
                        "Send your message again, or sign in to keep chatting, it's free. {signin}",
 }
 # The sign-in door, phrased for a chat surface (slash command) and for a terminal.
 _SIGNIN_CHAT = "To sign in: /login."
-_SIGNIN_TERMINAL = "To sign in: `hermes auth upgrade`."
+_SIGNIN_TERMINAL = "To sign in: `tandem auth upgrade`."
 _MODEL_HINT_CHAT = "Run /model and pick the Nous row again."
-_MODEL_HINT_TERMINAL = "Run `hermes model` and pick the Nous row again."
+_MODEL_HINT_TERMINAL = "Run `tandem model` and pick the Nous row again."
 # Terminal copy for a free-model outage once the retries are spent (5xx, transport failure).
 FREE_TIER_OUTAGE_COPY = ("The free model is having trouble responding right now. "
                          "Try sending your message again in a minute.")
@@ -843,7 +843,7 @@ def welcome_refusal_copy(refusal: dict[str, Any], *, model: str = "", in_chat: b
     wait = friendly_wait(retry) if retry > 0 else "a little while"
     if reason == "model_not_free":
         what = f"{model} isn't" if model else "That model isn't"
-        return (f"{what} available without signing in, so Hermes uses {serves} for now. "
+        return (f"{what} available without signing in, so Tandem uses {serves} for now. "
                 f"Sign in for more models. {signin}").rstrip()
     if reason == "feature_not_free":
         return f"That isn't available without signing in. Sign in to use it, it's free. {signin}".rstrip()
@@ -856,7 +856,7 @@ def welcome_refusal_copy(refusal: dict[str, Any], *, model: str = "", in_chat: b
     if reason == "rate_limited":
         return (f"You've used up the allowance for chatting without signing in. It refreshes in {wait}. "
                 f"Sign in for a bigger allowance, it's free. {signin}").rstrip()
-    return f"Hermes couldn't send that without signing in. Signing in is free. {signin}".rstrip()
+    return f"Tandem couldn't send that without signing in. Signing in is free. {signin}".rstrip()
 
 
 def welcome_route_refusal(status: Any, message: Any, base_url: Any = None) -> Optional[str]:
@@ -881,7 +881,7 @@ def welcome_route_refusal(status: Any, message: Any, base_url: Any = None) -> Op
 
 
 def welcome_route_refusal_copy(kind: str, *, in_chat: bool = True, door: bool = True) -> str:
-    template = _WELCOME_ROUTE_COPY.get(kind) or "Hermes couldn't reach the free model on this route."
+    template = _WELCOME_ROUTE_COPY.get(kind) or "Tandem couldn't reach the free model on this route."
     return template.format(
         host=DEFAULT_NOUS_WELCOME_URL, signin=(_SIGNIN_CHAT if in_chat else _SIGNIN_TERMINAL) if door else "",
         model_hint=_MODEL_HINT_CHAT if in_chat else _MODEL_HINT_TERMINAL).rstrip()
@@ -923,7 +923,7 @@ def apply_model_switch(agent: Any) -> Optional[str]:
 
     Runs once per recorded header, between calls. The conversation keeps its history; only the id
     the next request carries changes, so a promoted account stops relying on the gateway's reverse
-    map. The config write is the same one a sign-in completion uses, so ``hermes model`` and the
+    map. The config write is the same one a sign-in completion uses, so ``tandem model`` and the
     gateway's config re-read agree with the live session.
     """
     pending = getattr(agent, "_nous_pending_model_switch", None)
@@ -1155,7 +1155,7 @@ def settle_after_upgrade(account_state: dict[str, Any]) -> dict[str, Any]:
     same pick as ``GET /api/model/recommended-default``), through the same config write a plain Nous
     login uses. A config on the user's own model and host is left alone.
 
-    Every sign-in completion (CLI ``hermes auth upgrade``, the desktop poller) calls this once, after
+    Every sign-in completion (CLI ``tandem auth upgrade``, the desktop poller) calls this once, after
     ``persist_nous_credentials``. Returns ``{"model": str, "changed": bool}``: ``model`` is the default
     the config now carries (``""`` when it carries none); ``changed`` says whether this call wrote it.
     Never raises: a failed pick or write is logged and reported as ``changed: False`` so the sign-in

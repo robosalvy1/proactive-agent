@@ -1,6 +1,6 @@
 # Engineering guide
 
-Technical guidance for Proactive Agent. Read the root `AGENTS.md` first, then the nearest area guide. Project goals and work priorities come from `docs/project/`, not external contribution policies. The public terminal command is `tandem`, with `hermes` retained as a compatibility alias. The existing engine and modules retain their `hermes` names.
+Technical guidance for Tandem Agent. Read the root `AGENTS.md` first, then the nearest area guide. Project goals and work priorities come from `docs/project/`, not external contribution policies. The public terminal command is `tandem`, with `hermes` retained as a compatibility alias. The existing engine and modules retain their `hermes` names.
 
 ## Runtime foundation
 

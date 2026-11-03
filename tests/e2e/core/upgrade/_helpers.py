@@ -1,6 +1,6 @@
 """Lane-private helpers for the upgrade / install-integrity and config round-trip suites.
 
-Every Hermes process these suites spawn runs:
+Every Tandem process these suites spawn runs:
 
 * with a HOME/HERMES_HOME under the test's tmp dir and an environment built from an
   allowlist (no inherited ``*_API_KEY`` / ``HERMES_*``), so only the fake provider is

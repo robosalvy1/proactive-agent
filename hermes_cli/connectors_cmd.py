@@ -1,4 +1,4 @@
-"""``hermes connectors``: list, connect, rename and remove hosted connector accounts."""
+"""``tandem connectors``: list, connect, rename and remove hosted connector accounts."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import Any, Callable, NoReturn
 
 _POLL_SECONDS = 2.0
 _DONE_STATES = frozenset({"connected", "skipped", "failed", "expired", "not_connected"})
-_SIGN_IN = "Sign in with `hermes login` to manage connectors."
+_SIGN_IN = "Sign in with `tandem login` to manage connectors."
 
 
 class _CommandError(Exception):
@@ -119,7 +119,7 @@ def _report_connect(app: str, alias: str | None, target: dict[str, Any]) -> int:
     if state == "connected":
         if alias:
             print(f"{app_title(app)} account {alias} is connected. "
-                  f"Rename it anytime: hermes connectors rename {app} {alias} --to <new-name>")
+                  f"Rename it anytime: tandem connectors rename {app} {alias} --to <new-name>")
         else:
             print(f"{app_title(app)} is connected.")
         return 0
@@ -209,7 +209,7 @@ def _disconnect(args) -> int:
     if not args.yes:
         if not sys.stdin.isatty():
             _fail("Refusing to remove an account without confirmation. Pass --yes to confirm.")
-        answer = input(f"Remove {app} account {name}? This signs Hermes out of it. [y/N] ").strip().lower()
+        answer = input(f"Remove {app} account {name}? This signs Tandem out of it. [y/N] ").strip().lower()
         if answer not in ("y", "yes"):
             print("Nothing removed.")
             return 0
@@ -237,7 +237,7 @@ def cmd_connectors(args) -> int:
         print(f"Unknown connectors action: {args.connectors_action}", file=sys.stderr)
         return 2
     if not connectors_available():
-        print("Connectors are not available. Sign in with `hermes login` first.", file=sys.stderr)
+        print("Connectors are not available. Sign in with `tandem login` first.", file=sys.stderr)
         return 1
     try:
         return handler(args)

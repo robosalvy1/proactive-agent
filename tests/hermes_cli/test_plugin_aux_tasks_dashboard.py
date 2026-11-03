@@ -1,13 +1,13 @@
 """Plugin-registered auxiliary tasks reach the dashboard/Desktop Models settings.
 
-``PluginContext.register_auxiliary_task`` already puts a plugin task in the ``hermes model``
+``PluginContext.register_auxiliary_task`` already puts a plugin task in the ``tandem model``
 picker (``main_provider_setup._all_aux_tasks``), but the REST surface behind the Desktop
 Settings → Models page enumerated only the built-in ``_AUX_TASK_SLOTS``: ``GET
 /api/model/auxiliary`` never listed the task, ``POST /api/model/set`` rejected it with
 ``unknown auxiliary task``, ``__reset__`` skipped it and the stale-pin nudge ignored it.
 
 These tests load real plugins from temp homes through ``PluginManager`` discovery (no fake
-registry) and cover the profile seam: one ``hermes serve`` process, two profiles with their own
+registry) and cover the profile seam: one ``tandem serve`` process, two profiles with their own
 plugins and their own config. Regression for #40880 / #129189.
 """
 

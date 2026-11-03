@@ -1,4 +1,4 @@
-"""Canonical runtime identity for Hermes.
+"""Canonical runtime identity for Tandem.
 
 Resolution order:
 1. Install stamp (``install-stamp.json``) — written at build time by

@@ -1,5 +1,5 @@
 """
-Tests for hermes_cli.mcp_config — ``hermes mcp`` subcommands.
+Tests for hermes_cli.mcp_config — ``tandem mcp`` subcommands.
 
 These tests mock the MCP server connection layer so they run without
 any actual MCP servers or API keys.
@@ -297,7 +297,7 @@ class TestMcpTest:
         assert "not found in config" in capsys.readouterr().out
 
     def test_cli_dispatcher_forwards_test_exit_code(self, tmp_path, monkeypatch):
-        """``hermes mcp test`` reaches ``main()`` with the handler's code (the dispatcher used to drop it)."""
+        """``tandem mcp test`` reaches ``main()`` with the handler's code (the dispatcher used to drop it)."""
         _seed_config(tmp_path, {"ink": {"url": "https://mcp.ml.ink/mcp"}})
         from hermes_cli.main import cmd_mcp
 
@@ -471,7 +471,7 @@ class TestContextVarInterpolation:
 class TestProbeEnvResolution:
     """The probe path must resolve ``${ENV}`` before connecting, so the
     discovery probe behaves like runtime tool loading. Regression for #37792
-    where `hermes mcp add --auth header` sent a literal
+    where `tandem mcp add --auth header` sent a literal
     ``Authorization: Bearer ${MCP_X_API_KEY}`` and got 401."""
 
     def test_resolve_interpolates_header(self, monkeypatch):
@@ -536,7 +536,7 @@ class TestProbeEnvResolution:
         assert seen["config"]["headers"]["Authorization"] == "Bearer jwt-token-xyz"
 
     def test_probe_propagates_explicit_connect_timeout_to_config(self, monkeypatch):
-        """An explicit `connect_timeout=` override (e.g. `hermes mcp login`'s 315s, extended so a
+        """An explicit `connect_timeout=` override (e.g. `tandem mcp login`'s 315s, extended so a
         user has time to finish an OAuth browser flow) must reach `config["connect_timeout"]` —
         that's what tools/mcp_tool_transport.py::_negotiate_session bounds session.initialize()
         with. Left stale at its unrelated 60s default, the still-pending OAuth callback wait gets

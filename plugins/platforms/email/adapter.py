@@ -1,4 +1,4 @@
-"""Email platform adapter for the Hermes gateway: users talk to Hermes by sending email; IMAP (polled)
+"""Email platform adapter for the Tandem gateway: users talk to Tandem by sending email; IMAP (polled)
 receives, SMTP sends. Configured via EMAIL_* env vars or ``platforms.email`` in config.yaml (see website docs)."""
 
 import asyncio
@@ -605,7 +605,7 @@ class EmailAdapter(BasePlatformAdapter):
         # Validate up front so a missing host is an actionable config error, not IMAP4_SSL("") raising ``[Errno 8]``.
         required = (("EMAIL_ADDRESS", self._address), ("EMAIL_PASSWORD", self._password), ("EMAIL_IMAP_HOST", self._imap_host), ("EMAIL_SMTP_HOST", self._smtp_host))
         if missing := [name for name, value in required if not value]:
-            message = f"Not configured — missing {', '.join(missing)}. Set it via `hermes gateway setup` (env) or platforms.email in config.yaml."
+            message = f"Not configured — missing {', '.join(missing)}. Set it via `tandem gateway setup` (env) or platforms.email in config.yaml."
             # Non-retryable: a blank-but-present env var used to drive an indefinite retry loop that leaked until OOM.
             return self._fail("[Email] %s", message, "email_missing_configuration", message, retryable=False)
         if not self._probe_imap(is_reconnect) or not self._probe_smtp():
@@ -861,7 +861,7 @@ class EmailAdapter(BasePlatformAdapter):
                    attach_empty_body: bool = False) -> tuple[MIMEMultipart, str, str]:
         """Build a threaded reply skeleton. Returns ``(msg, msg_id, subject)``."""
         msg, ctx = MIMEMultipart(), self._thread_context.get(to_addr, {})
-        subject = ctx.get("subject", "Hermes Agent")
+        subject = ctx.get("subject", "Tandem Agent")
         if not subject.startswith("Re:"):
             subject = f"Re: {subject}"
         original_msg_id = reply_to_msg_id or ctx.get("message_id")
@@ -998,7 +998,7 @@ def _is_connected(config) -> bool:
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Tandem plugin system."""
     ctx.register_platform(
         name="email", label="Email", adapter_factory=EmailAdapter, check_fn=check_email_requirements, is_connected=_is_connected,
         required_env=["EMAIL_ADDRESS", "EMAIL_PASSWORD", "EMAIL_SMTP_HOST"],

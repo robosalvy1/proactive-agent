@@ -346,7 +346,7 @@ async def console_ws(ws: WebSocket) -> None:
             if command_id == command_generation:
                 pending_confirmation = None
                 await out.error_then_complete(
-                    "Command timed out. Hermes Console returned to the prompt.", line, command_id, "timeout",
+                    "Command timed out. Tandem Console returned to the prompt.", line, command_id, "timeout",
                 )
         except Exception as exc:
             if command_id == command_generation:
@@ -551,7 +551,7 @@ async def pty_ws(ws: WebSocket) -> None:
         await ws.send_text(
             "\r\n\x1b[31mChat unavailable: the embedded terminal requires a "
             "POSIX PTY, which native Windows Python doesn't provide.\x1b[0m\r\n"
-            "\x1b[33mInstall Hermes inside WSL2 to use the dashboard's /chat "
+            "\x1b[33mInstall Tandem inside WSL2 to use the dashboard's /chat "
             "tab — the rest of the dashboard works here.\x1b[0m\r\n"
         )
         await ws.close(code=1011)

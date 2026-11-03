@@ -837,7 +837,7 @@ def _terminate_state_pid() -> None:
 
     if not stop_recorded_orphan():
         raise HTTPException(status_code=409, detail=(
-            "Another Hermes process owns this server, or its ownership could not be verified"))
+            "Another Tandem process owns this server, or its ownership could not be verified"))
 
 
 def _stop_server() -> None:

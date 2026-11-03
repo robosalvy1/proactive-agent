@@ -140,7 +140,7 @@ async def test_legacy_adoption_refuses_live_owner_and_foreign_profile_without_wr
 @pytest.mark.asyncio
 async def test_upgraded_oneshot_and_tool_history_resumes_by_id_and_title_but_stays_out_of_pickers(tmp_path, monkeypatch):
     """main's `chat -q` stored ``oneshot`` rows (``--source tool`` stored ``tool``) and printed
-    `hermes --resume <id>` for each. After the upgrade, the native owner adopts them by id and by
+    `tandem --resume <id>` for each. After the upgrade, the native owner adopts them by id and by
     title like ``cli`` history, and they keep their label so human pickers still hide them."""
     from gateway import run
     from gateway.config import GatewayConfig

@@ -113,7 +113,7 @@ def test_corrupt_epoch_refuses_profile_sweep_with_separate_recovery(tmp_path, mo
     for home in homes:
         assert ((home / 'state.db').read_bytes(), snapshots[home].read_bytes()) == originals[home]
     assert 'Auto-restored' not in output
-    assert 'separate' in output and 'hermes sessions recover' in output
+    assert 'separate' in output and 'tandem sessions recover' in output
     assert 'restored copy also failed integrity' not in output
     for home in homes:
         report = recover_session_database(snapshots[home], home / 'recovered.db')

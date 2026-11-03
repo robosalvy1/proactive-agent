@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Monitor a running video-production kanban. Polls `hermes kanban list` and
+Monitor a running video-production kanban. Polls `tandem kanban list` and
 `events` for a tenant and surfaces issues (stuck tasks, missing heartbeats,
 repeated retries, dependency deadlocks).
 

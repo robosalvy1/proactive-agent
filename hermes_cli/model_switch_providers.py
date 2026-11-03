@@ -72,7 +72,7 @@ def _discovered_catalog_stale(entry: dict, model_ids: list[str]) -> bool:
     """Whether a live probe may overwrite ``entry["models"]``.
 
     A ``models`` mapping or list of dicts is user-curated per-model metadata — never replaced.
-    A mapping Hermes itself discovered (entry flag or legacy in-mapping sentinel) is ours to
+    A mapping Tandem itself discovered (entry flag or legacy in-mapping sentinel) is ours to
     refresh, but only when stale; a legacy-shape entry is always rewritten so the save migrates
     it to the clean entry-level flag."""
     existing = entry.get("models")
@@ -411,7 +411,7 @@ def _is_aws_sdk(pconfig) -> bool:
 
 def _live_or_curated_ids(slug: str, curated: dict, *fallback_keys: str, merge_models_dev: bool = True,
                          non_blocking: bool = False) -> list:
-    """``cached_provider_model_ids`` (the SAME disk-cached list ``hermes model`` builds), falling
+    """``cached_provider_model_ids`` (the SAME disk-cached list ``tandem model`` builds), falling
     back to the curated list (merged with models.dev for preferred providers) when live is empty.
     ``non_blocking`` (GUI read path) reads the disk cache only — a provider that is slow or down
     contributes its curated list instead of stalling the whole picker (#114215)."""
@@ -586,7 +586,7 @@ def _discover_flag(entry: dict):
 
 
 def _display_prefix(name: str) -> str:
-    """Text before the per-model separator Hermes's own writer uses ("—" / " - ")."""
+    """Text before the per-model separator Tandem's own writer uses ("—" / " - ")."""
     return next((name.split(sep)[0].strip() for sep in ("—", " - ") if sep in name), name)
 
 
@@ -698,7 +698,7 @@ def _collect_authed_provider_slugs(
 @dataclass
 class _PickerBuild:
     """State threaded through the ``list_authenticated_providers`` sections: 1 built-ins mapped to
-    models.dev, 2 Hermes-only overlays, 2b canonical providers missed by 1/2, 3 ``providers:``
+    models.dev, 2 Tandem-only overlays, 2b canonical providers missed by 1/2, 3 ``providers:``
     entries + 3b the bare active custom endpoint, 4 ``custom_providers:`` entries. Row-builder
     imports of ``hermes_cli.auth/models`` stay lazy so tests can patch those modules."""
     current_provider: str
@@ -905,7 +905,7 @@ def _overlay_has_creds(b: _PickerBuild, pid: str, hermes_slug: str, overlay) -> 
 
 
 def _lap_overlay_rows(b: _PickerBuild, data: dict, user_providers: dict) -> None:
-    """Section 2: Hermes-only providers (nous, openai-codex, copilot, opencode-go, ...)."""
+    """Section 2: Tandem-only providers (nous, openai-codex, copilot, opencode-go, ...)."""
     from agent.models_dev import PROVIDER_TO_MODELS_DEV
     from hermes_cli.model_switch import _declared_model_ids
     from hermes_cli.providers import HERMES_OVERLAYS

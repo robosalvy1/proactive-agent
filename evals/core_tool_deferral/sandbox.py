@@ -1,6 +1,6 @@
 """Keep an eval agent's host-level side effects inside the run's sandbox.
 
-HERMES_HOME isolation covers Hermes state only. Tasks like "schedule it nightly at 2am" let
+HERMES_HOME isolation covers Tandem state only. Tasks like "schedule it nightly at 2am" let
 the agent reach the operator's real crontab, systemd user manager and home directory: a
 past run of ``longrange_backup_pipeline`` left three nightly cron jobs and two scripts on the
 operator's machine, pointing into run dirs that no longer existed.

@@ -30,7 +30,7 @@ _MISSING = object()
 declaration.on_change = invalidate_check_fn_cache
 
 _NEEDS_REAUTH_MSG = (
-    "MCP server '{s}' requires re-authentication.{detail} Run `hermes mcp login {s}` (or delete the tokens file under "
+    "MCP server '{s}' requires re-authentication.{detail} Run `tandem mcp login {s}` (or delete the tokens file under "
     "~/.hermes/mcp-tokens/ and restart). Do NOT retry this tool — ask the user to re-authenticate.")
 _STDIO_NO_RESPAWN_MSG = (
     "MCP server '{s}' stdio subprocess had exited (this is not a timeout — the call never reached the server). A "
@@ -41,7 +41,7 @@ _STDIO_DIED_AGAIN_MSG = (
     "cleanly — do NOT retry this tool; ask the user to check the server's command and its stderr log.")
 _STDIO_OUTCOME_UNCERTAIN_MSG = (
     "MCP server '{s}' lost its stdio subprocess after the tool call began. The operation may have completed, so "
-    "Hermes did not replay it. Do NOT retry automatically; inspect the external state first.")
+    "Tandem did not replay it. Do NOT retry automatically; inspect the external state first.")
 _SESSION_OUTCOME_UNCERTAIN_MSG = (
     "The MCP transport session to '{s}' expired while this write-capable call was in flight, so the outcome is "
     "UNKNOWN — the operation may or may not have taken effect server-side. It was NOT automatically retried to "

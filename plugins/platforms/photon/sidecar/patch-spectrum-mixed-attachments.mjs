@@ -18,7 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const MARKER = "Hermes patch: Preserve mixed text + attachment iMessage payloads";
+const MARKER = "Tandem patch: Preserve mixed text + attachment iMessage payloads";
 
 function scriptDir() {
   return path.dirname(fileURLToPath(import.meta.url));

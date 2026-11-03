@@ -23,7 +23,7 @@ def test_dump_cron_summary_accepts_utf8_bom(tmp_path):
 
 
 def test_status_scheduled_jobs_accepts_utf8_bom(monkeypatch, capsys, tmp_path):
-    """hermes status must not print '(error reading jobs file)' under BOM."""
+    """tandem status must not print '(error reading jobs file)' under BOM."""
     from hermes_cli import status as status_mod
     import hermes_cli.auth as auth_mod
     import hermes_cli.gateway as gateway_mod
