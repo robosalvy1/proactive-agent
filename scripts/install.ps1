@@ -618,7 +618,7 @@ function Write-Banner {
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
     Write-Host "|             * Tandem Agent Installer                    |" -ForegroundColor Magenta
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
-    Write-Host "|  An open source AI agent by Nous Research.              |" -ForegroundColor Magenta
+    Write-Host "|  Built on Hermes Agent by Nous Research.                |" -ForegroundColor Magenta
     Write-Host "+---------------------------------------------------------+" -ForegroundColor Magenta
     Write-Host ""
 }

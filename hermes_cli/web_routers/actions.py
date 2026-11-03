@@ -129,7 +129,7 @@ def _durable_completed_update_action_id(lines: list[str]) -> Optional[str]:
     last_start = last_completed = -1
     completed_action_id: Optional[str] = None
     for index, line in enumerate(lines):
-        if line.startswith("=== tandem update started "):
+        if line.startswith(("=== hermes update started ", "=== tandem update started ")):  # brand-compat
             last_start = index
         match = _UPDATE_ACTION_COMPLETED_RE.fullmatch(line.strip())
         if match:
