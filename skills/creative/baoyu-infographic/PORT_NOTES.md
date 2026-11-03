@@ -10,7 +10,7 @@ Only `SKILL.md` was modified. All 45 reference files are verbatim copies.
 
 | Change | Upstream | Tandem |
 |--------|----------|--------|
-| Metadata namespace | `openclaw` | `tandem` |
+| Metadata namespace | `openclaw` | `hermes` |
 | Trigger | `/baoyu-infographic` slash command | Natural language skill matching |
 | User config | EXTEND.md file (project/user/XDG paths) | Removed — not part of Tandem infra |
 | User prompts | `AskUserQuestion` (batched) | `clarify` tool (batched, up to 5 questions) |

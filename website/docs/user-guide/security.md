@@ -508,8 +508,8 @@ tandem pairing revoke telegram 123456789
 tandem pairing clear-pending
 ```
 
-:::tip Docker users: run pairing commands as the `tandem` user
-The official Docker image runs the gateway as the unprivileged `tandem` user
+:::tip Docker users: run pairing commands as the `hermes` user
+The official Docker image runs the gateway as the unprivileged `hermes` user
 (uid 10000) via `gosu`, but `docker exec` defaults to root. Approval files
 created by root are written with mode `0600 root:root` and the gateway
 cannot read them — the approval is silently ignored ([#10270][i10270]).

@@ -240,7 +240,7 @@ text, the focus topic or error messages.
   `gateway_hygiene` or `overflow`. An automatic caller that passes no label
   reads `auto`; a refusal before any attempt began (pool saturation) reads
   `unknown`.
-- `route` is `tandem` for the local compressor and `codex_app_server` when the
+- `route` is `hermes` for the local compressor and `codex_app_server` when the
   Codex thread owns compaction.
 - `commit_status` is `committed`, `aborted`, `failed`, `skipped` or `blocked`.
   A `blocked` attempt was refused by an automatic guard; its `failure_class`
@@ -323,7 +323,7 @@ auxiliary:
 | `idle_compact_after_seconds` | `0` | ≥0 seconds | Opt-in: compact up front when a session resumes after this many seconds idle (0 = disabled). Skips when context ≤ threshold × target_ratio; honors cooldown/anti-thrash/lock guards |
 | `codex_gpt55_autoraise` | `true` | bool | Raise the trigger to 85% for gpt-5.4/5.5/5.6 and gpt-6 Astra on the ChatGPT Codex OAuth route (see below). Set `false` to keep the global `threshold` |
 | `codex_gpt55_autoraise_notice` | `true` | bool | Show the one-time Codex gpt-5.5 autoraise notice. Set `false` to keep the 85% autoraise but suppress the banner |
-| `codex_app_server_auto` | `native` | `native`, `tandem`, `off` | Thread-compaction mode for Codex app-server sessions (see below) |
+| `codex_app_server_auto` | `native` | `native`, `hermes`, `off` | Thread-compaction mode for Codex app-server sessions (see below) |
 | `codex_responses_native` | `false` | bool | Opt in to OpenAI's server-side compaction on the Responses API. Engages for gpt-5.6-family models on the direct OpenAI API or a ChatGPT Codex subscription, and `gpt-6-astra` (including its `-900k` picker alias) on official Codex OAuth (see below) |
 | `codex_responses_compact_threshold` | `null` | `null` or positive integer | Server-side compaction trigger, read **only when `codex_responses_native: true`** — it never changes when local compression fires; the local trigger is `threshold` (ratio) capped by `threshold_tokens`. `null` follows the resolved local compression trigger with an 8,192 token safety margin. A positive integer remains absolute and only clamps downward when required. Invalid values use automatic behavior. Automatic mode falls back to `200000` when no usable local trigger exists |
 | `in_place` | `true` | bool | Compact on the same session id instead of rotating to a new one (see below) |
@@ -472,7 +472,7 @@ mechanism instead:
 - Automatic compaction is controlled by `compression.codex_app_server_auto`:
   the default `native` lets the app-server decide when to compact and Tandem
   records the resulting compaction events (compression counters, session
-  events). Set `tandem` to let Tandem's compression threshold initiate
+  events). Set `hermes` to let Tandem's compression threshold initiate
   app-server compaction, or `off` to disable Tandem-initiated automatic
   compaction entirely (codex may still compact natively).
 
