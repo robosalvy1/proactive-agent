@@ -277,7 +277,7 @@ def _resample_audio_frame(np, frame, output_length: int):
 def silent_audio_hint(details: dict[str, Any]) -> str:
     """Platform-specific remediation for an armed stream delivering silence."""
     if sys.platform == "darwin":
-        return ("Microphone delivers only silence. Grant the Hermes backend "
+        return ("Microphone delivers only silence. Grant the Tandem backend "
                 "microphone access in System Settings > Privacy & Security > "
                 "Microphone, then toggle the wake word.")
     fix = ("Set wake_word.input_device to a different PortAudio input device"
@@ -404,7 +404,7 @@ def check_wake_word_requirements(cfg: Optional[dict[str, Any]] = None, *,
         missing = " and ".join(
             name for name, ok in (("speech-to-text", stt_ok), ("text-to-speech", tts_ok)) if not ok
         )
-        hint = (f"Wake word needs {missing} configured — run `hermes tools` "
+        hint = (f"Wake word needs {missing} configured — run `tandem tools` "
                 f"(Voice section) or see the voice-mode docs.")
 
     capture_mode = resolve_capture_mode(cfg)

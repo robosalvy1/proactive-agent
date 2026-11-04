@@ -1,4 +1,4 @@
-"""`hermes vault sources --disable` must not crash on a hand-edited non-dict
+"""`tandem vault sources --disable` must not crash on a hand-edited non-dict
 ``vault:`` section in config.yaml (the same YAML-shape hazard class
 ``_voice_cfg_dict`` guards for voice.*, #19835): the malformed section is
 coerced to a dict before the opt-out is written."""

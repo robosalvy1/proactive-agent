@@ -33,7 +33,7 @@ Starting release: `v2026.7.1`, commit `7c1a029553d87c43ecff8a3821336bc95872213b`
 | `installer-script+desktop` → `hermes-desktop-app-update` | [101514760893](https://github.com/ethernet8023/hermes-agent/actions/runs/34043635705/job/101514760893) |
 | `installer-script+desktop` → `open-app-update` | [101514756508](https://github.com/ethernet8023/hermes-agent/actions/runs/34043635705/job/101514756508) |
 
-These script installs have no staged updater. The released Electron code (`apps/desktop/electron/main.cjs:2212-2214`) logs `no staged updater; surfacing manual` and returns `{ ok: true, manual: true, command }`. It does not start an update. Each job's `logs/desktop.log` records that branch followed by `[updates] manual: hermes update`; no target checkout/result signal appears.
+These script installs have no staged updater. The released Electron code (`apps/desktop/electron/main.cjs:2212-2214`) logs `no staged updater; surfacing manual` and returns `{ ok: true, manual: true, command }`. It does not start an update. Each job's `logs/desktop.log` records that branch followed by `[updates] manual: tandem update`; no target checkout/result signal appears.
 
 Evidence required: an app-update leg from this released commit and those explicit manual-update log entries. A hand-off timeout without the manual message is not this limitation. Desktop-installer installs have a different staged-updater path and are not covered by this classification.
 

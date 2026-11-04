@@ -551,7 +551,7 @@ function printArtifacts(options = {}) {
 
 function help() {
   console.log(`Usage:
-  npm run test:desktop:existing  # build packaged app, launch with normal PATH/existing Hermes
+  npm run test:desktop:existing  # build packaged app, launch with normal PATH/existing Tandem
   npm run test:desktop:fresh     # build packaged app, launch with temp userData + HERMES_HOME
   npm run test:desktop:dmg       # (macOS only) build DMG and open it
   npm run test:desktop:msix      # (win32 only) build MSIX package

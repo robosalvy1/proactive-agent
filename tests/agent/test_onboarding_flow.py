@@ -317,7 +317,7 @@ def test_results_that_pick_nothing_settle_nothing(tool, args, result):
 
 @pytest.mark.parametrize("options", [
     None, [], [{"id": "games", "label": "Games"}], [{"id": "scan", "label": "Scan"}],
-    [{"id": "hermes", "label": "Explain how Hermes works"}], [{"id": x, "label": x} for x in ("notes", "site", "repo", "watch", "explain")],
+    [{"id": "hermes", "label": "Explain how Tandem works"}], [{"id": x, "label": x} for x in ("notes", "site", "repo", "watch", "explain")],
     [{"id": "notes", "label": "A"}, {"id": "notes", "label": "B"}], [{"id": "notes", "label": "x" * 33}],
     [{"id": "notes", "label": " "}], ["notes"],
 ])
@@ -334,7 +334,7 @@ def test_valid_picks_are_the_card_with_how_hermes_works_last_and_any_card_id_ans
     shown = run(facts, Shown("build", "call_b", picks))[-1]
     card = flow.BEAT_BY_ID["build"].card(facts, shown.record["picks"])
 
-    assert card == {"options": [*picks, {"id": "hermes", "label": "Explain how Hermes works"}]}
+    assert card == {"options": [*picks, {"id": "hermes", "label": "Explain how Tandem works"}]}
     # Brought back without picks, the same card returns.
     assert apply(shown.record, Shown("build", "call_c"), facts).result == {}
     for value in ("repo", "hermes", "own"):

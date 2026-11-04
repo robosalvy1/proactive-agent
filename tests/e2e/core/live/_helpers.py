@@ -154,7 +154,7 @@ class WireRecord:
 
 @dataclass
 class WireLog:
-    """Every HTTP exchange made through httpx (all SDKs Hermes uses sit on it)."""
+    """Every HTTP exchange made through httpx (all SDKs Tandem uses sit on it)."""
 
     secret: str
     records: list[WireRecord] = field(default_factory=list)

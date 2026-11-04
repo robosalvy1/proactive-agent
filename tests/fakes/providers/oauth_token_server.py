@@ -1,7 +1,7 @@
 """Recording loopback OAuth 2.0 authorization server for end-to-end tests.
 
 One real HTTP server on 127.0.0.1 that plays the vendor side of two OAuth
-flows Hermes drives but does not own:
+flows Tandem drives but does not own:
 
 * **Refresh grant with single-use rotating refresh tokens.** Every successful
   ``grant_type=refresh_token`` spends the presented token and issues a fresh

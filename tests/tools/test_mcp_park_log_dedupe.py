@@ -39,7 +39,7 @@ def _fast_time(monkeypatch, tmp_path):
 def test_reparked_server_logs_once_not_per_probe(monkeypatch, tmp_path, caplog):
     """First park warns; every failed self-probe that re-parks the same dead
     server logs at DEBUG only — the parked state is already visible via
-    ``hermes mcp list`` (#115713)."""
+    ``tandem mcp list`` (#115713)."""
     monkeypatch.setenv("HERMES_HOME", str(tmp_path))
 
     from tools import mcp_tool

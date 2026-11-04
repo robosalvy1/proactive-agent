@@ -128,7 +128,7 @@ def test_stop_forwards_recovery_and_preserves_conflict(client, tmp_path, monkeyp
     def recover():
         called.append(True)
         if refuse:
-            raise HTTPException(409, "Another Hermes process owns this server, or its ownership could not be verified")
+            raise HTTPException(409, "Another Tandem process owns this server, or its ownership could not be verified")
     monkeypatch.setattr(local_models, "_terminate_state_pid", recover)
     monkeypatch.setattr(local_models, "_set_runtime_enabled", lambda value: disabled.append(value))
     response = client.post("/api/local-models/server", json={"action": "stop"})

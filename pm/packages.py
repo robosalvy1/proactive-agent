@@ -794,7 +794,7 @@ class Gh(BinaryPackage):
 class Ffmpeg(_BionicDebArm, BinaryPackage, DebPackage):
     """FFmpeg builds for supported targets; BtbN Linux archives require glibc.
     optional=False: ffmpeg is a required runtime tool where supported. Sealed bundles ship
-    it baked into the payload; every `hermes update` and `hermes pm install`
+    it baked into the payload; every `tandem update` and `tandem pm install`
     re-ensures it from the new lockfile before the venv sync
     (pm.client.ensure_tools_for_sync), so a pin bump lands. Windows + Linux:
     BtbN/FFmpeg-Builds (month-end autobuild tag, kept two years; ships ffprobe too).

@@ -1,4 +1,4 @@
-"""Tests for the direct Hermes-to-Relay shared-metrics runtime."""
+"""Tests for the direct Tandem-to-Relay shared-metrics runtime."""
 
 from __future__ import annotations
 
@@ -2514,7 +2514,7 @@ def test_failed_flush_keeps_daily_export_open_for_later_task(
     assert metrics["hermes.task_run.started"]["value"] == 2
     assert metrics["hermes.task_run.finished"]["value"] == 2
     assert flush_attempts == 2
-    assert "Hermes shared-metrics task flush failed" in caplog.text
+    assert "Tandem shared-metrics task flush failed" in caplog.text
 
 
 def _finish_desktop_task(session_id: str, task_id: str) -> None:
@@ -2800,7 +2800,7 @@ def _stored_counters(tmp_path) -> dict[str, list[dict[str, Any]]]:
 
 def test_v3_failure_dimensions_never_export_third_party_identifiers(direct_runtime, tmp_path):
     """Plugin tool names, exception class names, plugin platforms and raw exit reasons collapse
-    to closed classes, while Hermes's own vocabularies pass through."""
+    to closed classes, while Tandem's own vocabularies pass through."""
     base = {
         "session_id": "s1", "task_id": "t1", "api_request_id": "r1", "platform": "telegram",
         "provider": "anthropic", "model": "claude-sonnet",
@@ -3007,7 +3007,7 @@ def _cli_turn(session_id: str, parent_session_id: str = "") -> None:
 
 
 def test_finite_cli_runs_report_their_own_entrypoint(direct_runtime, tmp_path, monkeypatch):
-    """`hermes -z` / `chat -q` / `-Q` runs (HERMES_SINGLE_QUERY_SESSION) report `one_shot`, a
+    """`tandem -z` / `chat -q` / `-Q` runs (HERMES_SINGLE_QUERY_SESSION) report `one_shot`, a
     dispatcher-spawned one (kanban worker, A2A forward) `background`; the REPL stays `interactive`,
     and a delegated child or a non-CLI surface keeps its own entrypoint inside a finite run."""
     monkeypatch.delenv("HERMES_SINGLE_QUERY_SESSION", raising=False)
@@ -3041,7 +3041,7 @@ def test_finite_cli_runs_report_their_own_entrypoint(direct_runtime, tmp_path, m
 
 
 def test_oneshot_hard_exit_cleanup_records_the_session_summary(direct_runtime, tmp_path, monkeypatch):
-    """`hermes -z` leaves through os._exit, past the atexit hook that closes the metrics session; its
+    """`tandem -z` leaves through os._exit, past the atexit hook that closes the metrics session; its
     pre-exit cleanup must write the run's session.count itself."""
     from hermes_cli import main as hermes_main
 

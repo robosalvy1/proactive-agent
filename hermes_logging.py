@@ -1,4 +1,4 @@
-"""Centralized logging setup for Hermes Agent.
+"""Centralized logging setup for Tandem Agent.
 
 Log files: agent.log (INFO+, everything), errors.log (WARNING+), gateway.log (INFO+,
 gateway components; ``mode="gateway"``), gui.log (INFO+, dashboard/TUI-gateway;
@@ -356,7 +356,7 @@ def setup_logging(
     mode: Optional[str] = None,
     force: bool = False,
 ) -> Path:
-    """Configure the Hermes logging subsystem; returns the ``logs/`` directory.
+    """Configure the Tandem logging subsystem; returns the ``logs/`` directory.
 
     Safe to call multiple times; the second call is a no-op unless *force*. Level and
     rotation defaults come from config.yaml ``logging.*``. ``mode="gateway"`` adds
@@ -629,7 +629,7 @@ _PROFILE_LIVENESS_RECHECK_S = 2.0
 
 
 class _ProfileRoutingFileHandler(logging.Handler):
-    """Route queued records to the log file for their Hermes home.
+    """Route queued records to the log file for their Tandem home.
 
     Used only behind the QueueListener, so its small routing lock never blocks an agent
     or dashboard event loop. Per-home handlers keep rotation, redaction and managed perms.

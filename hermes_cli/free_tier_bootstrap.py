@@ -1,6 +1,6 @@
 """Serve-start record of who carries inference, for ``setup.status`` and ``setup.ready``.
 
-``hermes serve`` runs this once at boot on a daemon thread. It never creates an identity: the
+``tandem serve`` runs this once at boot on a daemon thread. It never creates an identity: the
 desktop's welcome-trial claim (``hermes_cli.welcome_trial``) and the first hosted connector action
 are the only creators. On the desktop's local backend it first records a fresh install's onboarding
 decision (``onboarding_run.latch_first_install``), settles a claim cut off before its marker write
@@ -93,7 +93,7 @@ def reconcile_record() -> Optional[SetupRecord]:
     inference. The identity and failure block are kept as is. A record that already says ``True`` is never re-probed, so the answer
     only moves false -> true here. Every write path that assigns the main model (the Models page,
     a picker key save) calls this for the immediate broadcast; ``setup.status`` calls it for
-    writes this process never saw (``hermes setup`` / ``hermes model`` from a shell, a hand edit).
+    writes this process never saw (``tandem setup`` / ``tandem model`` from a shell, a hand edit).
     The record is the LAUNCH profile's: a call scoped to another profile's home (a dashboard
     write with ``?profile=B``) leaves it alone, or B's providers would open the launch gate."""
     global _record
@@ -251,7 +251,7 @@ def _broadcast(record: SetupRecord) -> None:
 
 
 def start_background_bootstrap() -> threading.Thread:
-    """``hermes serve`` entry: run on a daemon thread so the inventory never delays the socket."""
+    """``tandem serve`` entry: run on a daemon thread so the inventory never delays the socket."""
     from agent.memory_provider import spawn_context_thread
 
     thread = spawn_context_thread(run_bootstrap, name="free-tier-bootstrap")

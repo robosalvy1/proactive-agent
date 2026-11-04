@@ -1,4 +1,4 @@
-"""Regression tests: `hermes dashboard` validates HERMES_WEB_DIST before serving.
+"""Regression tests: `tandem dashboard` validates HERMES_WEB_DIST before serving.
 
 A custom HERMES_WEB_DIST without --skip-build previously skipped BOTH the
 build and any validation, so the server started and served 404s with no
@@ -143,7 +143,7 @@ def test_skip_build_missing_dist_attempts_one_recovery_build(
 
 def test_desktop_child_dashboard_drops_packaged_renderer(main_mod, monkeypatch):
     """#116107: every desktop-spawned process inherits HERMES_DESKTOP=1 with the
-    packaged dist; a browser `hermes dashboard` from it must not keep serving the
+    packaged dist; a browser `tandem dashboard` from it must not keep serving the
     IPC-only desktop renderer."""
     packaged = "/Applications/Hermes.app/Contents/Resources/app.asar.unpacked/dist"
     monkeypatch.setenv("HERMES_DESKTOP", "1")

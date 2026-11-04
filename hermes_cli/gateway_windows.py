@@ -53,7 +53,7 @@ _ACCESS_DENIED_PATTERN = re.compile(rf"({_ACCESS_DENIED_WORDS})", re.IGNORECASE)
 _LAST_SPAWN_BREAKAWAY_FALLBACK: dict = {"fallback": False}
 
 _TASK_NAME_DEFAULT = "Hermes_Gateway"
-_TASK_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"
+_TASK_DESCRIPTION = "Tandem Agent Gateway - Messaging Platform Integration"
 _TASK_LOGON_DELAY = "PT30S"
 _TASK_RESTART_INTERVAL = "PT1M"
 _TASK_RESTART_COUNT = 999
@@ -116,7 +116,7 @@ def _hermes_home() -> Path:
 
 
 def hermes_service_roots() -> tuple[str, ...]:
-    """Directories a Hermes-owned SCM service binary lives under: the checkout (its ``venv`` included),
+    """Directories a Tandem-owned SCM service binary lives under: the checkout (its ``venv`` included),
     the running interpreter's ``Scripts`` dir (``hermes.exe`` shim) and the ``gateway-service`` launcher dir."""
     project_root = Path(__file__).resolve().parent.parent
     return (str(project_root), str(Path(sys.executable).parent), str(_hermes_home() / "gateway-service"))
@@ -127,8 +127,8 @@ def _normalize_windows_path(value: str) -> str:
 
 
 def hermes_owns_windows_service(name: str, binpath: str, hermes_roots: tuple[str, ...]) -> bool:
-    """Positive ownership of an SCM service: Hermes-named (``hermes*``) or its binary path starts under a
-    Hermes root. Pure so it is testable off-Windows. A Scheduled-Task-launched gateway descends from
+    """Positive ownership of an SCM service: Tandem-named (``hermes*``) or its binary path starts under a
+    Tandem root. Pure so it is testable off-Windows. A Scheduled-Task-launched gateway descends from
     ``svchost.exe`` hosting ``Schedule``; without this gate the updater took Task Scheduler for the
     gateway's supervisor and ``sc.exe stop Schedule`` aborted every update (#97208)."""
     normalized_name = "".join(char for char in name.casefold() if char.isalnum())
@@ -139,7 +139,7 @@ def hermes_owns_windows_service(name: str, binpath: str, hermes_roots: tuple[str
 
 
 def _preserve_hermes_home_path(path: str | Path) -> str:
-    r"""Render Hermes-owned paths under the configured HERMES_HOME spelling.
+    r"""Render Tandem-owned paths under the configured HERMES_HOME spelling.
 
     ``%LOCALAPPDATA%\hermes`` may be a symlink/junction to another drive; launcher files must not
     bake in the resolved target for paths under HERMES_HOME.
@@ -226,7 +226,7 @@ def _is_running_as_admin() -> bool:
 
 
 def _current_profile_cli_args() -> list[str]:
-    """Return CLI args that preserve the current Hermes profile."""
+    """Return CLI args that preserve the current Tandem profile."""
     from hermes_cli.gateway import _profile_arg
 
     profile_arg = _profile_arg()
@@ -805,7 +805,7 @@ def _spawn_detached(script_path: Path | None = None, home: Path | None = None) -
 
 def _stdin_is_interactive(*, isatty: bool, console_mode_ok: bool | None) -> bool:
     """A human can answer a prompt only on a real console. The Windows CRT reports isatty()==True for
-    every character device — the NUL device included (`hermes gateway start < NUL`, stdin=DEVNULL) — so
+    every character device — the NUL device included (`tandem gateway start < NUL`, stdin=DEVNULL) — so
     isatty must be confirmed by GetConsoleMode accepting the handle (#113977). ``console_mode_ok`` is
     None where that fact does not exist (not Windows) and isatty alone decides."""
     return isatty and console_mode_ok is not False
@@ -878,7 +878,7 @@ def _install_startup_fallback(script_path: Path, start_now: bool, detail: str) -
         # An earlier task survives (UAC declined, access denied on re-create) and still fires at
         # logon; adding the fallback beside it would start the gateway twice (#80569).
         print("⚠ Scheduled Task is still registered — skipped the Startup fallback to avoid a duplicate autostart.")
-        print("  If that task is disabled or broken, run 'hermes gateway uninstall', then install again.")
+        print("  If that task is disabled or broken, run 'tandem gateway uninstall', then install again.")
     else:
         entry = _install_startup_entry(script_path)
         print(f"✓ Installed Windows login item: {entry}")
@@ -893,7 +893,7 @@ def _install_startup_fallback(script_path: Path, start_now: bool, detail: str) -
         from hermes_cli.gateway import _profile_arg
 
         profile_arg = _profile_arg()
-        start_cmd = f"hermes {profile_arg} gateway start" if profile_arg else "hermes gateway start"
+        start_cmd = f"tandem {profile_arg} gateway start" if profile_arg else "tandem gateway start"
         print("ℹ Startup fallback installed; gateway not started now.")
         print(f"  Start manually with: {start_cmd}")
     _print_next_steps()
@@ -907,11 +907,11 @@ def _offer_elevated_install(headline: str, force: bool, start_now: bool, start_o
     print("  UAC is Windows' admin approval prompt; it is needed to create/update the Scheduled Task.")
     if prompt_yes_no("  Open the UAC prompt now?", False):
         if _launch_elevated_install(force=force, start_now=start_now, start_on_login=start_on_login):
-            print("✓ Launched elevated Hermes gateway install prompt.")
+            print("✓ Launched elevated Tandem gateway install prompt.")
             if start_now:
                 print("  Approve the Windows UAC prompt; the elevated install will start the gateway afterwards.")
             else:
-                print("  Approve the Windows UAC prompt, then run: hermes gateway status")
+                print("  Approve the Windows UAC prompt, then run: tandem gateway status")
             return True
         print("⚠ Falling back to Startup folder because elevation was unavailable or cancelled.")
     else:
@@ -934,7 +934,7 @@ def install(
             _start_or_report_running()
         else:
             print("ℹ Gateway not started and no auto-start service installed.")
-            print("  Run in the foreground later with: hermes gateway run")
+            print("  Run in the foreground later with: tandem gateway run")
         return
 
     task_name = get_task_name()
@@ -977,7 +977,7 @@ def install(
             _start_or_report_running()
         else:
             print("ℹ Gateway not started now.")
-            print("  Start manually with: hermes gateway start")
+            print("  Start manually with: tandem gateway start")
         _print_next_steps()
         return
 
@@ -1079,7 +1079,7 @@ def _write_start_attestation(pids: list[int], via: str, home: Path | None = None
 
     ``generation`` identifies this marker instance: the update resume token records the generation
     whose death authorized a cold-start, so execution consumes exactly that marker and never a
-    newer one written by a concurrent ``hermes gateway start`` (#110020 review)."""
+    newer one written by a concurrent ``tandem gateway start`` (#110020 review)."""
     try:
         path = _start_attestation_path(home)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -1214,7 +1214,7 @@ def attested_death_generation(current_pids: list[int], home: Path | None = None)
     or ``None``.
 
     Read-only twin of :func:`check_start_attestation` for callers that must not consume the
-    one-shot marker — ``hermes update`` consults it to decide whether a Desktop-owned install
+    one-shot marker — ``tandem update`` consults it to decide whether a Desktop-owned install
     still owes a gateway cold-start (#109538) and records the generation in its resume token so the
     execution step consumes exactly the marker it was authorized by. Callers pass the liveness they
     already established (``[]`` after their own discovery came back empty) so the process table is
@@ -1260,7 +1260,7 @@ def _format_attestation_warning(attested: list[int], data: dict) -> str:
         f"⚠ The previous gateway start ({via}, {ts}) reported success, but the "
         f"process (PID {', '.join(map(str, attested))}) died without a clean "
         "shutdown record.",
-        "  This usually means the shell that ran `hermes gateway start` was inside "
+        "  This usually means the shell that ran `tandem gateway start` was inside "
         "a Windows Job Object that killed the gateway on exit (#91675).",
     ]
     hint = _task_run_hint("  Recovery: schtasks /Run /TN {}   (Task Scheduler starts the gateway outside any Job Object)")
@@ -1311,7 +1311,7 @@ def _report_gateway_start(via: str) -> None:
 
 
 def _print_next_steps() -> None:
-    print("\nNext steps:\n  hermes gateway status                      # Check status")
+    print("\nNext steps:\n  tandem gateway status                      # Check status")
     print(f"  type {_hermes_home()}\\logs\\gateway.log       # View logs")
 
 
@@ -1335,8 +1335,8 @@ def uninstall() -> None:
             print("  UAC is Windows' admin approval prompt; it is needed to remove the Scheduled Task.")
             if prompt_yes_no("  Open the UAC prompt now?", False):
                 if _launch_elevated_gateway_command("uninstall"):
-                    print("✓ Launched elevated Hermes gateway uninstall prompt.")
-                    print("  Approve the Windows UAC prompt, then run: hermes gateway status")
+                    print("✓ Launched elevated Tandem gateway uninstall prompt.")
+                    print("  Approve the Windows UAC prompt, then run: tandem gateway status")
                     return
                 print("⚠ Elevated uninstall prompt was unavailable or cancelled.")
             else:
@@ -1468,18 +1468,18 @@ def scheduled_task_drift(task_name: str) -> list[str]:
 
 def _print_scheduled_task_drift(task_name: str) -> None:
     """Warn when the registered task predates the current template (status is read-only; the
-    repair runs from ``start()`` / ``hermes update`` via ``reconcile_scheduled_task``)."""
+    repair runs from ``start()`` / ``tandem update`` via ``reconcile_scheduled_task``)."""
     drift = scheduled_task_drift(task_name)
     if drift:
         print(f"⚠ Scheduled Task registration predates the current template ({'; '.join(drift)})")
-        print("  Repair: hermes gateway start  (or: hermes gateway install)")
+        print("  Repair: tandem gateway start  (or: tandem gateway install)")
 
 
 def reconcile_scheduled_task(task_name: str) -> bool:
     """Re-register the task from the current template when it drifts (#113670) — the Windows sibling
     of ``gateway.py::refresh_systemd_unit_if_needed``. Template hardening (``RestartOnFailure``, logon
     ``Delay``) otherwise only ever reaches fresh installs. False when aligned/unqueryable or when
-    ``schtasks`` refused (typically Access Denied — the elevating ``hermes gateway install`` is the fallback)."""
+    ``schtasks`` refused (typically Access Denied — the elevating ``tandem gateway install`` is the fallback)."""
     drift = scheduled_task_drift(task_name)
     if not drift:
         return False
@@ -1487,7 +1487,7 @@ def reconcile_scheduled_task(task_name: str) -> bool:
     ok, detail = _install_scheduled_task(task_name, _write_task_script())
     print(f"{'✓' if ok else '⚠'} {detail}")
     if not ok:
-        print("  Repair manually: hermes gateway install")
+        print("  Repair manually: tandem gateway install")
     return ok
 
 
@@ -1674,7 +1674,7 @@ def status(deep: bool = False) -> None:
         _print_deep_probes()
 
     if not task_installed and not startup_installed and not pids:
-        print("\nTo install:\n  hermes gateway install")
+        print("\nTo install:\n  tandem gateway install")
 
 
 def start() -> None:
@@ -1706,7 +1706,7 @@ def start() -> None:
             # hand-off to an elevated child — so there is nothing left to spawn or to warn about here.
             install(force=False, start_now=True, start_on_login=True)
             return
-        print("ℹ Login auto-start not installed; add it later with: hermes gateway install")
+        print("ℹ Login auto-start not installed; add it later with: tandem gateway install")
     elif is_task_registered():
         reconcile_scheduled_task(get_task_name())   # like systemd's regenerate-on-stale before a start
 
@@ -1882,5 +1882,5 @@ def restart() -> None:
     if not _wait_for_gateway_ready(timeout_s=15.0):
         raise RuntimeError(
             "Gateway restart did not produce a running gateway process. "
-            "Check logs/gateway.log and run `hermes gateway status`."
+            "Check logs/gateway.log and run `tandem gateway status`."
         )

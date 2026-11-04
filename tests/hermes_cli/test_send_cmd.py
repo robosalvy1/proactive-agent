@@ -1,4 +1,4 @@
-"""Tests for the ``hermes send`` CLI subcommand.
+"""Tests for the ``tandem send`` CLI subcommand.
 
 Covers the argument parsing / stdin / file / list behavior of
 ``hermes_cli.send_cmd``. The underlying ``send_message_tool`` is stubbed so
@@ -59,7 +59,7 @@ def fake_tool(monkeypatch):
 
 @pytest.fixture
 def whatsapp_bridge(monkeypatch):
-    """Route ``hermes send --to whatsapp:...`` through the real plugin standalone sender into a fake
+    """Route ``tandem send --to whatsapp:...`` through the real plugin standalone sender into a fake
     bridge; returns the recorded ``(path, payload)`` posts and a mutable ``supports_mentions`` flag."""
     import asyncio
     from types import SimpleNamespace
@@ -258,8 +258,8 @@ def test_load_hermes_env_bridges_config_yaml_scalars(tmp_path, monkeypatch):
     """Top-level config.yaml scalars should be bridged into os.environ.
 
     This mirrors the gateway/run.py bootstrap behavior: without this, running
-    ``hermes send`` from a fresh shell cannot resolve the home channel
-    because ``TELEGRAM_HOME_CHANNEL`` (saved by ``hermes config set``) lives
+    ``tandem send`` from a fresh shell cannot resolve the home channel
+    because ``TELEGRAM_HOME_CHANNEL`` (saved by ``tandem config set``) lives
     in config.yaml, not in .env — and the gateway's config loader reads via
     ``os.getenv(...)``.
     """
@@ -293,7 +293,7 @@ def test_load_hermes_env_utf8_bom_preserves_first_key(tmp_path, monkeypatch):
     PowerShell 5.1 `Set-Content -Encoding UTF8` and Notepad prepend a BOM
     (EF BB BF). With encoding=utf-8, python-dotenv kept U+FEFF on the first
     key, so the credential never appeared under its canonical name and
-    `hermes send` failed to authenticate.
+    `tandem send` failed to authenticate.
     """
     import os
 

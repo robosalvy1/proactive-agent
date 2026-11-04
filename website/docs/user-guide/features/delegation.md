@@ -8,7 +8,7 @@ description: "Spawn isolated child agents for parallel workstreams with delegate
 
 The `delegate_task` tool spawns child AIAgent instances with isolated context, inherited tool access, and their own terminal sessions. Each child gets a fresh conversation and works independently — only its final summary enters the parent's context.
 
-Top-level model calls run in the background automatically. Hermes returns a handle immediately so the conversation can continue, then posts the result back as a new message. An orchestrator subagent waits for its own workers so it can synthesize their results before returning.
+Top-level model calls run in the background automatically. Tandem returns a handle immediately so the conversation can continue, then posts the result back as a new message. An orchestrator subagent waits for its own workers so it can synthesize their results before returning.
 
 ## Completion delivery
 
@@ -183,7 +183,7 @@ delegate_task(
 
 ## Batch Mode Details
 
-When a top-level agent provides a `tasks` array, Hermes returns one background handle and runs the subagents in parallel. By default the call returns **one** consolidated message once every task has finished. Results are delivered only between the parent's turns: the parent should finish anything that does not depend on the children, then end its turn rather than polling transcripts, artifacts, or CI while it waits.
+When a top-level agent provides a `tasks` array, Tandem returns one background handle and runs the subagents in parallel. By default the call returns **one** consolidated message once every task has finished. Results are delivered only between the parent's turns: the parent should finish anything that does not depend on the children, then end its turn rather than polling transcripts, artifacts, or CI while it waits.
 
 ### Independent completions (opt-in)
 
@@ -218,9 +218,9 @@ Synchronous single-task delegation from an orchestrator runs directly without th
 
 ### Durable background completions
 
-When a background delegation finishes, Hermes stores its completion event in
+When a background delegation finishes, Tandem stores its completion event in
 the active profile's `state.db` before publishing it to the normal fresh-turn
-queue. If Hermes restarts after completion but before delivery, the pending
+queue. If Tandem restarts after completion but before delivery, the pending
 event is restored and routed through the same ownership checks. Competing
 consumers use a durable claim, so only the consumer that successfully accepts
 the synthetic turn acknowledges delivery; failed attempts release the claim for
@@ -228,7 +228,7 @@ retry.
 
 This does not resume child execution after a crash. A delegation whose owner
 process disappears while it is still running is recorded as `unknown`, because
-Hermes cannot prove whether its external side effects happened. Pending and
+Tandem cannot prove whether its external side effects happened. Pending and
 delivered records are bounded and profile-local.
 
 ### Child background-process notifications
@@ -355,7 +355,7 @@ A child that exhausts its budget returns with `exit_reason: max_iterations` and 
 
 By default there is **no wall-clock timeout** on subagents. Children fail only from what they're actually doing — API errors, tool errors, or hitting their iteration budget — never from a delegation-level stopwatch. Earlier releases shipped a hard cap (300s, later 600s), which kept killing legitimately busy children mid-task: deep code reviews, large research fan-outs, and slow reasoning models routinely need more than 10 minutes while making steady progress the whole time.
 
-Genuinely stuck children are still detected on every runtime, with or without a configured cap: the heartbeat staleness monitor watches each child's progress signals (API calls, tool starts, activity-timestamp ticks). A child whose progress is completely frozen past the stale threshold — 450s idle between turns, 1200s while inside a tool — is interrupted and its wait is **abandoned**: the parent gets a `status: "timeout"` entry whose error reads `Subagent stopped making progress after N API call(s) — no activity for 450s (heartbeat stale threshold); the pending worker was abandoned.` The wait ends even in one-shot runs (`hermes chat -Q`, Bot Chat one-shot, cron) that have no gateway inactivity watchdog behind them, so a wedged child can no longer hold the turn or its session lease forever. An in-flight model wait still counts as progress — subagents refresh the activity clock while waiting on the provider, so a slow local / long-prefill completion is not treated as stalled.
+Genuinely stuck children are still detected on every runtime, with or without a configured cap: the heartbeat staleness monitor watches each child's progress signals (API calls, tool starts, activity-timestamp ticks). A child whose progress is completely frozen past the stale threshold — 450s idle between turns, 1200s while inside a tool — is interrupted and its wait is **abandoned**: the parent gets a `status: "timeout"` entry whose error reads `Subagent stopped making progress after N API call(s) — no activity for 450s (heartbeat stale threshold); the pending worker was abandoned.` The wait ends even in one-shot runs (`tandem chat -Q`, Bot Chat one-shot, cron) that have no gateway inactivity watchdog behind them, so a wedged child can no longer hold the turn or its session lease forever. An in-flight model wait still counts as progress — subagents refresh the activity clock while waiting on the provider, so a slow local / long-prefill completion is not treated as stalled.
 
 If you want a cap anyway (e.g. cost control on unattended cron-driven delegation), opt in per-install:
 
@@ -549,7 +549,7 @@ delegate_task(
 
 **Cost warning:** With `max_spawn_depth: 3` and `max_concurrent_children: 3`, the tree can reach 3×3×3 = 27 concurrent leaf agents. Each extra level multiplies spend — raise `max_spawn_depth` intentionally.
 
-**One-shot runs are capped separately.** `hermes chat -q` / `--oneshot` sessions may spawn at most `delegation.oneshot_max_children` subagents in total (default `2`, `0` = unlimited). A one-shot run has no later turn to receive results, and in benchmark trajectories most of its spawns were "independently review my own work" rather than parallel work — each such child re-pays a cold system prompt and re-reads the repo. Interactive and gateway sessions are unaffected.
+**One-shot runs are capped separately.** `tandem chat -q` / `--oneshot` sessions may spawn at most `delegation.oneshot_max_children` subagents in total (default `2`, `0` = unlimited). A one-shot run has no later turn to receive results, and in benchmark trajectories most of its spawns were "independently review my own work" rather than parallel work — each such child re-pays a cold system prompt and re-reads the repo. Interactive and gateway sessions are unaffected.
 
 ## Finite chat runs
 
@@ -565,7 +565,7 @@ final response before the CLI exits.
   including when resuming an interactive session. It does not change that session's
   creation policy, sibling viewers, or the daemon environment.
 - **Existing safeguards:** delegation limits, timeouts, cancellation, and
-  `approvals.single_query_mode` (`-q` turns; `hermes -z` turns are unattended) still apply.
+  `approvals.single_query_mode` (`-q` turns; `tandem -z` turns are unattended) still apply.
   Joining does not auto-approve commands or guarantee successful child outcomes.
   Inspect results and verify artifacts. Managed/safe workers still reject child
   delegation until their child-registration contract is available.
@@ -580,11 +580,11 @@ that must survive an owner restart.
 ## Lifetime and Durability
 
 :::warning Background completion durability is not durable execution
-Top-level model-facing `delegate_task` calls run in the background automatically where the session supports later delivery. Hermes returns a handle immediately, and the result re-enters the conversation after the child or batch finishes. Orchestrator subagents wait for their workers in the current turn because they must synthesize those results before returning. Stateless request/response endpoints fall back to synchronous execution when they cannot deliver a detached result later.
+Top-level model-facing `delegate_task` calls run in the background automatically where the session supports later delivery. Tandem returns a handle immediately, and the result re-enters the conversation after the child or batch finishes. Orchestrator subagents wait for their workers in the current turn because they must synthesize those results before returning. Stateless request/response endpoints fall back to synchronous execution when they cannot deliver a detached result later.
 
 - Normal follow-up messages do not cancel background children. `/stop` on any surface (gateway `/stop` — also when the session is idle after the dispatching turn ended — CLI `/stop`, the Desktop/TUI Stop button, an ACP cancel) ends the session's running background delegations, and closing or resetting the owning session does the same.
 - Explicit session close/reset interrupts that session's background children. Closing a TUI viewer of a gateway-owned session does not kill the gateway's work.
-- A Hermes process restart does **not** resume a running child. Its attempt becomes `unknown` because Hermes cannot prove which side effects happened.
+- A Tandem process restart does **not** resume a running child. Its attempt becomes `unknown` because Tandem cannot prove which side effects happened.
 - A child that completed before restart but whose result was not delivered is restored and routed back through the owning session's normal checks.
 - Stopped children return a structured result (`status="interrupted"`, `exit_reason="interrupted"`) whose `summary` is the last text the child produced before the stop (the interrupt placeholder moves to `error`). The stop recurses down the spawn tree — an orchestrator child's synchronous workers are interrupted first and their partial results roll up into the child's own interrupted result — and each background unit's result re-enters the conversation right away as its normal completion notice (`Subagent Task Interrupted: …`), so nothing waits for the child to exhaust its budget.
 

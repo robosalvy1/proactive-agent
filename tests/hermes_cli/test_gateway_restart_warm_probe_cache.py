@@ -1,4 +1,4 @@
-"""``hermes gateway restart`` of a manual gateway must not attach to the gateway it just stopped.
+"""``tandem gateway restart`` of a manual gateway must not attach to the gateway it just stopped.
 
 The host-gateway probe is memoized for ``HOST_GATEWAY_CACHE_TTL_S``. The restart probes before the
 stop, the stop finishes well inside the TTL, and the in-process ``run_gateway`` then read the memo

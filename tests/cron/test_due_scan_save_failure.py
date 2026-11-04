@@ -303,7 +303,7 @@ def test_idle_tick_reprobes_a_degraded_store_and_clears_it(cron_store, monkeypat
 @pytest.mark.platforms("posix")  # POSIX mode bits; root ignores them
 @pytest.mark.skipif(hasattr(os, "geteuid") and os.geteuid() == 0, reason="root bypasses directory modes")
 def test_unwritable_store_is_shown_in_cron_status_and_announced_once(cron_store, monkeypatch, capsys, caplog):
-    """`hermes cron status` probes the store itself (a real 0500 dir) and leads with the red
+    """`tandem cron status` probes the store itself (a real 0500 dir) and leads with the red
     headline + fix; the gateway posts ONE home-channel notice on entry, naming the store, the
     error and since-when, to the served profile owning the store. "recovered" waits out the repeat
     window and is dropped if the store degrades again meanwhile, so the last notice always matches

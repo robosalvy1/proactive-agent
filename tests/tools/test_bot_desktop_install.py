@@ -141,7 +141,7 @@ def test_passwordless_sudo_runs_the_install_without_asking_for_a_password(monkey
 
 @pytest.mark.platforms("linux")
 def test_timeout_returns_and_frees_the_slot_even_when_a_descendant_survives(monkeypatch):
-    """From an unprivileged Hermes, killpg reaches the sudo leader but not a root-owned apt child; that
+    """From an unprivileged Tandem, killpg reaches the sudo leader but not a root-owned apt child; that
     child keeps the pipe's write end open, so draining stdout never sees EOF and the profile slot stays
     taken forever. The timeout must end the drain and release the slot regardless of what survived.
     Stand-in for the unkillable root child: a grandchild in its own session holding our stdout."""
@@ -174,7 +174,7 @@ def test_timeout_returns_and_frees_the_slot_even_when_a_descendant_survives(monk
 
 
 def test_root_installs_without_sudo_and_without_asking(monkeypatch):
-    """The official Docker image runs Hermes as uid 0 with no sudo binary: the package manager must be
+    """The official Docker image runs Tandem as uid 0 with no sudo binary: the package manager must be
     run directly, and the password card must never be raised for a user who already is root."""
     import subprocess
 

@@ -8,7 +8,7 @@ user docs `website/docs/user-guide/features/cron.md`, `kanban.md`.
 ## Cron
 
 `cron/jobs.py` (job store) + `cron/scheduler.py` (tick loop; `scheduler_*.py` siblings). Agents
-schedule via the `cronjob` tool; users via `hermes cron list|add|edit|pause|resume|run|remove` or
+schedule via the `cronjob` tool; users via `tandem cron list|add|edit|pause|resume|run|remove` or
 `/cron`. Schedules: duration (`"30m"`, `"2h"`, `"1d"`), "every" phrase (`"every 2h"`, `"every monday
 9am"`), 5-field cron (`"0 9 * * *"`), ISO one-shot (`"2026-06-01T09:00:00Z"`). Per-job fields:
 `skills`, `model`/`provider` overrides, `script` (pre-run data-collection script whose stdout is
@@ -31,12 +31,12 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   skips past-grace misses with a logged reason. Never drop a slot silently (#107485).
 - Per-home tick lock `<home>/cron/.tick.lock` prevents duplicate ticks across processes for
   that profile's store; never a `~/.hermes/...` literal.
-- **Headless ticks refuse, never spawn.** `hermes cron tick` (system crontab / external scheduler)
+- **Headless ticks refuse, never spawn.** `tandem cron tick` (system crontab / external scheduler)
   calls `tick(headless=True)`; `cron/scheduler_gateway_gate.py` skips agent jobs when discovery
   says no gateway owns the home (`last_fire_error` stamped, one warning per tick, due instant
   untouched) instead of letting `run_canonical_job → connect_gateway → ensure_gateway_runtime`
   spawn an unmanaged daemon. Same policy as approvals (headless/cron = refuse). The in-process
-  ticker and `hermes cron run` are not headless.
+  ticker and `tandem cron run` are not headless.
 - **The ticker binds each served profile's scope for the whole tick, including pre-loop code.**
   `scheduler_provider.py::_start_multiplex` is ONE ticker iterating `profiles_to_serve()`
   sequentially under `_profile_cron_scope(home)` (home + secret scope + terminal scope) — never N
@@ -93,7 +93,30 @@ Hardening invariants — each guards a real failure; don't weaken without answer
   payload, and only then drops the marker: a source-update relaunch (`-I`, no `PYTHONPATH`) or a
   post-restore re-exec must replay the whole worker, never land after the ack with the payload
   gone and no dependency boot.
-- Cron sessions pass `skip_memory=True`; memory providers intentionally do not run during cron.
+- Cron sessions pass `skip_memory=False`: built-in `MEMORY.md`/`USER.md` load as in any session, and
+  `agent.disabled_toolsets: [memory]` is the only off-switch. Pinned with its flip history in
+  `tests/cron/test_cron_memory_contract.py`; change it only by editing that test consciously.
+- **Attention layer** (`cron/attention*.py`, user doc `features/attention.md`): with
+  `attention.enabled` + `route_cron`, a successful RECURRING run is captured as an inbox item in
+  `_save_compose_deliver` (under the fire-claim fence) instead of delivered; outcome `inbox`.
+  One-shots, `[SILENT]` and failures never route. `scheduler_tick._run_attention_flush` runs on
+  every admitted, unpaused tick (idle included) AFTER the tick lock is released, under its own
+  non-blocking `<home>/cron/.attention.lock` (slow sends never delay due jobs; two tickers never
+  send the same digest); on the gateway ticker (`sync=False`) it runs on one context-bound thread
+  per home so a slow send never delays the next profile. It never raises into the tick; it
+  returns before loading config while `cron/attention.db` does not exist. A digest slot is
+  recorded BEFORE sending (at-most-once); a delivery that resolves no target leaves the item in
+  `/inbox`, never reads as sent. The `[ALERT]` prompt hint is added only for routed jobs so every
+  other job's prompt stays byte-identical. Attention sends set `attach_to_session` so replies
+  to a proactive message have context.
+- **Source watchers** (`cron/attention_watch.py`, `cron/attention_sources.py`): ordinary cron
+  jobs owned through `attention_sources.job_id` / the `discovery_job_id` state key
+  (`job_role`). Their output is data: always owned by the gate, parsed into one item per entry,
+  and DROPPED (never delivered raw) when capture fails or attention is off. Watchers get only
+  their source's toolsets plus the `no_mcp` sentinel; their run context arrives as
+  `runtime_data_prompt` (scanned as data). The headless index runs from `flush` at most hourly
+  on a background thread (stamp written first). A source the user removed (or whose job they
+  deleted) is latched `removed`; discovery never overwrites an indexed source.
 - Cron execution has its own session. Eligible continuable deliveries may mirror or seed the
   reply-facing conversation: origin, origin-less home fallback, user-written bare-platform home,
   or opted-in explicit targets. `all` expansions do not gain home mirror eligibility. Mirrored
@@ -105,7 +128,7 @@ Hardening invariants — each guards a real failure; don't weaken without answer
 
 ## Kanban (multi-agent work queue)
 
-Durable SQLite-backed board letting multiple profiles/workers collaborate. Users: `hermes kanban
+Durable SQLite-backed board letting multiple profiles/workers collaborate. Users: `tandem kanban
 <verb>`; dispatcher-spawned workers use a dedicated `kanban_*` toolset so their schema footprint is
 zero outside a kanban task (footprint ladder rung 3).
 
@@ -118,7 +141,7 @@ zero outside a kanban task (footprint ladder rung 3).
   kanban_request_changes, kanban_block, kanban_schedule, kanban_heartbeat, kanban_comment,
   kanban_create, kanban_link,
   kanban_attach, kanban_attach_url, kanban_attachments`; platforms whose saved selection enables
-  `kanban` (`hermes tools enable kanban --platform <p>`; default-off, in `CONFIGURABLE_TOOLSETS`) get
+  `kanban` (`tandem tools enable kanban --platform <p>`; default-off, in `CONFIGURABLE_TOOLSETS`) get
   the full set plus `kanban_list`/`kanban_unblock` for board routing. The check_fn reads the schema
   build's own selection (`tools/kanban_toolset_context.py`), never the legacy top-level `toolsets`
   key alone.

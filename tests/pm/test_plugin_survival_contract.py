@@ -1,6 +1,6 @@
 """Plugin survival + upgrade contracts (mnemosyne-oss/mnemosyne#859).
 
-Hermes-side contracts an external memory-provider wrapper can hold us to,
+Tandem-side contracts an external memory-provider wrapper can hold us to,
 exercised through PUBLIC paths (no source inspection, no network — uv
 resolves offline local path-source fixtures):
 
@@ -10,7 +10,7 @@ resolves offline local path-source fixtures):
    join the pm workspace union, because pm scans only plugin roots.
 2. Conflict admission. Through the PUBLIC admission authority
    (hermes_cli.plugins_admission.admit_plugin_set_change — the one path
-   `hermes plugins enable/install` use), a candidate union with no
+   `tandem plugins enable/install` use), a candidate union with no
    valid solution is REFUSED before anything is published: the
    candidate stays unenabled (so the loader never imports it), the
    plugin trees and every home's config.yaml survive untouched, the

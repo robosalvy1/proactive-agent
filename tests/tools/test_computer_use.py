@@ -1445,7 +1445,7 @@ class TestCuaEnvironmentScrubbing:
     def test_cua_session_sanitizes_provider_env_vars(self):
         """_CuaDriverSession lifecycle must sanitize sensitive env vars.
 
-        The cua-driver MCP subprocess should not inherit Hermes-managed
+        The cua-driver MCP subprocess should not inherit Tandem-managed
         credentials or other sensitive environment variables — only
         runtime-required vars. Regression test for issue #37878.
 
@@ -1778,7 +1778,7 @@ class TestMcpInvocationResolution:
     """Surface 8 (NousResearch/hermes-agent#47072): instead of hardcoding
     `["mcp"]` as the cua-driver subcommand, we ask the driver via its
     `manifest` JSON (trycua/cua#1961) so a future rename or relocation of
-    the MCP subcommand doesn't require a Hermes patch.
+    the MCP subcommand doesn't require a Tandem patch.
 
     The discovery hop must NEVER prevent the wrapper from starting — every
     failure mode (no manifest verb, non-zero exit, junk JSON, missing
@@ -2069,7 +2069,7 @@ class TestElementTokenAttachment:
 
 
 class TestSessionLifecycle:
-    """Surface gap (audit June 2026): Hermes never declared a cua-driver
+    """Surface gap (audit June 2026): Tandem never declared a cua-driver
     session, so the agent-cursor overlay was inert and per-run state
     (config overrides, recording ownership, cursor identity) was shared
     across concurrent runs. Wired now: backend.start() calls

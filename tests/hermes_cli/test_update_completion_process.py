@@ -253,7 +253,7 @@ def test_old_process_new_git_tree_completes_in_fresh_python(transition, tmp_path
 
 
 def _run_cmd_update(monkeypatch, request, capsys):
-    """``hermes update --gateway`` whose impl hands this request to the real post-commit completion."""
+    """``tandem update --gateway`` whose impl hands this request to the real post-commit completion."""
     from types import SimpleNamespace
     from hermes_cli import main, update_cmd, update_receipt
 

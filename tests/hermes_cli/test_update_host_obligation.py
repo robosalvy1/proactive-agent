@@ -1,7 +1,7 @@
 """The update→restart obligation is HOST-scoped, and one update restarts the host gateway once.
 
-Multiplex-only (Teknium ruling): exactly one ``hermes gateway run`` per host serves every
-profile. The obligation used to live in ONE profile's ``HERMES_HOME``, so ``hermes -p coder
+Multiplex-only (Teknium ruling): exactly one ``tandem gateway run`` per host serves every
+profile. The obligation used to live in ONE profile's ``HERMES_HOME``, so ``tandem -p coder
 update`` armed and cleared coder's copy while restarting the SHARED process; no other profile
 could see that obligation, and every profile that ran the catch-up killed the same gateway
 again. These tests pin the host-scoped contract:
@@ -222,7 +222,7 @@ def test_unwritable_host_state_dir_never_hides_the_debt_from_another_profile(two
 def test_one_installs_completed_restart_never_erases_another_installs_debt(tmp_path):
     """Two installations of one OS user share the host state dir. Install B arming its own pull and
     then completing its restart must leave install A's debt standing; each install arms, reads and
-    clears from its own process, the way two checkouts' ``hermes update`` runs do (review S3)."""
+    clears from its own process, the way two checkouts' ``tandem update`` runs do (review S3)."""
     import shutil
     import subprocess
     import sys
@@ -362,7 +362,7 @@ def test_a_failing_main_pid_probe_keeps_its_own_restart():
     {},
 ])
 def test_recovery_host_state_dir_matches_the_gateway_resolver(monkeypatch, env):
-    """``update_restart_recovery`` re-implements the lock-dir rule (it may import no Hermes code
+    """``update_restart_recovery`` re-implements the lock-dir rule (it may import no Tandem code
     at runtime); the duplicate must not drift from ``gateway.status._get_lock_dir``."""
     from gateway.status import _get_lock_dir
 

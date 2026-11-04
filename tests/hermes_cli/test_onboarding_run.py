@@ -1,5 +1,5 @@
 """``onboarding.run`` lives in the root profile's config.yaml: unset runs onboarding only on a
-machine that never used Hermes, an explicit bool wins, and a backend launched under a named profile reads and writes
+machine that never used Tandem, an explicit bool wins, and a backend launched under a named profile reads and writes
 the same root file."""
 
 from __future__ import annotations

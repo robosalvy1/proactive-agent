@@ -1,7 +1,7 @@
 """Fake Google AI Studio ``generateContent`` / ``streamGenerateContent`` endpoint behind a real
 TLS boundary.
 
-Hermes routes to its native Gemini adapter only for the real Google host
+Tandem routes to its native Gemini adapter only for the real Google host
 (``generativelanguage.googleapis.com``), so the fake is reached the way any corporate egress
 proxy would be: an HTTPS ``CONNECT`` proxy on loopback that terminates TLS for the Google host
 with a leaf certificate signed by a throwaway CA. The child trusts that CA through the standard
@@ -473,7 +473,7 @@ class GeminiFake:
         return f"http://127.0.0.1:{self._server.server_address[1]}"
 
     def child_env(self) -> dict[str, str]:
-        """Env for the ``hermes`` child: route HTTPS through the proxy and trust the fake CA."""
+        """Env for the ``tandem`` child: route HTTPS through the proxy and trust the fake CA."""
         ca = str(self.ca_pem)
         return {"HTTPS_PROXY": self.proxy_url, "https_proxy": self.proxy_url,
                 "HTTP_PROXY": self.proxy_url, "http_proxy": self.proxy_url,

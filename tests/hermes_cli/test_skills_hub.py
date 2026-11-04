@@ -107,7 +107,7 @@ def _capture_update(monkeypatch, results) -> tuple[str, list[tuple[str, str, boo
 
 
 def test_do_list_platform_env_is_ignored(three_source_env, monkeypatch):
-    """`hermes skills list` reads the active profile's config via
+    """`tandem skills list` reads the active profile's config via
     HERMES_HOME (swapped by -p), so it must NOT pass a platform arg to
     ``get_disabled_skill_names`` — otherwise per-platform overrides
     would silently leak in from HERMES_PLATFORM env."""
@@ -683,7 +683,7 @@ def _stub_search(monkeypatch, results):
     "computer-use", "NousResearch/hermes-agent/skills/productivity/pdf",
     "skills-sh/nousresearch/hermes-agent/google-workspace", "blender-bpy-enhanced"])
 def test_install_by_name_resolves_to_the_skill_it_names(monkeypatch, tmp_path, identifier):
-    """`hermes skills install <bundled skill>` failed every time: the name resolved to a stranger's
+    """`tandem skills install <bundled skill>` failed every time: the name resolved to a stranger's
     same-named hub skill or an ambiguity table, and this repo's own copy was rescanned as community
     content and refused. It now makes the shipped skill active and fetches nothing. A hub slug behind
     a prettified catalog title ("Blender Bpy Enhanced") resolves too, where it answered "No exact match"
@@ -741,7 +741,7 @@ def test_install_by_name_resolves_to_the_skill_it_names(monkeypatch, tmp_path, i
     assert cli_hub.do_install(identifier, console=console, skip_confirm=True) is False
     # One line, subject and remedy together: the Desktop toast shows only a failed action's last 3 lines.
     error = next(line for line in sink.getvalue().splitlines() if line.startswith("Error:"))
-    assert f"'{name}' is a built-in skill" in error and f"`hermes skills uninstall {name}`" in error
+    assert f"'{name}' is a built-in skill" in error and f"`tandem skills uninstall {name}`" in error
     assert "already available" not in sink.getvalue()
     assert (stranger / "SKILL.md").read_text().endswith("stranger\n")
 

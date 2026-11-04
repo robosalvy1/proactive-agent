@@ -1,4 +1,4 @@
-"""Proxy-only egress: ``hermes update`` on a network whose ONLY way out is an HTTP(S) proxy.
+"""Proxy-only egress: ``tandem update`` on a network whose ONLY way out is an HTTP(S) proxy.
 
 Every command runs in its own network namespace (no route, no DNS; proven per module by
 ``_seed.assert_isolated``). The proxy is what a corporate network runs: it tunnels ``CONNECT``,

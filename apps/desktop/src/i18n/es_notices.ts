@@ -10,7 +10,7 @@ export const esNotices = {
   butterbar: {
     goTo: (index, total) => `Mostrar aviso ${index} de ${total}`,
     legal: {
-      before: 'El uso de Hermes Agent está sujeto a nuestros ',
+      before: 'El uso de Tandem Agent está sujeto a nuestros ',
       terms: 'Términos del servicio',
       between: ' y a nuestra ',
       privacy: 'Política de privacidad',

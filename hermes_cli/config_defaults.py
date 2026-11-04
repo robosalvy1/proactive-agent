@@ -1,8 +1,12 @@
-"""Default configuration data for Hermes Agent: DEFAULT_CONFIG and OPTIONAL_ENV_VARS.
+"""Default configuration data for Tandem Agent: DEFAULT_CONFIG and OPTIONAL_ENV_VARS.
 
 Pure-data leaf module — must not import from hermes_cli.config. Comments are the user-facing
 docs of config.yaml.
 """
+
+from hermes_cli.config_env_defaults import category as _category, env as _env
+
+from hermes_cli.config_defaults_aux import _aux
 
 
 #: Image every container terminal backend (docker/modal/daytona/singularity) uses unless the
@@ -15,19 +19,6 @@ LEGACY_SANDBOX_IMAGE = LEGACY_SANDBOX_IMAGES[0]
 # Vercel Sandbox managed image (Vercel deprecated its `runtime` presets in Aug 2026).
 DEFAULT_VERCEL_IMAGE = "vercel/sandbox/universal:latest"
 LEGACY_VERCEL_RUNTIME = "node24"  # the seeded pre-49 default, never a user choice
-
-
-def _aux(timeout, *, reasoning_effort=True, **extra):
-    """Standard auxiliary-task model block (see DEFAULT_CONFIG["auxiliary"]).
-
-    reasoning_effort=False omits that key (MoA blocks configure depth per slot);
-    ``extra`` keys are appended after the standard ones.
-    """
-    d = {"provider": "auto", "model": "", "base_url": "", "api_key": "", "timeout": timeout, "extra_body": {}}
-    if reasoning_effort:
-        d["reasoning_effort"] = ""
-    d.update(extra)
-    return d
 
 
 DEFAULT_CONFIG = {
@@ -774,7 +765,6 @@ DEFAULT_CONFIG = {
         "title_generation": {
             "enabled": True,
             "model_upgrade_enabled": True,  # False = keep the instant derived title, never call a model
-            # session_search no longer uses an aux LLM (#27590); leftover auxiliary.session_search is ignored.
             "provider": "auto",
             "model": "",
             "prefer_fast_model": False,
@@ -786,6 +776,7 @@ DEFAULT_CONFIG = {
             "language": "",
         },
         "memory_query_rewrite": _aux(8, reasoning_effort=False),
+        "home_dream": _aux(30, reasoning_effort=False),
         "tts_audio_tags": _aux(30),
         "voice_chat": {**_aux(120), "reasoning_effort": "none"},  # agent/voice_turn_route.py; off = lowest valid
         # Kanban: triage_specifier expands a Triage one-liner into a spec (cheap model OK);
@@ -798,9 +789,11 @@ DEFAULT_CONFIG = {
         # of skills); route cheaper via `hermes model` → auxiliary → Curator.
         "curator": _aux(600),
         "monitor": _aux(60),   # important-mail 0-10 scorer; high-volume, small model fine
+        "open_loops": _aux(60),  # attention open-loop extractor; one JSON call per cued message
         # Post-turn self-improvement fork (save memory / patch skill). "auto" = main model replaying
         # the full conversation (warm cache); other models replay a compact digest (~3-5x cheaper).
-        # enabled=false skips auto spawns (/refine still works). An explicit max_input_tokens caps
+        # Automatic review is opt-in; enabled=true permits auto spawns (/refine always works).
+        # An explicit max_input_tokens caps
         # the SUM of replayed input tokens over the review loop (iterations capped at 16); the loop
         # stops before crossing it. When unset, the runtime derives a budget from the active model
         # context window. <= 0 = unlimited.
@@ -808,7 +801,7 @@ DEFAULT_CONFIG = {
         # conversation's reasoning config verbatim so its request bytes keep the parent's warm
         # prompt-cache prefix (#30532). Set provider/model below to route the review to another model
         # if you want a different effort level; a one-time warning says so when the key is set.
-        "background_review": {"enabled": True, **_aux(120)},
+        "background_review": {"enabled": False, **_aux(120)},
         # No reasoning_effort on MoA blocks by design — configured PER SLOT in the preset
         # (moa.presets.<name>.reference_models[].reasoning_effort / aggregator.reasoning_effort).
         "moa_reference": _aux(900, reasoning_effort=False),
@@ -1308,6 +1301,15 @@ DEFAULT_CONFIG = {
         },
     },
     "memory": {  # Persistent memory — bounded curated memory injected into the system prompt
+        # auto_index: true (opt-in) embeds participating messages after each turn; recall embeds only the query.
+        "home_recall": {
+            "enabled": False, "auto_index": False, "observe": False, "connect": True,
+            "base_url": "",
+            "model": "",
+            "api_key_env": "HOME_EMBEDDING_API_KEY",
+            "timeout_seconds": 5,
+            "min_similarity": 0.55,
+        },
         "memory_enabled": True,
         "user_profile_enabled": True,
         "prefetch_spill_enabled": False,  # External recall opt-in to hooks.output_spill.
@@ -1878,6 +1880,13 @@ DEFAULT_CONFIG = {
         # cron.scheduler.DEFAULT_FAILURE_REPEAT_ALERT_HOURS.
         "failure_repeat_alert_hours": 6,
     },
+    # Proactive inbox (cron/attention*.py; user-guide/features/attention.md); off by default. level:
+    # off|quiet (digests only)|balanced|eager. quiet_hours: local "HH:MM-HH:MM", "" = none.
+    # max_interrupts_per_day: None = level default. route_cron: recurring cron results go to the
+    # inbox. open_loops: track commitments stated in chat. deliver: fallback target, "" = inbox only.
+    "attention": {"enabled": False, "level": "quiet", "quiet_hours": "22:00-08:00",
+                  "digest_times": ["08:30", "13:00", "18:30"], "max_interrupts_per_day": None,
+                  "route_cron": True, "open_loops": True, "deliver": ""},
     # Kanban multi-agent coordination. The dispatcher ticks every N seconds, reclaims stale claims,
     # promotes dependency-satisfied todos to ready, and fires `hermes -p <assignee> chat -q ...` per
     # claimable task. Run ONE dispatcher per profile; two on the same kanban.db race for claims.
@@ -2720,33 +2729,6 @@ DEFAULT_CONFIG = {
 }
 
 
-def _env(description, prompt, **keys):
-    """One OPTIONAL_ENV_VARS entry; keyword order is preserved as dict key order."""
-    return {"description": description, "prompt": prompt, **keys}
-
-
-_OMIT = object()
-
-
-def _category(category, password, advanced):
-    """Entry factory for one category with its usual password/advanced defaults.
-
-    ``url``/``help``/``tools`` are only written when passed; ``password=None`` omits the key;
-    ``advanced`` is only written when true. Key order matches the plain ``_env`` entries.
-    """
-    def make(description, prompt, url=_OMIT, *, help=_OMIT, tools=_OMIT, password=password,
-             advanced=advanced):
-        d = {"description": description, "prompt": prompt}
-        d.update((k, v) for k, v in (("help", help), ("url", url), ("tools", tools)) if v is not _OMIT)
-        if password is not None:
-            d["password"] = password
-        d["category"] = category
-        if advanced:
-            d["advanced"] = True
-        return d
-    return make
-
-
 _prov = _category("provider", password=True, advanced=True)
 _tool = _category("tool", password=True, advanced=False)
 _msg = _category("messaging", password=False, advanced=False)
@@ -2781,7 +2763,7 @@ OPTIONAL_ENV_VARS = {
     "GEMINI_BASE_URL": _base_url("Google AI Studio", "Gemini"),
     "VERTEX_CREDENTIALS_PATH": _prov(
         "Path to a Google Cloud service account JSON for Vertex AI (Gemini). Vertex uses "
-        "OAuth2, not a static API key — this points at the credentials Hermes mints short-lived "
+        "OAuth2, not a static API key — this points at the credentials Tandem mints short-lived "
         "tokens from. Falls back to GOOGLE_APPLICATION_CREDENTIALS, then to ADC (gcloud auth "
         "application-default login). Set project/region under vertex: in config.yaml.",
         "Vertex service account JSON path (leave empty to use ADC / "
@@ -2872,7 +2854,7 @@ OPTIONAL_ENV_VARS = {
     "AZURE_FOUNDRY_API_KEY": _prov("Azure Foundry API key for custom Azure endpoints",
         "Azure Foundry API Key", "https://ai.azure.com/", advanced=False),
     "AZURE_FOUNDRY_BASE_URL": _prov(
-        "Azure Foundry base URL (set via 'hermes model' for endpoint-specific config)",
+        "Azure Foundry base URL (set via 'tandem model' for endpoint-specific config)",
         "Azure Foundry base URL", None, password=False),
     # ── Tool API keys ──
     "EXA_API_KEY": _tool("Exa API key for AI-native web search and contents", "Exa API key",
@@ -2905,7 +2887,7 @@ OPTIONAL_ENV_VARS = {
         None, password=False, advanced=True),
     "TOOL_GATEWAY_USER_TOKEN": _tool(
         "Explicit Nous Subscriber access token for tool-gateway requests (optional; otherwise "
-        "read from the Hermes auth store)", "Tool-gateway user token", None, advanced=True),
+        "read from the Tandem auth store)", "Tool-gateway user token", None, advanced=True),
     "TAVILY_API_KEY": _tool(
         "Tavily API key for AI-native web search and extract (optional — keyless works when "
         "Tavily is selected)", "Tavily API key", "https://app.tavily.com/home",
@@ -3002,6 +2984,9 @@ OPTIONAL_ENV_VARS = {
     # ── Mem0 ──
     "MEM0_API_KEY": _tool("Mem0 Platform API key for semantic persistent memory", "Mem0 API key",
         "https://app.mem0.ai", tools=["mem0_search"]),
+    # ── Home semantic recall ──
+    "HOME_EMBEDDING_API_KEY": _tool("Embedding endpoint key for opt-in Home semantic recall",
+        "Home embedding API key", advanced=True),
     # ── RetainDB ──
     "RETAINDB_API_KEY": _tool("RetainDB API key for persistent memory", "RetainDB API key",
         "https://retaindb.com", tools=["retaindb_search"]),
@@ -3050,7 +3035,7 @@ OPTIONAL_ENV_VARS = {
         help=("In your Slack app, enable Socket Mode, then create Basic Information > App-Level "
         "Tokens with the connections:write scope."), password=True),
     "SLACK_ALLOWED_USERS": _msg(
-        "Comma-separated Slack member IDs allowed to use Hermes, e.g. U01ABC2DEF3. Without "
+        "Comma-separated Slack member IDs allowed to use Tandem, e.g. U01ABC2DEF3. Without "
         "this, Slack may connect but deny messages by default.", "Allowed Slack member IDs",
         "https://api.slack.com/apps",
         help=("In Slack, open your profile, choose More or the three-dot menu, then Copy member "
@@ -3147,13 +3132,13 @@ OPTIONAL_ENV_VARS = {
         "for the default profile). Useful for multi-user setups with OpenWebUI.",
         "API server model name", None, advanced=True),
     "GATEWAY_PROXY_URL": _msg(
-        "URL of a remote Hermes API server to forward messages to (proxy mode). When set, the "
+        "URL of a remote Tandem API server to forward messages to (proxy mode). When set, the "
         "gateway handles platform I/O only — all agent work is delegated to the remote server. "
         "Use for Docker E2EE containers that relay to a host agent. Also configurable via "
         "gateway.proxy_url in config.yaml.",
-        "Remote Hermes API server URL (e.g. http://192.168.1.100:8642)", None, advanced=True),
+        "Remote Tandem API server URL (e.g. http://192.168.1.100:8642)", None, advanced=True),
     "GATEWAY_PROXY_KEY": _msg(
-        "Bearer token for authenticating with the remote Hermes API server (proxy mode). Must "
+        "Bearer token for authenticating with the remote Tandem API server (proxy mode). Must "
         "match the API_SERVER_KEY on the remote host.", "Remote API server auth key", None,
         password=True, advanced=True),
     "WEBHOOK_ENABLED": _msg(

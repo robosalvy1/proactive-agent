@@ -431,7 +431,7 @@ def _ollama_context_limit_error(agent: Any, request_tokens: int) -> Optional[str
 
     model = getattr(agent, "model", "") or "the selected model"
     logger.warning(
-        "Ollama runtime context too small for Hermes tool use: model=%s provider=%s base_url=%s "
+        "Ollama runtime context too small for Tandem tool use: model=%s provider=%s base_url=%s "
         "runtime_context=%d minimum_context=%d estimated_request_tokens=%d tool_count=%d session=%s",
         model, getattr(agent, "provider", "") or "unknown",
         getattr(agent, "base_url", "") or "unknown base URL", runtime_ctx, MINIMUM_CONTEXT_LENGTH,
@@ -439,10 +439,10 @@ def _ollama_context_limit_error(agent: Any, request_tokens: int) -> Optional[str
         getattr(agent, "session_id", None) or "none",
     )
     return (
-        f"Ollama loaded `{model}` with only {runtime_ctx:,} tokens of runtime context, but Hermes "
+        f"Ollama loaded `{model}` with only {runtime_ctx:,} tokens of runtime context, but Tandem "
         f"needs at least {MINIMUM_CONTEXT_LENGTH:,} tokens for reliable tool use.\n\n"
         "Increase the Ollama context for this model and restart/reload the model before trying "
-        "again. A known-good starting point is 65,536 tokens. In Hermes config, set "
+        "again. A known-good starting point is 65,536 tokens. In Tandem config, set "
         "`model.ollama_num_ctx: 65536` (and `model.context_length: 65536` if you also override the "
         "displayed model context). If you manage the model through an Ollama Modelfile, set "
         "`PARAMETER num_ctx 65536` there instead."
@@ -555,7 +555,7 @@ def _billing_or_entitlement_message(
                 "at https://claude.ai/settings/usage",
                 switch,
                 # The exhaustion latch replays the stored error without a request.
-                "Retry with a fresh credential state: `hermes auth reset anthropic`. Until that "
+                "Retry with a fresh credential state: `tandem auth reset anthropic`. Until that "
                 "cooldown clears, this error can be replayed from cache without contacting the API.",
             ])
         return "\n".join([
@@ -719,7 +719,7 @@ def _refresh_bot_chat_tools(agent) -> None:
     """Rebuild ``agent.tools`` for a Bot Chat capability refresh through the builder that
     created the session, so the refreshed set is what a fresh desktop/TUI session gets
     (#124211). A canonical Bot Chat never forks, so its tools[] is otherwise a fossil of
-    session creation: ``hermes tools enable/disable`` writes ``platform_toolsets`` and the
+    session creation: ``tandem tools enable/disable`` writes ``platform_toolsets`` and the
     automatic between-turns refresh reuses the build-time selection. Only the desktop/TUI
     gateway keeps agents alive across turns; every other surface builds a fresh agent whose
     tools[] already reflects config. No prefix preservation: a disabled toolset must drop,
@@ -1537,8 +1537,12 @@ def _run_api_retry_loop(agent, s: _LoopState) -> Optional[dict[str, Any]]:
 def _codex_app_server_turn(agent: Any, s: Any) -> Optional[dict[str, Any]]:
     """The codex app-server's result for this turn, or None when its failure activated a fallback and the
     generic loop retries the same user turn."""
+    from agent.turn_context import compose_user_api_content
+    # This runtime sends a new turn directly rather than build_api_messages(). Keep
+    # the same current-turn recall while its native thread owns historical replay.
+    user_message = compose_user_api_content(s.user_message, s._ext_prefetch_cache, s._plugin_user_context)
     codex_result = agent._run_codex_app_server_turn(
-        user_message=s.user_message, original_user_message=s.original_user_message,
+        user_message=user_message or s.user_message, original_user_message=s.original_user_message,
         messages=s.messages, effective_task_id=s.effective_task_id,
         should_review_memory=s._should_review_memory,
     )
@@ -1819,7 +1823,7 @@ def _redact_display_metadata(metadata: dict) -> dict:
 
 
 def _close_durable_failed_turn(agent, result: Any) -> None:
-    """Append a Hermes-authored assistant boundary when a failed turn left ``user`` as the
+    """Append a Tandem-authored assistant boundary when a failed turn left ``user`` as the
     durable conversation tail (in place, on ``result["messages"]`` and in SessionDB).
 
     The terminal-failure paths (content-policy refusal, ``_Trunc.end_turn``, retry exhaustion,

@@ -9,7 +9,7 @@ import { ChatSessionList } from './ChatSessionList'
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-const { getSessions } = vi.hoisted(() => ({ getSessions: vi.fn() }))
+const { getSessions, fetchJSON } = vi.hoisted(() => ({ getSessions: vi.fn(), fetchJSON: vi.fn() }))
 
 vi.mock('@nous-research/ui/ui/components/button', () => ({
   Button: ({
@@ -59,7 +59,7 @@ vi.mock('@/i18n', () => ({
   })
 }))
 
-vi.mock('@/lib/api', () => ({ api: { getSessions } }))
+vi.mock('@/lib/api', () => ({ api: { getSessions }, fetchJSON }))
 
 vi.mock('@/lib/utils', () => ({
   cn: (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(' '),
@@ -95,6 +95,7 @@ describe('ChatSessionList', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     getSessions.mockReset()
+    fetchJSON.mockReset()
     Object.defineProperty(document, 'visibilityState', {
       configurable: true,
       value: 'visible'
@@ -108,6 +109,21 @@ describe('ChatSessionList', () => {
     await act(async () => root.unmount())
     container.remove()
     vi.useRealTimers()
+  })
+
+  it('ignores a delayed Home response after another chat was selected', async () => {
+    getSessions.mockResolvedValue(response('other', 'Other chat'))
+    let finish!: (value: { session_id: string }) => void
+    fetchJSON.mockImplementation(() => new Promise(resolve => { finish = resolve }))
+    const onPicked = vi.fn()
+    const render = (id: string) => root.render(
+      <MemoryRouter><ChatSessionList activeSessionId={id} onPicked={onPicked} /></MemoryRouter>
+    )
+    await act(async () => render('first'))
+    await act(async () => Array.from(container.querySelectorAll('button')).find(button => button.textContent === 'Home')!.click())
+    await act(async () => render('other'))
+    await act(async () => finish({ session_id: 'home' }))
+    expect(onPicked).not.toHaveBeenCalled()
   })
 
   it('renders sessions returned by an automatic refresh', async () => {

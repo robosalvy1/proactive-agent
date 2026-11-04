@@ -6,17 +6,17 @@ description: "External memory provider plugins — Honcho, OpenViking, Mem0, Hin
 
 # Memory Providers
 
-Hermes Agent ships with 2 external memory provider plugins (RetainDB and ByteRover) that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md, and more (such as Honcho, Hindsight, Supermemory and Holographic) are available from the [plugin catalog](./plugins.md). Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
+Tandem Agent ships with 2 external memory provider plugins (RetainDB and ByteRover) that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md, and more (such as Honcho, Hindsight, Supermemory and Holographic) are available from the [plugin catalog](./plugins.md). Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
 
 ## Quick Start
 
 ```bash
-hermes memory setup      # interactive picker + configuration
-hermes memory status     # check what's active
-hermes memory off        # disable external provider
+tandem memory setup      # interactive picker + configuration
+tandem memory status     # check what's active
+tandem memory off        # disable external provider
 ```
 
-You can also select the active memory provider via `hermes plugins` → Provider Plugins → Memory Provider.
+You can also select the active memory provider via `tandem plugins` → Provider Plugins → Memory Provider.
 
 Or set manually in `~/.hermes/config.yaml`:
 
@@ -24,12 +24,12 @@ Or set manually in `~/.hermes/config.yaml`:
 memory:
   provider: retaindb  # or byterover,
                       # or honcho / hindsight / supermemory / mem0 / openviking / holographic
-                      # (plugin catalog — run `hermes plugins install <name>` first)
+                      # (plugin catalog — run `tandem plugins install <name>` first)
 ```
 
 ## How It Works
 
-When a memory provider is active, Hermes automatically:
+When a memory provider is active, Tandem automatically:
 
 1. **Injects provider context** into the system prompt (what the provider knows)
 2. **Prefetches relevant memories** before each turn (background, non-blocking)
@@ -40,14 +40,14 @@ When a memory provider is active, Hermes automatically:
 
 The built-in memory (MEMORY.md / USER.md) continues to work exactly as before. The external provider is additive.
 
-Everything Hermes hands a provider (turns, the transcript including tool output, recall queries, session-end and pre-compression transcripts, mirrored memory writes, delegation results and the arguments of the provider's own tools) passes through the same secret scrub as chat-platform and cron delivery first, so a key echoed into tool output is masked before the provider can store it. Like that delivery scrub it applies even with `security.redact_secrets: false`. Credentials with no recognisable shape (an arbitrary password, an opaque token outside a `key=value` or `Bearer` context) are not detected; your local transcript keeps the original text.
+Everything Tandem hands a provider (turns, the transcript including tool output, recall queries, session-end and pre-compression transcripts, mirrored memory writes, delegation results and the arguments of the provider's own tools) passes through the same secret scrub as chat-platform and cron delivery first, so a key echoed into tool output is masked before the provider can store it. Like that delivery scrub it applies even with `security.redact_secrets: false`. Credentials with no recognisable shape (an arbitrary password, an opaque token outside a `key=value` or `Bearer` context) are not detected; your local transcript keeps the original text.
 
 ## Available Providers
 
 ### Honcho
 
 :::info Plugin catalog
-Honcho is maintained by [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. It is the same provider that used to ship in-tree: tools, config files and the `hermes honcho` commands are unchanged.
+Honcho is maintained by [Plastic Labs](https://github.com/plastic-labs/honcho/tree/main/hermes-plugin-honcho) and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. It is the same provider that used to ship in-tree: tools, config files and the `tandem honcho` commands are unchanged.
 :::
 
 AI-native cross-session user modeling with dialectic reasoning, session-scoped context injection, semantic search, and persistent conclusions. Base context now includes the session summary alongside user representation and peer cards, giving the agent awareness of what has already been discussed.
@@ -55,7 +55,7 @@ AI-native cross-session user modeling with dialectic reasoning, session-scoped c
 | | |
 |---|---|
 | **Best for** | Multi-agent systems with cross-session context, user-agent alignment |
-| **Requires** | `hermes plugins install honcho` (installs the `honcho-ai` SDK with it); [API key](https://app.honcho.dev) or self-hosted instance |
+| **Requires** | `tandem plugins install honcho` (installs the `honcho-ai` SDK with it); [API key](https://app.honcho.dev) or self-hosted instance |
 | **Data storage** | Honcho Cloud or self-hosted |
 | **Cost** | Honcho pricing (cloud) / free (self-hosted) |
 
@@ -73,11 +73,11 @@ The auto-injected dialectic also scales its reasoning level by query length (lon
 
 **Setup Wizard:**
 ```bash
-hermes plugins install honcho   # from the plugin catalog
-hermes memory setup             # select "honcho" — runs the Honcho-specific post-setup
+tandem plugins install honcho   # from the plugin catalog
+tandem memory setup             # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-The legacy `hermes honcho setup` command still works (it now redirects to `hermes memory setup`), but is only registered after Honcho is selected as the active memory provider.
+The legacy `tandem honcho setup` command still works (it now redirects to `tandem memory setup`), but is only registered after Honcho is selected as the active memory provider.
 
 **Headless / remote machines:** for cloud auth on a box without a browser (SSH, remote VM), pick **device** at the wizard's auth-method prompt. The CLI prints a short code and a verification link; open the link in a browser on any other machine, approve, and setup completes — no API key copy-paste. The wizard defaults to this option automatically when it detects no usable local browser.
 
@@ -152,27 +152,27 @@ The legacy `hermes honcho setup` command still works (it now redirects to `herme
 
 </details>
 
-:::tip Migrating from `hermes honcho`
-If you previously used `hermes honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
+:::tip Migrating from `tandem honcho`
+If you previously used `tandem honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
 :::
 
 **Multi-peer setup:**
 
-Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Hermes profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
+Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Tandem profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
 
 The mapping:
 
 | Concept | What it is |
 |---------|-----------|
-| **Workspace** | Shared environment. All Hermes profiles under one workspace see the same user identity. |
+| **Workspace** | Shared environment. All Tandem profiles under one workspace see the same user identity. |
 | **User peer** (`peerName`) | The human. Shared across profiles in the workspace. |
-| **AI peer** (`aiPeer`) | One per Hermes profile. Host key `hermes` → default; `hermes.<profile>` for others. |
+| **AI peer** (`aiPeer`) | One per Tandem profile. Host key `hermes` → default; `hermes.<profile>` for others. |
 | **Observation** | Per-peer toggles controlling what Honcho models from whose messages. `directional` (default, all four on) or `unified` (single-observer pool). |
 
 ### New profile, fresh Honcho peer
 
 ```bash
-hermes profile create coder --clone
+tandem profile create coder --clone
 ```
 
 `--clone` creates a `hermes.coder` host block in `honcho.json` with `aiPeer: "coder"`, shared `workspace`, inherited `peerName`, `recallMode`, `writeFrequency`, `observation`, etc. The AI peer is eagerly created in Honcho so it exists before the first message.
@@ -180,10 +180,10 @@ hermes profile create coder --clone
 ### Existing profiles, backfill Honcho peers
 
 ```bash
-hermes honcho sync
+tandem honcho sync
 ```
 
-Scans every Hermes profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
+Scans every Tandem profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
 
 ### Per-profile observation
 
@@ -225,7 +225,7 @@ The peer model above covers CLI, TUI, and desktop sessions, where every conversa
 | `userPeerAliases` | Maps specific runtime IDs to peers (`{"7654321": "alice"}`). The home for routing distinct identities — including agents that each carry their own peer |
 | `runtimePeerPrefix` | Namespaces any unmapped runtime ID (`telegram_7654321`) so platforms with same-shaped IDs don't collide |
 
-Off-gateway these keys do nothing. `hermes memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
+Off-gateway these keys do nothing. `tandem memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
 
 <details>
 <summary>Full honcho.json example (multi-profile)</summary>
@@ -287,7 +287,7 @@ See the [plugin README](https://github.com/plastic-labs/honcho/tree/main/hermes-
 
 #### Upgrading from the bundled Honcho
 
-Earlier Hermes releases shipped Honcho in-tree. If a profile still has `memory.provider: honcho`, Hermes installs the catalog plugin automatically the next time it starts or runs `hermes update` — your `~/.honcho/config.json` (or `$HERMES_HOME/honcho.json`), host blocks, peers and session mappings are read exactly as before, so no memory is lost. To do it by hand, or on a machine without network access at startup, run `hermes plugins install honcho`.
+Earlier Tandem releases shipped Honcho in-tree. If a profile still has `memory.provider: honcho`, Tandem installs the catalog plugin automatically the next time it starts or runs `tandem update` — your `~/.honcho/config.json` (or `$HERMES_HOME/honcho.json`), host blocks, peers and session mappings are read exactly as before, so no memory is lost. To do it by hand, or on a machine without network access at startup, run `tandem plugins install honcho`.
 
 
 ---
@@ -295,7 +295,7 @@ Earlier Hermes releases shipped Honcho in-tree. If a profile still has `memory.p
 ### OpenViking
 
 :::info Plugin catalog
-OpenViking is maintained by Volcengine and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source: [volcengine/OpenViking — examples/hermes-plugin](https://github.com/volcengine/OpenViking/tree/main/examples/hermes-plugin). Existing setups are migrated automatically — see [Migrating from bundled OpenViking](#migrating-from-bundled-openviking).
+OpenViking is maintained by Volcengine and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. Source: [volcengine/OpenViking — examples/hermes-plugin](https://github.com/volcengine/OpenViking/tree/main/examples/hermes-plugin). Existing setups are migrated automatically — see [Migrating from bundled OpenViking](#migrating-from-bundled-openviking).
 :::
 
 Context database by Volcengine (ByteDance) with filesystem-style knowledge hierarchy, tiered retrieval, and automatic memory extraction into 6 categories.
@@ -303,7 +303,7 @@ Context database by Volcengine (ByteDance) with filesystem-style knowledge hiera
 | | |
 |---|---|
 | **Best for** | Self-hosted knowledge management with structured browsing |
-| **Requires** | `hermes plugins install openviking`; OpenViking initialized, validated, and running |
+| **Requires** | `tandem plugins install openviking`; OpenViking initialized, validated, and running |
 | **Data storage** | Self-hosted (local or cloud) |
 | **Cost** | Free (open-source, AGPL-3.0) |
 
@@ -316,14 +316,14 @@ openviking-server init
 openviking-server doctor
 openviking-server
 
-# Then install and configure the Hermes plugin
-hermes plugins install openviking
-hermes memory setup    # select "openviking"
+# Then install and configure the Tandem plugin
+tandem plugins install openviking
+tandem memory setup    # select "openviking"
 # Or manually:
-hermes config set memory.provider openviking
+tandem config set memory.provider openviking
 ```
 
-`hermes memory setup` can reuse or copy connection values from
+`tandem memory setup` can reuse or copy connection values from
 `~/.openviking/ovcli.conf`. Manual setup uses the active profile's `.env` file;
 for the default profile that is `~/.hermes/.env`, and for named profiles use
 `~/.hermes/profiles/<profile>/.env`.
@@ -342,9 +342,9 @@ live in `ovcli.conf` (`OPENVIKING_CLI_CONFIG_FILE` or
 
 When the endpoint is local and nothing is listening, the plugin starts
 `openviking-server` in the background. At the cataloged version that server
-inherits the full Hermes process environment (minus `PYTHONPATH`), including
+inherits the full Tandem process environment (minus `PYTHONPATH`), including
 any bot, gateway or relay tokens set there. If that matters to you, start
-`openviking-server` yourself before Hermes so the plugin never spawns it.
+`openviking-server` yourself before Tandem so the plugin never spawns it.
 The fix is tracked upstream in
 [volcengine/OpenViking#5553](https://github.com/volcengine/OpenViking/pull/5553).
 
@@ -354,7 +354,7 @@ The fix is tracked upstream in
 - `viking://` URI scheme for hierarchical knowledge browsing
 
 `OPENVIKING_ACCOUNT` and `OPENVIKING_USER` are used for local/trusted mode.
-Peer identity is optional. By default, Hermes sends no peer ID and writes
+Peer identity is optional. By default, Tandem sends no peer ID and writes
 explicit memories to `viking://user/<user>/memories/...`. Setup does not ask
 for a peer ID. For separate assistant context, set
 `memory.openviking.agent: work-assistant` in `config.yaml`.
@@ -369,26 +369,26 @@ Set `memory.openviking.agent: hermes` to restore the old peer-scoped writes.
 Memories written at user scope before this change stay there and remain
 searchable. The setting changes future writes, not existing memory locations.
 
-Hermes sends `User-Agent: openviking-memory-hermes/<version>` on OpenViking
+Tandem sends `User-Agent: openviking-memory-hermes/<version>` on OpenViking
 requests. This standard harness identifier contains no per-user identifier and
 does not add a separate request.
 
 ### Migrating from bundled OpenViking
 
-OpenViking used to ship inside the Hermes tree. If your `config.yaml` already has `memory.provider: openviking`, there is nothing to do for most users:
+OpenViking used to ship inside the Tandem tree. If your `config.yaml` already has `memory.provider: openviking`, there is nothing to do for most users:
 
-- `hermes update` installs the catalog plugin into every profile home that names the provider.
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Hermes installs it and tells you it did.
-- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `hermes plugins install openviking` command instead.
+- `tandem update` installs the catalog plugin into every profile home that names the provider.
+- If the plugin is still missing on the first agent start (`tandem chat`, the gateway, Desktop), Tandem installs it and tells you it did.
+- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `tandem plugins install openviking` command instead.
 
-`memory.provider`, `memory.openviking.*`, the `OPENVIKING_*` keys in `.env`, `~/.openviking/` and the memories on your OpenViking server are untouched. Verify with `hermes memory status` and `hermes plugins list`.
+`memory.provider`, `memory.openviking.*`, the `OPENVIKING_*` keys in `.env`, `~/.openviking/` and the memories on your OpenViking server are untouched. Verify with `tandem memory status` and `tandem plugins list`.
 
 ---
 
 ### Mem0
 
 :::info Plugin catalog
-Mem0 is maintained by Mem0 and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source: [mem0ai/mem0 — integrations/hermes-plugin-mem0](https://github.com/mem0ai/mem0/tree/main/integrations/hermes-plugin-mem0). Existing setups are migrated automatically — see [Migrating from bundled Mem0](#migrating-from-bundled-mem0).
+Mem0 is maintained by Mem0 and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. Source: [mem0ai/mem0 — integrations/hermes-plugin-mem0](https://github.com/mem0ai/mem0/tree/main/integrations/hermes-plugin-mem0). Existing setups are migrated automatically — see [Migrating from bundled Mem0](#migrating-from-bundled-mem0).
 :::
 
 Server-side LLM fact extraction with semantic search, reranking, and automatic deduplication. Three connection modes: **Platform** (Mem0 Cloud), **self-hosted dashboard** (a Mem0 server you run via Docker), and **OSS** (Mem0 in-process with your own LLM + vector store).
@@ -396,7 +396,7 @@ Server-side LLM fact extraction with semantic search, reranking, and automatic d
 | | |
 |---|---|
 | **Best for** | Hands-off memory management — Mem0 handles extraction automatically |
-| **Requires** | `hermes plugins install mem0` (installs the Mem0 SDK with the plugin); API key (platform), a running Mem0 server (self-hosted dashboard), or an LLM + vector store (OSS) |
+| **Requires** | `tandem plugins install mem0` (installs the Mem0 SDK with the plugin); API key (platform), a running Mem0 server (self-hosted dashboard), or an LLM + vector store (OSS) |
 | **Data storage** | Mem0 Cloud (platform), your own Mem0 server (self-hosted dashboard), or in-process (OSS) |
 | **Cost** | Mem0 pricing (platform) / free (self-hosted or OSS) |
 
@@ -407,31 +407,31 @@ your shell or `~/.hermes/.env`.
 
 **Setup (Platform):**
 ```bash
-hermes plugins install mem0   # from the plugin catalog
-hermes memory setup    # select "mem0" → "Platform"
+tandem plugins install mem0   # from the plugin catalog
+tandem memory setup    # select "mem0" → "Platform"
 # Or manually:
-hermes config set memory.provider mem0
+tandem config set memory.provider mem0
 echo "MEM0_API_KEY=your-key" >> ~/.hermes/.env
 ```
 
 **Setup (OSS):**
 ```bash
-hermes memory setup    # select "mem0" → "Open Source (self-hosted)"
+tandem memory setup    # select "mem0" → "Open Source (self-hosted)"
 # Or via flags:
-hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant
+tandem memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant
 ```
 
 Preview without writing files:
 ```bash
-hermes memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
+tandem memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
 ```
 
 **Setup (Self-Hosted Dashboard):** connect to a Mem0 server you run via Docker (the dashboard's REST API):
 
 ```bash
-hermes memory setup    # select "mem0" → "Self-hosted server"
+tandem memory setup    # select "mem0" → "Self-hosted server"
 # Or via flags:
-hermes memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
+tandem memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
 ```
 
 Or configure manually — either as env vars:
@@ -468,24 +468,24 @@ The plugin authenticates with `X-API-Key` and uses the server's `/search` / `/me
 | Embedder | openai, ollama |
 | Vector Store | qdrant (local/server), pgvector |
 
-**Switching modes:** Re-run `hermes memory setup mem0 --mode <platform|selfhosted|oss>` or edit `mem0.json` directly.
+**Switching modes:** Re-run `tandem memory setup mem0 --mode <platform|selfhosted|oss>` or edit `mem0.json` directly.
 
 ### Migrating from bundled Mem0
 
-Mem0 used to ship inside the Hermes tree (and as the `hermes-agent[mem0]` pip extra). If your `config.yaml` already has `memory.provider: mem0`, there is nothing to do for most users:
+Mem0 used to ship inside the Tandem tree (and as the `hermes-agent[mem0]` pip extra). If your `config.yaml` already has `memory.provider: mem0`, there is nothing to do for most users:
 
-- `hermes update` installs the catalog plugin into every profile home that names the provider.
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Hermes installs it and tells you it did.
-- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `hermes plugins install mem0` command instead.
+- `tandem update` installs the catalog plugin into every profile home that names the provider.
+- If the plugin is still missing on the first agent start (`tandem chat`, the gateway, Desktop), Tandem installs it and tells you it did.
+- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `tandem plugins install mem0` command instead.
 
-`memory.provider`, `$HERMES_HOME/mem0.json`, the `MEM0_*` keys in `.env` and the memories stored in Mem0 Cloud, your Mem0 server or the local OSS store are untouched. Verify with `hermes memory status` and `hermes plugins list`.
+`memory.provider`, `$HERMES_HOME/mem0.json`, the `MEM0_*` keys in `.env` and the memories stored in Mem0 Cloud, your Mem0 server or the local OSS store are untouched. Verify with `tandem memory status` and `tandem plugins list`.
 
 ---
 
 ### Hindsight
 
 :::info Plugin catalog
-Hindsight is maintained by [vectorize-io](https://github.com/vectorize-io/hindsight) and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Setup details live in the upstream docs: [hindsight.vectorize.io/sdks/integrations/hermes](https://hindsight.vectorize.io/sdks/integrations/hermes).
+Hindsight is maintained by [vectorize-io](https://github.com/vectorize-io/hindsight) and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. Setup details live in the upstream docs: [hindsight.vectorize.io/sdks/integrations/hermes](https://hindsight.vectorize.io/sdks/integrations/hermes).
 :::
 
 Long-term memory with knowledge graph, entity resolution, and multi-strategy retrieval. The `hindsight_reflect` tool provides cross-memory synthesis that no other provider offers. Automatically retains full conversation turns (including tool calls) with session-level document tracking.
@@ -493,7 +493,7 @@ Long-term memory with knowledge graph, entity resolution, and multi-strategy ret
 | | |
 |---|---|
 | **Best for** | Knowledge graph-based recall with entity relationships |
-| **Requires** | `hermes plugins install hindsight`. Cloud: API key from [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io). Local: LLM API key (OpenAI, Groq, OpenRouter, etc.) |
+| **Requires** | `tandem plugins install hindsight`. Cloud: API key from [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io). Local: LLM API key (OpenAI, Groq, OpenRouter, etc.) |
 | **Data storage** | Hindsight Cloud, local embedded PostgreSQL, or an external local Hindsight server |
 | **Cost** | Hindsight pricing (cloud) or free (local) |
 
@@ -501,14 +501,14 @@ Long-term memory with knowledge graph, entity resolution, and multi-strategy ret
 
 **Setup:**
 ```bash
-hermes plugins install hindsight   # from the plugin catalog; answer "Use 'hindsight' as the memory provider now?"
-hermes memory setup                # select "hindsight"
+tandem plugins install hindsight   # from the plugin catalog; answer "Use 'hindsight' as the memory provider now?"
+tandem memory setup                # select "hindsight"
 # Or manually:
-hermes config set memory.provider hindsight
+tandem config set memory.provider hindsight
 echo "HINDSIGHT_API_KEY=your-key" >> ~/.hermes/.env
 ```
 
-The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory provider is activated by `memory.provider` in `config.yaml`, not `plugins.enabled`: accepting the install prompt (or passing `--enable`) sets it, and declining leaves it unchanged so `hermes memory setup` can pick it later. `hermes plugins enable hindsight` does not activate a memory provider. `hermes memory setup`, `hermes memory status`, `hermes plugins list` and the dashboard Memory settings all work with the catalog-installed plugin. In local embedded mode the plugin installs `hindsight-all` on first use through Hermes' lazy-install path, which honours `security.allow_lazy_installs`.
+The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory provider is activated by `memory.provider` in `config.yaml`, not `plugins.enabled`: accepting the install prompt (or passing `--enable`) sets it, and declining leaves it unchanged so `tandem memory setup` can pick it later. `tandem plugins enable hindsight` does not activate a memory provider. `tandem memory setup`, `tandem memory status`, `tandem plugins list` and the dashboard Memory settings all work with the catalog-installed plugin. In local embedded mode the plugin installs `hindsight-all` on first use through Tandem's lazy-install path, which honours `security.allow_lazy_installs`.
 
 **Local mode UI:** `hindsight-embed -p hermes ui start`
 
@@ -523,28 +523,28 @@ The plugin lands in `~/.hermes/plugins/hindsight/` (per profile home). A memory 
 | `auto_retain` | `true` | Automatically retain conversation turns |
 | `auto_recall` | `true` | Automatically recall memories before each turn |
 | `retain_async` | `true` | Process retain asynchronously on the server |
-| `retain_context` | `conversation between Hermes Agent and the User` | Context label for retained memories |
+| `retain_context` | `conversation between Tandem Agent and the User` | Context label for retained memories |
 | `retain_tags` | — | Default tags applied to retained memories; merged with per-call tool tags |
 | `retain_source` | — | Optional `metadata.source` attached to retained memories |
 | `retain_user_prefix` | `User` | Label used before user turns in auto-retained transcripts |
 | `retain_assistant_prefix` | `Assistant` | Label used before assistant turns in auto-retained transcripts |
 | `recall_tags` | — | Tags to filter on recall |
 
-See the [upstream Hermes integration docs](https://hindsight.vectorize.io/sdks/integrations/hermes) for the full configuration reference.
+See the [upstream Tandem integration docs](https://hindsight.vectorize.io/sdks/integrations/hermes) for the full configuration reference.
 
 #### Migrating from bundled Hindsight
 
-Hindsight used to ship inside the Hermes tree (and as the `hermes-agent[hindsight]` pip extra). If your `config.yaml` already has `memory.provider: hindsight`, there is nothing to do for most users:
+Hindsight used to ship inside the Tandem tree (and as the `hermes-agent[hindsight]` pip extra). If your `config.yaml` already has `memory.provider: hindsight`, there is nothing to do for most users:
 
-- `hermes update` installs the catalog plugin into every profile home that names the provider. Each line names the profile it is about. In a terminal it asks before preparing the plugin's Python dependencies; when several profiles use the provider, the questions are asked once and the answers apply to all of them. Without a terminal (the Desktop app, a script, a service) nobody can answer, so each profile prepares them unattended when its `security.allow_lazy_installs` is on (the default); a profile with it off gets the exact `hermes -p <profile> plugins install hindsight` command instead, and the other profiles still migrate.
-- If the plugin is still missing on the first agent start (`hermes chat`, Desktop, the gateway, …), Hermes installs it, dependencies included, and shows ``✓ Memory provider 'hindsight' moved out of core — installed its plugin from the catalog (memory.provider and your stored memories are unchanged; check its settings with `hermes memory status`).`` Messaging platforms get the line with the first reply.
-- When the agent-start install cannot happen, you see why instead of silently running without external memory: with `security.allow_lazy_installs: false` the warning names the install command for that profile; offline or declined installs show the error and the same command. After a failed attempt, agent starts in the next hour skip the install and only repeat the command; `hermes update` always retries.
-- Agent start never asks a question (the chat prompt owns the terminal). A catalog provider that never shipped with Hermes (for example `mnemosyne`) is therefore not installed on agent start: the warning names `hermes plugins install <name>` for that profile, or install it from the dashboard/Desktop Plugins page.
+- `tandem update` installs the catalog plugin into every profile home that names the provider. Each line names the profile it is about. In a terminal it asks before preparing the plugin's Python dependencies; when several profiles use the provider, the questions are asked once and the answers apply to all of them. Without a terminal (the Desktop app, a script, a service) nobody can answer, so each profile prepares them unattended when its `security.allow_lazy_installs` is on (the default); a profile with it off gets the exact `tandem -p <profile> plugins install hindsight` command instead, and the other profiles still migrate.
+- If the plugin is still missing on the first agent start (`tandem chat`, Desktop, the gateway, …), Tandem installs it, dependencies included, and shows ``✓ Memory provider 'hindsight' moved out of core — installed its plugin from the catalog (memory.provider and your stored memories are unchanged; check its settings with `tandem memory status`).`` Messaging platforms get the line with the first reply.
+- When the agent-start install cannot happen, you see why instead of silently running without external memory: with `security.allow_lazy_installs: false` the warning names the install command for that profile; offline or declined installs show the error and the same command. After a failed attempt, agent starts in the next hour skip the install and only repeat the command; `tandem update` always retries.
+- Agent start never asks a question (the chat prompt owns the terminal). A catalog provider that never shipped with Tandem (for example `mnemosyne`) is therefore not installed on agent start: the warning names `tandem plugins install <name>` for that profile, or install it from the dashboard/Desktop Plugins page.
 
-What changes on disk: the plugin appears in `~/.hermes/plugins/hindsight/` and `config.yaml` gains `plugins.enabled: [hindsight]`. `memory.provider`, `$HERMES_HOME/hindsight/config.json`, `HINDSIGHT_API_KEY` in `.env` and your memory bank data are untouched. Verify with `hermes memory status` (provider active) and `hermes plugins list` (plugin installed and enabled).
+What changes on disk: the plugin appears in `~/.hermes/plugins/hindsight/` and `config.yaml` gains `plugins.enabled: [hindsight]`. `memory.provider`, `$HERMES_HOME/hindsight/config.json`, `HINDSIGHT_API_KEY` in `.env` and your memory bank data are untouched. Verify with `tandem memory status` (provider active) and `tandem plugins list` (plugin installed and enabled).
 
 :::warning Where the plugin reads its config
-Hindsight reads `$HERMES_HOME/hindsight/config.json` (per profile home), `~/.hindsight/config.json` (legacy shared), and the `HINDSIGHT_*` variables in `.env`. It does not read a `memory.hindsight` section of `config.yaml`: a `memory.hindsight.*` key there is ignored. Edit the plugin's own `config.json` (key table above) or use `hermes memory setup`.
+Hindsight reads `$HERMES_HOME/hindsight/config.json` (per profile home), `~/.hindsight/config.json` (legacy shared), and the `HINDSIGHT_*` variables in `.env`. It does not read a `memory.hindsight` section of `config.yaml`: a `memory.hindsight.*` key there is ignored. Edit the plugin's own `config.json` (key table above) or use `tandem memory setup`.
 :::
 
 ---
@@ -552,7 +552,7 @@ Hindsight reads `$HERMES_HOME/hindsight/config.json` (per profile home), `~/.hin
 ### Holographic
 
 :::info Plugin catalog
-Holographic is maintained by [itpartypattaya](https://github.com/itpartypattaya/hermes-plugin-holographic) and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. It is the provider that used to ship in-tree, with the same provider name, settings and database. Existing setups are migrated automatically — see [Migrating from bundled Holographic](#migrating-from-bundled-holographic).
+Holographic is maintained by [itpartypattaya](https://github.com/itpartypattaya/hermes-plugin-holographic) and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. It is the provider that used to ship in-tree, with the same provider name, settings and database. Existing setups are migrated automatically — see [Migrating from bundled Holographic](#migrating-from-bundled-holographic).
 :::
 
 Local SQLite fact store with FTS5 full-text search, trust scoring, and HRR (Holographic Reduced Representations) for compositional algebraic queries.
@@ -568,10 +568,10 @@ Local SQLite fact store with FTS5 full-text search, trust scoring, and HRR (Holo
 
 **Setup:**
 ```bash
-hermes plugins install holographic   # from the plugin catalog
-hermes memory setup                  # select "holographic"
+tandem plugins install holographic   # from the plugin catalog
+tandem memory setup                  # select "holographic"
 # Or manually:
-hermes config set memory.provider holographic
+tandem config set memory.provider holographic
 ```
 
 **Config:** `config.yaml` under `plugins.hermes-memory-store`
@@ -592,15 +592,15 @@ The catalog plugin has its own release notes and options beyond this list; see i
 
 #### Migrating from bundled Holographic
 
-Holographic used to ship inside the Hermes tree. If your `config.yaml` already has `memory.provider: holographic`, there is nothing to do:
+Holographic used to ship inside the Tandem tree. If your `config.yaml` already has `memory.provider: holographic`, there is nothing to do:
 
-- `hermes update` installs the catalog plugin into every profile home that names the provider.
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, Desktop), Hermes installs it and tells you it did.
-- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `hermes plugins install holographic` command instead.
+- `tandem update` installs the catalog plugin into every profile home that names the provider.
+- If the plugin is still missing on the first agent start (`tandem chat`, the gateway, Desktop), Tandem installs it and tells you it did.
+- With `security.allow_lazy_installs: false` the agent-start path does not install anything; it prints the exact `tandem plugins install holographic` command instead.
 
-Your facts (`$HERMES_HOME/memory_store.db`, or the `db_path` you set) and your `plugins.hermes-memory-store` settings are read exactly as before, so no memory is lost. Verify with `hermes memory status` and `hermes plugins list`.
+Your facts (`$HERMES_HOME/memory_store.db`, or the `db_path` you set) and your `plugins.hermes-memory-store` settings are read exactly as before, so no memory is lost. Verify with `tandem memory status` and `tandem plugins list`.
 
-If you installed Nous Research's interim copy by URL (`NousResearch/hermes-plugin-holographic`, now archived), `hermes plugins update holographic` moves it onto the catalog entry; your data stays where it is.
+If you installed Nous Research's interim copy by URL (`NousResearch/hermes-plugin-holographic`, now archived), `tandem plugins update holographic` moves it onto the catalog entry; your data stays where it is.
 
 ---
 
@@ -619,9 +619,9 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking), 7 memory types,
 
 **Setup:**
 ```bash
-hermes memory setup    # select "retaindb"
+tandem memory setup    # select "retaindb"
 # Or manually:
-hermes config set memory.provider retaindb
+tandem config set memory.provider retaindb
 echo "RETAINDB_API_KEY=your-key" >> ~/.hermes/.env
 ```
 
@@ -645,10 +645,10 @@ Persistent memory via the `brv` CLI — hierarchical knowledge tree with tiered 
 # Install the CLI first
 curl -fsSL https://byterover.dev/install.sh | sh
 
-# Then configure Hermes
-hermes memory setup    # select "byterover"
+# Then configure Tandem
+tandem memory setup    # select "byterover"
 # Or manually:
-hermes config set memory.provider byterover
+tandem config set memory.provider byterover
 ```
 
 **Key features:**
@@ -661,7 +661,7 @@ hermes config set memory.provider byterover
 ### Supermemory
 
 :::info Plugin catalog
-Supermemory is maintained by Supermemory and installed from the [plugin catalog](./plugins.md) rather than bundled with Hermes. Source and full configuration reference: [supermemoryai/hermes-supermemory](https://github.com/supermemoryai/hermes-supermemory). Existing setups are migrated automatically — see [Migrating from bundled Supermemory](#migrating-from-bundled-supermemory).
+Supermemory is maintained by Supermemory and installed from the [plugin catalog](./plugins.md) rather than bundled with Tandem. Source and full configuration reference: [supermemoryai/hermes-supermemory](https://github.com/supermemoryai/hermes-supermemory). Existing setups are migrated automatically — see [Migrating from bundled Supermemory](#migrating-from-bundled-supermemory).
 :::
 
 Semantic long-term memory with profile recall, semantic search, explicit memory tools, and per-turn conversation capture (one document per session per 4-hour window).
@@ -669,7 +669,7 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 | | |
 |---|---|
 | **Best for** | Semantic recall with user profiling and session-level graph building |
-| **Requires** | `hermes plugins install supermemory` (installs the Supermemory SDK with the plugin); [cloud API key](http://app.supermemory.ai/integrations?connect=hermes), or a [self-hosted server](https://supermemory.ai/docs/self-hosting/overview) |
+| **Requires** | `tandem plugins install supermemory` (installs the Supermemory SDK with the plugin); [cloud API key](http://app.supermemory.ai/integrations?connect=hermes), or a [self-hosted server](https://supermemory.ai/docs/self-hosting/overview) |
 | **Data storage** | Supermemory Cloud or self-hosted |
 | **Cost** | Supermemory pricing (cloud) / free (self-hosted) |
 
@@ -677,10 +677,10 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 
 **Setup:**
 ```bash
-hermes plugins install supermemory   # from the plugin catalog
-hermes memory setup                  # select "supermemory"
+tandem plugins install supermemory   # from the plugin catalog
+tandem memory setup                  # select "supermemory"
 # Or manually:
-hermes config set memory.provider supermemory
+tandem config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.hermes/.env
 ```
 
@@ -690,7 +690,7 @@ Self-hosted setup:
 npx supermemory local
 ```
 
-After `hermes plugins install supermemory` and before running `hermes memory setup`, set `base_url` in
+After `tandem plugins install supermemory` and before running `tandem memory setup`, set `base_url` in
 `$HERMES_HOME/supermemory.json`:
 
 ```json
@@ -699,7 +699,7 @@ After `hermes plugins install supermemory` and before running `hermes memory set
 }
 ```
 
-Then run `hermes memory setup` and enter the API key printed by the local
+Then run `tandem memory setup` and enter the API key printed by the local
 server. Configuring the endpoint first ensures the setup connection probe also
 stays local.
 
@@ -727,7 +727,7 @@ Base URL precedence is `supermemory.json` → `SUPERMEMORY_BASE_URL` → `https:
 - Failed turn writes are retried (at-least-once) on the next turn, session end, `/reset`, or shutdown
 - End-to-end self-hosted routing — SDK and probe requests use the same configured endpoint
 - Profile facts injected on first turn and at configurable intervals
-- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `hermes-{identity}` → `hermes-coder`) to isolate memories per Hermes profile
+- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `hermes-{identity}` → `hermes-coder`) to isolate memories per Tandem profile
 - **Multi-container mode** — enable `enable_custom_container_tags` with a `custom_containers` list to let the agent read/write across named containers. Automatic operations stay on the primary container.
 
 <details>
@@ -748,13 +748,13 @@ Base URL precedence is `supermemory.json` → `SUPERMEMORY_BASE_URL` → `https:
 
 ### Migrating from bundled Supermemory
 
-Supermemory used to ship inside the Hermes tree (and as the `hermes-agent[supermemory]` pip extra). If your `config.yaml` already has `memory.provider: supermemory`, there is nothing to do for most users:
+Supermemory used to ship inside the Tandem tree (and as the `hermes-agent[supermemory]` pip extra). If your `config.yaml` already has `memory.provider: supermemory`, there is nothing to do for most users:
 
-- `hermes update` installs the catalog plugin into every profile home that names the provider (this runs even when `security.allow_lazy_installs` is `false`).
-- If the plugin is still missing on the first agent start (`hermes chat`, the gateway, …), Hermes installs it and prints `✓ Memory provider 'supermemory' moved out of core — installed its plugin from the catalog (your memory.supermemory settings and data are unchanged).`
-- With `security.allow_lazy_installs: false`, the agent-start path instead logs one line — ``Memory provider 'supermemory' is not installed; security.allow_lazy_installs is off — run `hermes plugins install supermemory`.`` — and you run `hermes plugins install supermemory` yourself.
+- `tandem update` installs the catalog plugin into every profile home that names the provider (this runs even when `security.allow_lazy_installs` is `false`).
+- If the plugin is still missing on the first agent start (`tandem chat`, the gateway, …), Tandem installs it and prints `✓ Memory provider 'supermemory' moved out of core — installed its plugin from the catalog (your memory.supermemory settings and data are unchanged).`
+- With `security.allow_lazy_installs: false`, the agent-start path instead logs one line — ``Memory provider 'supermemory' is not installed; security.allow_lazy_installs is off — run `tandem plugins install supermemory`.`` — and you run `tandem plugins install supermemory` yourself.
 
-What changes on disk: the plugin appears in `~/.hermes/plugins/supermemory/` and `config.yaml` gains `plugins.enabled: [supermemory]`. The Supermemory SDK is installed from the plugin's own package metadata, so the `hermes-agent[supermemory]` extra is no longer needed. `memory.provider`, `$HERMES_HOME/supermemory.json`, the `SUPERMEMORY_*` keys in `.env` and the memories stored in your Supermemory account are untouched. Verify with `hermes memory status` (provider active) and `hermes plugins list` (plugin installed and enabled).
+What changes on disk: the plugin appears in `~/.hermes/plugins/supermemory/` and `config.yaml` gains `plugins.enabled: [supermemory]`. The Supermemory SDK is installed from the plugin's own package metadata, so the `hermes-agent[supermemory]` extra is no longer needed. `memory.provider`, `$HERMES_HOME/supermemory.json`, the `SUPERMEMORY_*` keys in `.env` and the memories stored in your Supermemory account are untouched. Verify with `tandem memory status` (provider active) and `tandem plugins list` (plugin installed and enabled).
 
 ### Memori
 
@@ -773,22 +773,22 @@ Structured long-term memory using Memori Cloud, with background completed-turn c
 
 `hermes-memori` is an external integration, not a managed PM tool name. Follow
 its publisher's instructions to install the CLI in an independent environment.
-Before running its installer, confirm that it targets the intended Hermes home
+Before running its installer, confirm that it targets the intended Tandem home
 and supplies a provider with declared Python dependencies. Do not let an external
-installer pip-install into Hermes's selected environment. CLI availability alone
-does not make the Python provider available inside Hermes; an entry-point-only
+installer pip-install into Tandem's selected environment. CLI availability alone
+does not make the Python provider available inside Tandem; an entry-point-only
 distribution needs an owner-managed build that includes it.
 
 ```bash
 # Run only after confirming the external installer's integration contract above.
 hermes-memori install
-hermes config set memory.provider memori
-hermes memory setup
+tandem config set memory.provider memori
+tandem memory setup
 ```
 
 If the installer does not support PM-managed directory-provider admission, ask
-the publisher for that integration rather than inventing a `hermes pm install`
-package command. Restart Hermes after successful dependency preparation.
+the publisher for that integration rather than inventing a `tandem pm install`
+package command. Restart Tandem after successful dependency preparation.
 
 ---
 
@@ -796,14 +796,14 @@ package command. Restart Hermes after successful dependency preparation.
 
 | Provider | Storage | Cost | Tools | Dependencies | Unique Feature |
 |----------|---------|------|-------|-------------|----------------|
-| **Honcho** (plugin catalog) | Cloud/Self-hosted | Paid/Free | 5 | `hermes plugins install honcho` | Dialectic user modeling + session-scoped context |
-| **OpenViking** (plugin catalog) | Self-hosted | Free | 6 | `hermes plugins install openviking` + server | Filesystem hierarchy + tiered loading |
-| **Mem0** (plugin catalog) | Cloud/Self-hosted | Free/Paid | 4 | `hermes plugins install mem0` | Server-side LLM extraction + self-hosted/OSS modes |
-| **Hindsight** (plugin catalog) | Cloud/Local | Free/Paid | 3 | `hermes plugins install hindsight` | Knowledge graph + reflect synthesis |
-| **Holographic** (plugin catalog) | Local | Free | 2 | `hermes plugins install holographic` | HRR algebra + trust scoring |
+| **Honcho** (plugin catalog) | Cloud/Self-hosted | Paid/Free | 5 | `tandem plugins install honcho` | Dialectic user modeling + session-scoped context |
+| **OpenViking** (plugin catalog) | Self-hosted | Free | 6 | `tandem plugins install openviking` + server | Filesystem hierarchy + tiered loading |
+| **Mem0** (plugin catalog) | Cloud/Self-hosted | Free/Paid | 4 | `tandem plugins install mem0` | Server-side LLM extraction + self-hosted/OSS modes |
+| **Hindsight** (plugin catalog) | Cloud/Local | Free/Paid | 3 | `tandem plugins install hindsight` | Knowledge graph + reflect synthesis |
+| **Holographic** (plugin catalog) | Local | Free | 2 | `tandem plugins install holographic` | HRR algebra + trust scoring |
 | **RetainDB** | Cloud | $20/mo | 10 | `requests` | Delta compression |
 | **ByteRover** | Local/Cloud | Free/Paid | 3 | `brv` CLI | Pre-compression extraction |
-| **Supermemory** (plugin catalog) | Cloud/Self-hosted | Free/Paid | 4 | `hermes plugins install supermemory` | Context fencing + session graph ingest + multi-container |
+| **Supermemory** (plugin catalog) | Cloud/Self-hosted | Free/Paid | 4 | `tandem plugins install supermemory` | Context fencing + session graph ingest + multi-container |
 | **Memori** | Cloud | Free/Paid | 5 | `hermes-memori` | Tool-aware memory + structured recall |
 
 ## Profile Isolation
@@ -817,7 +817,7 @@ Each provider's data is isolated per [profile](../profiles.md):
 
 ## Providers Moving to the Plugin Catalog
 
-Memory providers are moving out of the Hermes tree into their maintainers' own repositories,
+Memory providers are moving out of the Tandem tree into their maintainers' own repositories,
 published through the [plugin catalog](./plugins.md). Hindsight moved first (see
 [Migrating from bundled Hindsight](#migrating-from-bundled-hindsight)), then Honcho (see
 [Upgrading from the bundled Honcho](#upgrading-from-the-bundled-honcho)), Supermemory (see
@@ -829,12 +829,12 @@ maintained by itpartypattaya, see
 ByteRover leave core on October 15, 2026; their standalone repositories are unmaintained and
 open for a new maintainer. Nothing changes for you: the
 provider name, the settings it reads, its data directory and its tools stay the same.
-When a provider you have configured stops shipping with Hermes, `hermes update` installs its
+When a provider you have configured stops shipping with Tandem, `tandem update` installs its
 catalog plugin for every profile that names it; if you update through the Desktop app, the
 agent does the same the first time it starts. Every outcome is shown to you — in the terminal,
 in Desktop, or with the first reply on a messaging platform. If the install cannot happen
 (`security.allow_lazy_installs: false`, offline, declined), the warning includes the exact
-`hermes plugins install <name>` command.
+`tandem plugins install <name>` command.
 
 ## Building a Memory Provider
 

@@ -285,7 +285,7 @@ def union_with_nous_on_sale_models(curated_ids: list[str], pricing: dict[str, di
     discount first. A sale lives only in ``/v1/models`` ``pricing.original``, so without this the
     picker badges discounts on curated rows but never shows a discounted model the curated list and
     Portal recommendations omit. Free rows stay with ``freeRecommendedModels``; rows the gateway
-    marks tool-less (``"tools": False``) are skipped because Hermes is tool-calling-first, and
+    marks tool-less (``"tools": False``) are skipped because Tandem is tool-calling-first, and
     image/video generation rows are skipped because they are not chat models."""
     from math import isfinite
 
@@ -832,7 +832,7 @@ def _provider_has_credentials(pid: str) -> bool:
 
 
 def list_available_providers() -> list[dict[str, str]]:
-    """``{id, label, aliases, authenticated}`` per listed provider (shared with ``hermes model`` / ``/model``)."""
+    """``{id, label, aliases, authenticated}`` per listed provider (shared with ``tandem model`` / ``/model``)."""
     from hermes_cli.models_catalog_static import listed_canonical_providers
     aliases_for: dict[str, list[str]] = {}
     for alias, canonical in _PROVIDER_ALIASES.items():
@@ -1232,7 +1232,7 @@ def _strip_vendor_prefix(model_id: str) -> str:
 
 
 def model_supports_fast_mode(model_id: Optional[str]) -> bool:
-    """Return whether Hermes should expose the /fast toggle for this model."""
+    """Return whether Tandem should expose the /fast toggle for this model."""
     from agent.model_metadata import is_grok_46_family
 
     return (
@@ -2170,7 +2170,7 @@ def cached_provider_model_ids(
 
 def clear_provider_models_cache(provider: Optional[str] = None) -> None:
     """Drop one provider's cache entry, or wipe the whole cache (``provider=None``). Used by
-    ``/model --refresh`` and ``hermes model --refresh``."""
+    ``/model --refresh`` and ``tandem model --refresh``."""
     try:
         # Native Ollama tags are keyed by root URL, not provider slug — a targeted refresh can't
         # identify the root from the name alone, so clear this small in-process cache every time.

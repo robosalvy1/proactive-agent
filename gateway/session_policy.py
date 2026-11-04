@@ -183,7 +183,7 @@ class LocalSessionPolicy:
 
     @property
     def yolo(self):
-        """`hermes chat --yolo`: this session's dangerous-command approvals are bypassed, exactly the
+        """`tandem chat --yolo`: this session's dangerous-command approvals are bypassed, exactly the
         scope `/yolo` gives a messaging chat; never the process-wide HERMES_YOLO_MODE."""
         return json.loads(self.request_json).get('yolo', False)
 
@@ -206,7 +206,7 @@ class LocalSessionPolicy:
 
     @property
     def verbose(self):
-        """`hermes chat -v`: the session's agent runs with quiet_mode off, so its status lines reach the
+        """`tandem chat -v`: the session's agent runs with quiet_mode off, so its status lines reach the
         viewer (``agent.print``) as main's in-process verbose agent printed them."""
         return json.loads(self.request_json).get('verbose', False)
 

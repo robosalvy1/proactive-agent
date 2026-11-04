@@ -37,7 +37,7 @@ with SessionDB(db_path=path) as owner:
                 elif command[0] == 'sessions':
                     assert 'Total sessions: 1' in result.stdout, result.stdout
                 else:
-                    assert 'Hermes Insights' in result.stdout, result.stdout
+                    assert 'Tandem Insights' in result.stdout, result.stdout
                 assert owner._conn.in_transaction, 'reader disturbed owner transaction'
         finally:
             owner._conn.rollback()

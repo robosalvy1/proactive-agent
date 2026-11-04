@@ -248,7 +248,7 @@ test('primary SSH reuse rejects a descriptor with different effective dialing co
   )
 })
 
-test('primary SSH reuse rejects a descriptor with a different remote Hermes path', async () => {
+test('primary SSH reuse rejects a descriptor with a different remote Tandem path', async () => {
   const registry = migrateV1ToRegistry({
     mode: 'ssh',
     remote: { mode: 'ssh', host: 'build-host', remoteHermesPath: '/srv/hermes', user: 'alice' },
@@ -288,7 +288,7 @@ test('registry primary reuses a matching primary backend descriptor', () => {
     lastUsed: 'hermes-vps',
     connections: [
       { id: LOCAL_CONNECTION_ID, kind: 'local', label: 'This device' },
-      { id: 'hermes-vps', kind: 'ssh', label: 'Hermes VPS', host: 'hermes-vps' }
+      { id: 'hermes-vps', kind: 'ssh', label: 'Tandem VPS', host: 'hermes-vps' }
     ]
   })
 

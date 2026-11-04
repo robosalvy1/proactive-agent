@@ -1,4 +1,4 @@
-"""Efficiency shared metrics: what one user turn costs, what users throw away, and where Hermes
+"""Efficiency shared metrics: what one user turn costs, what users throw away, and where Tandem
 spends tokens it did not have to (spilled tool output, idle tool schemas, prompt-cache breaks).
 
 Per-turn state lives on the relay runtime's task/session objects (see ``TurnCost`` and
@@ -97,7 +97,7 @@ def _route(route: dict[str, str] | None) -> dict[str, str]:
 @dataclass
 class TurnCost:
     """Token spend of one task; ``user_turn`` marks a turn a user message started (pre_llm_call),
-    which Hermes-owned forks sharing the session id never fire."""
+    which Tandem-owned forks sharing the session id never fire."""
 
     user_turn: bool = False
     tokens: int = 0
@@ -211,8 +211,8 @@ class SessionEfficiency:
     def observe_cache(
         self, route: dict[str, str], usage: Any, started_ns: int, ended_ns: int, *, expected: bool,
     ) -> str | None:
-        """A cold primary read after a warm one on the same route is a break Hermes did not announce
-        (``expected``: Hermes already counted the cause); a gap past the cache TTL is plain expiry."""
+        """A cold primary read after a warm one on the same route is a break Tandem did not announce
+        (``expected``: Tandem already counted the cause); a gap past the cache TTL is plain expiry."""
         read = _int(usage.get("cache_read_tokens")) if isinstance(usage, dict) else None
         if read is None:
             return None
@@ -231,7 +231,7 @@ def cache_break_row(cause: str, route: dict[str, str] | None) -> tuple[str, dict
 # ---- agent-side entry points (agent thread; never raise) ---------------------------------------
 
 def _internal_agent(agent: Any) -> bool:
-    """Hermes-owned forks (background review, curator) share the user's session id."""
+    """Tandem-owned forks (background review, curator) share the user's session id."""
     return getattr(agent, "_memory_write_origin", None) == "background_review"
 
 
@@ -331,7 +331,7 @@ def _tool_names(tools: Iterable[Any]) -> Iterable[str]:
 
 
 def record_cache_break(agent: Any, cause: str) -> None:
-    """Hermes itself invalidated the conversation's cached prefix (compression, a rebuilt prompt)."""
+    """Tandem itself invalidated the conversation's cached prefix (compression, a rebuilt prompt)."""
     try:
         if cause not in contract.CACHE_BREAK_CAUSES or getattr(agent, "_persist_disabled", False):
             return

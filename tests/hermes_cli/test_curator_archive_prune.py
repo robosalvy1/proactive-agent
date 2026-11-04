@@ -1,4 +1,4 @@
-"""`hermes curator archive` refuses pinned skills (with an `unpin` hint) and never archives them."""
+"""`tandem curator archive` refuses pinned skills (with an `unpin` hint) and never archives them."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def test_archive_refuses_pinned(monkeypatch, capsys):
     assert called == []
     out = capsys.readouterr().out
     assert "pinned" in out.lower()
-    assert "hermes curator unpin" in out
+    assert "tandem curator unpin" in out
 
 
 # ─── purge ──────────────────────────────────────────────────────────────────

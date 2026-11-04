@@ -64,9 +64,9 @@ class TestUserSystemdPrivateSocketPreflight:
 class TestSystemdServiceRefresh:
 
     def test_systemd_restart_timeout_prints_status_guidance(self, monkeypatch, capsys):
-        """`hermes gateway restart` must not surface a raw TimeoutExpired traceback.
+        """`tandem gateway restart` must not surface a raw TimeoutExpired traceback.
 
-        The dashboard spawns `hermes gateway restart` in the background; when a
+        The dashboard spawns `tandem gateway restart` in the background; when a
         wedged adapter websocket pushes drain past the 90s CLI timeout, the
         dashboard would previously show a Python traceback (issue #19937
         follow-up: the same failure mode applies to restart, not just stop).
@@ -100,7 +100,7 @@ class TestSystemdServiceRefresh:
 
         output = capsys.readouterr().out
         assert "still restarting after 90s" in output
-        assert "hermes gateway status" in output
+        assert "tandem gateway status" in output
 
     def test_refresh_refuses_to_bake_pytest_tmpdir_into_real_user_unit(
         self, tmp_path, monkeypatch
@@ -168,7 +168,7 @@ class TestRequireServiceInstalled:
         assert exc_info.value.code == 1
         out = capsys.readouterr().out
         assert "not installed" in out
-        assert "hermes gateway install" in out
+        assert "tandem gateway install" in out
 
     def test_passes_when_unit_exists(self, tmp_path, monkeypatch):
         unit_path = tmp_path / "hermes-gateway.service"
@@ -319,8 +319,8 @@ class TestGeneratedSystemdUnits:
         """#104251: a planned restart (gateway/restart.py's exit 75) is force-restarted
         via RestartForceExitStatus, but without SuccessExitStatus=75 too, systemd still
         classifies the exit as a failure -- the unit flips to ``failed``/``Result=exit-code``
-        and any OnFailure= alert unit fires on every routine restart (hermes update,
-        hermes gateway restart, the in-app restart). SuccessExitStatus=75 keeps the same
+        and any OnFailure= alert unit fires on every routine restart (tandem update,
+        tandem gateway restart, the in-app restart). SuccessExitStatus=75 keeps the same
         force-restart behavior while letting the unit land back in ``active``/``success``,
         so OnFailure= stays reserved for actual failures."""
         unit = gateway_cli.generate_systemd_unit(system=False)
@@ -348,7 +348,7 @@ class TestGeneratedSystemdUnits:
 
     def test_launchd_plist_persists_configured_nofile_soft_limit(self, monkeypatch):
         """The generated plist must carry SoftResourceLimits/NumberOfFiles so a
-        plist rewrite by `hermes gateway start` cannot strip the FD floor and
+        plist rewrite by `tandem gateway start` cannot strip the FD floor and
         reintroduce EMFILE crashes (launchd default soft limit is 256)."""
         from hermes_cli import resource_limits
 
@@ -830,7 +830,7 @@ class TestLaunchdDomainDetection:
 class TestLaunchdUnsupportedFallbackPolicy:
     """A 5/125 launchctl exit must not brand a domain the host is demonstrably managing.
 
-    Regression for the recurrence where ``hermes gateway install --force`` over the LIVE job
+    Regression for the recurrence where ``tandem gateway install --force`` over the LIVE job
     returned EIO (5) — launchctl's answer for an already-loaded label — which
     ``_launchd_degrade_or_raise`` read as "this macOS cannot manage launchd services". It wrote the
     permanent launchd-unsupported marker and started a detached gateway beside the supervised one,
@@ -1377,7 +1377,7 @@ class TestSystemUnitHermesHome:
     def test_no_pm_node_never_bakes_the_invokers_path_node(
         self, monkeypatch, tmp_path
     ):
-        """Hermes runs only its PM-managed Node: a PATH node is never written into a unit."""
+        """Tandem runs only its PM-managed Node: a PATH node is never written into a unit."""
         (tmp_path / ".hermes" / "tools").mkdir(parents=True)
         monkeypatch.setattr(
             gateway_cli.shutil, "which", lambda name: "/opt/external-node/bin/node"
@@ -1670,7 +1670,7 @@ class TestPreflightUserSystemd:
 
         msg = str(exc_info.value)
         assert "sudo loginctl enable-linger" in msg
-        assert "hermes gateway run" in msg  # foreground fallback mentioned
+        assert "tandem gateway run" in msg  # foreground fallback mentioned
         assert "Interactive authentication required" in msg
 
     def test_enable_linger_succeeds_and_socket_appears(self, monkeypatch, capsys):
@@ -2006,7 +2006,7 @@ class TestDockerAwareGateway:
 
 
     def test_install_in_container_prints_docker_guidance(self, monkeypatch, capsys):
-        """'hermes gateway install' inside Docker exits 0 with container guidance."""
+        """'tandem gateway install' inside Docker exits 0 with container guidance."""
         import pytest
 
         monkeypatch.setattr(gateway_cli, "is_managed", lambda: False)
@@ -2093,7 +2093,7 @@ class TestLegacyHermesUnitDetection:
 
     # Minimal ExecStart that looks like our gateway
     _OUR_UNIT_TEXT = (
-        "[Unit]\nDescription=Hermes Gateway\n[Service]\n"
+        "[Unit]\nDescription=Tandem Gateway\n[Service]\n"
         "ExecStart=/usr/bin/python -m hermes_cli.main gateway run --replace\n"
     )
 
@@ -2129,7 +2129,7 @@ class TestLegacyHermesUnitDetection:
         ExecStart variants we've seen in the wild:
           - python -m hermes_cli.main gateway run
           - python path/to/hermes_cli/main.py gateway run
-          - hermes gateway run   (direct binary)
+          - tandem gateway run   (direct binary)
           - python path/to/gateway/run.py
         """
         user_dir, _ = self._setup_search_paths(tmp_path, monkeypatch)
@@ -2142,7 +2142,7 @@ class TestLegacyHermesUnitDetection:
         for i, execstart in enumerate(variants):
             # Test each variant fresh (every variant ships the same unit name)
             (user_dir / "hermes.service").write_text(
-                f"[Unit]\nDescription=Old Hermes\n[Service]\n{execstart}\n",
+                f"[Unit]\nDescription=Old Tandem\n[Service]\n{execstart}\n",
                 encoding="utf-8",
             )
             results = gateway_cli._find_legacy_hermes_units()
@@ -2154,7 +2154,7 @@ class TestRemoveLegacyHermesUnits:
     """Tests for remove_legacy_hermes_units (the migration action)."""
 
     _OUR_UNIT_TEXT = (
-        "[Unit]\nDescription=Hermes Gateway\n[Service]\n"
+        "[Unit]\nDescription=Tandem Gateway\n[Service]\n"
         "ExecStart=/usr/bin/python -m hermes_cli.main gateway run --replace\n"
     )
 
@@ -2218,7 +2218,7 @@ class TestRemoveLegacyHermesUnits:
 
 
 class TestMigrateLegacyCommand:
-    """Tests for the `hermes gateway migrate-legacy` subcommand dispatch."""
+    """Tests for the `tandem gateway migrate-legacy` subcommand dispatch."""
 
 
     def test_gateway_command_migrate_legacy_dispatches(
@@ -2442,7 +2442,7 @@ class TestSystemScopeWizardPreCheck:
 
 
 class TestGatewayCommandCatchesSystemScopeError:
-    """The direct CLI path (``hermes gateway start --system`` etc.) must
+    """The direct CLI path (``tandem gateway start --system`` etc.) must
     still exit 1 with a clean message when non-root. The top-level
     ``gateway_command`` catches ``SystemScopeRequiresRootError`` and
     converts it back to ``sys.exit(1)``, preserving existing CLI behavior.

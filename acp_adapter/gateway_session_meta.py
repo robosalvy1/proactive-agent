@@ -37,7 +37,7 @@ COMMANDS: dict[str, tuple[str, str | None]] = {
     "queue": ("Queue a prompt to run after the current turn finishes", "prompt to run next"),
     "usage": ("Show token usage and rate limits", None),
     "status": ("Show session, model, token, and context info", None),
-    "version": ("Show Hermes version", None),
+    "version": ("Show Tandem version", None),
 }
 
 

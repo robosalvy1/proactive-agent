@@ -1,7 +1,7 @@
 """A child spawned FOR a served profile carries that profile's env, never the launch profile's.
 
 Under ``gateway.multiplex_profiles`` one process serves several profiles and ``os.environ`` holds the
-LAUNCH profile's ``.env``. Every ``hermes -p X`` / helper child (slash worker, relay delivery, A2A
+LAUNCH profile's ``.env``. Every ``tandem -p X`` / helper child (slash worker, relay delivery, A2A
 forward, ``key_cmd`` helper, browser driver) must start from X's env: X's home pinned, X's own
 secrets, and none of the launch profile's residue. The same build reaches every site through
 ``served_profile_child_env``; the slash worker is spawned through its production class here.

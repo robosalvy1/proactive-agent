@@ -2,9 +2,9 @@
 sidebar_position: 5
 ---
 
-# Connecting Desktop to Many Hermes Instances
+# Connecting Desktop to Many Tandem Instances
 
-Register every Hermes backend you own — the local runtime, remote gateways on
+Register every Tandem backend you own — the local runtime, remote gateways on
 your LAN or VPS, SSH hosts, and Hermes Cloud instances — in one desktop app,
 and use the agents on all of them side by side. Connections are persistent:
 each registered gateway dials its own backends and WebSockets on demand, and
@@ -25,7 +25,7 @@ redirect there). Three doors lead to it:
   **Gateways** in the settings nav). The connections registry is a section
   of that page, below the machine-level connection-mode controls.
 - **The sidebar profile rail** — the plug button at the right end of the rail
-  (tooltip: **"Connect another Hermes gateway…"**) deep-links straight to
+  (tooltip: **"Connect another Tandem gateway…"**) deep-links straight to
   the Gateways page. It is always visible, even before you have created
   a second profile or a second connection.
 - **The command palette** — **Cmd/Ctrl+K**, then type *Gateways* (also
@@ -34,15 +34,15 @@ redirect there). Three doors lead to it:
 ## The gateway registry
 
 The **Registered gateways** section of **Settings → Gateways** manages a named
-list of Hermes gateways. Its intro says it plainly: *"Manage this device and
-every Hermes gateway it can reach through remote, SSH, or Cloud connections."*
+list of Tandem gateways. Its intro says it plainly: *"Manage this device and
+every Tandem gateway it can reach through remote, SSH, or Cloud connections."*
 Each entry is a *connection*:
 
 | Kind | What it is | Auth |
 |---|---|---|
-| **Local** | "The Hermes runtime managed by this app." | automatic |
-| **Remote gateway** | "A Hermes gateway reachable over HTTP(S) — LAN, Tailscale, or the internet." | session token or OAuth |
-| **SSH** | "A Hermes install reached over SSH." The app opens the tunnel and starts the dashboard for you | SSH key + adopted token |
+| **Local** | "The Tandem runtime managed by this app." | automatic |
+| **Remote gateway** | "A Tandem gateway reachable over HTTP(S) — LAN, Tailscale, or the internet." | session token or OAuth |
+| **SSH** | "A Tandem install reached over SSH." The app opens the tunnel and starts the dashboard for you | SSH key + adopted token |
 | **Hermes Cloud** | "A hosted instance discovered through your Hermes Cloud account." | portal sign-in |
 
 Rules worth knowing:
@@ -119,7 +119,7 @@ authentication; manage sign-in from the registered connection controls.
    - **Name** — required, unique; the "device name" shown everywhere this
      instance appears (placeholder: `Homelab`). Max 64 characters.
    - *Remote gateway only:*
-     - **Gateway URL** — the base URL of a running `hermes serve` backend,
+     - **Gateway URL** — the base URL of a running `tandem serve` backend,
        e.g. `http://homelab.lan:9119`. Reverse-proxy path prefixes work.
      - **Authentication** — choose **Session token** or **OAuth**:
        - **Session token** — paste the dashboard session token from the
@@ -134,10 +134,10 @@ authentication; manage sign-in from the registered connection controls.
        shell; on a `zsh` login shell the probe watchdog cannot kill the whole
        process group, so a hung probe's grandchildren may linger on the remote
        (bash/sh remotes reap them).
-     - **Hermes path (optional)** — full path to the `hermes` executable on
+     - **Tandem path (optional)** — full path to the `tandem` executable on
        the remote (for example `/opt/hermes/bin/hermes`). Leave blank to
        auto-detect. Set it when the remote's non-interactive shell does not
-       have `hermes` on its `PATH` and **Test** reports *"Hermes is not
+       have `tandem` on its `PATH` and **Test** reports *"Tandem is not
        installed on the remote host"*; clearing the field restores
        auto-detection.
 5. Click **Save connection** (or **Cancel**).
@@ -147,7 +147,7 @@ Edit any non-local entry later with the pencil button, or remove it with the
 trash button — removal asks for confirmation and reminds you that *"The
 instance itself is not touched — you can add it again any time."*
 
-:::info The remote backend is a running `hermes serve` process
+:::info The remote backend is a running `tandem serve` process
 Nothing here works unless the backend is actually up and reachable on the
 other machine. The desktop app attaches to it; it does not start it for you
 (except for SSH connections, where the app starts the dashboard over the
@@ -191,11 +191,11 @@ Each `(connection, profile)` pair gets its own socket, and Desktop caches the
 gateway descriptor it dialed so the next open joins the same connection —
 background agents keep streaming while you look at another gateway. Desktop
 never spawns or reaps a *remote* gateway; each one owns its own lifetime. For a
-**local** profile, the first open runs `hermes gateway ensure`, which attaches
+**local** profile, the first open runs `tandem gateway ensure`, which attaches
 to that profile's running gateway or, when there is none, installs and starts a
 persistent per-profile gateway (a systemd/launchd service where one exists,
 otherwise a detached daemon). That gateway keeps running after you close the
-app — it has no idle shutdown — until you stop it with `hermes gateway stop`.
+app — it has no idle shutdown — until you stop it with `tandem gateway stop`.
 
 Approval buttons route back to the session's owning backend, not whichever
 profile is currently selected. For a local secondary profile, Desktop can use
@@ -207,7 +207,7 @@ an obsolete backend.
 ### Switching and scoping
 
 The sidebar foot follows one hierarchy: **gateway → profile → sessions**.
-Gateways are machines or hosted backends; profiles are isolated Hermes agents
+Gateways are machines or hosted backends; profiles are isolated Tandem agents
 that live on one gateway.
 
 - With one registered gateway, no gateway control is added. Local-only Desktop
@@ -297,7 +297,7 @@ side effect of sharing one Desktop window.
 ## Updating every instance at once
 
 **Settings → Gateways → Update all instances** (shown once more than one
-connection is registered) dispatches `hermes update` to every eligible
+connection is registered) dispatches `tandem update` to every eligible
 connection in parallel:
 
 - **Local** updates through the app's own update pipeline (the same flow as
@@ -313,7 +313,7 @@ with their own message, per row.
 
 You rarely need the Settings button, though: once more than one update target
 exists, the app's regular update affordances (**Update now** on the About
-panel, ⌘K **Update Hermes**, the update-ready toast) run the same fan-out
+panel, ⌘K **Update Tandem**, the update-ready toast) run the same fan-out
 automatically — active backend first, then every other eligible gateway, then
 the desktop app itself last. See
 [Updating](./desktop.md#updating) in the desktop guide.
@@ -359,7 +359,7 @@ multi-gateway roster is the reference consumer.
 ## Troubleshooting
 
 - **"Connection test failed"** — the backend isn't reachable at that URL from
-  this machine. Check that `hermes serve` is running on the remote host, the
+  this machine. Check that `tandem serve` is running on the remote host, the
   port is open, and (for token auth) the token is current. Re-run **Test**
   after fixing.
 - **An agent shows but won't open** — run **Test** on its connection. The
@@ -368,7 +368,7 @@ multi-gateway roster is the reference consumer.
 - **A remote gateway is missing from the roster** — its backend is down or
   unreachable; the roster lists it under gateways with the error. SSH connections
   show *connect-on-demand* until first use — that's by design, not a failure.
-- **"Update Hermes Desktop to chat with agents on other connections"** — the
+- **"Update Tandem Desktop to chat with agents on other connections"** — the
   app predates the multi-connection stack; update the desktop app itself.
 - **Duplicate device names** — not possible; names are enforced unique at
   save time. If a migrated name collided, it was suffixed (`Homelab 2`).

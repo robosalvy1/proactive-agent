@@ -1,4 +1,4 @@
-"""Regression tests for profile-keyed state purge on `hermes profile delete`.
+"""Regression tests for profile-keyed state purge on `tandem profile delete`.
 
 `delete_profile` removes the profile directory and the multiplexer tears its runtime down, but the
 profile name is also baked into session keys (``agent:<name>:*``), ``gateway_heartbeats.profile``,

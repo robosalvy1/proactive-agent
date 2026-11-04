@@ -37,7 +37,7 @@ _BROWSER_PASSTHROUGH_KEYS: tuple[str, ...] = (
 
 
 def warm_agent_browser_npx_cache(timeout: float = 60.0) -> bool:
-    """Frozen old-updater surface (tests/compat/old_updater_surface.json): a pre-PM ``hermes update``
+    """Frozen old-updater surface (tests/compat/old_updater_surface.json): a pre-PM ``tandem update``
     still running mid-swap imports this from the NEW tree. Nothing is warmed — PM owns the browser
     runtime — and the permanent definition must live here, not behind the revert-scheduled compat
     pointer."""
@@ -580,7 +580,7 @@ BROWSER_TOOL_SCHEMAS = [
     },
     {
         "name": "browser_vision",
-        "description": "Take a screenshot of the current page so you can inspect it visually. Use this when you need to understand what the page looks like - especially for CAPTCHAs, visual verification challenges, complex layouts, or cases where the text snapshot misses important visual information. When your active model has native vision, the screenshot is attached to your context directly and you inspect it on the next turn; otherwise Hermes falls back to an auxiliary vision model and returns a text analysis. Includes a screenshot_path that you can share with the user by including MEDIA:<screenshot_path> in your response. Requires browser_navigate to be called first.",
+        "description": "Take a screenshot of the current page so you can inspect it visually. Use this when you need to understand what the page looks like - especially for CAPTCHAs, visual verification challenges, complex layouts, or cases where the text snapshot misses important visual information. When your active model has native vision, the screenshot is attached to your context directly and you inspect it on the next turn; otherwise Tandem falls back to an auxiliary vision model and returns a text analysis. Includes a screenshot_path that you can share with the user by including MEDIA:<screenshot_path> in your response. Requires browser_navigate to be called first.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -652,7 +652,7 @@ def _url_policy_error(url: str, *, auto_local: bool = False) -> Optional[dict]:
     Credential-NAMED query params (``?token=``, ``?signature=``) are deliberately NOT a floor:
     magic links, OAuth callbacks and signed CDN assets are how the agent signs in and browses, and
     a cloud browser already sees every cookie and typed password of the session — refusing the
-    URL protects nothing. Hermes' own secrets leaking into a URL are caught by ``_secret_url_error``."""
+    URL protects nothing. Tandem's own secrets leaking into a URL are caught by ``_secret_url_error``."""
     local = _cloud._is_local_backend()
     # Always-blocked floor: cloud metadata / IMDS endpoints are denied regardless of backend, hybrid
     # routing, or allow_private_urls. There's no legitimate agent use case for navigating to 169.254.169.254

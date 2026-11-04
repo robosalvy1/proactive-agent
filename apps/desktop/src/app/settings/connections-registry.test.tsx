@@ -244,7 +244,7 @@ describe('ConnectionsRegistrySection', () => {
     expect(save.mock.calls[0][0].token).toBeUndefined()
   })
 
-  it('saves a custom remote Hermes path for SSH connections', async () => {
+  it('saves a custom remote Tandem path for SSH connections', async () => {
     render(<ConnectionsRegistrySection />)
 
     await waitFor(() => expect(screen.getByText('Homelab')).toBeTruthy())
@@ -266,7 +266,7 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('clears a saved remote Hermes path back to auto-detect', async () => {
+  it('clears a saved remote Tandem path back to auto-detect', async () => {
     const sshRegistry: DesktopConnectionsRegistry = {
       ...registry,
       connections: [

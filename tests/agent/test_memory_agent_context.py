@@ -7,11 +7,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from agent.agent_init import _GATEWAY_IDENTITY_PARAMS, _memory_provider_init_kwargs
+from agent.agent_init_params import _GATEWAY_IDENTITY_PARAMS
+from agent.memory_bootstrap import memory_provider_init_kwargs
 
 
 def _fake_agent():
-    """The attribute surface ``_memory_provider_init_kwargs`` reads."""
+    """The attribute surface ``memory_provider_init_kwargs`` reads."""
     return SimpleNamespace(
         session_id="sess-80646", _session_db=None, _emit_warning=None, _emit_status=None,
         session_cwd=None, **{f"_{name}": None for name in _GATEWAY_IDENTITY_PARAMS},
@@ -23,4 +24,4 @@ def _fake_agent():
     [("cron", "cron"), ("subagent", "subagent"), ("telegram", "primary"), (None, "primary")],
 )
 def test_agent_context_follows_the_platform(platform, expected):
-    assert _memory_provider_init_kwargs(_fake_agent(), platform)["agent_context"] == expected
+    assert memory_provider_init_kwargs(_fake_agent(), platform)["agent_context"] == expected

@@ -16,7 +16,7 @@ function logSsh(log: string) {
 }
 
 test('scrapeReadyPort explains a missing remote profile', async () => {
-  const ssh = logSsh("Error: Profile 'operator' does not exist. Create it with: hermes profile create operator\n")
+  const ssh = logSsh("Error: Profile 'operator' does not exist. Create it with: tandem profile create operator\n")
 
   await assert.rejects(
     () =>

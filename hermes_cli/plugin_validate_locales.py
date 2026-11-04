@@ -1,8 +1,8 @@
-"""``hermes plugins validate`` — language-pack checks (``provides_locales``).
+"""``tandem plugins validate`` — language-pack checks (``provides_locales``).
 
 For every declared id the pack must ship ``locales/<id>.yaml`` that parses and is text-only (a number,
 list or null leaf is an error: ``t()`` would silently drop it). Keys the English catalogs do not have
-are a WARNING naming them — a pack written against a newer or older Hermes still installs, it just
+are a WARNING naming them — a pack written against a newer or older Tandem still installs, it just
 carries dead keys. Core keys come from the bundled ``locales/en.yaml``; TUI/Desktop keys from
 ``locales/_keys.tui.json`` / ``locales/_keys.desktop.json`` (exported by the TS packages' build
 scripts). When an export is absent the key check for that surface is skipped, never failed.

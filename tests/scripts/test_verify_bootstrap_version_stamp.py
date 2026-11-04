@@ -62,7 +62,7 @@ def _install_repo(tmp_path: Path) -> Path:
     _git(repo, "config", "user.name", "ci")
     (repo / "hermes_cli").mkdir()
     (repo / "hermes_cli" / "__init__.py").write_text(
-        '"""Hermes CLI."""\n', encoding="utf-8")
+        '"""Tandem CLI."""\n', encoding="utf-8")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-m", "seed")
     (repo / "install-stamp.json").write_text(json.dumps({

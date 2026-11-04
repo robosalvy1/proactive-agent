@@ -61,7 +61,7 @@ def test_dock_lists_only_programs_present_on_path(tmp_path):
 
 def test_browser_launcher_follows_the_profile_without_reseeding_the_panel(tmp_path):
     """The panel layout is seeded once (the human may have rearranged it), but the Browser entry's Exec=
-    binds the bot's user-data-dir by absolute path: after `hermes profile rename` the dock must open the
+    binds the bot's user-data-dir by absolute path: after `tandem profile rename` the dock must open the
     renamed profile's cookie jar, the same one agent-browser now drives, while the layout stays untouched."""
     chrome = tmp_path / "bin" / "chrome"
     cfg = _seed(tmp_path, ["xfce4-terminal", "chrome"], browser_exec=str(chrome), profile_dir="/old name/bp")

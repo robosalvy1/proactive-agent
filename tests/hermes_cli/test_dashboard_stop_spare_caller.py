@@ -16,11 +16,11 @@ from hermes_cli.main_dashboard import _find_stale_dashboard_pids
 
 def test_scan_spares_only_the_callers_wrapper_shell(capsys):
     """The bash the ``--stop`` was typed into is dropped; the real backend and an unrelated
-    wrapper with the same argv shape (another user's ``bash -c 'hermes serve'``) stay targets."""
+    wrapper with the same argv shape (another user's ``bash -c 'tandem serve'``) stay targets."""
     processes = [
-        (111, "/opt/hermes/bin/python hermes dashboard --port 9119"),
-        (222, "bash -c hermes dashboard --stop"),
-        (333, "bash -c hermes serve"),
+        (111, "/opt/hermes/bin/python tandem dashboard --port 9119"),
+        (222, "bash -c tandem dashboard --stop"),
+        (333, "bash -c tandem serve"),
     ]
     with (
         patch("hermes_cli.dashboard_procs._scan_dashboard_processes", return_value=processes),

@@ -1,4 +1,4 @@
-"""Tests for the Hermes plugin system (hermes_cli.plugins)."""
+"""Tests for the Tandem plugin system (hermes_cli.plugins)."""
 
 import logging
 import json
@@ -60,7 +60,7 @@ def _make_plugin_dir(base: Path, name: str, *, register_body: str = "pass",
     ``<hermes_home>`` from it by walking one level up unless *home* is
     given explicitly.
 
-    Pass *home* explicitly whenever the target Hermes home for this
+    Pass *home* explicitly whenever the target Tandem home for this
     plugin isn't necessarily the current ``HERMES_HOME`` env var — e.g.
     when writing fixtures for two profiles up front and only switching
     ``HERMES_HOME``/``set_hermes_home_override()`` per-profile afterwards
@@ -2307,7 +2307,7 @@ class TestPluginManagerList:
         already-loaded plugins, so when a later plugin registered a hook name
         an earlier plugin had already used, the shared name was attributed to
         the first plugin only and the later plugin reported 0 hooks in
-        `hermes plugins list`. Attribution now counts what each plugin's own
+        `tandem plugins list`. Attribution now counts what each plugin's own
         register() added (per-registration delta), so both get credit.
         """
         plugins_dir = tmp_path / "hermes_test" / "plugins"

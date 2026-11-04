@@ -203,7 +203,7 @@ def test_loop_stops_on_worker_failed_flag_default_reason(monkeypatch):
 # ---------------------------------------------------------------------------
 
 class TestCLIJudgeGate:
-    """hermes kanban complete must apply the same goal_mode judge gate as the
+    """tandem kanban complete must apply the same goal_mode judge gate as the
     kanban_complete tool (Issue #38367 sibling gap).
 
     Uses mocks for kb.get_task and kb.complete_task to avoid depending on the

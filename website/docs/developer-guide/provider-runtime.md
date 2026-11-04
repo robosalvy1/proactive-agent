@@ -1,15 +1,15 @@
 ---
 sidebar_position: 4
 title: "Provider Runtime Resolution"
-description: "How Hermes resolves providers, credentials, API modes, and auxiliary models at runtime"
+description: "How Tandem resolves providers, credentials, API modes, and auxiliary models at runtime"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Provider Runtime Resolution
 
-Hermes has a shared provider runtime resolver used across:
+Tandem has a shared provider runtime resolver used across:
 
 - CLI
 - gateway
@@ -33,7 +33,7 @@ If you are trying to add a new first-class inference provider, read [Adding Prov
 ## Chat-completions reasoning shapes
 
 OpenAI-compatible relays can return `reasoning` or `reasoning_content` as strings,
-text-part dictionaries, or lists of text parts and string fragments. Hermes flattens
+text-part dictionaries, or lists of text parts and string fragments. Tandem flattens
 these fields before string operations in the main stream, Relay recording, synchronous
 and asynchronous auxiliary streams, and completed-response reasoning extraction.
 Fragments retain their explicit whitespace; normalization adds no intra-field separator.
@@ -56,7 +56,7 @@ At a high level, provider resolution uses:
 3. environment variables
 4. provider-specific defaults or auto resolution
 
-That ordering matters because Hermes treats the saved model/provider choice as the source of truth for normal runs. This prevents a stale shell export from silently overriding the endpoint a user last selected in `hermes model`.
+That ordering matters because Tandem treats the saved model/provider choice as the source of truth for normal runs. This prevents a stale shell export from silently overriding the endpoint a user last selected in `tandem model`.
 
 ## Providers
 
@@ -105,9 +105,9 @@ The runtime resolver returns data such as:
 
 ## Why this matters
 
-This resolver is the main reason Hermes can share auth/runtime logic between:
+This resolver is the main reason Tandem can share auth/runtime logic between:
 
-- `hermes chat`
+- `tandem chat`
 - gateway message handling
 - cron jobs running in fresh sessions
 - ACP editor sessions
@@ -115,11 +115,11 @@ This resolver is the main reason Hermes can share auth/runtime logic between:
 
 ## AI Gateway
 
-Set `AI_GATEWAY_API_KEY` in `~/.hermes/.env` and run with `--provider ai-gateway`. Hermes fetches available models from the gateway's `/models` endpoint, filtering to language models with tool-use support.
+Set `AI_GATEWAY_API_KEY` in `~/.hermes/.env` and run with `--provider ai-gateway`. Tandem fetches available models from the gateway's `/models` endpoint, filtering to language models with tool-use support.
 
 ## OpenRouter, AI Gateway, and custom OpenAI-compatible base URLs
 
-Hermes contains logic to avoid leaking the wrong API key to a custom endpoint when multiple provider keys exist (e.g. `OPENROUTER_API_KEY`, `AI_GATEWAY_API_KEY`, and `OPENAI_API_KEY`).
+Tandem contains logic to avoid leaking the wrong API key to a custom endpoint when multiple provider keys exist (e.g. `OPENROUTER_API_KEY`, `AI_GATEWAY_API_KEY`, and `OPENAI_API_KEY`).
 
 Each provider's API key is scoped to its own base URL:
 
@@ -127,7 +127,7 @@ Each provider's API key is scoped to its own base URL:
 - `AI_GATEWAY_API_KEY` is only sent to `ai-gateway.vercel.sh` endpoints
 - `OPENAI_API_KEY` is used for custom endpoints and as a fallback
 
-Hermes also distinguishes between:
+Tandem also distinguishes between:
 
 - a real custom endpoint selected by the user
 - the OpenRouter fallback path used when no custom endpoint is configured
@@ -143,7 +143,7 @@ That distinction is especially important for:
 
 Anthropic is not just "via OpenRouter" anymore.
 
-When provider resolution selects `anthropic`, Hermes uses:
+When provider resolution selects `anthropic`, Tandem uses:
 
 - `api_mode = anthropic_messages`
 - the native Anthropic Messages API
@@ -153,8 +153,8 @@ Credential resolution for native Anthropic now prefers refreshable Claude Code c
 
 - Claude Code credential files are treated as the preferred source when they include refreshable auth
 - manual `ANTHROPIC_TOKEN` / `CLAUDE_CODE_OAUTH_TOKEN` values still work as explicit overrides
-- Hermes preflights Anthropic credential refresh before native Messages API calls
-- Hermes still retries once on a 401 after rebuilding the Anthropic client, as a fallback path
+- Tandem preflights Anthropic credential refresh before native Messages API calls
+- Tandem still retries once on a 401 after rebuilding the Anthropic client, as a fallback path
 
 ## OpenAI Codex path
 
@@ -177,15 +177,15 @@ Auxiliary tasks such as:
 
 can use their own provider/model routing rather than the main conversational model.
 
-When an auxiliary task is configured with provider `main`, Hermes resolves that through the same shared runtime path as normal chat. In practice that means:
+When an auxiliary task is configured with provider `main`, Tandem resolves that through the same shared runtime path as normal chat. In practice that means:
 
 - env-driven custom endpoints still work
-- custom endpoints saved via `hermes model` / `config.yaml` also work
+- custom endpoints saved via `tandem model` / `config.yaml` also work
 - auxiliary routing can tell the difference between a real saved custom endpoint and the OpenRouter fallback
 
 ## Fallback models
 
-Hermes supports a configured fallback provider chain — a list of `(provider, model)` entries tried in order when the primary model encounters errors. The legacy single-pair `fallback_model` dict is still accepted for back-compat (and migrated on first write).
+Tandem supports a configured fallback provider chain — a list of `(provider, model)` entries tried in order when the primary model encounters errors. The legacy single-pair `fallback_model` dict is still accepted for back-compat (and migrated on first write).
 
 ### How it works internally
 

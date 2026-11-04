@@ -34,7 +34,7 @@ def flavored_assets(icons: Path, assets: Path):
     flavored (canary/commit) build cannot package from the rendered product
     directory alone. Restore the admitted files once packaging ends: the source
     custody check refuses a dirty checkout, and a build that leaves its own
-    render behind breaks every later build in that tree and `hermes update`.
+    render behind breaks every later build in that tree and `tandem update`.
     """
     admitted = {path.relative_to(assets): path.read_bytes()
                 for path in assets.rglob("*") if path.is_file()}

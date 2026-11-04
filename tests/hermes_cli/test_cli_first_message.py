@@ -1,7 +1,7 @@
 """A fresh install's first CLI message reaches the model exactly as typed.
 
 The first-contact note (the profile-build offer or the plain intro) is sent by the messaging gateway and
-the TUI/desktop backend. The CLI never sent one. A one-shot ``hermes chat -q`` in a fresh home, which is
+the TUI/desktop backend. The CLI never sent one. A one-shot ``tandem chat -q`` in a fresh home, which is
 how kanban workers and scripted runs start, must not gain that note or record
 ``onboarding.seen.profile_build_offered`` in the profile's config.
 """

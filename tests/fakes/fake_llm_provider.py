@@ -2,7 +2,7 @@
 
 One real HTTP server on 127.0.0.1 that speaks the OpenAI Chat Completions
 wire format (JSON and SSE streaming). Every request body is recorded so a test
-can assert on exactly what Hermes sent (history integrity, prompt-cache prefix
+can assert on exactly what Tandem sent (history integrity, prompt-cache prefix
 stability, routing/credential isolation), and every response is scripted so a
 test can drive tool calls, reasoning, long streams and provider faults through
 the real client stack instead of mocking the agent loop.

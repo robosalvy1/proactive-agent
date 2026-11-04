@@ -127,7 +127,7 @@ def test_release_claims_the_first_attempt_creates_a_draft_and_dispatches(source)
     assert "--verify-tag" in create and "--draft" in create
     assert "--generate-notes" not in create
     assert "--notes-file" in create
-    assert create[-2:] == ["--title", "Hermes Agent v0.21.5"]
+    assert create[-2:] == ["--title", "Tandem Agent v0.21.5"]
     assert calls[1:] == [
         # Stable dispatches the default-branch workflow. The tag is an input.
         ["gh", "workflow", "run", "stable-release.yml", "--ref", "main",
@@ -590,7 +590,7 @@ def test_changelog_prints_the_notes_a_draft_would_carry_and_claims_nothing(sourc
     release_script.main()
 
     out = capsys.readouterr().out
-    assert out.startswith("# Hermes Agent v0.21.5 (rc.1-v0.21.5)")
+    assert out.startswith("# Tandem Agent v0.21.5 (rc.1-v0.21.5)")
     assert "New in this release" in out
     assert "hipped in the published release" not in out
     assert git(source, "ls-remote", "origin", "refs/tags/*") == ""

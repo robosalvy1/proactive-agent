@@ -1,6 +1,6 @@
-"""``hermes usage`` — the non-interactive /usage surface (issue #33094).
+"""``tandem usage`` — the non-interactive /usage surface (issue #33094).
 
-Drives the real ``hermes`` argparse entrypoint; only the network fetch is replaced with a snapshot
+Drives the real ``tandem`` argparse entrypoint; only the network fetch is replaced with a snapshot
 (``agent.account_usage.fetch_account_usage`` is what ``cmd_usage`` reads at call time).
 """
 

@@ -107,7 +107,7 @@ async function stampExeIdentity(
     }
   }
 
-  console.log('[set-exe-identity] done — Hermes icon + identity stamped')
+  console.log('[set-exe-identity] done — Tandem icon + identity stamped')
 }
 
 export { RCEDIT_COMMIT_RETRY_DELAYS_MS, stampExeIdentity }

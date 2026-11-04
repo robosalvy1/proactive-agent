@@ -1,4 +1,4 @@
-"""``hermes doctor`` probes survive a bracketed-IPv6 NO_PROXY environment (#118159).
+"""``tandem doctor`` probes survive a bracketed-IPv6 NO_PROXY environment (#118159).
 
 Clash Verge / mihomo write ``[::1]`` into NO_PROXY; httpx 0.28.1 turns that into an
 unparseable ``all://*[::1]`` mount, so every probe's bare ``httpx.get()``/``httpx.Client()``

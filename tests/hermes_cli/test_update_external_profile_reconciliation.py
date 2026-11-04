@@ -1,4 +1,4 @@
-"""A symlinked profile that is really another install must not fail `hermes update` (#120240).
+"""A symlinked profile that is really another install must not fail `tandem update` (#120240).
 
 ``~/.hermes/profiles/work -> ~/.hermes-work`` where ``~/.hermes-work`` has its own checkout and
 gateway: the plan inventories that gateway, the restart phase correctly leaves it alone, and the

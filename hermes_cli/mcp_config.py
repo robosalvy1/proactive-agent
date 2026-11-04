@@ -1,4 +1,4 @@
-"""MCP Server Management CLI — ``hermes mcp`` subcommand."""
+"""MCP Server Management CLI — ``tandem mcp`` subcommand."""
 
 import asyncio
 import contextlib
@@ -643,9 +643,9 @@ def cmd_mcp_add(args):
     if not url and not command:
         _error("Must specify --url <endpoint>, --command <cmd>, or --preset <name>")
         _info("Examples:")
-        _info('  hermes mcp add ink --url "https://mcp.ml.ink/mcp"')
-        _info('  hermes mcp add github --command npx --args @modelcontextprotocol/server-github')
-        _info('  hermes mcp add myserver --preset mypreset')
+        _info('  tandem mcp add ink --url "https://mcp.ml.ink/mcp"')
+        _info('  tandem mcp add github --command npx --args @modelcontextprotocol/server-github')
+        _info('  tandem mcp add myserver --preset mypreset')
         return
 
     # Overwriting an existing server is a re-add, not an install; cancels are not recorded either.
@@ -694,7 +694,7 @@ def cmd_mcp_add(args):
             saved = _save_mcp_server(name, server_config)
             if saved:
                 _success(f"Saved '{name}' to config (disabled)")
-                _info("Fix the issue, then: hermes mcp test " + name)
+                _info("Fix the issue, then: tandem mcp test " + name)
         _record(saved, probe_failure_class(exc))
         return
 
@@ -749,8 +749,8 @@ def cmd_mcp_list(args=None):
         _info("No MCP servers configured.")
         print()
         _info("Add one with:")
-        _info('  hermes mcp add <name> --url <endpoint>')
-        _info('  hermes mcp add <name> --command <cmd> --args <args...>')
+        _info('  tandem mcp add <name> --url <endpoint>')
+        _info('  tandem mcp add <name> --command <cmd> --args <args...>')
         print()
         return
 
@@ -824,13 +824,13 @@ def _probe_failure_next_step(name: str, exc: BaseException) -> str:
     from tools.mcp_tool_node_abi import NodeAbiMismatchError
     root = _unwrap_exception_group(exc)
     if _is_auth_error(root) or getattr(getattr(root, "response", None), "status_code", None) in (401, 403):
-        return f"The server rejected the sign-in. Run: hermes mcp login {name}"
+        return f"The server rejected the sign-in. Run: tandem mcp login {name}"
     if isinstance(root, NodeAbiMismatchError):
-        return f"After rebuilding it under Hermes's Node as above, run: hermes mcp test {name}"
+        return f"After rebuilding it under Tandem's Node as above, run: tandem mcp test {name}"
     if "missing executable" in _format_connect_error(exc):
         return (f"Install that command, or set mcp_servers.{name}.command in {display_hermes_home()}/config.yaml "
                 "to its full path.")
-    return f"Check the server is running and the URL/command in its config, then run: hermes mcp test {name}"
+    return f"Check the server is running and the URL/command in its config, then run: tandem mcp test {name}"
 
 
 def cmd_mcp_test(args):
@@ -892,7 +892,7 @@ def _reauth_oauth_server(name: str, server_config: dict, *, flow: str | None = N
         return False
     if server_config.get("auth") != "oauth":
         _error(f"Server '{name}' is not configured for OAuth (auth={server_config.get('auth')})")
-        _info("Use `hermes mcp remove` + `hermes mcp add` to reconfigure auth.")
+        _info("Use `tandem mcp remove` + `tandem mcp add` to reconfigure auth.")
         return False
 
     oauth_cfg = server_config.get("oauth") or {}
@@ -952,7 +952,7 @@ def _reauth_oauth_server(name: str, server_config: dict, *, flow: str | None = N
             ):
                 print(color(f"    {line}", Colors.DIM))
             print()
-            _info("Then re-run `hermes mcp login " + name + "`.")
+            _info("Then re-run `tandem mcp login " + name + "`.")
             return False
         if tools:
             _success(f"Authenticated — {len(tools)} tool(s) available")
@@ -1004,7 +1004,7 @@ def cmd_mcp_reauth(args):
         return
     if not name:
         _error("Specify a server name, or use --all to re-auth every OAuth server.")
-        _info("Usage: hermes mcp reauth <name>   |   hermes mcp reauth --all")
+        _info("Usage: tandem mcp reauth <name>   |   tandem mcp reauth --all")
         return
     cfg = _lookup_server(name, servers)
     if cfg is not None:
@@ -1048,7 +1048,7 @@ def cmd_mcp_configure(args):
     """Reconfigure which tools are enabled for an existing MCP server."""
     import sys as _sys
     if not _sys.stdin.isatty():
-        print("Error: 'hermes mcp configure' requires an interactive terminal.", file=_sys.stderr)
+        print("Error: 'tandem mcp configure' requires an interactive terminal.", file=_sys.stderr)
         _sys.exit(1)
     name = args.name
     cfg = _lookup_server(name, _get_mcp_servers(), "Available")
@@ -1121,24 +1121,24 @@ def cmd_mcp_configure(args):
 
 
 _MCP_USAGE = (
-    "hermes mcp                                    Open the catalog picker (default)",
-    "hermes mcp catalog                            List Nous-approved MCPs",
-    "hermes mcp install <name>                     Install a catalog MCP",
-    "hermes mcp serve                              Run as MCP server",
-    "hermes mcp add <name> --url <endpoint>        Add a custom MCP server",
-    "hermes mcp add <name> --command <cmd>         Add a stdio server",
-    "hermes mcp add <name> --preset <preset>       Add from a known preset",
-    "hermes mcp remove <name>                      Remove a server",
-    "hermes mcp list                               List configured servers",
-    "hermes mcp test <name>                        Test connection",
-    "hermes mcp configure <name>                   Toggle tools",
-    "hermes mcp login <name>                       Re-authenticate OAuth",
-    "hermes mcp reauth <name> | --all              Re-auth one or all OAuth servers",
+    "tandem mcp                                    Open the catalog picker (default)",
+    "tandem mcp catalog                            List Nous-approved MCPs",
+    "tandem mcp install <name>                     Install a catalog MCP",
+    "tandem mcp serve                              Run as MCP server",
+    "tandem mcp add <name> --url <endpoint>        Add a custom MCP server",
+    "tandem mcp add <name> --command <cmd>         Add a stdio server",
+    "tandem mcp add <name> --preset <preset>       Add from a known preset",
+    "tandem mcp remove <name>                      Remove a server",
+    "tandem mcp list                               List configured servers",
+    "tandem mcp test <name>                        Test connection",
+    "tandem mcp configure <name>                   Toggle tools",
+    "tandem mcp login <name>                       Re-authenticate OAuth",
+    "tandem mcp reauth <name> | --all              Re-auth one or all OAuth servers",
 )
 
 
 def mcp_command(args):
-    """Main dispatcher for ``hermes mcp`` subcommands."""
+    """Main dispatcher for ``tandem mcp`` subcommands."""
     action = getattr(args, "mcp_action", None)
     if action == "serve":
         from mcp_serve import run_mcp_server

@@ -32,7 +32,7 @@ if TYPE_CHECKING:  # annotation-only; the runtime import would be a cycle
 # Log-record parity with the origin module (caplog tests pin "hermes_cli.auth").
 logger = logging.getLogger("hermes_cli.auth")
 
-_UNUSABLE_JWT_RELOGIN = "Re-authenticate with: hermes auth add nous"
+_UNUSABLE_JWT_RELOGIN = "Re-authenticate with: tandem auth add nous"
 
 
 def _unusable_invoke_jwt_error(reason: str, *, no_refresh_token: bool = False) -> AuthError:
@@ -349,7 +349,7 @@ _nous_shared_lock_holder = threading.local()
 def _nous_shared_auth_dir() -> Path:
     """Directory of the shared Nous token store: ``HERMES_SHARED_AUTH_DIR`` or ``<root>/shared/``.
 
-    Outside any named profile so all profiles share it (``hermes --profile X auth add nous --type
+    Outside any named profile so all profiles share it (``tandem --profile X auth add nous --type
     oauth`` one-tap imports it). Written on login AND every runtime refresh so the refresh_token
     stays current across profiles; a stale token just falls back to device-code.
     """
@@ -670,13 +670,13 @@ def _refresh_access_token(
         description = (
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
-            "custom self-heal hook, or another Hermes install sharing "
-            "~/.hermes/auth.json) called POST /api/oauth/token with Hermes's "
+            "custom self-heal hook, or another Tandem install sharing "
+            "~/.hermes/auth.json) called POST /api/oauth/token with Tandem's "
             "refresh token without persisting the rotated token back.\n"
-            "Nous refresh tokens are single-use — only Hermes may call the "
-            "refresh endpoint. For health checks, use `hermes auth status` "
+            "Nous refresh tokens are single-use — only Tandem may call the "
+            "refresh endpoint. For health checks, use `tandem auth status` "
             "instead.\n"
-            "Re-authenticate with: hermes auth add nous")
+            "Re-authenticate with: tandem auth add nous")
         relogin = True
     raise _nous_err(description, code, relogin=relogin)
 
@@ -1106,11 +1106,11 @@ def _resolve_nous_runtime_credentials(
         _tls_state_from_verify)
     with _provider_state_transaction("nous") as (auth_store, state, state_source_path):
         if not state:
-            raise _nous_err("Hermes is not logged into Nous Portal.", "nous_auth_missing", relogin=True)
+            raise _nous_err("Tandem is not logged into Nous Portal.", "nous_auth_missing", relogin=True)
         from hermes_cli.anon_auth import guest_without_free_tier
         if guest_without_free_tier(state):
             # Not terminal (no relogin): the identity stays for connectors.
-            raise _nous_err("Hermes is not logged into Nous Portal.", "nous_auth_missing")
+            raise _nous_err("Tandem is not logged into Nous Portal.", "nous_auth_missing")
         run = _NousRuntimeResolve(
             auth_store, state, state_source_path, force_refresh=force_refresh,
             stale_access_token=stale_access_token, timeout_seconds=timeout_seconds)
@@ -1333,7 +1333,7 @@ def _pool_first_oauth_status(
     on_pool_miss: Optional[Callable[[], Optional[dict[str, Any]]]] = None) -> dict[str, Any]:
     """Status snapshot for a store-backed OAuth provider (Codex, xAI).
 
-    Pool first (where `hermes auth` / `hermes model` store device_code tokens), then
+    Pool first (where `tandem auth` / `tandem model` store device_code tokens), then
     *on_pool_miss* for a pool-derived degraded status, then the legacy state via *resolve*.
 
     The pool read is an observation (``peek``), not a lease: ``select()`` refreshes an expiring
@@ -1398,7 +1398,7 @@ def _nous_device_code_login(
     verify: bool | str = False if insecure else (ca_bundle if ca_bundle else True)
     if _is_remote_session():
         open_browser = False
-    print(f"Starting Hermes login via {pconfig.name}...")
+    print(f"Starting Tandem login via {pconfig.name}...")
     print(f"Portal: {portal_base_url}")
     if insecure:
         print("TLS verification: disabled (--insecure)")
@@ -1449,7 +1449,7 @@ def _nous_device_code_login(
             print(format_auth_error(exc))
             print(f"  Subscribe here: {portal_url}/billing")
             print()
-            print("After subscribing, run `hermes model` again to finish setup.")
+            print("After subscribing, run `tandem model` again to finish setup.")
             raise SystemExit(1)
         raise
 
@@ -1657,7 +1657,7 @@ def _login_nous(args, pconfig: ProviderConfig) -> None:
             _restore_active_provider(prior_active_provider)
             print()
             print("No provider change. Nous credentials saved for future use.")
-            print("  Run `hermes model` again to switch to Nous Portal.")
+            print("  Run `tandem model` again to switch to Nous Portal.")
             return
         config_path = _update_config_for_provider(
             "nous", inference_base_url, default_model=selected_model)

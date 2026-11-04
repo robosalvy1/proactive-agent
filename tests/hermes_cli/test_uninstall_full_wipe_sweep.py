@@ -79,7 +79,7 @@ def test_full_uninstall_sweeps_macos_caches_and_dashboard_launchd(monkeypatch, t
 
     removed_caches, removed_jobs = [], []
     cache_dirs = [tmp_path / "caches" / name for name in
-                  ("Hermes", "com.nousresearch.hermes", "hermes-setup",
+                  ("Tandem", "com.nousresearch.hermes", "hermes-setup",
                    "com.nousresearch.hermes.setup")]
     for d in cache_dirs:
         d.mkdir(parents=True)

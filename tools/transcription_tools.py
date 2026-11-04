@@ -131,7 +131,7 @@ def _has_openai_audio_backend() -> bool:
 
 
 def _is_local_stt_provider(provider: str, stt_config: dict[str, Any]) -> bool:
-    """Whether *provider* is exempt from Hermes's remote upload cap."""
+    """Whether *provider* is exempt from Tandem's remote upload cap."""
     return (provider or "").lower().strip() in {"local", "local_command"}
 
 

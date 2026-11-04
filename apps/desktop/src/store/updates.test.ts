@@ -585,7 +585,7 @@ describe('requestActiveUpdate', () => {
       ok: false,
       name: 'hermes-update',
       error: 'dashboard_update_managed_externally',
-      message: 'Hermes updates are managed outside this dashboard in containerized environments.',
+      message: 'Tandem updates are managed outside this dashboard in containerized environments.',
       update_command: ''
     })
 
@@ -598,7 +598,7 @@ describe('requestActiveUpdate', () => {
     expect($backendUpdateApply.get().message).toContain('managed outside this dashboard')
   })
 
-  it('falls back to `hermes update` only when an older backend omits update_command', async () => {
+  it('falls back to `tandem update` only when an older backend omits update_command', async () => {
     setRemote(true)
     updateHermesSpy.mockResolvedValue({ ok: false, name: 'hermes-update', message: 'Run it yourself.' })
 
@@ -1091,7 +1091,7 @@ describe('applyUpdates terminal state', () => {
       guiUpdated: false,
       manualRestart: true,
       sandboxBlocked: true,
-      message: 'Backend updated. Quit and reopen Hermes to finish.'
+      message: 'Backend updated. Quit and reopen Tandem to finish.'
     })
 
     const result = await applyUpdates()

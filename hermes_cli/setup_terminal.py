@@ -110,9 +110,9 @@ def _ensure_sdk(extra: str) -> None:
             pm.sync_venv([extra], explicit=True)
         except (pm.InstallError, OSError, ValueError) as exc:
             _setup.print_warning(f"Install failed: {exc}")
-            _setup.print_info("Retry with: hermes setup terminal")
+            _setup.print_info("Retry with: tandem setup terminal")
         else:
-            _setup.print_success(f"{extra} SDK installed. Restart Hermes to use it.")
+            _setup.print_success(f"{extra} SDK installed. Restart Tandem to use it.")
 
 
 def _report_binary(found: str | None, missing: str, install_hint: str, found_prefix: str = "Found: ") -> None:
@@ -149,9 +149,9 @@ def _setup_backend_docker(config: dict) -> None:
         proxy_cfg.setdefault("enforce_on_docker", True)
         _setup.print_success("Egress firewall enabled in config")
         _setup.print_info(
-            "Run `hermes egress setup` then `hermes egress start` to mint tokens and launch the proxy.")
+            "Run `tandem egress setup` then `tandem egress start` to mint tokens and launch the proxy.")
     else:
-        _setup.print_info("Skipping egress firewall. You can enable it later with `hermes egress setup`.")
+        _setup.print_info("Skipping egress firewall. You can enable it later with `tandem egress setup`.")
 
 
 def _setup_backend_singularity(config: dict) -> None:
@@ -213,7 +213,7 @@ def _setup_backend_daytona(config: dict) -> None:
 def _setup_backend_vercel(config: dict) -> None:
     _setup.print_success("Terminal backend: Vercel Sandbox")
     _setup._info("Cloud microVM sandboxes with snapshot-backed filesystem persistence.",
-                 "Requires the optional Vercel SDK (installed through Hermes PM).")
+                 "Requires the optional Vercel SDK (installed through Tandem PM).")
     _ensure_sdk("vercel")
     _prompt_vercel_sandbox_settings(config)
 
@@ -283,7 +283,7 @@ def setup_terminal_backend(config: dict):
     """Configure the terminal execution backend."""
     import platform as _platform
     _setup.print_header("Terminal Backend")
-    _setup._info("Choose where Hermes runs shell commands and code.",
+    _setup._info("Choose where Tandem runs shell commands and code.",
                  "This affects tool execution, file access, and isolation.",
                  f"   Guide: {_setup._DOCS_BASE}/user-guide/configuration#terminal-backend-configuration", None)
     current_backend = _setup.cfg_get(config, "terminal", "backend", default="local")

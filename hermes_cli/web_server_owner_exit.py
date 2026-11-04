@@ -1,4 +1,4 @@
-"""Supersession retirement for Desktop-owned ``hermes serve --isolated`` backends reached over SSH.
+"""Supersession retirement for Desktop-owned ``tandem serve --isolated`` backends reached over SSH.
 
 Such a backend is detached on purpose (#91668) and the remote Desktop decides ownership through
 ``desktop-ssh/<ownershipId>/backend.lock.json``. When a reconnect cannot prove the recorded pid is

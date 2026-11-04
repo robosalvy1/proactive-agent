@@ -1,6 +1,6 @@
 """Loopback fake of Google Vertex AI (Gemini behind the OpenAI-compatible endpoint) + Google OAuth.
 
-Two external boundaries Hermes does not own, both faked for real:
+Two external boundaries Tandem does not own, both faked for real:
 
 * **Google OAuth2 token endpoint** (``POST /token`` on plain loopback HTTP). A generated
   service-account JSON names it as ``token_uri``, so the REAL ``google-auth`` library signs an
@@ -8,10 +8,10 @@ Two external boundaries Hermes does not own, both faked for real:
   against the SA public key and the claims Google checks (``iss``/``aud``/``scope``/``iat``/``exp``)
   and mints ``ya29.``-style access tokens with a scripted ``expires_in``.
 * **Vertex AI** at ``https://{region}-aiplatform.googleapis.com/v1beta1/projects/{project}/locations/
-  {region}/endpoints/openapi/chat/completions``. Hermes has no base-URL override for Vertex, so the
+  {region}/endpoints/openapi/chat/completions``. Tandem has no base-URL override for Vertex, so the
   fake is an HTTPS ``CONNECT`` proxy that terminates TLS with a leaf cert signed by a generated CA:
   the child trusts it through the standard ``SSL_CERT_FILE`` and reaches it through the standard
-  ``HTTPS_PROXY`` (the corporate-proxy channel Hermes documents). CONNECTs to any other host are
+  ``HTTPS_PROXY`` (the corporate-proxy channel Tandem documents). CONNECTs to any other host are
   refused (recorded), so nothing can leak to the real network.
 
 Every Vertex request is recorded (host, path, headers, body) and validated against the published
@@ -425,7 +425,7 @@ class FakeVertex:
         return f"/v1beta1/projects/{self.project}/locations/{self.region}/endpoints/openapi/chat/completions"
 
     def child_env(self) -> dict[str, str]:
-        """Standard proxy + CA-trust env for the Hermes child (no Hermes-specific knobs)."""
+        """Standard proxy + CA-trust env for the Tandem child (no Tandem-specific knobs)."""
         return {"HTTPS_PROXY": f"http://127.0.0.1:{self.port}", "NO_PROXY": "127.0.0.1,localhost",
                 "SSL_CERT_FILE": str(self.ca_pem)}
 
@@ -685,7 +685,7 @@ REGION = "us-central1"
 
 def hermes_setup(fake: FakeVertex, *, model: str = MODEL, extra_config: dict[str, Any] | None = None,
                  context_length: int | None = None) -> dict[str, Any]:
-    """``make_home`` kwargs for a Hermes home that selects ``provider: vertex`` against ``fake``: the SA
+    """``make_home`` kwargs for a Tandem home that selects ``provider: vertex`` against ``fake``: the SA
     key path in ``.env`` (VERTEX_CREDENTIALS_PATH) and project/region under ``vertex:`` in config.yaml."""
     assert fake.sa is not None
     block: dict[str, Any] = {"provider": "vertex", "default": model}

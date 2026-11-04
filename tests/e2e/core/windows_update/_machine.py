@@ -1,4 +1,4 @@
-"""A fresh Windows machine for the PR-time install.ps1 -> ``hermes update`` suite.
+"""A fresh Windows machine for the PR-time install.ps1 -> ``tandem update`` suite.
 
 Every file here drives the REAL user entry points on a real Windows runner:
 
@@ -6,11 +6,11 @@ Every file here drives the REAL user entry points on a real Windows runner:
   directory that is not a project, like a user who downloaded it);
 * the ``hermes.exe`` it publishes in ``%LOCALAPPDATA%\\hermes\\bin`` for every later
   command (``--version``, one-shot turns, ``gateway run/status/stop``, ``update``);
-* ``hermes update --yes`` from HEAD to NEXT, a synthetic child of HEAD.
+* ``tandem update --yes`` from HEAD to NEXT, a synthetic child of HEAD.
 
 Only external edges are replaced (tests/install/README.md, "The isolation trick"):
 
-* git: a bare clone of this checkout (``serve.git``) answers every canonical Hermes URL via
+* git: a bare clone of this checkout (``serve.git``) answers every canonical Tandem URL via
   ``url.<file>.insteadOf`` in a machine-owned ``GIT_CONFIG_GLOBAL``. ``serve.git`` allows
   filtered fetches, so the installer's ``--filter=blob:none`` clone is a real partial clone,
   as it is against GitHub. Every ``git.exe`` directory is removed from PATH, so the
@@ -21,7 +21,7 @@ Tool and dependency downloads (uv, the managed Python, wheels, Node) use the net
 exactly like the real installer.
 
 Each machine is a fake user profile: ``USERPROFILE``/``HOME``/``LOCALAPPDATA``/``APPDATA``
-point inside it and ``HERMES_HOME`` is NOT set, so the installer and every ``hermes``
+point inside it and ``HERMES_HOME`` is NOT set, so the installer and every ``tandem``
 command resolve the default ``%LOCALAPPDATA%\\hermes`` the way a real user's do. CI
 puts the profiles in ``C:\\Users`` itself (``HERMES_E2E_PROFILES_ROOT``): the checkout
 carries 159-character paths, so a profile any deeper than a real one would hit MAX_PATH
@@ -247,8 +247,8 @@ class Machine:
         blob = harness_git("-C", str(self.serve), "hash-object", "-w", "--no-filters", str(blob_src))
         index = self.root / "next.index"
         env = {"GIT_INDEX_FILE": str(index),
-               "GIT_AUTHOR_NAME": "Hermes E2E", "GIT_AUTHOR_EMAIL": "e2e@hermes.invalid",
-               "GIT_COMMITTER_NAME": "Hermes E2E", "GIT_COMMITTER_EMAIL": "e2e@hermes.invalid"}
+               "GIT_AUTHOR_NAME": "Tandem E2E", "GIT_AUTHOR_EMAIL": "e2e@hermes.invalid",
+               "GIT_COMMITTER_NAME": "Tandem E2E", "GIT_COMMITTER_EMAIL": "e2e@hermes.invalid"}
         harness_git("-C", str(self.serve), "read-tree", self.head, env=env)
         for path in (NEXT_MARKER, f"tests/e2e/{NEXT_MARKER}"):
             harness_git("-C", str(self.serve), "update-index", "--add", "--cacheinfo",
@@ -273,8 +273,8 @@ class Machine:
         blob = harness_git("-C", str(self.serve), "hash-object", "-w", "--no-filters", str(blob_src))
         index = self.root / f"{tag}.index"
         env = {"GIT_INDEX_FILE": str(index),
-               "GIT_AUTHOR_NAME": "Hermes E2E", "GIT_AUTHOR_EMAIL": "e2e@hermes.invalid",
-               "GIT_COMMITTER_NAME": "Hermes E2E", "GIT_COMMITTER_EMAIL": "e2e@hermes.invalid"}
+               "GIT_AUTHOR_NAME": "Tandem E2E", "GIT_AUTHOR_EMAIL": "e2e@hermes.invalid",
+               "GIT_COMMITTER_NAME": "Tandem E2E", "GIT_COMMITTER_EMAIL": "e2e@hermes.invalid"}
         harness_git("-C", str(self.serve), "read-tree", parent, env=env)
         harness_git("-C", str(self.serve), "update-index", "--add", "--cacheinfo",
                     f"100644,{blob},.hermes-e2e-{tag}", env=env)
@@ -443,7 +443,7 @@ class Machine:
             return {}
 
     def spawn_gateway(self, env_extra: dict[str, str] | None = None) -> subprocess.Popen:
-        """``hermes gateway run`` through the published launcher, windowless and detached from
+        """``tandem gateway run`` through the published launcher, windowless and detached from
         this console: the shape the Desktop / login item uses to host a gateway."""
         self._seq += 1
         log = self.logs / f"{self._seq:02d}-gateway-run.log"
@@ -592,7 +592,7 @@ class Journey:
 
 
 def failure_line(run: Run) -> str:
-    """The first line a ``hermes`` command printed as its failure (``✗ ...``), else ``""``."""
+    """The first line a ``tandem`` command printed as its failure (``✗ ...``), else ``""``."""
     for line in run.stdout.splitlines():
         if line.strip().startswith("✗"):
             return line.strip()
@@ -619,7 +619,7 @@ class Turn:
 
 
 def one_shot_turn(machine: Machine, srv: Any, label: str) -> Turn:
-    """``hermes chat -q ... -Q`` through the published launcher against the loopback provider."""
+    """``tandem chat -q ... -Q`` through the published launcher against the loopback provider."""
     from tests.e2e.core.windows._helpers import last_user
     from tests.fakes.fake_llm_provider import Text
 

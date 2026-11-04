@@ -44,7 +44,7 @@ def test_no_scrub_is_byte_preserving_except_explicit_extra():
 def test_e2e_scrubbed_env_resolves_bare_hermes_under_minimal_parent_path(monkeypatch):
     """Regression for #92998/#93082: a gateway launched by systemd/cron with a
     minimal PATH (no hermes console-script dir) must still hand cron job
-    children an env whose PATH resolves bare ``hermes``.
+    children an env whose PATH resolves bare ``tandem``.
 
     Exercises the REAL factory and the REAL bin-dir resolver — no mocks of the
     helpers. cron/scheduler._run_job_script builds its child env via exactly

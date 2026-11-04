@@ -12,7 +12,7 @@ import pytest
 
 pytestmark = pytest.mark.platforms("windows")
 INSTALLER = Path(__file__).resolve().parents[3] / "scripts" / "install.ps1"
-REFUSAL = "exists and is not a Hermes git checkout"
+REFUSAL = "exists and is not a Tandem git checkout"
 
 
 def _failing_install_env(tmp_path):

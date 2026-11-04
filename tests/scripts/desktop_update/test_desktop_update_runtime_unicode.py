@@ -1,7 +1,7 @@
 """runtime.ps1 must decode the launcher's UTF-8 path output on Windows (#124526).
 
 ``scripts/desktop-update/runtime.ps1`` captures two machine-readable outputs from
-Hermes launchers: ``--print-runtime-command`` (a JSON array whose first element
+Tandem launchers: ``--print-runtime-command`` (a JSON array whose first element
 is the interpreter path) and ``--version`` (whose ``Install directory:`` line
 names the source root). Both can sit under a non-ASCII profile
 (``C:\\Users\\Balázs``). The launchers print UTF-8 — the real CLI's

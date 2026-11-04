@@ -1,4 +1,4 @@
-"""Tests for ``hermes plugins validate`` (hermes_cli/plugin_validate.py).
+"""Tests for ``tandem plugins validate`` (hermes_cli/plugin_validate.py).
 
 Static manifest checks + subprocess-isolated capability probing against a
 recording stub context.
@@ -416,7 +416,7 @@ class TestDesktopSurface:
 
 
 def test_runtime_rebind_of_hermes_core_fails_admission(tmp_path):
-    """A plugin that replaces Hermes core in place fails ``no core override``: through a module
+    """A plugin that replaces Tandem core in place fails ``no core override``: through a module
     import, a helper that ``setattr``s its parameter, a local helper returning
     ``import_module(...)`` under an alias, and a write into a core module's dict. Ordinary use of
     core (calling it, mutating its return values, its own ``tools`` package, tests) passes."""

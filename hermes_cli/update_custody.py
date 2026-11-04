@@ -138,7 +138,7 @@ def _past_commit() -> bool:
     return current is not None and any(stage.get("name") == "apply" for stage in current.data.get("stages") or ())
 
 
-def refusal_notice(command: str = "hermes update") -> str | None:
+def refusal_notice(command: str = "tandem update") -> str | None:
     """What the command's failure path prints when this run refused an update child (m2), in
     place of whatever generic error the refusal turned into downstream; ``None`` otherwise."""
     if _RUN["refused"] is None:

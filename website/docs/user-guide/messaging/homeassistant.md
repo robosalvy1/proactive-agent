@@ -1,13 +1,13 @@
 ---
 title: Home Assistant
-description: Control your smart home with Hermes Agent via the Home Assistant plugin from the plugin catalog.
+description: Control your smart home with Tandem Agent via the Home Assistant plugin from the plugin catalog.
 sidebar_label: Home Assistant
 sidebar_position: 5
 ---
 
 # Home Assistant Integration
 
-Hermes Agent integrates with [Home Assistant](https://www.home-assistant.io/) through the official **`homeassistant` plugin** from the [plugin catalog](../features/plugins.md). The plugin is maintained by Nous Research in [NousResearch/hermes-official-plugins](https://github.com/NousResearch/hermes-official-plugins/tree/main/homeassistant) and is not part of Hermes core. It provides two things:
+Tandem Agent integrates with [Home Assistant](https://www.home-assistant.io/) through the official **`homeassistant` plugin** from the [plugin catalog](../features/plugins.md). The plugin is maintained by Nous Research in [NousResearch/hermes-official-plugins](https://github.com/NousResearch/hermes-official-plugins/tree/main/homeassistant) and is not part of Tandem core. It provides two things:
 
 1. **Gateway platform** — subscribes to real-time state changes via WebSocket and responds to events
 2. **Smart home tools** — four LLM-callable tools (the `homeassistant` toolset) for querying and controlling devices via the REST API
@@ -15,19 +15,19 @@ Hermes Agent integrates with [Home Assistant](https://www.home-assistant.io/) th
 ## Install
 
 ```bash
-hermes plugins install homeassistant
+tandem plugins install homeassistant
 ```
 
 Plugins are installed per profile. To use Home Assistant in another profile, install it there too:
 
 ```bash
-hermes -p <profile> plugins install homeassistant
+tandem -p <profile> plugins install homeassistant
 ```
 
 The plugin declares its own Python dependency (`aiohttp`), so there is no pip extra to install. The old `hermes-agent[homeassistant]` extra has been removed.
 
 :::info Upgrading from a release that bundled Home Assistant
-Nothing to do. Every profile that was already using Home Assistant — `HASS_TOKEN` in its `.env`, `platforms.homeassistant` enabled (or given a `token`) in `config.yaml`, or the `homeassistant` toolset listed in `platform_toolsets` — gets the plugin installed automatically from the catalog by `hermes update` (for all profiles sharing the install). If that step could not run, Hermes installs it the first time the profile starts (agent or gateway start; this honours `security.allow_lazy_installs`). After a failed attempt (offline, catalog unreachable) starts retry at most once an hour; `hermes update` always retries. The outcome is reported in the terminal, the Desktop app and chat. This happens once per profile: if you later remove the plugin (`hermes plugins remove homeassistant`), it stays removed.
+Nothing to do. Every profile that was already using Home Assistant — `HASS_TOKEN` in its `.env`, `platforms.homeassistant` enabled (or given a `token`) in `config.yaml`, or the `homeassistant` toolset listed in `platform_toolsets` — gets the plugin installed automatically from the catalog by `tandem update` (for all profiles sharing the install). If that step could not run, Tandem installs it the first time the profile starts (agent or gateway start; this honours `security.allow_lazy_installs`). After a failed attempt (offline, catalog unreachable) starts retry at most once an hour; `tandem update` always retries. The outcome is reported in the terminal, the Desktop app and chat. This happens once per profile: if you later remove the plugin (`tandem plugins remove homeassistant`), it stays removed.
 
 Your configuration carries over unchanged: the same `HASS_TOKEN` / `HASS_URL` variables, the same `homeassistant` platform name and `platforms.homeassistant` keys, the same `homeassistant` toolset and tool names, and the same cron `deliver: homeassistant:<notify target>` syntax. One difference: like every plugin tool, the `ha_*` tools sit behind [Tool Search](../features/tools.md) (`tool_search` / `tool_call`) when it is on, instead of being listed directly.
 :::
@@ -39,7 +39,7 @@ Your configuration carries over unchanged: the same `HASS_TOKEN` / `HASS_URL` va
 1. Open your Home Assistant instance
 2. Go to your **Profile** (click your name in the sidebar)
 3. Scroll to **Long-Lived Access Tokens**
-4. Click **Create Token**, give it a name like "Hermes Agent"
+4. Click **Create Token**, give it a name like "Tandem Agent"
 5. Copy the token
 
 ### 2. Configure Environment Variables
@@ -64,7 +64,7 @@ With the plugin installed, the `homeassistant` toolset is enabled automatically 
 ### 3. Start the Gateway
 
 ```bash
-hermes gateway
+tandem gateway
 ```
 
 Home Assistant will appear as a connected platform alongside any other messaging platforms (Telegram, Discord, etc.).
@@ -203,7 +203,7 @@ State changes are formatted as human-readable messages based on domain:
 
 ### Agent Responses
 
-Outbound messages from the agent are delivered as **Home Assistant persistent notifications** (via `persistent_notification.create`). These appear in the HA notification panel with the title "Hermes Agent".
+Outbound messages from the agent are delivered as **Home Assistant persistent notifications** (via `persistent_notification.create`). These appear in the HA notification panel with the title "Tandem Agent".
 
 The platform uses the `minimal` display defaults (no tool-progress or streaming chatter in notifications). Override them under `display.platforms.homeassistant` in `config.yaml` if you want more.
 
@@ -293,14 +293,14 @@ Agent automatically:
 
 **Platform or tools missing.**
 Check that the plugin is installed and enabled in the active profile with
-`hermes plugins list`. If it is missing, run `hermes plugins install homeassistant`
-(or `hermes -p <profile> plugins install homeassistant`) and restart the gateway.
+`tandem plugins list`. If it is missing, run `tandem plugins install homeassistant`
+(or `tandem -p <profile> plugins install homeassistant`) and restart the gateway.
 With `security.allow_lazy_installs` turned off, the automatic first-start install
 is skipped and you must install the plugin yourself.
 
 **Environment variables not picked up.**
 The adapter reads credentials from `~/.hermes/.env` (auto-merged at startup) or
-from `config.yaml`. Double-check the file lives under the active Hermes profile
+from `config.yaml`. Double-check the file lives under the active Tandem profile
 home and that there's no stray quoting around the URL/token. Restart the gateway
 after editing — env changes are only applied on process start.
 
@@ -309,5 +309,5 @@ The token must be a *Long-Lived Access Token* created from your HA user profile
 page (**Profile → Security → Long-lived access tokens**). Short-lived UI
 session tokens won't work. Also verify the base URL includes the scheme and
 port (e.g. `http://homeassistant.local:8123`) and is reachable from the host
-running Hermes — `curl -H "Authorization: Bearer <token>" <url>/api/` should
+running Tandem — `curl -H "Authorization: Bearer <token>" <url>/api/` should
 return `{"message": "API running."}`.

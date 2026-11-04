@@ -123,7 +123,7 @@ def test_chat_client_never_spawns_mcp_servers_the_gateway_owns(monkeypatch, comm
 def test_prepare_agent_startup_skips_discovery_when_chat_resolves_to_tui(
     monkeypatch,
 ):
-    """Bare ``hermes`` / ``hermes chat`` on a TTY with ``display.interface:
+    """Bare ``tandem`` / ``tandem chat`` on a TTY with ``display.interface:
     tui`` resolves to the TUI via ``_resolve_use_tui``, but does NOT pass
     ``--tui`` or ``HERMES_TUI``. Discovery must be skipped in the wrapper:
     the TUI gateway owns it, and the wrapper would otherwise hold a dead
@@ -486,7 +486,7 @@ def test_lazy_only_discovery_counts_as_usable_at_both_startup_sites(monkeypatch,
 
 
 def test_server_added_after_discovery_is_connected_by_the_next_agent_build(monkeypatch, tmp_path):
-    """#76954: ``hermes mcp add`` against a running Desktop backend. Discovery already ran and left
+    """#76954: ``tandem mcp add`` against a running Desktop backend. Discovery already ran and left
     ``github`` live, so the re-entry every agent build makes returned early and the new server's
     tools never reached a new session. It must run discovery again, and only while something
     configured is still unconnected."""

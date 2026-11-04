@@ -94,6 +94,10 @@ class CLICommandsSessionToolsMixin:
     ``/profile`` handlers (moved from ``CLICommandsMixin``)."""
 
 
+    def _handle_home_command(self, command: str) -> None:
+        from hermes_cli.home import handle_cli_home
+        handle_cli_home(self, command)
+
     # ---- /stop, /agents -------------------------------------------------------------------
     def _handle_stop_command(self):
         """Handle /stop — kill all running background processes and background (async) delegations.
@@ -139,7 +143,7 @@ class CLICommandsSessionToolsMixin:
 
     # ---- /journey, /paste, /copy, /image --------------------------------------------------
     def _handle_journey_command(self, cmd_original: str) -> None:
-        """Handle /journey — the learning timeline (see `hermes journey`). Read-only views render
+        """Handle /journey — the learning timeline (see `tandem journey`). Read-only views render
         Rich color that patch_stdout would swallow, so capture with forced ANSI and re-emit via
         ``_cprint``; ``delete``/``edit`` are interactive and keep real stdio."""
         from hermes_cli.journey import register_cli

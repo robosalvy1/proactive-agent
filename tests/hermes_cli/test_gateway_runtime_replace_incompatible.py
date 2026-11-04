@@ -1,9 +1,9 @@
-"""An owner from an older Hermes on the SAME home is replaced by ensure, never reported forever.
+"""An owner from an older Tandem on the SAME home is replaced by ensure, never reported forever.
 
 Upgrade path (Windows Desktop report, TUI "retrying in 30s" forever): the pre-protocol gateway a user
 left running answers ``identify`` without ``runtime_protocol``. Every client of this install ensures
-through ``ensure_gateway_runtime`` (TUI bootstrap, Desktop's ``hermes gateway ensure``), so that is
-where the old owner is stopped the way ``hermes gateway stop`` stops it and the current one started.
+through ``ensure_gateway_runtime`` (TUI bootstrap, Desktop's ``tandem gateway ensure``), so that is
+where the old owner is stopped the way ``tandem gateway stop`` stops it and the current one started.
 A gateway of another install (a home that resolves outside this install's root) stays refused.
 """
 from __future__ import annotations
@@ -93,7 +93,7 @@ def test_a_refused_replacement_is_reported_with_its_reason(home, monkeypatch):
     result = runtime.ensure_gateway_runtime(home, timeout=5)
 
     assert (result.state, result.reason_code) == ("incompatible", "runtime_protocol")
-    assert result.detail and "another Hermes install" in result.detail
+    assert result.detail and "another Tandem install" in result.detail
 
 
 # --- the stop itself -------------------------------------------------------------------------------

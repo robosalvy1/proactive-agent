@@ -1,4 +1,4 @@
-"""SSH file paths and cwds live in the remote namespace, never the Hermes host's.
+"""SSH file paths and cwds live in the remote namespace, never the Tandem host's.
 
 In Docker the host subprocess home is ``/opt/data/home``; expanding ``~`` or a
 relative path against it and sending the result over SSH names a directory the

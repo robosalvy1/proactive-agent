@@ -152,3 +152,30 @@ def test_powershell_cold_sync_changed_input_warm_and_failure(tmp_path):
             "-noprofile", "-noninteractive", "-executionpolicy", "bypass", "-file",
             str(root / "setup-hermes.ps1").lower(), "-runtimeonly",
         ]
+
+
+@pytest.mark.platforms("posix")
+def test_tandem_activation_dispatch_guard_and_cleanup(tmp_path):
+    root, env = sync_checkout(tmp_path)
+    fake_store(tmp_path)
+    # A real checkout boundary, with a synthetic entry point recording argv.
+    subprocess.run(['git', 'init', str(root)], check=True, capture_output=True)
+    (root / 'tandem').write_text(
+        "import sys; print(repr(sys.argv[1:])); sys.exit(7)\n", encoding='utf-8',
+    )
+    script = f'''
+        source {shlex.quote(str(root / 'activate'))} || exit 20
+        cd {shlex.quote(str(root))} || exit 21
+        tandem 'spaces and café' ''; test "$?" = 7 || exit 22
+        hermes 'spaces and café' ''; test "$?" = 7 || exit 23
+        cd {shlex.quote(str(tmp_path))} || exit 24
+        tandem ignored; test "$?" = 1 || exit 25
+        deactivate
+        ! declare -F tandem >/dev/null || exit 26
+        ! declare -F hermes >/dev/null || exit 27
+    '''
+    result = subprocess.run([bash(), '-c', script], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=40, check=False)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert result.stdout.splitlines() == ["['spaces and café', '']"] * 2
+    assert 'outside' in result.stderr

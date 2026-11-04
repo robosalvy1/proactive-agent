@@ -4,7 +4,7 @@ title: "Agent Loop 内部机制"
 description: "AIAgent 执行流程、API 模式、工具、回调及回退行为的详细说明"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Agent Loop 内部机制
@@ -43,7 +43,7 @@ result = agent.run_conversation(
 
 ## API 模式
 
-Hermes 支持三种 API 执行模式，通过 provider 选择、显式参数和 base URL 启发式规则来确定：
+Tandem 支持三种 API 执行模式，通过 provider 选择、显式参数和 base URL 启发式规则来确定：
 
 | API 模式 | 用途 | 客户端类型 |
 |----------|------|-----------|
@@ -219,7 +219,7 @@ agent 通过 `IterationBudget` 追踪迭代次数：
 每轮结束后：
 - 消息保存到 session 存储（通过 `hermes_state.py` 使用 SQLite）
 - 内存变更刷写到 `MEMORY.md` / `USER.md`
-- 可通过 `/resume` 或 `hermes chat --resume` 恢复 session
+- 可通过 `/resume` 或 `tandem chat --resume` 恢复 session
 
 ## 关键源文件
 

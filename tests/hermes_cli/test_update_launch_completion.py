@@ -89,7 +89,7 @@ def _committed_checkout(tmp_path, monkeypatch):
 def test_completed_tree_discharges_only_a_marker_older_than_its_stamp(
         tmp_path, monkeypatch, completion_tail, marker_age, owed):
     """Fresh install under a preserved home (#123314): a marker armed before the stamp
-    owes no rebuild of the same SHA. One armed after it (a same-commit `hermes update`
+    owes no rebuild of the same SHA. One armed after it (a same-commit `tandem update`
     that failed or was killed) is newer debt and the launch still finishes it."""
     import pm
 
@@ -172,12 +172,12 @@ def test_failed_completion_tail_is_retried_without_rebuilding_dependencies(tmp_p
 
     monkeypatch.setattr(pm, "sync_venv", sync)
     completion_tail.exit_code = 1
-    with pytest.raises(RuntimeError, match="run `hermes update`"):
+    with pytest.raises(RuntimeError, match="run `tandem update`"):
         venv_sync.prepare_launch(root, [])
     assert len(syncs) == 1 and len(completion_tail) == 1
     assert pm.venv_is_current()
 
-    with pytest.raises(RuntimeError, match="run `hermes update`"):
+    with pytest.raises(RuntimeError, match="run `tandem update`"):
         venv_sync.prepare_launch(root, [])
     assert len(syncs) == 1, "current dependencies were rebuilt for a tail retry"
     assert len(completion_tail) == 2
@@ -438,7 +438,7 @@ def test_supervised_launch_leaves_a_pending_tail_to_the_cli(
 
     systemd/launchd/s6 restart the gateway under a policy; with a marker that never
     clears, each boot would rebuild the completion environment until the disk fills.
-    The obligation stays with `hermes update`. An off value (`0`/`false`) is not a
+    The obligation stays with `tandem update`. An off value (`0`/`false`) is not a
     supervised launch and still repays the tail.
     """
     import pm
@@ -459,7 +459,7 @@ def test_supervised_launch_leaves_a_pending_tail_to_the_cli(
         assert completion_tail == []
         assert pending.is_file(), "a supervised child discharged an obligation the CLI still owes"
         out, err = capsys.readouterr()
-        assert out == "" and err.count("run `hermes update`") == 1
+        assert out == "" and err.count("run `tandem update`") == 1
     else:
         assert len(completion_tail) == 1
         assert not pending.is_file()

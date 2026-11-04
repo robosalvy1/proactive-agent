@@ -85,7 +85,7 @@ async def test_hermes_provider_forwards_401_triggers_refresh(tmp_path, monkeypat
 
     metadata = OAuthClientMetadata(
         redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-        client_name="Hermes Agent",
+        client_name="Tandem Agent",
     )
     provider = _HERMES_PROVIDER_CLS(
         server_name="srv",
@@ -133,7 +133,7 @@ async def test_long_lived_resource_request_does_not_block_concurrent_post(
 
     MCP SDK 2.0.0 wraps its entire auth-flow generator in one lock.  Leaving
     the GET response pending then prevents a concurrent POST from even
-    acquiring its Bearer token.  Hermes narrows that lock around resource I/O
+    acquiring its Bearer token.  Tandem narrows that lock around resource I/O
     while retaining it for OAuth state transitions.
     """
     from tools.mcp_tool import sdk_httpx
@@ -173,7 +173,7 @@ async def test_long_lived_resource_request_does_not_block_concurrent_post(
         server_url="https://example.com/mcp",
         client_metadata=OAuthClientMetadata(
             redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-            client_name="Hermes Agent",
+            client_name="Tandem Agent",
         ),
         storage=storage,
         redirect_handler=_noop_redirect,
@@ -274,7 +274,7 @@ async def test_fabricated_dcr_registration_rejected_before_network(tmp_path, mon
 
     metadata = OAuthClientMetadata(
         redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-        client_name="Hermes Agent",
+        client_name="Tandem Agent",
     )
     provider = _HERMES_PROVIDER_CLS(
         server_name="srv",
@@ -345,7 +345,7 @@ async def test_fabricated_dcr_registration_rejected_before_network(tmp_path, mon
     assert "does not support automatic client registration" in text
     assert "https://example.com/register" in text
     assert "config.yaml" in text
-    assert "hermes mcp login srv" in text
+    assert "tandem mcp login srv" in text
     await flow.aclose()
 
 
@@ -375,7 +375,7 @@ async def test_advertised_registration_endpoint_passes_through(tmp_path, monkeyp
     storage = HermesTokenStorage("srv")
     metadata = OAuthClientMetadata(
         redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-        client_name="Hermes Agent",
+        client_name="Tandem Agent",
     )
     provider = _HERMES_PROVIDER_CLS(
         server_name="srv",
@@ -472,7 +472,7 @@ async def test_guard_ignores_non_fabricated_post_paths(tmp_path, monkeypatch):
         server_url="https://example.com/mcp",
         client_metadata=OAuthClientMetadata(
             redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-            client_name="Hermes Agent",
+            client_name="Tandem Agent",
         ),
         storage=HermesTokenStorage("srv"),
         redirect_handler=_noop_redirect,

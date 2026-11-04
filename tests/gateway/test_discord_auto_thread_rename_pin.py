@@ -1,7 +1,7 @@
-"""Hermes's own auto-thread title rename keeps the pinned session-context prompt.
+"""Tandem's own auto-thread title rename keeps the pinned session-context prompt.
 
 ``chat_name`` keys the pinned prompt, and the title lane renames a new auto-thread between turns 1
-and 2. Any other rename still re-renders, including a later restore of Hermes's title.
+and 2. Any other rename still re-renders, including a later restore of Tandem's title.
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ def conversation(monkeypatch: pytest.MonkeyPatch) -> Conversation:
     monkeypatch.setattr(discord_platform, "DISCORD_AVAILABLE", True)
     monkeypatch.setenv("DISCORD_REQUIRE_MENTION", "false")
     monkeypatch.setenv("DISCORD_AUTO_THREAD", "true")
-    parent = SimpleNamespace(id=700, name="ops", topic=None, guild=SimpleNamespace(id=1, name="Hermes Server"))
+    parent = SimpleNamespace(id=700, name="ops", topic=None, guild=SimpleNamespace(id=1, name="Tandem Server"))
     thread = _Thread(parent)
     adapter = DiscordAdapter(PlatformConfig(enabled=True, token="fake"))
     adapter._client = SimpleNamespace(user=SimpleNamespace(id=999), get_channel=lambda _id: thread)
@@ -84,9 +84,9 @@ async def test_hermes_title_keeps_the_pin_and_a_moderator_rename_does_not(
     assert await turn(thread, 102) == first
 
     thread.name = moderator_name
-    assert f"Hermes Server / #ops / {moderator_name}" in await turn(thread, 103)
+    assert f"Tandem Server / #ops / {moderator_name}" in await turn(thread, 103)
     thread.name = TITLE  # the moderator restores Hermes's title: it shows as itself
-    assert f"Hermes Server / #ops / {TITLE}" in await turn(thread, 104)
+    assert f"Tandem Server / #ops / {TITLE}" in await turn(thread, 104)
 
 
 @pytest.mark.asyncio
@@ -102,7 +102,7 @@ async def test_a_moderator_round_trip_during_the_edit_retires_the_record(convers
 
     thread.edit = edit
     assert await adapter.rename_thread("800", TITLE, only_if_current_name=OPENING)
-    assert f"Hermes Server / #ops / {TITLE}" in await turn(thread, 101)
+    assert f"Tandem Server / #ops / {TITLE}" in await turn(thread, 101)
 
 
 @pytest.mark.asyncio
@@ -128,7 +128,7 @@ async def test_an_unfinished_edit_drops_its_record(conversation: Conversation, c
         finish.set()
         assert not await attempt
     thread.name = TITLE  # chosen by someone else
-    assert f"Hermes Server / #ops / {TITLE}" in await turn(thread, 101)
+    assert f"Tandem Server / #ops / {TITLE}" in await turn(thread, 101)
 
 
 def test_an_unfinished_attempt_keeps_a_newer_attempts_record() -> None:

@@ -79,7 +79,7 @@ class ParityHome:
     canaries: dict[str, str] = field(default_factory=dict)
 
     def env(self, extra: dict[str, str] | None = None) -> dict[str, str]:
-        """Hermetic env for a subprocess Hermes: fake HOME, no real credentials."""
+        """Hermetic env for a subprocess Tandem: fake HOME, no real credentials."""
         import pwd  # POSIX-only; the suite is Linux-gated
 
         # Refuse only a home the real install would read as live state (its root or a profile).
@@ -460,9 +460,9 @@ def terminate(proc: subprocess.Popen, timeout: float = 30.0) -> int | None:
 
 
 def stop_profile_gateway(ph: ParityHome, timeout: float = STOP_TIMEOUT) -> bool:
-    """The normal stop for the profile's ``gateway run`` daemon: ``hermes gateway stop``.
+    """The normal stop for the profile's ``gateway run`` daemon: ``tandem gateway stop``.
 
-    ``hermes -z``, ``hermes chat -q``, ``hermes acp`` and ``hermes cron run`` are clients of the
+    ``tandem -z``, ``tandem chat -q``, ``tandem acp`` and ``tandem cron run`` are clients of the
     unified gateway runtime: their first connect spawns the profile's daemon (``ensure_gateway_runtime``
     → ``spawn_unmanaged_gateway``), the daemon owns the agent — and with it the MCP server tree — and it
     keeps serving after the client exits (cron, messaging, the next client). So the surface's
@@ -474,7 +474,7 @@ def stop_profile_gateway(ph: ParityHome, timeout: float = STOP_TIMEOUT) -> bool:
         hermes_argv("gateway", "stop"), cwd=ph.project, env=ph.env(), capture_output=True, text=True,
         timeout=timeout, stdin=subprocess.DEVNULL, check=False
     )
-    assert proc.returncode == 0, f"hermes gateway stop exited {proc.returncode}: {proc.stderr[-2000:]}"
+    assert proc.returncode == 0, f"tandem gateway stop exited {proc.returncode}: {proc.stderr[-2000:]}"
     return "Stopped gateway" in proc.stdout
 
 

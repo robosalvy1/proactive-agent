@@ -19,10 +19,10 @@ def _get_hermes_version() -> str:
 
 
 def build_user_agent() -> str:
-    """``QQBotAdapter/<qqbot_version> (Python/<py_version>; <os>; Hermes/<hermes_version>)``."""
+    """``QQBotAdapter/<qqbot_version> (Python/<py_version>; <os>; Tandem/<hermes_version>)``."""
     v = sys.version_info
     return (f"QQBotAdapter/{QQBOT_VERSION} (Python/{v.major}.{v.minor}.{v.micro}; "
-            f"{platform.system().lower()}; Hermes/{_get_hermes_version()})")
+            f"{platform.system().lower()}; Tandem/{_get_hermes_version()})")
 
 
 def get_api_headers() -> dict[str, str]:

@@ -175,7 +175,7 @@ def _generate_test_key(home: Path, passphrase: str = "") -> str:
     its fingerprint. Uses the production _gpg_run wrapper."""
     stage_apt_repo._gpg_run(
         home,
-        ["--quick-generate-key", "Hermes APT Test <apt-test@example.invalid>",
+        ["--quick-generate-key", "Tandem APT Test <apt-test@example.invalid>",
          "ed25519", "sign", "never"],
         passphrase=passphrase,
     )

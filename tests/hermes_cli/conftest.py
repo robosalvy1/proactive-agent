@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture
 def all_assignees_spawnable(monkeypatch):
-    """Pretend every assignee maps to a real Hermes profile.
+    """Pretend every assignee maps to a real Tandem profile.
 
     Most dispatcher tests use synthetic assignees ("alice", "bob") that
     don't correspond to actual profile directories on disk. Without this
@@ -25,7 +25,7 @@ def _suppress_concurrent_hermes_gate(request, monkeypatch):
 
     The Windows update path now refuses to proceed when another
     ``hermes.exe`` is detected (issue #26670). On a developer's Windows
-    machine running the test suite via ``hermes`` itself, this would
+    machine running the test suite via ``tandem`` itself, this would
     flag the running agent as a concurrent instance and abort every
     ``cmd_update`` test. Tests that want to exercise the gate explicitly
     re-patch ``_detect_concurrent_hermes_instances`` with their own
@@ -60,7 +60,7 @@ def _suppress_concurrent_hermes_gate(request, monkeypatch):
 def _private_repo_checkout_lock(monkeypatch, tmp_path_factory):
     """``cmd_update`` locks the checkout it runs from: in tests, this repository, whose git
     common dir every parallel test process (and, from a linked worktree, the live install's
-    ``hermes update``) shares. Give each test its own lock file for THIS repo; lock tests on
+    ``tandem update``) shares. Give each test its own lock file for THIS repo; lock tests on
     fixture checkouts are unaffected."""
     from pathlib import Path
 
@@ -79,7 +79,7 @@ def _private_repo_checkout_lock(monkeypatch, tmp_path_factory):
 
 @pytest.fixture(autouse=True)
 def _source_channels_resolve_locally(request, monkeypatch):
-    """Every unflagged ``hermes update`` resolves its channel through R2; tests must
+    """Every unflagged ``tandem update`` resolves its channel through R2; tests must
     not reach the network for that. Default every channel to a ``source-branch``
     record delivering ``origin/<name>`` through the documented seam. Channel tests
     that model records themselves re-patch ``_resolve_channel`` after this runs;

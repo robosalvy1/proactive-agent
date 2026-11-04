@@ -1,6 +1,6 @@
-"""Hermes-tools-as-MCP server for the codex_app_server runtime.
+"""Tandem-tools-as-MCP server for the codex_app_server runtime.
 
-Codex owns the loop and tool list there, so a curated subset of Hermes tools is
+Codex owns the loop and tool list there, so a curated subset of Tandem tools is
 exposed over stdio MCP; codex registers it via ``~/.codex/config.toml
 [mcp_servers.hermes-tools]``. Run: ``python -m agent.transports.hermes_tools_mcp_server``.
 """
@@ -69,7 +69,7 @@ EXPOSED_TOOLS: tuple[str, ...] = (
 
 
 def _build_server() -> Any:
-    """Create the MCP server with Hermes tools attached (lazy imports: importable without ``mcp``)."""
+    """Create the MCP server with Tandem tools attached (lazy imports: importable without ``mcp``)."""
     try:
         # mcp 2.0 renamed `mcp.server.fastmcp` to `mcp.server.MCPServer` (same surface).
         from mcp.server import MCPServer
@@ -81,7 +81,7 @@ def _build_server() -> Any:
     mcp = MCPServer(
         HERMES_TOOLS_MCP_SERVER_NAME,
         instructions=(
-            "Hermes Agent's tool surface, exposed for use inside a Codex "
+            "Tandem Agent's tool surface, exposed for use inside a Codex "
             "session. Use these for capabilities Codex's built-in toolset "
             "doesn't cover: web search/extract, browser automation, "
             "subagent delegation, vision, image generation, persistent "
@@ -118,9 +118,9 @@ def _build_server() -> Any:
     for name in EXPOSED_TOOLS:
         spec = all_defs.get(name)
         if spec is None:
-            logger.debug("skipping %s — not registered in this Hermes process", name)
+            logger.debug("skipping %s — not registered in this Tandem process", name)
             continue
-        description = spec.get("description") or f"Hermes {name} tool"
+        description = spec.get("description") or f"Tandem {name} tool"
         params_schema = spec.get("parameters") or {"type": "object", "properties": {}}
         try:
             mcp.add_tool(_make_handler(name, params_schema, description), name=name, description=description)

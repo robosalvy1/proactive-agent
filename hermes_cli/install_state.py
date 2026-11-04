@@ -1,12 +1,12 @@
-"""Has this OS user already used Hermes on this computer?
+"""Has this OS user already used Tandem on this computer?
 
 The desktop's welcome trial goes only to a first install, once per OS user, so ``onboarding.start``
 asks this before it claims one. The answer is about the OS user, not the active profile: it looks at
-every Hermes root the machine names (default roots, channel and package roots, the roots gateway
-services and the ``hermes`` launcher point at) and at a marker file no Hermes setting can move.
+every Tandem root the machine names (default roots, channel and package roots, the roots gateway
+services and the ``tandem`` launcher point at) and at a marker file no Tandem setting can move.
 
 This is product gating, not security: the inference API's limits stop abuse. So it reads only small
-known files, never scans the disk, never writes into a Hermes root, and treats doubt as "used".
+known files, never scans the disk, never writes into a Tandem root, and treats doubt as "used".
 """
 
 from __future__ import annotations
@@ -120,7 +120,7 @@ _claim_lock_holder = threading.local()
 
 @contextlib.contextmanager
 def claim_lock() -> Iterator[None]:
-    """One welcome-trial claim at a time for this OS user, whichever Hermes data root it runs from
+    """One welcome-trial claim at a time for this OS user, whichever Tandem data root it runs from
     (stable and canary started together hold different auth locks). Beside the marker it guards, and
     taken before any auth lock."""
     places = machine_places()
@@ -298,7 +298,7 @@ def _is_this_account(account: str) -> bool:
 
 
 def _launcher_root() -> Iterable[Path]:
-    """The root that owns the ``hermes`` on PATH: its launcher execs that root's ``tools/`` Python."""
+    """The root that owns the ``tandem`` on PATH: its launcher execs that root's ``tools/`` Python."""
     from hermes_cli._launchers import _launcher_python
     from hermes_platform.resolver import locate_command
 
@@ -412,7 +412,7 @@ def _provider_key(home: _Root) -> bool:
 
 def _provider_login(home: _Root) -> bool:
     """A login, an active provider or a guest (only a connector action or a trial claim makes one),
-    or a credential the user added by hand. Pool rows Hermes seeds on its own (shell env keys, other
+    or a credential the user added by hand. Pool rows Tandem seeds on its own (shell env keys, other
     tools' CLI logins) prove nothing."""
     for store in home.auth_stores:
         providers = store.get("providers")

@@ -357,14 +357,14 @@ method("profiles.get_asset", params=ProfilesGetAssetParams, result=ProfilesGetAs
 
 class OnboardingStateParams(Params):
     """``assume_fresh``: the unpackaged desktop's ``--fresh-install`` launch; the backend treats this
-    machine as one that never used Hermes. Packaged builds never send it."""
+    machine as one that never used Tandem. Packaged builds never send it."""
 
     assume_fresh: bool = False
 
 
 class OnboardingRunStateResult(Result):
     """``run``: onboarding opens on this launch (root config ``onboarding.run``, else a machine that
-    never used Hermes). ``eligible``: this is the desktop's local backend and the welcome trial or a
+    never used Tandem). ``eligible``: this is the desktop's local backend and the welcome trial or a
     configured provider can carry the first chat.
     ``session_id``: the stored id of the onboarding chat still in progress, so a relaunch reopens it;
     ``run_id``: that run's id, which ``onboarding.ended`` names."""

@@ -274,7 +274,7 @@ def test_maintenance_keys_leave_gits_own_fold_running(tmp_path: Path) -> None:
     """Between updates, git's post-lazy-fetch auto maintenance is what folds packs (git <= 2.53).
 
     The keys stop the commit-graph write without switching that fold off: ``maintenance.auto=false``
-    let the packs pile up until the next ``hermes update``. Compared against a stock-config clone
+    let the packs pile up until the next ``tandem update``. Compared against a stock-config clone
     because newer git (2.55) does not fold lazy-fetch packs on its own at all.
     """
     def lazy_packs(name: str, keys: bool) -> int:
@@ -467,7 +467,7 @@ def test_a_git_elsewhere_exiting_mid_scan_is_gone_not_a_hidden_holder(repo: Path
     """A git in ANOTHER repository that exits between the scan reading its argv and its cwd/environ
     (unreadable once it has released its memory) is gone: it holds nothing and takes no lock. Read
     as a hidden git that may work here, any busy machine's git churn postponed the launch repair
-    ("a running git holds the index after an interrupted `hermes update`")."""
+    ("a running git holds the index after an interrupted `tandem update`")."""
     from hermes_cli import _early_recovery as er
     from tests.waiting import wait_until
 
@@ -497,7 +497,7 @@ def test_a_git_elsewhere_exiting_mid_scan_is_gone_not_a_hidden_holder(repo: Path
 def test_lock_keeping_git_is_recognised_in_every_form_and_by_path_components(tmp_path: Path, monkeypatch) -> None:
     """Review P1/secondary, the hosts with no /proc: the macOS branch had only an (empty) ``lsof``,
     and the Windows scan matched ``git.exe`` alone and compared paths with ``startswith``
-    (``hermes-backup`` read as inside ``hermes``). Injected process metadata, not a native run."""
+    (``hermes-backup`` read as inside ``tandem``). Injected process metadata, not a native run."""
     import types
 
     from hermes_cli import _early_recovery as er

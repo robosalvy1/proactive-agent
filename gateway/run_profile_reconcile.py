@@ -522,7 +522,7 @@ def profile_scoped_chore(runner, chore):
 
 
 def migrate_profile_identity_verb(runner):
-    """Build the ``migrate-profile-identity`` control-verb handler for ``hermes profile rename``
+    """Build the ``migrate-profile-identity`` control-verb handler for ``tandem profile rename``
     (#111926). The live multiplexer owns the routing index in memory and writes it back
     periodically, so a CLI-side rewrite of ``agent:<old>:*`` would be clobbered on the next save;
     the CLI therefore asks this process to rekey both durable stores AND ``SessionStore._entries``.
@@ -564,7 +564,7 @@ def migrate_profile_identity_verb(runner):
 
 
 def purge_profile_identity_verb(runner):
-    """Build the ``purge-profile-identity`` control-verb handler for ``hermes profile delete``
+    """Build the ``purge-profile-identity`` control-verb handler for ``tandem profile delete``
     (#111926, delete side). The live multiplexer owns the routing index in memory and writes it back
     periodically, so a CLI-side DELETE of ``agent:<name>:*`` rows would be undone by its next save;
     the CLI therefore asks this process to drop the durable rows AND ``SessionStore._entries``.

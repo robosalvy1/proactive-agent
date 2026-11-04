@@ -24,7 +24,7 @@ export const pickersEn = {
       failedToSaveKey: 'failed to save key',
       // {0} = the provider's key env var name (e.g. OPENAI_API_KEY).
       pasteKeyToActivate: (keyEnv: string) => `paste ${keyEnv} to activate`,
-      runHermesModelToConfigure: 'run `hermes model` to configure',
+      runHermesModelToConfigure: 'run `tandem model` to configure',
       escQCancelHint: 'Esc/q cancel',
       reasoning: {
         none: 'none (disable reasoning)',

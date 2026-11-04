@@ -1,4 +1,4 @@
-"""User-facing cron failure notices: plain words, the real output path, and the exact `hermes cron`
+"""User-facing cron failure notices: plain words, the real output path, and the exact `tandem cron`
 command to act on. Contract tests, not snapshots (root AGENTS.md).
 
 The classifier is `agent.error_classifier.classify_api_error`; these tests pin what the copy table
@@ -33,10 +33,10 @@ def test_auth_failure_names_the_pinned_provider_and_the_failing_profile(monkeypa
     monkeypatch.setenv("HERMES_HOME", str(profile_home))
     msg = _summarize_cron_failure_for_delivery(
         {**JOB, "provider": "openai-codex"}, "Error code: 401 - Unauthorized")
-    assert "`hermes -p ops auth add openai-codex --type oauth`" in msg, msg
+    assert "`tandem -p ops auth add openai-codex --type oauth`" in msg, msg
     assert "<provider>" not in msg
     unpinned = _summarize_cron_failure_for_delivery(JOB, "Error code: 401 - Unauthorized")
-    assert "`hermes -p ops auth add <provider>`" in unpinned, unpinned
+    assert "`tandem -p ops auth add <provider>`" in unpinned, unpinned
 
 
 def test_rate_and_usage_limit_phrases_still_yield_a_provider_notice(monkeypatch):
@@ -52,7 +52,7 @@ def test_rate_and_usage_limit_phrases_still_yield_a_provider_notice(monkeypatch)
         msg = _summarize_cron_failure_for_delivery(JOB, text)
         assert "limit" in msg.lower(), msg
         assert not _HTTP_LEAD.search(msg), msg
-        assert "`hermes cron run ab12cd34`" in msg or "`hermes cron edit ab12cd34" in msg, msg
+        assert "`tandem cron run ab12cd34`" in msg or "`tandem cron edit ab12cd34" in msg, msg
 
 
 def test_cron_cause_gloss_is_the_shared_table():
@@ -62,7 +62,7 @@ def test_cron_cause_gloss_is_the_shared_table():
 
     for reason in FAILURE_CAUSE_GLOSS:
         notice = provider_failure_notice("Morning brief", "ab12cd34", reason, backup_provider_phrase="x.")
-        assert notice is not None and "`hermes cron" in notice, reason
+        assert notice is not None and "`tandem cron" in notice, reason
     assert provider_failure_notice("Morning brief", "ab12cd34", "unknown", backup_provider_phrase="x.") is None
 
 

@@ -21,7 +21,7 @@ def _is_windows() -> bool:
 #: managed binary dir (the default Hermes root's ``bin``, next to uv.exe)
 #: on the user PATH. Keep in lockstep with WINDOWS_BIN_LAUNCHERS in
 #: hermes_cli/_launchers.py and scripts/install.ps1.
-_WINDOWS_BIN_LAUNCHERS = ("hermes", "hermes-acp")
+_WINDOWS_BIN_LAUNCHERS = ("hermes", "hermes-acp", "tandem")
 
 
 def _normalize_windows_path(value) -> str:
@@ -68,7 +68,7 @@ def ensure_windows_bin_launchers(
     python with ``PYTHONPATH=<repo>;<venv>/site-packages``, never the venv
     interpreter (no-boot-through-venv; ``pyvenv.cfg`` is inert dead
     config). The canonical launcher home is
-    the managed binary dir — the default Hermes root's ``bin``
+    the managed binary dir — the default Tandem root's ``bin``
     (``%LOCALAPPDATA%\\hermes\\bin``, next to the managed uv) — which lives
     OUTSIDE the git checkout so no git operation can ever touch it. It is
     a per-machine dir shared by every profile: ``get_hermes_home()`` would

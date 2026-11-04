@@ -3,7 +3,7 @@
 A half-updated install can ship a newer ``cli.py`` (or launcher) importing
 config helpers that the older ``hermes_cli.config`` does not export. ``cmd_chat``
 (around ``cli.main``) and the ``-z`` transport launch are the load-bearing catches:
-bare ``hermes`` and ``hermes chat`` (including the fast-chat launch path)
+bare ``tandem`` and ``tandem chat`` (including the fast-chat launch path)
 all go through it.
 """
 
@@ -58,7 +58,7 @@ def _missing_config_name_error(name: str = "resolve_turn_limit") -> ImportError:
 
 
 def _install_boom(monkeypatch, boom):
-    """``hermes chat`` runs main's ``cli.main``; ``-z`` keeps the gateway transport launcher."""
+    """``tandem chat`` runs main's ``cli.main``; ``-z`` keeps the gateway transport launcher."""
     monkeypatch.setitem(sys.modules, "cli", types.SimpleNamespace(main=lambda **_kw: boom(None)))
     monkeypatch.setattr("hermes_cli.gateway_chat.launch_from_args", boom)
 
@@ -82,7 +82,7 @@ def test_emit_hint_for_missing_resolve_turn_limit():
     assert emit_partial_update_hint(exc, file=buf) is True
     text = buf.getvalue()
     assert "resolve_turn_limit" in text
-    assert "hermes update" in text
+    assert "tandem update" in text
 
 
 
@@ -114,7 +114,7 @@ def test_cmd_chat_prints_update_hint_when_config_helper_is_missing(
     assert excinfo.value.code == 1
     err = capsys.readouterr().err
     assert name in err
-    assert "hermes update" in err
+    assert "tandem update" in err
 
 
 @pytest.mark.parametrize("entry", ["cmd_chat", "_run_oneshot_from_args"])

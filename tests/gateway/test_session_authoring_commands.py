@@ -77,7 +77,7 @@ def test_local_session_authoring_commands_run_the_gateway_handler(tmp_path):
             for command in ('plan add a cache', 'learn', 'init', 'moa', 'moa compare',
                             'blueprint', 'egress', 'curator', 'goal ship the cache', 'subgoal add tests',
                             'goal status', 'loop every 30m check the queue', 'loop', 'heartbeat every 10m ping',
-                            'heartbeat', 'goal clear', 'loop clear', 'heartbeat clear'):
+                            'heartbeat', 'goal clear', 'loop clear', 'heartbeat clear', 'inbox'):
                 out[command] = await exec_(ws, command)
             out['admitted after'] = admissions()
 
@@ -115,6 +115,8 @@ def test_local_session_authoring_commands_run_the_gateway_handler(tmp_path):
     assert out['blueprint']['type'] == 'exec' and out['blueprint']['output'], out['blueprint']
     assert out['egress']['type'] == 'exec' and out['egress']['output'], out['egress']
     assert out['curator']['type'] == 'exec' and 'curator' in out['curator']['output'].lower(), out['curator']
+    # /inbox: the shared attention handler; off until the profile enables it.
+    assert out['inbox']['type'] == 'exec' and 'inbox is off' in out['inbox']['output'], out['inbox']
     # /goal: the session's own goal row, and its kickoff returned (never self-admitted).
     goal = send('goal ship the cache')
     assert 'ship the cache' in goal['message'] and 'ship the cache' in goal['notice'], goal

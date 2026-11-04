@@ -1,0 +1,110 @@
+/* Personal home: a light, sky-lit surface independent of the dashboard theme. */
+.personal-root {
+  font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  color: #111;
+}
+
+@keyframes personal-drift {
+  from { transform: translate3d(-5vw, 0, 0); }
+  to { transform: translate3d(9vw, -2vh, 0); }
+}
+.personal-cloud {
+  filter: blur(36px);
+  animation: personal-drift 120s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes personal-rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+.personal-rise { animation: personal-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@keyframes personal-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+.personal-dot { animation: personal-bounce 1.2s ease-in-out infinite; }
+
+/* Content drifts under the header instead of hitting a hard edge. */
+.personal-fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0, transparent 64px, #000 150px);
+  scrollbar-width: none;
+}
+.personal-fade-top::-webkit-scrollbar { display: none; }
+
+.personal-stars {
+  opacity: 0.55;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 34% 8%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 58% 22%, #fff, transparent),
+    radial-gradient(1px 1px at 77% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 88% 34%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 22% 40%, #fff, transparent),
+    radial-gradient(1px 1px at 66% 44%, #fff, transparent);
+}
+
+/* The shared Markdown renderer is themed for the dark dashboard; adapt it to light bubbles. */
+.personal-prose > div { font-size: inherit; line-height: inherit; color: inherit; }
+.personal-prose pre,
+.personal-prose code { background: rgb(0 0 0 / 0.05); border-color: transparent; color: #1f2937; border-radius: 10px; }
+.personal-prose a { color: #1d4ed8; }
+.personal-prose span[aria-hidden] { background: rgb(0 0 0 / 0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .personal-cloud, .personal-rise, .personal-dot { animation: none; }
+}
+
+/* Agent avatar: idle breathing and blinking; a busier rhythm while thinking. */
+@keyframes personal-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.025, 0.975); }
+}
+@keyframes personal-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+@keyframes personal-glance {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-2.2px); }
+  65% { transform: translateX(2.2px); }
+}
+@keyframes personal-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5px); }
+}
+@keyframes personal-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.16; }
+  50% { transform: scaleX(0.85); opacity: 0.1; }
+}
+.personal-avatar-body { transform-box: fill-box; transform-origin: 50% 100%; animation: personal-breathe 4.2s ease-in-out infinite; }
+.personal-avatar-eye { transform-box: fill-box; transform-origin: center; animation: personal-blink 4.8s ease-in-out infinite; }
+.personal-avatar-eye + .personal-avatar-eye { animation-delay: 0.04s; }
+.personal-avatar-shadow { transform-box: fill-box; transform-origin: center; }
+.personal-avatar.is-thinking .personal-avatar-body { animation: personal-bob 0.9s ease-in-out infinite; }
+.personal-avatar.is-thinking .personal-avatar-shadow { animation: personal-shadow 0.9s ease-in-out infinite; }
+.personal-avatar.is-thinking .personal-avatar-eyes { animation: personal-glance 2.4s ease-in-out infinite; }
+
+/* Bottom sheet for tiles on small screens. */
+@keyframes personal-sheet { from { transform: translateY(100%); } to { transform: none; } }
+.personal-sheet { animation: personal-sheet 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+.personal-safe-top { padding-top: max(1rem, env(safe-area-inset-top)); }
+.personal-safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .personal-avatar-body, .personal-avatar-eye, .personal-avatar-eyes, .personal-avatar-shadow, .personal-sheet { animation: none !important; }
+}
+
+/* After dark, translucent white over navy or teal reads as grey; lift the glass so it stays clean. */
+.personal-root[data-phase="night"] .personal-glass,
+.personal-root[data-phase="evening"] .personal-glass { background-color: rgb(246 248 252 / 0.9); border-color: rgb(255 255 255 / 0.6); }
+.personal-root[data-phase="night"] .personal-glass.bg-white\/80,
+.personal-root[data-phase="evening"] .personal-glass.bg-white\/80 { background-color: rgb(255 255 255 / 0.94); }
+.personal-root[data-phase="night"] .personal-soft,
+.personal-root[data-phase="evening"] .personal-soft { background-color: rgb(236 240 248 / 0.78); border-color: rgb(255 255 255 / 0.5); }
+.personal-root[data-phase="night"] .personal-soft:focus-within,
+.personal-root[data-phase="evening"] .personal-soft:focus-within { background-color: rgb(246 248 252 / 0.9); }

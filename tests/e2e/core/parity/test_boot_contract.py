@@ -1,6 +1,6 @@
 """Backend boot handshake contract, Python side (issue class C5).
 
-The Desktop spawns ``hermes serve`` with stdout piped and learns the port ONLY from
+The Desktop spawns ``tandem serve`` with stdout piped and learns the port ONLY from
 the READY sentinel on stdout (``apps/desktop/electron/backend-ready.ts``); the Ink
 TUI spawns ``tui_gateway.entry`` and treats stdout as a pure JSON-RPC stream whose
 first frame is ``gateway.ready``. Both break the same way — the sentinel/frame goes

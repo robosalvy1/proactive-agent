@@ -131,7 +131,7 @@ test('customSign delegates only the msix package and root product exe to the Azu
     const exe = path.join(root, exeName)
     delegated.length = 0
     // Same basename is not enough: payload copies wait for the afterPack batch.
-    for (const file of [path.join(root, 'resources', 'agent-payload', 'bin', exeName), path.join(`${root}-other`, exeName), path.join(root, 'resources', 'Hermes-helper.exe')]) {
+    for (const file of [path.join(root, 'resources', 'agent-payload', 'bin', exeName), path.join(`${root}-other`, exeName), path.join(root, 'resources', 'Tandem-helper.exe')]) {
       assert.equal(await customSign({ path: file }, packager, deps), true)
     }
     assert.deepEqual(delegated, [])

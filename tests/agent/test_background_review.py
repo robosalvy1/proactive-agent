@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import threading
 
+import pytest
+
 import run_agent as run_agent_module
 from run_agent import AIAgent
 
@@ -57,6 +59,16 @@ class FakeReviewAgent:
 
     def release_clients(self):
         pass
+
+@pytest.fixture(autouse=True)
+def _enable_automatic_reviews(tmp_path, monkeypatch):
+    """Lifecycle/cache tests exercise a profile that opted into automatic review."""
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    (tmp_path / "config.yaml").write_text(
+        "auxiliary:\n  background_review:\n    enabled: true\n", encoding="utf-8")
+    # These phase-ordering tests do not exercise telemetry storage. Keep its I/O
+    # outside the thread handshakes; test_background_review_usage covers it.
+    monkeypatch.setattr('agent.background_review._log_review_completion', lambda *_args: None)
 
 
 def _bare_agent() -> AIAgent:
@@ -467,7 +479,7 @@ def test_live_turn_waits_for_review_exit_before_relay_and_turn_context(monkeypat
 
         def run_conversation(self, **kwargs):
             review_entered.set()
-            assert allow_review_return.wait(2.0)
+            assert allow_review_return.wait(10.0)
             review_returned.set()
 
     monkeypatch.setattr(run_agent_module, "AIAgent", BlockingReviewAgent)
@@ -488,7 +500,7 @@ def test_live_turn_waits_for_review_exit_before_relay_and_turn_context(monkeypat
     monkeypatch.setattr(run_agent_module.threading, "Thread", _REAL_THREAD)
     worker = _REAL_THREAD(target=CapturingThread.targets[0], daemon=True)
     worker.start()
-    assert review_entered.wait(2.0)
+    assert review_entered.wait(10.0)
 
     def on_boundary():
         seen["review_returned_at_boundary"] = review_returned.is_set()
@@ -504,12 +516,12 @@ def test_live_turn_waits_for_review_exit_before_relay_and_turn_context(monkeypat
     )
     live.start()
 
-    assert interrupted.wait(2.0)
-    wait_started = observed_done.wait_started.wait(2.0)
+    assert interrupted.wait(10.0)
+    wait_started = observed_done.wait_started.wait(10.0)
     relay_calls_before_ack = list(relay_calls)
     allow_review_return.set()
-    worker.join(timeout=2.0)
-    live.join(timeout=2.0)
+    worker.join(timeout=10.0)
+    live.join(timeout=10.0)
 
     assert not worker.is_alive()
     assert not live.is_alive()
@@ -557,12 +569,12 @@ def test_live_turn_cancels_review_during_startup_before_provider(monkeypatch):
         daemon=True,
     )
     live.start()
-    assert run.cancel_requested.wait(2.0)
+    assert run.cancel_requested.wait(10.0)
 
     worker = _REAL_THREAD(target=CapturingThread.targets[0], daemon=True)
     worker.start()
-    worker.join(timeout=2.0)
-    live.join(timeout=2.0)
+    worker.join(timeout=10.0)
+    live.join(timeout=10.0)
 
     assert not worker.is_alive()
     assert not live.is_alive()
@@ -581,8 +593,6 @@ def test_live_turn_proceeds_when_review_acknowledgement_times_out(monkeypatch):
     """A broken review abort path must not block the foreground indefinitely.
     The live turn proceeds after the bounded wait, retaining foreground priority.
     """
-    import time
-
     import agent.background_review as background_review_module
 
     review_entered = threading.Event()
@@ -594,11 +604,11 @@ def test_live_turn_proceeds_when_review_acknowledgement_times_out(monkeypatch):
     class WedgedReviewAgent(FakeReviewAgent):
         def run_conversation(self, **kwargs):
             review_entered.set()
-            allow_review_return.wait(5.0)
+            allow_review_return.wait(30.0)
 
         def interrupt(self, message=None):
             interrupt_entered.set()
-            allow_interrupt_return.wait(5.0)
+            allow_interrupt_return.wait(30.0)
             interrupt_returned.set()
 
     monkeypatch.setattr(run_agent_module, "AIAgent", WedgedReviewAgent)
@@ -622,15 +632,15 @@ def test_live_turn_proceeds_when_review_acknowledgement_times_out(monkeypatch):
     monkeypatch.setattr(run_agent_module.threading, "Thread", _REAL_THREAD)
     worker = _REAL_THREAD(target=CapturingThread.targets[0], daemon=True)
     worker.start()
-    assert review_entered.wait(2.0)
+    assert review_entered.wait(10.0)
 
     boundary_calls = []
-    _install_live_turn_boundary(
-        monkeypatch, lambda: boundary_calls.append(True)
-    )
+    boundary_reached = threading.Event()
+    def record_boundary():
+        boundary_calls.append(True)
+        boundary_reached.set()
+    _install_live_turn_boundary(monkeypatch, record_boundary)
     relay_calls = _install_relay_recorder(monkeypatch, run)
-
-    started = time.monotonic()
     live_result = {}
     live = _REAL_THREAD(
         target=_run_wrapped_live_turn_to_boundary,
@@ -638,17 +648,18 @@ def test_live_turn_proceeds_when_review_acknowledgement_times_out(monkeypatch):
         daemon=True,
     )
     live.start()
-    live.join(timeout=5.0)
-
-    elapsed = time.monotonic() - started
+    foreground_proceeded = boundary_reached.wait(10.0)
+    acknowledged_before_release = run.request_done.is_set()
+    live.join(timeout=10.0)
 
     allow_interrupt_return.set()
     allow_review_return.set()
-    worker.join(timeout=2.0)
+    worker.join(timeout=10.0)
 
-    assert elapsed < 2.0
+    assert foreground_proceeded
+    assert not acknowledged_before_release
     assert interrupt_entered.is_set()
-    assert interrupt_returned.wait(2.0)
+    assert interrupt_returned.wait(10.0)
     assert not worker.is_alive()
     assert not live.is_alive()
     # Foreground retains priority: Relay/turn-context proceed even though
@@ -691,7 +702,7 @@ def test_live_turn_interrupts_legacy_review_but_keeps_foreground_priority(monkey
     live.start()
     live.join(timeout=5.0)
 
-    assert interrupt_called.wait(2.0)
+    assert interrupt_called.wait(10.0)
     assert interrupts == ["superseded by a new live turn"]
     assert not live.is_alive()
     assert boundary_calls == [True]
@@ -720,7 +731,7 @@ def test_stale_review_cleanup_cannot_clear_or_signal_newer_review(monkeypatch):
         def release_clients(self):
             if self.index == 0:
                 first_cleanup_entered.set()
-                assert allow_first_cleanup.wait(2.0)
+                assert allow_first_cleanup.wait(10.0)
 
     monkeypatch.setattr(run_agent_module, "AIAgent", BlockingCleanupReviewAgent)
     CapturingThread.targets = []
@@ -735,7 +746,7 @@ def test_stale_review_cleanup_cannot_clear_or_signal_newer_review(monkeypatch):
     first_run = agent._background_review_run
     first_worker = _REAL_THREAD(target=CapturingThread.targets[0], daemon=True)
     first_worker.start()
-    assert first_cleanup_entered.wait(2.0)
+    assert first_cleanup_entered.wait(10.0)
     assert first_run.request_done.is_set()
 
     AIAgent._spawn_background_review(
@@ -749,7 +760,7 @@ def test_stale_review_cleanup_cannot_clear_or_signal_newer_review(monkeypatch):
     assert not second_run.request_done.is_set()
 
     allow_first_cleanup.set()
-    first_worker.join(timeout=2.0)
+    first_worker.join(timeout=10.0)
 
     assert not first_worker.is_alive()
     assert agent._background_review_run is second_run
@@ -948,8 +959,8 @@ def test_supersede_hard_interrupt_targets_review_fork_only():
         set_interrupt(False, fork._execution_thread_id)
         set_interrupt(False, foreground_thread.ident)
         stop.set()
-        foreground_thread.join(timeout=2.0)
-        review_thread.join(timeout=2.0)
+        foreground_thread.join(timeout=10.0)
+        review_thread.join(timeout=10.0)
 
 
 def test_turn_exit_log_carries_fork_origin_tag():

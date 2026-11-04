@@ -340,7 +340,7 @@ def test_memory_inline_deny_blocks(hermes_home, approval_callback_cleanup):
 def test_headless_memory_write_stages_without_inline_prompt(
     hermes_home, approval_callback_cleanup, monkeypatch, context
 ):
-    """`hermes chat -q`, cron and unattended platforms can register the CLI callback but have no human to answer
+    """`tandem chat -q`, cron and unattended platforms can register the CLI callback but have no human to answer
     it: the write stages at once instead of waiting the approval timeout."""
     from tools.memory_tool import memory_tool, MemoryStore
     from tools.terminal_tool import set_approval_callback

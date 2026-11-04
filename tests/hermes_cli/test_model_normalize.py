@@ -167,7 +167,7 @@ class TestIssue78796NvidiaPrefixRepair:
 
 
 class TestColonProviderPrefixIsStrippedLikeSlash:
-    """Issue #64787: ``-m openai-codex:gpt-5.6-sol`` (Hermes's own ``provider:model`` switch syntax)
+    """Issue #64787: ``-m openai-codex:gpt-5.6-sol`` (Tandem's own ``provider:model`` switch syntax)
     reached the Codex wire with the prefix attached and got HTTP 400. A matching ``provider:`` prefix
     must normalize exactly like ``provider/``; a later colon (Ollama tags) is never a separator."""
 

@@ -20,11 +20,13 @@ Read `DEVELOPMENT.md`, `docs/project/ENGINEERING.md`, and the relevant nested in
 
 **Task:** choose one repeatable multi-session task from the audit and improve how its goals, decisions, preferences, or unresolved work survive a session boundary.
 
+The initial [Home thread implementation](HOME_THREAD.md) adds stable CLI/Ink/web navigation and bounded, source-linked transcript recall alongside independent chats. Deterministic integration tests cover request assembly, profile/owner boundaries, resets, and exclusions. The [larger design](HOME_THREAD_PLAN.md) still requires measured retrieval quality, learned-fact correction/forgetting semantics, and separate authorization/notification design before proactive coordination.
+
 **Done when:** a synthetic before/after fixture demonstrates improved retrieval; source/freshness and correction/deletion behavior are documented; token use is bounded; session caching and profile-isolation regressions are covered. Record the storage/assembly decision before adding a new subsystem.
 
 ## P3 — Deliver one proactive workflow
 
-**Task:** choose one user-enabled workflow with a concrete trigger and useful outcome, reusing Hermes scheduling and state.
+**Task:** choose one user-enabled workflow with a concrete trigger and useful outcome, reusing Tandem scheduling and state.
 
 **Done when:** authority and execution/notification budgets are explicit; pause/cancel, duplicates, retries, quiet hours, and restart behavior are tested; users can see what ran and why; the workflow is off until configured. A local dry run uses synthetic data and sends no external messages.
 
@@ -36,4 +38,4 @@ Read `DEVELOPMENT.md`, `docs/project/ENGINEERING.md`, and the relevant nested in
 
 ## Copyable first-task brief
 
-> Read AGENTS.md and complete P0 in docs/project/ROADMAP.md. Use an isolated Hermes home, inspect actual source before drawing conclusions, and document commands and results. Produce a capability map and recommend the smallest context and proactive slices. Do not implement a parallel scheduler, memory store, or new UI during the audit.
+> Read AGENTS.md and complete P0 in docs/project/ROADMAP.md. Use an isolated Tandem home, inspect actual source before drawing conclusions, and document commands and results. Produce a capability map and recommend the smallest context and proactive slices. Do not implement a parallel scheduler, memory store, or new UI during the audit.

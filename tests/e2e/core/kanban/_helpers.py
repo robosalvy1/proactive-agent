@@ -1,5 +1,5 @@
 """Real-process Kanban board harness: a scratch HOME/HERMES_HOME, the recording fake provider, and
-the real ``hermes kanban`` CLI (dispatcher ticks spawn real ``hermes chat -q`` workers).
+the real ``tandem kanban`` CLI (dispatcher ticks spawn real ``tandem chat -q`` workers).
 
 Nothing below imports the dispatcher: every board mutation goes through a child process and every
 verdict is read back from ``kanban.db`` (tasks / task_runs / task_events rows) or the files on disk.

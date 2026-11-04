@@ -247,7 +247,7 @@ def test_a_refused_build_join_is_logged_and_noted_in_the_receipt(tmp_path, monke
 
 def test_a_swallowed_refusal_is_what_the_update_reports(tmp_path, monkeypatch, capsys):
     """R8 m2: readers swallow an OSError (``_git_stdout``, ``_capture_head_sha``), so a refused
-    child used to end ``hermes update`` as whatever error followed downstream. The refusal is
+    child used to end ``tandem update`` as whatever error followed downstream. The refusal is
     receipted and kept for the run, and the command's failure path prints it, actionably."""
     import contextlib
     from types import SimpleNamespace
@@ -276,8 +276,8 @@ def test_a_swallowed_refusal_is_what_the_update_reports(tmp_path, monkeypatch, c
         main.cmd_update(SimpleNamespace(gateway=False))
     assert stop.value.code == 1
     out = capsys.readouterr().out
-    assert "`hermes update` stopped: Windows would not put `git` in this update's process job" in out, out
-    assert "Nothing was changed" in out and "Run `hermes update` again from a regular terminal" in out, out
+    assert "`tandem update` stopped: Windows would not put `git` in this update's process job" in out, out
+    assert "Nothing was changed" in out and "Run `tandem update` again from a regular terminal" in out, out
     payload = ur.read_latest_receipt()
     steps = [s for s in payload["steps"] if s["name"] == "update_custody"]
     assert steps and steps[0]["ok"] is False and "rev-parse" in steps[0]["detail"], payload["steps"]

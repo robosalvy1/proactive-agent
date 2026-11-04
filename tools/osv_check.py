@@ -44,8 +44,8 @@ def _disk_cache_path() -> Optional[Path]:
     """Return the path for the persistent OSV verdict cache.
 
     Uses ``hermes_constants.get_hermes_home()`` so the cache follows the
-    active profile and is isolated across Hermes homes. The cache directory
-    is created on demand. Returns ``None`` when Hermes home cannot be
+    active profile and is isolated across Tandem homes. The cache directory
+    is created on demand. Returns ``None`` when Tandem home cannot be
     resolved, in which case only the in-process cache is used.
     """
     try:

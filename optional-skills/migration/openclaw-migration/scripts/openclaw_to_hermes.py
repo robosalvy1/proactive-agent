@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""OpenClaw -> Hermes migration helper.
+"""OpenClaw -> Tandem migration helper.
 
 This script migrates the parts of an OpenClaw user footprint that map cleanly
-into Hermes Agent, archives selected unmapped docs for manual review, and
+into Tandem Agent, archives selected unmapped docs for manual review, and
 reports exactly what was skipped and why.
 """
 
@@ -47,7 +47,7 @@ WORKSPACE_INSTRUCTIONS_FILENAME = "AGENTS" + ".md"
 MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     "soul": {
         "label": "SOUL.md",
-        "description": "Import the OpenClaw persona file into Hermes.",
+        "description": "Import the OpenClaw persona file into Tandem.",
     },
     "workspace-agents": {
         "label": "Workspace instructions",
@@ -55,23 +55,23 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "memory": {
         "label": "MEMORY.md",
-        "description": "Import long-term memory entries into Hermes memories.",
+        "description": "Import long-term memory entries into Tandem memories.",
     },
     "user-profile": {
         "label": "USER.md",
-        "description": "Import user profile entries into Hermes memories.",
+        "description": "Import user profile entries into Tandem memories.",
     },
     "messaging-settings": {
         "label": "Messaging settings",
-        "description": "Import Hermes-compatible messaging settings such as allowlists and working directory.",
+        "description": "Import Tandem-compatible messaging settings such as allowlists and working directory.",
     },
     "secret-settings": {
         "label": "Allowlisted secrets",
-        "description": "Import the small allowlist of Hermes-compatible secrets when explicitly enabled.",
+        "description": "Import the small allowlist of Tandem-compatible secrets when explicitly enabled.",
     },
     "command-allowlist": {
         "label": "Command allowlist",
-        "description": "Merge OpenClaw exec approval patterns into Hermes command_allowlist.",
+        "description": "Merge OpenClaw exec approval patterns into Tandem command_allowlist.",
     },
     "skills": {
         "label": "User skills",
@@ -83,39 +83,39 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "discord-settings": {
         "label": "Discord settings",
-        "description": "Import Discord bot token and allowlist into Hermes .env.",
+        "description": "Import Discord bot token and allowlist into Tandem .env.",
     },
     "slack-settings": {
         "label": "Slack settings",
-        "description": "Import Slack bot/app tokens and allowlist into Hermes .env.",
+        "description": "Import Slack bot/app tokens and allowlist into Tandem .env.",
     },
     "whatsapp-settings": {
         "label": "WhatsApp settings",
-        "description": "Import WhatsApp allowlist into Hermes .env.",
+        "description": "Import WhatsApp allowlist into Tandem .env.",
     },
     "signal-settings": {
         "label": "Signal settings",
-        "description": "Import Signal account, HTTP URL, and allowlist into Hermes .env.",
+        "description": "Import Signal account, HTTP URL, and allowlist into Tandem .env.",
     },
     "provider-keys": {
         "label": "Provider API keys",
-        "description": "Import model provider API keys into Hermes .env (requires --migrate-secrets).",
+        "description": "Import model provider API keys into Tandem .env (requires --migrate-secrets).",
     },
     "model-config": {
         "label": "Default model",
-        "description": "Import the default model setting into Hermes config.yaml.",
+        "description": "Import the default model setting into Tandem config.yaml.",
     },
     "tts-config": {
         "label": "TTS configuration",
-        "description": "Import TTS provider and voice settings into Hermes config.yaml.",
+        "description": "Import TTS provider and voice settings into Tandem config.yaml.",
     },
     "shared-skills": {
         "label": "Shared skills",
-        "description": "Copy shared OpenClaw skills from ~/.openclaw/skills/ into Hermes.",
+        "description": "Copy shared OpenClaw skills from ~/.openclaw/skills/ into Tandem.",
     },
     "daily-memory": {
         "label": "Daily memory files",
-        "description": "Merge daily memory entries from workspace/memory/ into Hermes MEMORY.md.",
+        "description": "Merge daily memory entries from workspace/memory/ into Tandem MEMORY.md.",
     },
     "archive": {
         "label": "Archive unmapped docs",
@@ -123,7 +123,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "mcp-servers": {
         "label": "MCP servers",
-        "description": "Import MCP server definitions from OpenClaw into Hermes config.yaml.",
+        "description": "Import MCP server definitions from OpenClaw into Tandem config.yaml.",
     },
     "plugins-config": {
         "label": "Plugins configuration",
@@ -131,7 +131,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "cron-jobs": {
         "label": "Cron / scheduled tasks",
-        "description": "Import cron job definitions. Archive for manual recreation via 'hermes cron'.",
+        "description": "Import cron job definitions. Archive for manual recreation via 'tandem cron'.",
     },
     "hooks-config": {
         "label": "Hooks and webhooks",
@@ -139,7 +139,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "agent-config": {
         "label": "Agent defaults and multi-agent setup",
-        "description": "Import agent defaults (compaction, context, thinking) into Hermes config. Archive multi-agent list.",
+        "description": "Import agent defaults (compaction, context, thinking) into Tandem config. Archive multi-agent list.",
     },
     "gateway-config": {
         "label": "Gateway configuration",
@@ -151,7 +151,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "full-providers": {
         "label": "Full model provider definitions",
-        "description": "Import custom model providers (baseUrl, apiType, headers) into Hermes custom_providers.",
+        "description": "Import custom model providers (baseUrl, apiType, headers) into Tandem custom_providers.",
     },
     "deep-channels": {
         "label": "Deep channel configuration",
@@ -159,15 +159,15 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "browser-config": {
         "label": "Browser configuration",
-        "description": "Import browser automation settings into Hermes config.yaml.",
+        "description": "Import browser automation settings into Tandem config.yaml.",
     },
     "tools-config": {
         "label": "Tools configuration",
-        "description": "Import tool settings (exec timeout, sandbox, web search) into Hermes config.yaml.",
+        "description": "Import tool settings (exec timeout, sandbox, web search) into Tandem config.yaml.",
     },
     "approvals-config": {
         "label": "Approval rules",
-        "description": "Import approval mode and rules into Hermes config.yaml approvals section.",
+        "description": "Import approval mode and rules into Tandem config.yaml approvals section.",
     },
     "memory-backend": {
         "label": "Memory backend configuration",
@@ -392,7 +392,7 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
     except yaml.YAMLError as exc:
         raise ConfigReadError(
             f"Refusing to overwrite {path}: the existing file is not valid YAML "
-            f"({exc}). Fix it with `hermes config edit` (or move it aside), then "
+            f"({exc}). Fix it with `tandem config edit` (or move it aside), then "
             f"re-run the migration."
         ) from exc
     # An empty file parses to None — a legitimate state with nothing to lose.
@@ -402,7 +402,7 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
         raise ConfigReadError(
             f"Refusing to overwrite {path}: expected the existing file to hold a "
             f"YAML mapping but found {type(data).__name__}. Fix it with "
-            f"`hermes config edit` (or move it aside), then re-run the migration."
+            f"`tandem config edit` (or move it aside), then re-run the migration."
         )
     return data
 
@@ -423,7 +423,7 @@ def dump_yaml_file(path: Path, data: dict[str, Any]) -> None:
     ``~/.hermes/config.yaml`` into a dotfiles repo or profile package.
     """
     if yaml is None:
-        raise RuntimeError("ruamel.yaml is required to update Hermes config.yaml")
+        raise RuntimeError("ruamel.yaml is required to update Tandem config.yaml")
     ensure_parent(path)
     target = os.path.realpath(str(path)) if os.path.islink(str(path)) else str(path)
     fd, tmp_path = tempfile.mkstemp(
@@ -519,9 +519,9 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 # like ``openclaw`` → ``hermes`` (so filesystem paths like ``~/.openclaw``
 # become ``~/.hermes`` — the real Hermes home — not the broken ``~/.Hermes``).
 _REBRAND_PATTERNS: list[tuple[re.Pattern, str]] = [
-    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Hermes'),
-    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Hermes'),
-    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Hermes'),
+    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Tandem'),
+    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Tandem'),
+    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Tandem'),
 ]
 
 
@@ -529,21 +529,21 @@ def _case_preserving_replacement(replacement: str):
     """Return a re.sub replacement fn that lowercases the result when the
     matched text was all-lowercase.
 
-    Keeps ``OpenClaw`` → ``Hermes`` but maps ``openclaw`` → ``hermes`` so a
-    filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.hermes/config.yaml`` (the real Hermes home) instead of the broken
-    ``~/.Hermes/config.yaml``.
+    Keeps ``OpenClaw`` → ``Tandem`` but maps all-lowercase ``openclaw`` → ``hermes`` (the
+    stable home directory name, not the product name) so a filesystem path like
+    ``~/.openclaw/config.yaml`` rewrites to ``~/.hermes/config.yaml`` (the real home)
+    instead of a directory that does not exist.
     """
     def _sub(match: re.Match[str]) -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            return "hermes"  # brand-compat: the home directory is still ~/.hermes
         return replacement
     return _sub
 
 
 def rebrand_text(text: str) -> str:
-    """Replace OpenClaw / ClawdBot / MoltBot brand names with Hermes.
+    """Replace OpenClaw / ClawdBot / MoltBot brand names with Tandem.
 
     Preserves case so filesystem-path matches (lowercase) don't become
     capitalized directory names that don't exist.
@@ -554,7 +554,7 @@ def rebrand_text(text: str) -> str:
 
 
 def parse_existing_memory_entries(path: Path) -> list[str]:
-    """Parse a DESTINATION Hermes memory store (memories/MEMORY.md, USER.md).
+    """Parse a DESTINATION Tandem memory store (memories/MEMORY.md, USER.md).
 
     Splits on ``ENTRY_DELIMITER`` only, matching ``MemoryStore._parse_entries``
     in ``tools/memory_tool.py``: a store with no delimiter is ONE intact entry.
@@ -790,7 +790,7 @@ def write_report(output_dir: Path, report: dict[str, Any]) -> None:
         grouped.setdefault(item["status"], []).append(item)
 
     lines = [
-        "# OpenClaw -> Hermes Migration Report",
+        "# OpenClaw -> Tandem Migration Report",
         "",
         f"- Timestamp: {redacted['timestamp']}",
         f"- Mode: {redacted['mode']}",
@@ -1207,7 +1207,7 @@ class Migrator:
             warnings.append(
                 "API keys and other credentials were detected but not imported. "
                 "Re-run with --migrate-secrets to copy supported keys into the "
-                "Hermes env file."
+                "Tandem env file."
             )
         return warnings
 
@@ -1228,7 +1228,7 @@ class Migrator:
                 else "Review the migration report."
             )
             steps.append(
-                "Start a new Hermes session (or /reset) to pick up the imported config."
+                "Start a new Tandem session (or /reset) to pick up the imported config."
             )
         if summary.get("conflict", 0) > 0:
             steps.append(
@@ -1376,7 +1376,7 @@ class Migrator:
             self.record("command-allowlist", source, destination, "skipped", "No allowlist patterns found")
             return
         if not destination.exists():
-            self.record("command-allowlist", source, destination, "skipped", "Hermes config.yaml does not exist yet")
+            self.record("command-allowlist", source, destination, "skipped", "Tandem config.yaml does not exist yet")
             return
 
         config = load_yaml_file(destination)
@@ -1508,7 +1508,7 @@ class Migrator:
         if additions:
             self.merge_env_values(additions, "messaging-settings", self.source_root / "openclaw.json")
         else:
-            self.record("messaging-settings", self.source_root / "openclaw.json", self.target_root / ".env", "skipped", "No Hermes-compatible messaging settings found")
+            self.record("messaging-settings", self.source_root / "openclaw.json", self.target_root / ".env", "skipped", "No Tandem-compatible messaging settings found")
 
     def handle_secret_settings(self, config: Optional[dict[str, Any]] = None) -> None:
         config = config or self.load_openclaw_config()
@@ -1552,7 +1552,7 @@ class Migrator:
                 self.source_root / "openclaw.json",
                 self.target_root / ".env",
                 "skipped",
-                "No allowlisted Hermes-compatible secrets found",
+                "No allowlisted Tandem-compatible secrets found",
                 supported_targets=sorted(SUPPORTED_SECRET_TARGETS),
             )
 
@@ -1685,7 +1685,7 @@ class Migrator:
                             None,
                             "skipped",
                             f"Provider '{provider_name}' uses a {raw_key['source']}-backed SecretRef "
-                            f"that cannot be auto-migrated. Add this key manually via: hermes config set",
+                            f"that cannot be auto-migrated. Add this key manually via: tandem config set",
                         )
                     continue
 
@@ -2216,16 +2216,16 @@ class Migrator:
         ]
         for candidate in candidates:
             if candidate:
-                self.archive_path(candidate, reason="No direct Hermes destination; archived for manual review")
+                self.archive_path(candidate, reason="No direct Tandem destination; archived for manual review")
 
         for rel in ("workspace/.learnings", "workspace/memory"):
             candidate = self.source_root / rel
             if candidate.exists():
-                self.archive_path(candidate, reason="No direct Hermes destination; archived for manual review")
+                self.archive_path(candidate, reason="No direct Tandem destination; archived for manual review")
 
         partially_extracted = [
-            ("openclaw.json", "Selected Hermes-compatible values were extracted; raw OpenClaw config was not copied."),
-            ("credentials/telegram-default-allowFrom.json", "Selected Hermes-compatible values were extracted; raw credentials file was not copied."),
+            ("openclaw.json", "Selected Tandem-compatible values were extracted; raw OpenClaw config was not copied."),
+            ("credentials/telegram-default-allowFrom.json", "Selected Tandem-compatible values were extracted; raw credentials file was not copied."),
         ]
         for rel, reason in partially_extracted:
             candidate = self.source_root / rel
@@ -2274,7 +2274,7 @@ class Migrator:
                 continue
             if name in existing_mcp and not self.overwrite:
                 self.record("mcp-servers", f"mcp.servers.{name}", f"mcp_servers.{name}", "conflict",
-                            "MCP server already exists in Hermes config")
+                            "MCP server already exists in Tandem config")
                 continue
 
             hermes_srv: dict[str, Any] = {}
@@ -2384,7 +2384,7 @@ class Migrator:
                 dest = self.archive_dir / "cron-config.json"
                 dest.write_text(json.dumps(cron, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
                 self.record("cron-jobs", "openclaw.json cron.*", str(dest), "archived",
-                            "Cron config archived. Use 'hermes cron' to recreate jobs manually.")
+                            "Cron config archived. Use 'tandem cron' to recreate jobs manually.")
             else:
                 self.record("cron-jobs", "openclaw.json cron.*", "archive/cron-config.json",
                             "archived", "Would archive cron config")
@@ -2529,7 +2529,7 @@ class Migrator:
                 self.maybe_backup(hermes_cfg_path)
                 dump_yaml_file(hermes_cfg_path, hermes_cfg)
             self.record("agent-config", "openclaw.json agents.defaults", "config.yaml agent/compression/terminal",
-                        "migrated", "Agent defaults mapped to Hermes config")
+                        "migrated", "Agent defaults mapped to Tandem config")
 
         # Archive multi-agent list
         if agent_list:
@@ -2564,7 +2564,7 @@ class Migrator:
             dest = self.archive_dir / "gateway-config.json"
             dest.write_text(json.dumps(gateway, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         self.record("gateway-config", "openclaw.json gateway.*", "archive/gateway-config.json",
-                    "archived", "Gateway config archived. Use 'hermes gateway' to configure.")
+                    "archived", "Gateway config archived. Use 'tandem gateway' to configure.")
 
         # Extract gateway auth token to .env if present
         auth = gateway.get("auth") or {}
@@ -2581,7 +2581,7 @@ class Migrator:
 
         if session.get("reset") or session.get("resetTriggers") or session.get("reset_triggers"):
             self.record("session-config", "session reset timers", None, "skipped",
-                        "Hermes conversations do not reset on idle or daily timers")
+                        "Tandem conversations do not reset on idle or daily timers")
 
         # Archive full session config (identity links, thread bindings, etc.)
         complex_keys = {"identityLinks", "threadBindings", "maintenance", "scope", "sendPolicy"}
@@ -2959,7 +2959,7 @@ class Migrator:
         if not self.output_dir:
             return
         notes = [
-            "# OpenClaw -> Hermes Migration Notes",
+            "# OpenClaw -> Tandem Migration Notes",
             "",
             "This document lists items that require manual attention after migration.",
             "",
@@ -2977,7 +2977,7 @@ class Migrator:
                 "## Archived Items (Manual Review Needed)",
                 "",
                 "These OpenClaw configurations were archived because they don't have a",
-                "direct 1:1 mapping in Hermes. Review each file and recreate manually:",
+                "direct 1:1 mapping in Tandem. Review each file and recreate manually:",
                 "",
             ])
             for item in archived:
@@ -2987,9 +2987,9 @@ class Migrator:
         conflicts = [i for i in self.items if i.status == "conflict"]
         if conflicts:
             notes.extend([
-                "## Conflicts (Existing Hermes Config Not Overwritten)",
+                "## Conflicts (Existing Tandem Config Not Overwritten)",
                 "",
-                "These items already existed in your Hermes config. Re-run with",
+                "These items already existed in your Tandem config. Re-run with",
                 "`--overwrite` to force, or merge manually:",
                 "",
             ])
@@ -3010,29 +3010,29 @@ class Migrator:
             "## IMPORTANT: Archive the OpenClaw Directory",
             "",
             "After migration, your OpenClaw directory still exists on disk with workspace",
-            "state files (todo.json, sessions, logs). If the Hermes agent discovers these",
-            "directories, it may read/write to them instead of the Hermes state, causing",
+            "state files (todo.json, sessions, logs). If the Tandem agent discovers these",
+            "directories, it may read/write to them instead of the Tandem state, causing",
             "confusion (e.g., cron jobs reading a different todo list than interactive sessions).",
             "",
-            "**Strongly recommended:** Run `hermes claw cleanup` to rename the OpenClaw",
+            "**Strongly recommended:** Run `tandem claw cleanup` to rename the OpenClaw",
             "directory to `.openclaw.pre-migration`. This prevents the agent from finding it.",
             "The directory is renamed, not deleted — you can undo this at any time.",
             "",
             "If you skip this step and notice the agent getting confused about workspaces",
-            "or todo lists, run `hermes claw cleanup` to fix it.",
+            "or todo lists, run `tandem claw cleanup` to fix it.",
             "",
             "## Hermes-Specific Setup",
             "",
             "After migration, you may want to:",
-            "- Run `hermes claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
-            "- Run `hermes setup` to configure any remaining settings",
-            "- Run `hermes mcp list` to verify MCP servers were imported correctly",
+            "- Run `tandem claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
+            "- Run `tandem setup` to configure any remaining settings",
+            "- Run `tandem mcp list` to verify MCP servers were imported correctly",
         ])
 
         if has_cron_config_archive:
-            notes.append("- Run `hermes cron` to recreate scheduled tasks (see archive/cron-config.json)")
+            notes.append("- Run `tandem cron` to recreate scheduled tasks (see archive/cron-config.json)")
         elif has_cron_store_archive:
-            notes.append("- Run `hermes cron` to recreate scheduled tasks (see archived cron-store)")
+            notes.append("- Run `tandem cron` to recreate scheduled tasks (see archived cron-store)")
 
         # Check if skills were imported
         has_skills = any(i.kind == "skills" and i.status == "migrated" for i in self.items)
@@ -3057,12 +3057,12 @@ class Migrator:
                 "WhatsApp uses QR-code pairing, not token-based auth. Your allowlist",
                 "was migrated, but you must re-pair the device by running:",
                 "",
-                "    hermes whatsapp",
+                "    tandem whatsapp",
                 "",
             ])
 
         notes.extend([
-            "- Run `hermes gateway install` if you need the gateway service",
+            "- Run `tandem gateway install` if you need the gateway service",
             "- Review `~/.hermes/config.yaml` for any adjustments",
             "",
         ])
@@ -3075,19 +3075,19 @@ class Migrator:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Hermes Agent.")
+    parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Tandem Agent.")
     parser.add_argument("--source", default=str(Path.home() / ".openclaw"), help="OpenClaw home directory")
-    parser.add_argument("--target", default=os.environ.get("HERMES_HOME") or str(Path.home() / ".hermes"), help="Hermes home directory")
+    parser.add_argument("--target", default=os.environ.get("HERMES_HOME") or str(Path.home() / ".hermes"), help="Tandem home directory")
     parser.add_argument(
         "--workspace-target",
         help="Optional workspace root where the workspace instructions file should be copied",
     )
     parser.add_argument("--execute", action="store_true", help="Apply changes instead of reporting a dry run")
-    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing Hermes targets after backing them up")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing Tandem targets after backing them up")
     parser.add_argument(
         "--migrate-secrets",
         action="store_true",
-        help="Import a narrow allowlist of Hermes-compatible secrets into the target env file",
+        help="Import a narrow allowlist of Tandem-compatible secrets into the target env file",
     )
     parser.add_argument(
         "--skill-conflict",
@@ -3161,7 +3161,7 @@ def main() -> int:
 
     print()
     print("  ╔══════════════════════════════════════════════════════╗")
-    print(f"  ║   OpenClaw -> Hermes Migration   [{mode_label:>8s}]   ║")
+    print(f"  ║   OpenClaw -> Tandem Migration   [{mode_label:>8s}]   ║")
     print("  ╠══════════════════════════════════════════════════════╣")
     print(f"  ║  Source:  {str(report['source_root'])[:42]:<42s}  ║")
     print(f"  ║  Target:  {str(report['target_root'])[:42]:<42s}  ║")
@@ -3231,9 +3231,9 @@ def main() -> int:
         print()
         print("  Next steps:")
         print("    1. Review ~/.hermes/config.yaml")
-        print("    2. Run: hermes mcp list")
+        print("    2. Run: tandem mcp list")
         if any(i["kind"] == "cron-jobs" and i["status"] == "archived" for i in items):
-            print("    3. Recreate cron jobs: hermes cron")
+            print("    3. Recreate cron jobs: tandem cron")
         if report.get("output_dir"):
             print(f"    → Full report: {report['output_dir']}/MIGRATION_NOTES.md")
     elif not args.execute:

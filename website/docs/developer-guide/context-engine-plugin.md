@@ -4,7 +4,7 @@ title: "Context Engine Plugins"
 description: "How to build a context engine plugin that replaces the built-in ContextCompressor"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Building a Context Engine Plugin
@@ -194,7 +194,7 @@ What the host guarantees:
   Never assume per-row uniqueness in the active set; key your own state on
   the uid and treat the later row as the current version.
 - **Tool calls get per-occurrence ids too.** Provider tool-call ids repeat
-  (Hermes mints deterministic `call_<12hex>` ids for identical calls, and models
+  (Tandem mints deterministic `call_<12hex>` ids for identical calls, and models
   reuse ids), so an assistant message carries `_tool_call_uids`, a
   `{tool_call_id: uid}` map for its `tool_calls`, and each tool-result message
   carries the matching `_tool_call_uid`. Calls that repeat a provider id inside
@@ -292,7 +292,7 @@ Only one engine can be registered. A second plugin attempting to register is rej
 
 The registered instance is shared process-wide, but every `AIAgent` (parent, subagents, gateway
 sessions) needs its own engine so a child's `update_model()` cannot mutate the parent's budget.
-Hermes therefore calls `engine.clone_for_agent()` on the registered instance at each agent init.
+Tandem therefore calls `engine.clone_for_agent()` on the registered instance at each agent init.
 The default is `copy.deepcopy(self)`; override it when the engine holds state that cannot be
 deep-copied (locks, SQLite or HTTP connections) and return a fresh engine sharing the durable
 backend while copying only the mutable budget fields. If the clone raises, the agent falls back to
@@ -320,7 +320,7 @@ def clone_for_agent(self):
 
 ## Configuration
 
-Users select your engine via `hermes plugins` → Provider Plugins → Context Engine, or by editing `config.yaml`:
+Users select your engine via `tandem plugins` → Provider Plugins → Context Engine, or by editing `config.yaml`:
 
 ```yaml
 context:
@@ -351,7 +351,7 @@ See `tests/agent/test_context_engine.py` for the full ABC contract test suite.
 
 ## Thread safety
 
-When `compression.context_timeout_seconds > 0` (the default), Hermes runs the
+When `compression.context_timeout_seconds > 0` (the default), Tandem runs the
 whole compression pass — including your engine's `compress()` and boundary
 callbacks, and any memory provider's `on_pre_compress` /
 `on_session_switch` — on a pooled daemon thread with a host-side timeout.

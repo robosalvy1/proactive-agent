@@ -1,5 +1,5 @@
 """Staging for the hand-off suite: a real install at release N-1 (or HEAD), processes running
-from it, and the real ``hermes update`` to the next commit, all in one shared PID namespace.
+from it, and the real ``tandem update`` to the next commit, all in one shared PID namespace.
 
 Two columns, both git-mode installs over a local bare ``origin`` (the official URL rewritten to it,
 so the updater takes the normal non-fork path and never touches the network):
@@ -363,7 +363,7 @@ def cell(column: str, root: Path, provider_url: str, *, extra: dict | None = Non
 
 
 def start_gateway(inst: Install, *args: str) -> dict:
-    """``hermes gateway run`` as a user starts it by hand; returns its ``identify`` answer."""
+    """``tandem gateway run`` as a user starts it by hand; returns its ``identify`` answer."""
     inst.spawn("gateway", "gateway", "run", *args)
     try:
         wait_for(lambda: health(inst.port), timeout=240, what="the gateway API server /health")

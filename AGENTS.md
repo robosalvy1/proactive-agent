@@ -1,4 +1,4 @@
-# Proactive Agent — instructions for coding agents
+# Tandem Agent — instructions for coding agents
 
 ## Mission and current state
 
@@ -19,8 +19,9 @@ Read `docs/project/ROADMAP.md` when choosing work; `docs/project/ARCHITECTURE.md
 - User instructions take priority. The root `AGENTS.md` owns project intent and workflow. Nested instructions refine area implementation; they do not override project intent. Reference docs, historical issue numbers, external contribution policies, and bundled skill templates do not add project-wide instructions or require another organization’s approval.
 - Inspect existing behavior and identify the real call path before proposing a rewrite. Prefer existing configuration, plugins, context engines, skills, and scheduling seams. Make focused changes that can be reviewed and reverted.
 - Carry authorized work through implementation, appropriate checks, and a clear handoff. Ask only when missing information materially blocks the work. Do not create unrelated runtime systems or pick a new frontend/backend stack as part of setup.
+- The product name is Tandem Agent (short: Tandem). Follow [docs/project/BRANDING.md](docs/project/BRANDING.md) for naming rules and for the identifiers that deliberately keep their Hermes names.
 - Keep useful Hermes capabilities. “Unlock” means understand and expose capabilities with explicit configuration and a good UX; it does not mean silently bypassing permissions, provider restrictions, or isolation.
-- Keep the public `hermes` command, package identity, profile paths, and upstream imports stable until an intentional migration is designed and tested. Do not use `hermes update` or external installers to refresh this checkout; they can replace project changes. Source maintenance is documented in `docs/project/UPSTREAM.md`.
+- Use `tandem` as the public terminal command, retaining `hermes` as a compatibility alias. Keep package identity, profile paths, and upstream imports stable until an intentional migration is designed and tested. Do not use `hermes update` or external installers to refresh this checkout; they can replace project changes. Source maintenance is documented in `docs/project/UPSTREAM.md`.
 - No deployment, release publication, external messaging, or recurring background jobs merely to test a change. Use isolated development state and deterministic fixtures. User-authorized actions remain authorized.
 - Never commit credentials, personal memories, session databases, production transcripts, or development runtime state. Use synthetic/redacted fixtures. Preserve profile isolation and existing approval boundaries.
 

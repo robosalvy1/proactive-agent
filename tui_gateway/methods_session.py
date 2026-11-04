@@ -1987,7 +1987,7 @@ def _(rid, params: dict, session: dict) -> dict:
     )
     project = _project_info_for_cwd(_display_session_cwd(session))
     lines = [
-        "Hermes TUI Status", "", *status_lines(fields, "session_id", "path"),
+        "Tandem TUI Status", "", *status_lines(fields, "session_id", "path"),
         *([f"Project: {project['name']}"] if project else []),
         *status_lines(fields, "title", "model", "created", "last_activity", "tokens", "agent_running")]
     return _ok(rid, {"output": "\n".join(lines)})
@@ -2351,7 +2351,6 @@ def _(rid, params: dict) -> dict:
 def register(server) -> None:
     """Publish this module's helpers onto ``server`` (rebound to its globals) and install handlers."""
     bind_module(globals(), server, skip=("_",))
-    from . import methods_session_branch
-    methods_session_branch.register(server)
-    from . import methods_session_interrupt
-    methods_session_interrupt.register(server)
+    from . import methods_home, methods_session_branch, methods_session_interrupt
+    for module in (methods_session_branch, methods_session_interrupt, methods_home):
+        module.register(server)

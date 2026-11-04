@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:hermes-agent:schema:shared-metrics:v4",
-  "title": "Hermes Shared Metrics Package v4",
+  "title": "Tandem Shared Metrics Package v4",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -3522,7 +3522,7 @@
               ]
             }
           },
-          "description": "One per tool result: whether Hermes spilled or truncated it (per-result cap or per-turn budget), by raw size."
+          "description": "One per tool result: whether Tandem spilled or truncated it (per-result cap or per-turn budget), by raw size."
         },
         "value": {
           "type": "integer",
@@ -3731,7 +3731,7 @@
               "$ref": "#/$defs/provider_identifier"
             }
           },
-          "description": "A prompt-cache break mid-conversation: a cause Hermes knows (compression is expected), or a cold provider read after a warm one on the same route."
+          "description": "A prompt-cache break mid-conversation: a cause Tandem knows (compression is expected), or a cold provider read after a warm one on the same route."
         },
         "value": {
           "type": "integer",
@@ -4685,7 +4685,7 @@
               ]
             }
           },
-          "description": "A model called a tool Hermes ships that this session did not enable (background reviews and delegated children excluded)."
+          "description": "A model called a tool Tandem ships that this session did not enable (background reviews and delegated children excluded)."
         },
         "value": {
           "type": "integer",
@@ -4880,7 +4880,7 @@
               ]
             }
           },
-          "description": "A user turned off something Hermes ships on (or removed a shipped skill), or turned it back on. name is a shipped toolset / bundled or catalog skill or plugin / DEFAULT_CONFIG key path (never a value), else custom. At most once per (kind, name, event) per day."
+          "description": "A user turned off something Tandem ships on (or removed a shipped skill), or turned it back on. name is a shipped toolset / bundled or catalog skill or plugin / DEFAULT_CONFIG key path (never a value), else custom. At most once per (kind, name, event) per day."
         },
         "value": {
           "const": 1

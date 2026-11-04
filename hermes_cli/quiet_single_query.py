@@ -1,6 +1,6 @@
-"""Quiet ``hermes chat -Q`` helpers: bind this session's key and resume nested notifies.
+"""Quiet ``tandem chat -Q`` helpers: bind this session's key and resume nested notifies.
 
-Bot Mode delivers a local DM as ``hermes -p <bot> chat -Q --query-file``. Interactive
+Bot Mode delivers a local DM as ``tandem -p <bot> chat -Q --query-file``. Interactive
 chat binds ``set_current_session_key(self.session_id)`` around the turn; the quiet
 path did not, so a nested ``message_agent`` notify inherited the dispatcher's
 ``HERMES_SESSION_KEY`` and never woke the recipient. Quiet also printed and exited
@@ -89,7 +89,7 @@ REPORTED_TURN_EXIT_GRACE_SECONDS = 2.0
 def run_reported_turn(argv: list, *, env: MutableMapping[str, str], report_path: str, timeout: float,
                       exit_grace: float | None = REPORTED_TURN_EXIT_GRACE_SECONDS, cwd: str | None = None,
                       encoding: str | None = None) -> subprocess.CompletedProcess:
-    """Run one ``hermes chat -Q`` delivery child; *timeout* bounds the TURN, not the process.
+    """Run one ``tandem chat -Q`` delivery child; *timeout* bounds the TURN, not the process.
 
     The child records its turn at *report_path* (``write_turn_report``) the moment the turn ends,
     then runs the one-shot exit linger for nested ``notify_on_complete`` replies — bounded by

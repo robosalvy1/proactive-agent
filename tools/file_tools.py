@@ -608,7 +608,7 @@ def read_file_tool(path: str, offset: int = 1, limit: int = DEFAULT_READ_LIMIT, 
 
     Guard order: NT/device-namespace prefix (raw string, no resolution) →
     device-path blocklist (no I/O) → stat-based special-file guard (host only)
-    → Hermes internal denylist → document extraction → binary-extension guard
+    → Tandem internal denylist → document extraction → binary-extension guard
     → negative-result cache → dedup stub → real read.
     """
     try:

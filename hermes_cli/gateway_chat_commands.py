@@ -168,7 +168,7 @@ async def _tools(view, rest):
     if isinstance(toolsets, list) and toolsets:
         print("Toolsets frozen at launch: " + ", ".join(map(str, toolsets)))
     else:
-        print("This session runs the profile's CLI toolsets as they were at launch (`hermes tools list`).")
+        print("This session runs the profile's CLI toolsets as they were at launch (`tandem tools list`).")
     print("Changing toolsets mid-session (/tools enable|disable) " + refusal("tools").split(" ", 1)[1])
 
 

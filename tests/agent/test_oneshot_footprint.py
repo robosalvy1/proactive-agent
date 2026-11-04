@@ -1,4 +1,4 @@
-"""One-shot sessions (``hermes chat -q``) drop the self-improvement footprint.
+"""One-shot sessions (``tandem chat -q``) drop the self-improvement footprint.
 
 Across 21 one-shot benchmark trajectories the agent created 7 skills and patched a bundled one
 mid-task, spent 37 of ~215 tool calls on skill_view/skill_manage, and spawned review subagents of

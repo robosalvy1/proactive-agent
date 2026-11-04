@@ -1,7 +1,7 @@
 """First-run routing between the classic CLI guard, the TUI and the shared-metrics offer.
 
 A blank install (no provider) must reach the TUI's own "Setup Required" screen under
-``hermes --tui``; the classic "Run setup now? [Y/n]" guard only fronts the classic CLI, and the
+``tandem --tui``; the classic "Run setup now? [Y/n]" guard only fronts the classic CLI, and the
 one-time shared-metrics offer waits until a provider exists (#128663).
 """
 

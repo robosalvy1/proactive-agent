@@ -1,7 +1,7 @@
 """Late plugin loads re-wire the running adapters (#87770).
 
 A plugin that finishes loading after an adapter connected — a tool-triggered force re-discovery, or
-``hermes plugins install/enable`` / the Desktop / ``plugins.manage`` nudging the gateway over the control
+``tandem plugins install/enable`` / the Desktop / ``plugins.manage`` nudging the gateway over the control
 socket — used to leave its platform handlers (slash commands, button callbacks, inbound transforms)
 silently unwired until a restart. The runner subscribes to ``PluginManager.on_plugin_loaded`` per served
 profile and calls every live adapter's idempotent ``rewire_plugin_handlers()`` on the event loop.

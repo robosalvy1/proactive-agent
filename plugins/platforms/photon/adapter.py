@@ -248,13 +248,13 @@ def check_requirements() -> bool:
         if npm_error:
             logger.debug(
                 "photon: spectrum-ts not installed at %s "
-                "(last npm error: %s) — run: hermes photon setup",
+                "(last npm error: %s) — run: tandem photon setup",
                 _sidecar_dir(),
                 npm_error,
             )
         else:
             logger.debug(
-                "photon: spectrum-ts not installed at %s — run: hermes photon setup",
+                "photon: spectrum-ts not installed at %s — run: tandem photon setup",
                 _sidecar_dir(),
             )
         return False
@@ -262,7 +262,7 @@ def check_requirements() -> bool:
 
 
 def _sidecar_deps_stale() -> bool:
-    """True when node_modules predates the lockfile (`hermes update` rewrites it without
+    """True when node_modules predates the lockfile (`tandem update` rewrites it without
     reinstalling); False if either file is missing."""
     return _lock_newer_than_install(_sidecar_dir())
 
@@ -270,7 +270,7 @@ def _sidecar_deps_stale() -> bool:
 def _reinstall_sidecar_deps() -> None:
     """Reinstall the sidecar's node_modules from the lockfile (blocking).
 
-    Mirrors ``hermes photon install-sidecar``: ``npm ci`` for an exact,
+    Mirrors ``tandem photon install-sidecar``: ``npm ci`` for an exact,
     reproducible install, falling back to ``npm install`` if the lockfile is
     missing or drifted. Runs the postinstall patch as part of the install.
     Best-effort — a failure here just leaves the (stale) deps in place and the
@@ -539,7 +539,7 @@ def _lookup_sent_text(chat_id: Optional[str], message_id: Optional[str]) -> Opti
 def _attachment_body(space_id: str, safe_path: str, *, kind: str, name: Optional[str] = None,
                      mime_type: Optional[str] = None, caption: Optional[str] = None) -> dict[str, Any]:
     """``/send-attachment`` body; spectrum-ts infers name/mimeType from the extension,
-    so optional keys are only sent when Hermes supplied them."""
+    so optional keys are only sent when Tandem supplied them."""
     body: dict[str, Any] = {
         "spaceId": space_id, "path": safe_path, "kind": "voice" if kind == "voice" else "attachment"}
     body.update({k: v for k, v in (("name", name), ("mimeType", mime_type), ("caption", caption)) if v})
@@ -650,7 +650,7 @@ class PhotonAdapter(BasePlatformAdapter):
         if not self._project_id or not self._project_secret:
             self._set_fatal_error(
                 "MISSING_CREDENTIALS",
-                "PHOTON_PROJECT_ID and PHOTON_PROJECT_SECRET are required. Run: hermes photon setup",
+                "PHOTON_PROJECT_ID and PHOTON_PROJECT_SECRET are required. Run: tandem photon setup",
                 retryable=False)
             return False
         client = httpx.AsyncClient(timeout=30.0, trust_env=False)
@@ -940,7 +940,7 @@ class PhotonAdapter(BasePlatformAdapter):
 
     @classmethod
     def _pid_is_sidecar(cls, pid: int) -> bool:
-        """True if ``pid``'s command line is a Photon sidecar (any Hermes checkout)."""
+        """True if ``pid``'s command line is a Photon sidecar (any Tandem checkout)."""
         out = cls._quick_stdout(["ps", "-p", str(pid), "-o", "command="])
         return out is not None and "photon/sidecar/index.mjs" in out
 
@@ -1002,7 +1002,7 @@ class PhotonAdapter(BasePlatformAdapter):
                 raise PhotonSidecarStartupError(
                     f"Photon sidecar deps could not be installed into "
                     f"{_sidecar_dir()} (see log for the npm error). "
-                    f"Run: cd {_sidecar_dir()} && npm ci   (or `hermes photon setup`)",
+                    f"Run: cd {_sidecar_dir()} && npm ci   (or `tandem photon setup`)",
                     code="SIDECAR_DEPS_MISSING", retryable=False)
         # `hermes update` bumps the lockfile without reinstalling node_modules; the sidecar
         # would spawn against stale deps and die on every reconnect.
@@ -1063,7 +1063,7 @@ class PhotonAdapter(BasePlatformAdapter):
             # Retrying can never fix a missing binary (OOF-153).
             raise PhotonSidecarStartupError(
                 f"node binary not found ({self._node_bin!r}) — install Node.js "
-                f"18+ or run `hermes pm install`: {exc}",
+                f"18+ or run `tandem pm install`: {exc}",
                 code="SIDECAR_NODE_MISSING",
                 retryable=False,
             ) from exc
@@ -1622,7 +1622,7 @@ def _standalone_token_from_record(port: int) -> tuple[Optional[str], int, str]:
         stale_hint = (f" A stale sidecar runtime record was found (pid {record.get('pid')} is not running)"
                       " — the gateway appears to be down.")
     return None, port, (
-        "Photon standalone send requires a running sidecar. Start the Hermes gateway (which spawns "
+        "Photon standalone send requires a running sidecar. Start the Tandem gateway (which spawns "
         f"the sidecar and records its address under <hermes-home>/runtime/{_RUNTIME_RECORD_NAME}), "
         "or set PHOTON_SIDECAR_TOKEN in this process's environment." + stale_hint)
 
@@ -1693,14 +1693,14 @@ async def _standalone_send(
 # -- Plugin entry point ----------------------------------------------------------
 
 def register(ctx) -> None:
-    """Called by the Hermes plugin loader at startup."""
+    """Called by the Tandem plugin loader at startup."""
     from . import cli as _cli  # local: avoid argparse work at module load
     ctx.register_platform(
         name="photon", label="iMessage via Photon", adapter_factory=lambda cfg: PhotonAdapter(cfg),
         check_fn=check_requirements, validate_config=validate_config, is_connected=is_connected,
         required_env=["PHOTON_PROJECT_ID", "PHOTON_PROJECT_SECRET"],
         install_hint=(
-            "Run: hermes photon setup  (logs in via device flow, creates a "
+            "Run: tandem photon setup  (logs in via device flow, creates a "
             "Spectrum project, links your phone number, installs the "
             "spectrum-ts sidecar)."),
         setup_fn=_cli.gateway_setup,  # surfaces Photon in the unified `hermes gateway setup` wizard

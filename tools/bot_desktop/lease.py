@@ -11,7 +11,7 @@ tools consult it; a process the agent starts by hand against the published ``DIS
 (bot-screen.md, "Threat model"; #110040).
 
 Authority lives ON DISK, ``<HERMES_HOME>/bot-desktop/lease.json`` under an fcntl lock, because the
-processes that must agree do not share memory: ``hermes serve`` (viewer bridge), the messaging
+processes that must agree do not share memory: ``tandem serve`` (viewer bridge), the messaging
 gateway, a CLI turn and isolated workers all drive the same display. Every read goes to the file;
 the in-process Condition only wakes local waiters early. ``epoch`` increments on every transition so
 an action admitted under one lease can tell that control changed underneath it.

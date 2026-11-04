@@ -173,13 +173,13 @@ class ReviewIdleQueue:
 
     @staticmethod
     def _still_enabled(item: _PendingReview) -> bool:
-        """Re-check the enabled gate at DISPATCH time (disabling reviews while queued must stick). Fail-open."""
+        """Re-check the explicit opt-in at dispatch; a failed check cannot authorize review."""
         try:
             from agent.background_review import load_background_review_settings
 
             return load_background_review_settings()[0]
         except Exception:
-            return True
+            return False
 
 
 def _managed_server_idle() -> bool:

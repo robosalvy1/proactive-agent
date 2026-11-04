@@ -3,7 +3,7 @@
 The scripts that produced every number in tracking issue #103563 and the "Independent review
 (round 2)" sections of its 13 PRs. Two halves:
 
-- **`forensics/`** reads a *copy* of a Hermes `state.db` (plus rotated `agent.log*` and git) and
+- **`forensics/`** reads a *copy* of a Tandem `state.db` (plus rotated `agent.log*` and git) and
   recomputes the *observed* figures for any run: where the money went, per-call cache behaviour,
   nested-delegate timeouts, batch-join delivery delay, tool friction, `/goal` loop behaviour, and the
   post-open rework inventory. It needs no model calls and no network.
@@ -18,10 +18,10 @@ replay). Do not add the modeled figures to the observed ones; see §5 of #103563
 
 ## Requirements
 
-- A Hermes checkout with its venv (`.venv/bin/python`). NeMo Relay is not required for the forensics;
+- A Tandem checkout with its venv (`.venv/bin/python`). NeMo Relay is not required for the forensics;
   it is what the run itself used for the wire captures in `live_ab/cache_prefix_wire.py`.
 - For forensics: a **copy** of `~/.hermes/state.db` (never point at the live file; `sqlite3 state.db ".backup copy.db"`
-  or `cp` while Hermes is idle) and, optionally, the rotated `~/.hermes/logs/agent.log*`.
+  or `cp` while Tandem is idle) and, optionally, the rotated `~/.hermes/logs/agent.log*`.
 - For `--live` probes: real credentials in `HERMES_HOME` (they spend cents per run).
 
 ## Forensics: recompute the observed numbers for YOUR run
@@ -46,7 +46,7 @@ $P -m evals.postmortem.forensics.rework     --repo . --base <merge-base> --open 
 Each writes `postmortem_out/<lane>.json` and prints a summary. `--root` defaults to the top-level
 session with the most descendants; compression-rollover children are excluded from the population so
 cost buckets are disjoint. Pricing is fitted from `estimated_cost_usd`, so dollars match what that
-Hermes recorded (an estimator, not an invoice).
+Tandem recorded (an estimator, not an invoice).
 
 ### Reference output (the #102117 run, `state_copy.db` of 2026-09-04)
 
@@ -131,7 +131,7 @@ are in a secret gist linked from #103563 (no trajectories; see "What is NOT here
 
 ## Provenance
 
-Forensic lanes: five parallel Hermes subagents (2026-09-04), rewritten here to take `--db`/`--root`
+Forensic lanes: five parallel Tandem subagents (2026-09-04), rewritten here to take `--db`/`--root`
 instead of hard-coded paths. `live_ab/`: the primary agent's per-PR A/Bs. `review_probes/`: the
 independent `/review` subagent's probes (2026-09-05), adapted to take paths from the command line;
 their findings and the fixes are in each PR's "Independent review (round 2)" section.

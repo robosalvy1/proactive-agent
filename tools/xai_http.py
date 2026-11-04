@@ -50,7 +50,7 @@ def has_xai_credentials() -> bool:
 
 
 def hermes_xai_user_agent() -> str:
-    """Return a stable Hermes-specific User-Agent for xAI HTTP calls."""
+    """Return a stable Tandem-specific User-Agent for xAI HTTP calls."""
     try:
         from hermes_cli.version_info import get_version_info
         return f"Hermes-Agent/{get_version_info().base_version}"
@@ -141,7 +141,7 @@ def xai_storage_notice_text(section_name: str) -> str:
 
 
 def maybe_mark_xai_storage_notice_seen(section_name: str) -> Optional[str]:
-    """Return the storage notice once per Hermes home, then mark it seen."""
+    """Return the storage notice once per Tandem home, then mark it seen."""
     notice = xai_storage_notice_text(section_name)
     if not notice:
         return None
@@ -179,7 +179,7 @@ def resolve_xai_http_credentials(
 ) -> dict[str, str]:
     """Resolve bearer credentials for direct xAI HTTP endpoints.
 
-    Default order: Hermes-managed xAI OAuth, then ``XAI_API_KEY`` (via ``get_env_value`` so
+    Default order: Tandem-managed xAI OAuth, then ``XAI_API_KEY`` (via ``get_env_value`` so
     ``~/.hermes/.env`` keys count). ``prefer_api_key=True`` inverts that for API-metered
     endpoints where the subscription OAuth bearer authorizes but misbehaves (x_search answers
     without citations, TTS 403s). Both branches honor ``HERMES_XAI_BASE_URL``/``XAI_BASE_URL``
@@ -187,8 +187,8 @@ def resolve_xai_http_credentials(
     pass the rejected bearer as ``api_key_hint`` so a multi-account pool refreshes the issuing
     entry, not whichever its strategy selects first.
 
-    Prefers Hermes-managed xAI OAuth credentials when available, then falls back to ``XAI_API_KEY`` resolved
-    via ``hermes_cli.config.get_env_value`` so keys stored in ``~/.hermes/.env`` (the standard Hermes
+    Prefers Tandem-managed xAI OAuth credentials when available, then falls back to ``XAI_API_KEY`` resolved
+    via ``hermes_cli.config.get_env_value`` so keys stored in ``~/.hermes/.env`` (the standard Tandem
     location) are honored — not just ones already exported into ``os.environ``. This keeps direct xAI
     endpoints (images, TTS, STT, etc.) aligned with the main runtime auth model and preserves the regression
     contract from PR #17140 / #17163.

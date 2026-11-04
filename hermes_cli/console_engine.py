@@ -1,4 +1,4 @@
-"""Safe Hermes Console command engine."""
+"""Safe Tandem Console command engine."""
 
 from __future__ import annotations
 
@@ -93,7 +93,7 @@ def _strip_console_status_footer(text: str) -> str:
     if len(lines) < 2:
         return text.rstrip()
     last, prev = (_strip_ansi(lines[i]).strip() for i in (-1, -2))
-    if not (prev.startswith("Run 'hermes doctor'") and last.startswith("Run 'hermes setup'")):
+    if not (prev.startswith("Run 'tandem doctor'") and last.startswith("Run 'tandem setup'")):
         return text.rstrip()
     lines = lines[:-2]
     _drop_trailing_blank(lines)
@@ -345,8 +345,8 @@ def _register_command_family(
             return _dispatch(surface, root, fixed, args, namespace_update)
 
         engine.register(
-            full_path, usage, summaries.get(full_path) or f"Run `hermes {usage}`.", handler,
-            mutating=mutating, confirmation=f"Run `hermes {usage}`?")
+            full_path, usage, summaries.get(full_path) or f"Run `tandem {usage}`.", handler,
+            mutating=mutating, confirmation=f"Run `tandem {usage}`?")
 
 
 _BLOCKED_TOP = frozenset(
@@ -354,28 +354,28 @@ _BLOCKED_TOP = frozenset(
     "oneshot proxy serve setup uninstall update whatsapp whatsapp-cloud".split())
 
 _BLOCKED_PAIRS = {
-    ("config", "edit"): "`config edit` opens an editor and is not available in Hermes Console.",
-    ("mcp", "serve"): "`mcp serve` starts a server and is not available in Hermes Console.",
-    ("profile", "alias"): "`profile alias` creates shell wrappers and is not available in Hermes Console.",
-    ("skills", "config"): "`skills config` is interactive and is not available in Hermes Console.",
-    ("skills", "publish"): "`skills publish` is not available in Hermes Console.",
-    ("portal", "login"): "`portal login` is interactive and is not available in Hermes Console.",
-    ("portal", "open"): "`portal open` opens a browser and is not available in Hermes Console.",
-    ("kanban", "tail"): "`kanban tail` streams output and is not available in Hermes Console.",
-    ("kanban", "watch"): "`kanban watch` streams output and is not available in Hermes Console.",
-    ("kanban", "daemon"): "`kanban daemon` starts a service and is not available in Hermes Console.",
-    ("kanban", "dispatcher"): "`kanban dispatcher` starts a worker and is not available in Hermes Console.",
-    ("kanban", "swarm"): "`kanban swarm` starts agent work and is not available in Hermes Console.",
-    ("kanban", "decompose"): "`kanban decompose` starts agent work and is not available in Hermes Console.",
-    ("kanban", "specify"): "`kanban specify` starts agent work and is not available in Hermes Console.",
-    ("kanban", "gc"): "`kanban gc` is not available in Hermes Console.",
-    ("sessions", "delete"): "`sessions delete` and `sessions prune` are not available in Hermes Console.",
-    ("sessions", "prune"): "`sessions delete` and `sessions prune` are not available in Hermes Console.",
+    ("config", "edit"): "`config edit` opens an editor and is not available in Tandem Console.",
+    ("mcp", "serve"): "`mcp serve` starts a server and is not available in Tandem Console.",
+    ("profile", "alias"): "`profile alias` creates shell wrappers and is not available in Tandem Console.",
+    ("skills", "config"): "`skills config` is interactive and is not available in Tandem Console.",
+    ("skills", "publish"): "`skills publish` is not available in Tandem Console.",
+    ("portal", "login"): "`portal login` is interactive and is not available in Tandem Console.",
+    ("portal", "open"): "`portal open` opens a browser and is not available in Tandem Console.",
+    ("kanban", "tail"): "`kanban tail` streams output and is not available in Tandem Console.",
+    ("kanban", "watch"): "`kanban watch` streams output and is not available in Tandem Console.",
+    ("kanban", "daemon"): "`kanban daemon` starts a service and is not available in Tandem Console.",
+    ("kanban", "dispatcher"): "`kanban dispatcher` starts a worker and is not available in Tandem Console.",
+    ("kanban", "swarm"): "`kanban swarm` starts agent work and is not available in Tandem Console.",
+    ("kanban", "decompose"): "`kanban decompose` starts agent work and is not available in Tandem Console.",
+    ("kanban", "specify"): "`kanban specify` starts agent work and is not available in Tandem Console.",
+    ("kanban", "gc"): "`kanban gc` is not available in Tandem Console.",
+    ("sessions", "delete"): "`sessions delete` and `sessions prune` are not available in Tandem Console.",
+    ("sessions", "prune"): "`sessions delete` and `sessions prune` are not available in Tandem Console.",
 }
 
 
 class HermesConsoleEngine:
-    """Curated line-command executor for Hermes Console."""
+    """Curated line-command executor for Tandem Console."""
 
     def __init__(self, *, output_limit: int = 20000):
         self.output_limit = output_limit
@@ -389,14 +389,14 @@ class HermesConsoleEngine:
             return ConsoleResult("ok")
         try:
             tokens = _split_line(raw_line)
-            if tokens and tokens[0] == "hermes":
+            if tokens and tokens[0] in ("hermes", "tandem"):
                 tokens = tokens[1:]
             if not tokens:
                 return ConsoleResult("ok", output=self.help_text())
             if _contains_shell_syntax(raw_line, tokens):
                 raise ConsoleCommandError(
-                    "Hermes Console does not run shell syntax. Use one supported "
-                    "Hermes command at a time.")
+                    "Tandem Console does not run shell syntax. Use one supported "
+                    "Tandem command at a time.")
             builtin = self._execute_builtin(tokens)
             if builtin is not None:
                 if raw_line not in {"history", "clear"}:
@@ -418,7 +418,7 @@ class HermesConsoleEngine:
         if subject:
             command, _args = self._resolve_command(subject.split())
             return f"{command.usage}\n{command.summary}"
-        lines = ["Hermes Console", "", "Supported commands:"]
+        lines = ["Tandem Console", "", "Supported commands:"]
         for command in sorted(self.commands.values(), key=lambda c: c.usage):
             marker = " *" if command.mutating else "  "
             lines.append(f"{marker} {command.usage:<32} {_table_summary(command.summary)}")
@@ -472,14 +472,14 @@ class HermesConsoleEngine:
         probe = " ".join(tokens[:2]) if len(tokens) > 1 else tokens[0]
         suggestions = difflib.get_close_matches(probe, available, n=3, cutoff=0.45)
         suffix = f" Did you mean: {', '.join(suggestions)}?" if suggestions else ""
-        raise ConsoleCommandError(f"Unsupported Hermes Console command: {probe}.{suffix}")
+        raise ConsoleCommandError(f"Unsupported Tandem Console command: {probe}.{suffix}")
 
     def _rejection_for(self, tokens: Sequence[str]) -> str:
         first = tokens[0]
         if first.startswith("-"):
-            return f"{first} is not available in Hermes Console."
+            return f"{first} is not available in Tandem Console."
         if first in _BLOCKED_TOP:
-            return f"`hermes {first}` is not available in Hermes Console."
+            return f"`tandem {first}` is not available in Tandem Console."
         return _BLOCKED_PAIRS.get(tuple(tokens[:2]), "")
 
     def _cap_output(self, output: str) -> str:
@@ -539,7 +539,7 @@ def _apply_confirmed_defaults(args: argparse.Namespace) -> None:
         auth_type = getattr(args, "auth_type", None)
         if auth_type in {"api-key", "api_key"} and not getattr(args, "api_key", None):
             raise ConsoleCommandError(
-                "auth add --type api-key requires --api-key in Hermes Console.")
+                "auth add --type api-key requires --api-key in Tandem Console.")
     if getattr(args, "import_name", None) is not None:
         return  # profile import has no prompt flag; leave it alone.
     if getattr(args, "skills_action", None) in {"install", "reset", "opt-out", "repair-official"}:
@@ -567,7 +567,7 @@ _cron_status = _simple_command("cron status", "hermes_cli.cron", "cron_status")
 
 def _logs(_engine: HermesConsoleEngine, args: list[str]) -> str:
     if "-f" in args or "--follow" in args:
-        raise ConsoleCommandError("`logs -f` is not available in Hermes Console.")
+        raise ConsoleCommandError("`logs -f` is not available in Tandem Console.")
     ns = _parse(
         "logs", args, (("log_name",), dict(nargs="?", default="agent")),
         (("-n", "--lines"), dict(type=int, default=50)),
@@ -792,10 +792,10 @@ def _cron_run(_engine: HermesConsoleEngine, args: list[str]) -> str:
 
 # (path, usage, summary, handler, confirmation prompt) — a non-empty prompt marks it mutating.
 _BUILTIN_COMMANDS = (
-    (("status",), "status", "Show Hermes component status.", _status, ""),
-    (("version",), "version", "Show Hermes version information.", _version, ""),
+    (("status",), "status", "Show Tandem component status.", _status, ""),
+    (("version",), "version", "Show Tandem version information.", _version, ""),
     (("doctor",), "doctor", "Run diagnostics without auto-fix.", _doctor, ""),
-    (("logs",), "logs [name] [-n N]", "Show recent Hermes logs.", _logs, ""),
+    (("logs",), "logs [name] [-n N]", "Show recent Tandem logs.", _logs, ""),
     (("sessions", "list"), "sessions list [--limit N]", "List recent sessions.", _sessions_list,
      ""),
     (("sessions", "stats"), "sessions stats", "Show session store statistics.", _sessions_stats,
@@ -806,7 +806,7 @@ _BUILTIN_COMMANDS = (
     (("cron", "status"), "cron status", "Show cron scheduler status.", _cron_status, ""),
     (("profile",), "profile", "Show active profile status.", _profile_status, ""),
     (("config", "set"), "config set <key> <value>", "Set a configuration value.", _config_set,
-     "Update Hermes configuration?"),
+     "Update Tandem configuration?"),
     (("cron", "pause"), "cron pause <job>", "Pause a scheduled job.", _cron_pause,
      "Pause this cron job?"),
     (("cron", "resume"), "cron resume <job>", "Resume a paused cron job.", _cron_resume,
@@ -814,7 +814,7 @@ _BUILTIN_COMMANDS = (
     (("cron", "run"), "cron run <job>", "Run a job on the next scheduler tick.", _cron_run,
      "Trigger this cron job?"),
     (("config", "migrate"), "config migrate", "Update config with new options.", _config_migrate,
-     "Update Hermes configuration with missing defaults?"),
+     "Update Tandem configuration with missing defaults?"),
     (("sessions", "export"), "sessions export <output> [--source SOURCE] [--session-id ID]",
      "Export sessions to JSONL.", _sessions_export, "Export session data?"),
     (("sessions", "rename"), "sessions rename <session> <title>", "Rename a session.",
@@ -838,7 +838,7 @@ def run_console_repl(
         if interactive:
             print(text, file=stdout, **kw)
 
-    say("Hermes Console. Type `help` for commands, `exit` to quit.")
+    say("Tandem Console. Type `help` for commands, `exit` to quit.")
     while True:
         say("hermes> ", end="", flush=True)
         line = stdin.readline()

@@ -58,8 +58,8 @@ def _macos(facts: Facts, picks: Mapping[str, Any]) -> bool:
 
 FIRST_TASKS: tuple[FirstTask, ...] = (
     FirstTask(
-        "hermes", "Explain how Hermes works", lambda facts, picks: False, ("hermes-agent", "claude-design", "p5js"),
-        goal="build a living page that shows how Hermes works, from the real docs and this install",
+        "hermes", "Explain how Tandem works", lambda facts, picks: False, ("hermes-agent", "claude-design", "p5js"),
+        goal="build a living page that shows how Tandem works, from the real docs and this install",
         steps=(
             "Read https://hermes-agent.nousresearch.com/docs/llms.txt once with web_extract. Open a page only to "
             "check a fact you show.",
@@ -121,8 +121,8 @@ FIRST_TASKS: tuple[FirstTask, ...] = (
             "MCP bridge on port 9876. Check again each time they say done.",
             "Offer three scene ideas in one clarify: two that fit them, one that shows off this machine.",
             "First capture their Blender window with get_screenshot_of_window_as_image, copy the image it saved "
-            "over preview.png and open that in the preview pane, so they watch Hermes work. Then build it in a new "
-            "scene named Hermes, in camera view, in four calls they can watch: ground and camera, main objects, "
+            "over preview.png and open that in the preview pane, so they watch Tandem work. Then build it in a new "
+            "scene named Tandem, in camera view, in four calls they can watch: ground and camera, main objects, "
             "materials and light, framing. After each, capture the window over preview.png again; the pane "
             "reloads it.",
             "Render one 1280x720 EEVEE still with render_viewport_to_path, copy the filepath it returns to "

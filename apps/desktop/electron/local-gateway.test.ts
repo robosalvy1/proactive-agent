@@ -152,7 +152,7 @@ test('ensure consumes structured readiness without acquiring a child owner', asy
 
 test('an ensure child that never reached the protocol boundary is diagnosed from stderr, not as a JSON parse error', async () => {
   // `main`'s hermes has no `gateway ensure` subcommand: argparse usage on stderr, nothing on stdout.
-  const legacy = { code: 2, stdout: '', stderr: "usage: hermes gateway [-h] ...\nhermes gateway: 'ensure' is not a `hermes gateway` command.\nRun `hermes gateway --help` to see all commands.\n" }
+  const legacy = { code: 2, stdout: '', stderr: "usage: tandem gateway [-h] ...\nhermes gateway: 'ensure' is not a `tandem gateway` command.\nRun `tandem gateway --help` to see all commands.\n" }
   await expect(ensureLocalGateway(async () => legacy)).rejects.toThrow(/produced no result \(exit 2\): Run `hermes gateway --help`/)
   // A missing profile: the CLI exits 1 before the ensure command runs.
   await expect(ensureLocalGateway(async () => ({ code: 1, stdout: '', stderr: "Error: Profile 'gone' does not exist.\n" }))).rejects.toThrow(/exit 1\): Error: Profile 'gone' does not exist\./)
@@ -199,7 +199,7 @@ test('a dial against a replaced local gateway forgets the cached endpoint once a
   expect(ensures).toBe(2)
 })
 
-test('a ready owner running other code than this Hermes is restarted once, then re-ensured', async () => {
+test('a ready owner running other code than this Tandem is restarted once, then re-ensured', async () => {
   // After `hermes update` the live gateway still serves the old code and answers model calls
   // 503 "Restart required"; attaching to it on every dial pinned the user to it forever.
   const { createStaleGatewayRestarter } = await import('./local-gateway')
@@ -495,9 +495,9 @@ test('a session write that names its owner only in the body gets a grant for tha
 
 test('an ensure refusal names its remedy instead of only a status pointer', async () => {
   // A gateway another install owns is refused, not replaced; ensure says what to do in `detail`.
-  const detail = "another Hermes install's gateway owns this profile; stop it there: hermes gateway stop"
+  const detail = "another Tandem install's gateway owns this profile; stop it there: tandem gateway stop"
 
   await expect(ensureLocalGateway(async () => ({
     code: 3, stdout: JSON.stringify({ state: 'incompatible', reason_code: 'runtime_protocol', detail, endpoint: null })
-  }))).rejects.toThrow(`Gateway incompatible (runtime_protocol). ${detail}. Use hermes gateway status for recovery.`)
+  }))).rejects.toThrow(`Gateway incompatible (runtime_protocol). ${detail}. Use tandem gateway status for recovery.`)
 })

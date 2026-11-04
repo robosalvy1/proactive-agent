@@ -57,7 +57,7 @@ def _declared_item_id(item: dict) -> Any:
 
 
 def _entry_models_discovered(entry: Any) -> bool:
-    """True when the entry's ``models`` mapping was auto-discovered by Hermes.
+    """True when the entry's ``models`` mapping was auto-discovered by Tandem.
 
     Current shape: entry-level ``models_discovered: true``. Older versions wrote an in-mapping
     ``__discovered_model_catalog__: true`` sentinel — accepted on read (the next save migrates it)."""
@@ -75,7 +75,7 @@ def _models_config_is_allowlist(value: Any, discovered: bool = False) -> bool:
     ``_save_custom_provider`` / the wizard, not a catalog narrow (treating it as one made GUI
     pickers show only the saved default for keyless Ollama while the CLI live-probed). List and
     string shapes remain allowlists for no-key endpoints; pin a dict catalog with
-    ``discover_models: false``. A catalog Hermes itself persisted (``discovered``) is never a pin."""
+    ``discover_models: false``. A catalog Tandem itself persisted (``discovered``) is never a pin."""
     if discovered:
         return False
     if isinstance(value, str):
@@ -99,7 +99,7 @@ def _bare_custom_provider_def(current_base_url: str) -> Optional[ProviderDef]:
 
 _HERMES_MODEL_WARNING = (
     "Nous Research Hermes 3 & 4 models are NOT agentic and are not designed "
-    "for use with Hermes Agent. They lack the tool-calling capabilities "
+    "for use with Tandem Agent. They lack the tool-calling capabilities "
     "required for agent workflows. Consider using an agentic model instead "
     "(Claude, GPT, Gemini, DeepSeek, etc.).")
 
@@ -1042,13 +1042,13 @@ def _ollama_configured_base() -> tuple[dict, str]:
 
 def _unknown_provider_message(explicit_provider: str) -> str:
     msg = (
-        f"Unknown provider '{explicit_provider}'. Check 'hermes model' for available "
+        f"Unknown provider '{explicit_provider}'. Check 'tandem model' for available "
         f"providers, or define it in config.yaml under 'providers:'.")
     try:  # Surface common config issues that cause provider resolution failures
         from hermes_cli.config import validate_config_structure
         issues = validate_config_structure()
         if issues:
-            msg += "\n\nRun 'hermes doctor' — config issues detected:" + "".join(f"\n  • {ci.message}" for ci in issues[:3])
+            msg += "\n\nRun 'tandem doctor' — config issues detected:" + "".join(f"\n  • {ci.message}" for ci in issues[:3])
     except Exception:
         pass
     return msg
@@ -1282,7 +1282,7 @@ def _convert_vendor_colon_slug(st: _Switch) -> None:
     a variant tag (:free, :extended, :fast) that must be preserved.
 
     On an aggregator every ``left:right`` is a slug. Elsewhere the colon is converted only when
-    ``left`` names a provider Hermes knows, so ``/model alibaba:qwen3.6-plus`` routes like
+    ``left`` names a provider Tandem knows, so ``/model alibaba:qwen3.6-plus`` routes like
     ``alibaba/qwen3.6-plus`` (#9748) while Ollama-style tags (``qwen3.5:4b``) stay intact."""
     raw_input = st.raw_input
     colon_pos = raw_input.find(":")
@@ -1470,7 +1470,7 @@ def _creds_for_switched_provider(st: _Switch) -> Optional[ModelSwitchResult]:
                 return st.fail_on_target(str(e))
             return st.fail_on_target(
                 f"{st.provider_label} is not connected: no API key or login was found for it. Add one with "
-                f"`hermes auth add {st.target_provider}`, or pick a connected provider in /model.\n"
+                f"`tandem auth add {st.target_provider}`, or pick a connected provider in /model.\n"
                 f"  Details: {e}")
     return None
 

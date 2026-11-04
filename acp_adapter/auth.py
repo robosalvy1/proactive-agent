@@ -1,4 +1,4 @@
-"""ACP auth helpers — detect and advertise Hermes authentication methods."""
+"""ACP auth helpers — detect and advertise Tandem authentication methods."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ TERMINAL_SETUP_AUTH_METHOD_ID = "hermes-setup"
 
 
 def detect_provider() -> Optional[str]:
-    """Resolve the active Hermes runtime provider, or None if unavailable.
+    """Resolve the active Tandem runtime provider, or None if unavailable.
 
     A callable ``api_key`` (Azure Foundry Entra ID bearer-token provider, see
     :mod:`agent.azure_identity_adapter`) counts as a valid credential; otherwise
@@ -28,10 +28,10 @@ def detect_provider() -> Optional[str]:
 
 
 def build_auth_methods() -> list[Any]:
-    """Return registry-compatible ACP auth methods for Hermes.
+    """Return registry-compatible ACP auth methods for Tandem.
 
     The ACP registry requires at least one usable auth method in the initial
-    handshake. A fresh Zed install may have no Hermes credentials yet, so the
+    handshake. A fresh Zed install may have no Tandem credentials yet, so the
     terminal setup method is always advertised; when credentials resolve, the
     provider is also advertised as the default agent-managed runtime method."""
     from acp.schema import AuthMethodAgent, TerminalAuthMethod
@@ -41,11 +41,11 @@ def build_auth_methods() -> list[Any]:
     if provider:
         methods.append(AuthMethodAgent(
             id=provider, name=f"{provider} runtime credentials",
-            description=f"Authenticate Hermes using the currently configured {provider} runtime credentials.",
+            description=f"Authenticate Tandem using the currently configured {provider} runtime credentials.",
         ))
     methods.append(TerminalAuthMethod(
-        id=TERMINAL_SETUP_AUTH_METHOD_ID, name="Configure Hermes provider", type="terminal", args=["--setup"],
-        description=("Open Hermes' interactive model/provider setup in a terminal. "
-                     "Use this when Hermes has not been configured on this machine yet."),
+        id=TERMINAL_SETUP_AUTH_METHOD_ID, name="Configure Tandem provider", type="terminal", args=["--setup"],
+        description=("Open Tandem's interactive model/provider setup in a terminal. "
+                     "Use this when Tandem has not been configured on this machine yet."),
     ))
     return methods

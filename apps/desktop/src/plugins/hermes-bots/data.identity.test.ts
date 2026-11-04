@@ -84,7 +84,7 @@ describe('the @handle a bot answers to', () => {
 
 describe('renamed bots stay taggable', () => {
   it('drops reserved tokens so a rename cannot hijack a built-in tag', () => {
-    expect(mentionNameForms('Hermes')).toEqual([])
+    expect(mentionNameForms('Tandem')).toEqual([])
     expect(mentionNameForms('@everyone')).toEqual([])
     expect(mentionNameForms('')).toEqual([])
   })
@@ -344,7 +344,7 @@ describe('needs-attention badge (#93091 item 3)', () => {
         'Error code: 401 - {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}'
       )
     ).toBe('provider_auth_or_access')
-    expect(reasonFor('No LLM provider configured. Run hermes model to pick one.')).toBe('missing_config')
+    expect(reasonFor('No LLM provider configured. Run tandem model to pick one.')).toBe('missing_config')
     expect(reasonFor('No access token found for profile')).toBe('missing_config')
     expect(reasonFor('Your account is out of funds')).toBe('provider_quota_limit')
     expect(reasonFor('quota exceeded for this billing period')).toBe('provider_quota_limit')

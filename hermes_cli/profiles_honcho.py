@@ -1,4 +1,4 @@
-"""Honcho host-block migration for ``hermes profile rename``.
+"""Honcho host-block migration for ``tandem profile rename``.
 
 Split out of ``hermes_cli.profiles``; the profiles root is late-imported from there so its
 ``_get_default_hermes_home`` seam holds.

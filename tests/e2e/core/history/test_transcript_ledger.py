@@ -12,7 +12,7 @@ auto-compaction) the ledger asserts:
     the model ever saw is still in the display history exactly once (compaction archives, it
     never drops or duplicates — the kept window survives);
 (f) sessions + session_model_usage totals equal what the provider billed;
-and at the end of every scenario a FRESH ``hermes chat --resume`` process replays the persisted
+and at the end of every scenario a FRESH ``tandem chat --resume`` process replays the persisted
 history as a byte-identical request prefix (d), and the whole request stream only breaks its
 prefix at the declared compaction boundaries (C17).
 """

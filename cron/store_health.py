@@ -4,7 +4,7 @@ A full disk or read-only mount fails every store write on every 60s tick. Instea
 per failing call site, each store directory gets ONE in-memory record: set by the first failed
 write, updated by later ones, cleared by the first jobs.json save that lands. While it is set,
 the tick skips the advance/claim work that can only fail and re-probes the store at most once a
-minute. ``probe_store`` is also what ``hermes cron status`` and ``hermes doctor`` use: they run in
+minute. ``probe_store`` is also what ``tandem cron status`` and ``tandem doctor`` use: they run in
 another process, so they cannot read this record or trust markers in a directory nobody can write.
 """
 

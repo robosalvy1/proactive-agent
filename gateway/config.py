@@ -73,7 +73,7 @@ def _env_on_all_adapters_down_override() -> str | None:
 
     ``None`` when unset, blank, or unrecognized so the caller keeps the config.yaml value
     (env > config > default). Launchers without a supervising service manager (the desktop app
-    spawns ``hermes serve`` directly) set ``stay_alive``: a failure exit there only severs the
+    spawns ``tandem serve`` directly) set ``stay_alive``: a failure exit there only severs the
     UI's websocket connections and drops in-flight assistant messages (#118080).
     """
     raw = os.getenv("GATEWAY_ON_ALL_ADAPTERS_DOWN")

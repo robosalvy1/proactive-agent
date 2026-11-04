@@ -1,4 +1,4 @@
-"""Post-restart fleet verification for ``hermes update`` (``update_cmd_fleet`` sibling).
+"""Post-restart fleet verification for ``tandem update`` (``update_cmd_fleet`` sibling).
 
 After the restart phase: compare every live gateway's stamped code against the checkout, reconcile
 the pre-update plan against what the restart did, keep the restart owed (a ``gateway_restart``
@@ -30,7 +30,7 @@ def _print_legacy_units_warning() -> None:
     if not (supports_systemd_services() and has_legacy_hermes_units()):
         return
     print()
-    print("⚠ Legacy Hermes gateway unit(s) detected:")
+    print("⚠ Legacy Tandem gateway unit(s) detected:")
     for name, path, is_sys in _find_legacy_hermes_units():
         scope = "system" if is_sys else "user"
         print(f"    {path}  ({scope} scope)")
@@ -39,7 +39,7 @@ def _print_legacy_units_warning() -> None:
     print("  hermes-gateway.service for the bot token and cause SIGTERM")
     print("  flap loops. Remove them with:")
     print()
-    print("    hermes gateway migrate-legacy")
+    print("    tandem gateway migrate-legacy")
     print()
     print("  (add `sudo` if any are in system scope)")
 
@@ -224,7 +224,7 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
 
     print()
     print("Tip: You can now select a provider and model:")
-    print("  hermes model              # Select provider and model")
+    print("  tandem model              # Select provider and model")
 
     # Compare every live gateway's stamped code_sha against the fresh checkout
     # instead of assuming the restart phase worked.
@@ -334,7 +334,7 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
             "gateway_restart",
             "gateways may still run pre-update code or were stopped without a successor"
             + (f" (stopped PIDs {', '.join(map(str, stopped))})" if stopped else "")
-            + "; recover with `hermes gateway restart`",
+            + "; recover with `tandem gateway restart`",
         )
         with _best_effort('Fleet restart inventory not recorded: %s'):
             _record_owed_gateway_inventory(_pre_update_plan, stopped)
@@ -360,4 +360,4 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
         maybe_auto_migrate_after_update()
     except (Exception, SystemExit) as exc:  # health: allow BLE001 -- a SystemExit here must not fail a committed update
         logger.warning('Multiplex auto-migration after update failed: %s', exc)
-        print(f"  ⚠ Gateway multiplex migration did not finish: {exc} (run `hermes gateway migrate` later)")
+        print(f"  ⚠ Gateway multiplex migration did not finish: {exc} (run `tandem gateway migrate` later)")

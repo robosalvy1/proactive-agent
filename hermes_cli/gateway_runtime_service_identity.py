@@ -1,6 +1,6 @@
 """Read-only binding checks; unknown supervisor syntax is not profile absence.
 
-These checks recognize the installed Hermes launch formats, not arbitrary shell
+These checks recognize the installed Tandem launch formats, not arbitrary shell
 programs. Manager-loaded values take precedence over filenames and disk copies.
 """
 from __future__ import annotations
@@ -69,7 +69,7 @@ def verify_gateway_argv(argv: list[str], home: Path) -> None:
         if argv[1:3] != ["-m", "hermes_cli.main"]:
             _unverified()
         args = argv[3:]
-    elif executable in {"hermes", "hermes.exe"}:
+    elif executable in {"hermes", "hermes.exe", "tandem", "tandem.exe"}:
         args = argv[1:]
     else:
         _unverified()

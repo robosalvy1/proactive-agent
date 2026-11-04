@@ -36,7 +36,7 @@ _disk_checked = False
 
 
 class _CacheState:
-    """Efforts cache + once-only flags for one Hermes home (same names as the module slots)."""
+    """Efforts cache + once-only flags for one Tandem home (same names as the module slots)."""
 
     __slots__ = ("_disk_checked", "_efforts_cache", "_warm_started")
 

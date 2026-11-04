@@ -16,7 +16,7 @@ import { BootFailureOverlay } from './boot-failure-overlay'
 
 function failBoot() {
   $desktopBoot.set({
-    error: 'Could not connect to Hermes gateway',
+    error: 'Could not connect to Tandem gateway',
     fakeMode: false,
     message: 'boot failed',
     phase: 'renderer.error',
@@ -347,7 +347,7 @@ describe('BootFailureOverlay', () => {
     $desktopBoot.set({
       ...$desktopBoot.get(),
       error:
-        'This app bundles its own Hermes runtime, but the runtime files are missing or damaged. Reinstall Hermes Desktop to restore it.'
+        'This app bundles its own Tandem runtime, but the runtime files are missing or damaged. Reinstall Tandem Desktop to restore it.'
     })
 
     try {

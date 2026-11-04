@@ -1,8 +1,8 @@
 """Atomic writers must not resurrect a deleted named profile home.
 
-``hermes profile delete`` removes the tree and writes a tombstone under
+``tandem profile delete`` removes the tree and writes a tombstone under
 ``profiles/.deleted/<name>``. Background writers that still carry the dead
-profile as their Hermes home (reasoning-caps warm thread, models.dev refresh,
+profile as their Tandem home (reasoning-caps warm thread, models.dev refresh,
 gateway lifecycle ledger, MCP OAuth token writes, memory store mutations) used
 to re-create ``profiles/<name>/`` with a bare ``mkdir(parents=True)`` right
 before an atomic write — the exact resurrection class the tombstone guard

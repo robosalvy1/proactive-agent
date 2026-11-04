@@ -1,16 +1,16 @@
 ---
 sidebar_label: "Catalog submission"
 title: "Submitting to the Plugin Catalog"
-description: "The full admission guidelines for the Hermes plugin catalog: what to check before you submit, the rules every entry follows, and what reviewers look at"
+description: "The full admission guidelines for the Tandem plugin catalog: what to check before you submit, the rules every entry follows, and what reviewers look at"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Submitting to the Plugin Catalog
 
 The [plugin catalog](../../user-guide/features/plugin-catalog.md) is a human-reviewed
-directory of Hermes plugins. Being listed is the trust signal: users install a
+directory of Tandem plugins. Being listed is the trust signal: users install a
 catalog plugin by name, at the exact commit a maintainer read. This page holds
 the complete guidelines for getting a plugin in and keeping it there.
 
@@ -24,26 +24,26 @@ for word, and a test fails the build if the two drift apart.
 - **A public repository.** The `repo` URL is an `https://` URL anyone can clone
   (GitHub or GitLab).
 - **A loadable plugin at the commit you pin.** The tree has a `plugin.yaml`
-  manifest plus at least one entrypoint Hermes loads: `__init__.py` (Python),
+  manifest plus at least one entrypoint Tandem loads: `__init__.py` (Python),
   `desktop/plugin.js` (Desktop), `plugin.json` (portable Agent Plugin) or
   `dashboard/manifest.json` (web dashboard). If the plugin lives in a monorepo,
   point `subdir` at its directory. The
   [plugin developer guide](./index.md) covers the layout.
-- **Public surfaces only.** Extend Hermes through hooks, middleware, the
+- **Public surfaces only.** Extend Tandem through hooks, middleware, the
   `ctx.register_*` APIs, provider plugins and the
-  [Desktop plugin SDK](../desktop-plugin-sdk.md). Never patch Hermes
+  [Desktop plugin SDK](../desktop-plugin-sdk.md). Never patch Tandem
   code or Desktop markup at runtime. If the hook you need is missing, see
   [Asking for a hook](#asking-for-a-hook).
 - **Validation passes locally.** Run the same check catalog CI runs, against a
   checkout at the commit you are about to pin:
 
   ```bash
-  hermes plugins validate /path/to/your-plugin --install-deps
+  tandem plugins validate /path/to/your-plugin --install-deps
   ```
 
   It checks the manifest and `requires_hermes`, that the plugin loads, that the
   `capabilities` you declare match what it registers, `config_schema` and
-  `requires_env`, Python dependencies against Hermes's core constraints, the
+  `requires_env`, Python dependencies against Tandem's core constraints, the
   install security scan, and the `desktop surface` and `no core override`
   rules. Fix every failure before opening the PR, and read the warnings, since
   a reviewer will.
@@ -56,11 +56,11 @@ for word, and a test fails the build if the two drift apart.
    [entry schema](https://github.com/NousResearch/hermes-agent/blob/main/plugin-catalog/README.md#entry-schema)
    and in [What's in an entry](../../user-guide/features/plugin-catalog.md#whats-in-an-entry).
    Pin `sha` to a full 40-character commit, and quote `version`.
-2. In the PR description, say what the plugin does, which Hermes surfaces it
+2. In the PR description, say what the plugin does, which Tandem surfaces it
    uses, and everything rule 13 asks you to disclose. Add screenshots for
    anything with a UI.
 3. Wait for the catalog CI job to go green. It clones your repo at the pinned
-   commit and runs `hermes plugins validate`.
+   commit and runs `tandem plugins validate`.
 4. A maintainer reviews the pinned tree and merges, asks for changes, or
    declines. Rule 3 and rule 9 problems are declines rather than bug-fix
    requests: the plugin has to change its design before it can be listed.
@@ -211,8 +211,8 @@ the same PR so the label users see matches the code, and re-pin any `image` /
 `screenshots` URLs that embed the old sha.
 
 Installed plugins compare their recorded sha against the live pin:
-`hermes plugins list --json` reports `update_available`, the Desktop Plugins tab
-shows an **Update to 1.4.0** button, and `hermes plugins update <name>` checks
+`tandem plugins list --json` reports `update_available`, the Desktop Plugins tab
+shows an **Update to 1.4.0** button, and `tandem plugins update <name>` checks
 out exactly the new pin.
 
 If a maintainer swept your plugin into the catalog and you want the entry

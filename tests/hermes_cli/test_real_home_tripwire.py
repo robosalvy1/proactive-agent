@@ -72,14 +72,14 @@ _OPERATIONS = {
 
 @pytest.mark.parametrize("operation", _OPERATIONS, ids=_OPERATIONS)
 def test_io_guard_denies_protected_roots_before_mutation(protected_home, operation):
-    with pytest.raises((AssertionError, pytest.fail.Exception), match="REAL hermes home"):
+    with pytest.raises((AssertionError, pytest.fail.Exception), match="REAL tandem home"):
         _OPERATIONS[operation](protected_home / "file.txt")
 
 
 def test_rename_cannot_overwrite_a_protected_destination(protected_home, tmp_path):
     source = tmp_path / "source.txt"
     source.write_text("external", encoding="utf-8")
-    with pytest.raises((AssertionError, pytest.fail.Exception), match="REAL hermes home"):
+    with pytest.raises((AssertionError, pytest.fail.Exception), match="REAL tandem home"):
         source.replace(protected_home / "file.txt")
     assert source.read_text(encoding="utf-8") == "external"
 
@@ -103,7 +103,7 @@ def test_installed_desktop_app_can_be_read_but_never_changed(tmp_path, monkeypat
     monkeypatch.setattr(conftest, "_REAL_INSTALLED_GUI_APPS", [os.path.normcase(os.path.realpath(app))])
     assert plist.read_text(encoding="utf-8") == "unchanged"
     for change in changes:
-        with pytest.raises(pytest.fail.Exception, match="REAL installed Hermes desktop app"):
+        with pytest.raises(pytest.fail.Exception, match="REAL installed Tandem desktop app"):
             change()
     assert plist.read_text(encoding="utf-8") == "unchanged"
 
@@ -166,7 +166,7 @@ def test_path_metadata_exemption_tracks_path_changes(protected_home, monkeypatch
     monkeypatch.setenv("PATH", str(protected_home))
     guard.check(target, metadata=True)  # executable lookup, not a state read
     monkeypatch.setenv("PATH", str(protected_home.parent))
-    with pytest.raises(AssertionError, match="REAL hermes home"):
+    with pytest.raises(AssertionError, match="REAL tandem home"):
         guard.check(target, metadata=True)
 
 
@@ -182,7 +182,7 @@ def test_relative_path_metadata_exemption_tracks_working_directory(protected_hom
     monkeypatch.chdir(other)
     guard.check(target, metadata=True)
     monkeypatch.chdir(other / "nested")
-    with pytest.raises(AssertionError, match="REAL hermes home"):
+    with pytest.raises(AssertionError, match="REAL tandem home"):
         guard.check(target, metadata=True)
 
 
@@ -196,15 +196,15 @@ def test_checkout_inside_a_guarded_root_is_not_hermes_state():
     guard = HomeIOGuard(lambda: [PROJECT_ROOT.parent])
     guard.check(PROJECT_ROOT / "tests" / "home_io_guard.py")
     guard.check(PROJECT_ROOT / ".venv" / "bin" / "python", metadata=True)
-    with pytest.raises(AssertionError, match="REAL hermes home"):
+    with pytest.raises(AssertionError, match="REAL tandem home"):
         guard.check(PROJECT_ROOT.parent / "config.yaml")
 
 
 def test_hermes_exported_scratch_tmp_is_not_the_test_temp_root(tmp_path):
-    """A Hermes-launched shell hands pytest TMPDIR=<home>/cache/scratch (tagged by
+    """A Tandem-launched shell hands pytest TMPDIR=<home>/cache/scratch (tagged by
     HERMES_SCRATCH_DIR). With that home guarded, honoring it would put the session
     sandbox, basetemp and every tempfile default inside the guarded root; the
-    conftest must drop Hermes' own export before anything allocates temp space."""
+    conftest must drop Tandem's own export before anything allocates temp space."""
     home = tmp_path / "home"
     scratch = home / "cache" / "scratch"
     scratch.mkdir(parents=True)

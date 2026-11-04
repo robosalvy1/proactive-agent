@@ -15,6 +15,15 @@ that caused the prefix-cache miss.
 
 from unittest.mock import patch
 
+import pytest
+
+@pytest.fixture(autouse=True)
+def _enable_automatic_reviews(tmp_path, monkeypatch):
+    """Lifecycle/cache tests exercise a profile that opted into automatic review."""
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    (tmp_path / "config.yaml").write_text(
+        "auxiliary:\n  background_review:\n    enabled: true\n", encoding="utf-8")
+
 
 def _make_agent_stub(agent_cls):
     """Create a minimal AIAgent-like object with just enough state for _spawn_background_review."""
@@ -217,6 +226,7 @@ def test_background_review_whitelist_includes_configured_extra_tools(
     (hermes_home / "config.yaml").write_text(
         "auxiliary:\n"
         "  background_review:\n"
+        "    enabled: true\n"
         "    extra_tools:\n"
         "      - propose_shared_memory\n",
         encoding="utf-8",

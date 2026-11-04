@@ -181,7 +181,7 @@ def register_from_config(cfg: Optional[dict[str, Any]], *, accept_hooks: bool = 
 
 
 def iter_configured_hooks(cfg: Optional[dict[str, Any]]) -> list[ShellHookSpec]:
-    """Parse config hooks without registering (``hermes hooks list`` / doctor)."""
+    """Parse config hooks without registering (``tandem hooks list`` / doctor)."""
     return _parse_hooks_block(cfg.get("hooks")) if isinstance(cfg, dict) else []
 
 
@@ -194,7 +194,7 @@ def re_register_config_hooks() -> None:
     startup (they are config-owned, not plugin-owned, so the ledger cannot restore them). Clear the
     idempotence set and re-run ``register_from_config()`` so hooks are wired again (#60036 / PR #60267;
     tracking #64178 — salvaged from PR #64188).
-    Only the idempotence keys for the *current* Hermes home are cleared — ``discover_and_load(force=True)``
+    Only the idempotence keys for the *current* Tandem home are cleared — ``discover_and_load(force=True)``
     only unloads the manager scoped to that one home, so clearing every home's keys would make a
     force-reload in profile A drop profile B's still-live registration from the ledger and duplicate it on
     B's next registration call (#92682 review).
@@ -408,7 +408,7 @@ def _evaluate_result(
       block instead of silently contributing nothing.
 
     Shared by the live callback path (:func:`_make_callback`) and the CLI
-    test helper (:func:`run_once`) so ``hermes hooks test`` reflects
+    test helper (:func:`run_once`) so ``tandem hooks test`` reflects
     production behaviour exactly.
     """
     blocking_event = spec.event in _BLOCKING_EVENTS
@@ -508,7 +508,7 @@ _RESPONSE_PARSERS: dict[str, Callable[[dict[str, Any]], Optional[dict[str, Any]]
 
 
 def _parse_response(event: str, stdout: str) -> Optional[dict[str, Any]]:
-    """Translate stdout JSON into a Hermes wire-shape dict, or ``None``."""
+    """Translate stdout JSON into a Tandem wire-shape dict, or ``None``."""
     stdout = (stdout or "").strip()
     if not stdout:
         return None
@@ -586,7 +586,7 @@ def _prompt_and_record(event: str, command: str, *, accept_hooks: bool) -> bool:
     if not sys.stdin.isatty():
         return False
     print(
-        f"\n⚠ Hermes is about to register a shell hook that will run a\n  command on your behalf.\n\n"
+        f"\n⚠ Tandem is about to register a shell hook that will run a\n  command on your behalf.\n\n"
         f"    Event:   {event}\n    Command: {command}\n\n"
         f"  Commands run with your full user credentials.  Only approve\n  commands you trust."
     )
@@ -664,7 +664,7 @@ def script_is_executable(command: str) -> bool:
 
 
 def run_once(spec: ShellHookSpec, kwargs: dict[str, Any]) -> dict[str, Any]:
-    """Fire one hook with a synthetic payload (``hermes hooks test`` / doctor) through the production path."""
+    """Fire one hook with a synthetic payload (``tandem hooks test`` / doctor) through the production path."""
     result = _spawn(spec, _serialize_payload(spec.event, kwargs))
     result["parsed"] = _evaluate_result(spec, result)
     return result

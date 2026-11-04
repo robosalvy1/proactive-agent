@@ -109,7 +109,7 @@ canonical_method("session.mutate", params=SessionMutateParams, result=SessionMut
 
 class SessionPruneParams(Params):
     """Exactly one of ``filters`` (``SessionDB.prune_sessions`` keyword filters, as
-    ``hermes sessions prune`` builds them) or ``never_active_days`` (``--never-active``)."""
+    ``tandem sessions prune`` builds them) or ``never_active_days`` (``--never-active``)."""
 
     filters: dict[str, JsonValue] | None = None
     never_active_days: float | None = None
@@ -122,7 +122,7 @@ class SessionPruneResult(Result):
 
 
 canonical_method("session.prune", params=SessionPruneParams, result=SessionPruneResult,
-                 doc="Local operator only: the owner deletes the ended sessions `hermes sessions prune` "
+                 doc="Local operator only: the owner deletes the ended sessions `tandem sessions prune` "
                      "selected, skipping busy sessions and retained reset owners.")
 
 
@@ -457,6 +457,21 @@ class WorkerPersistResult(OpenModel):
 
 canonical_method("worker.persist", params=WorkerPersistParams, result=WorkerPersistResult,
                  doc="Sequence-fenced typed persistence write from an adopted worker.")
+
+
+class WorkerHomeRecallParams(WorkerScopeParams):
+    epoch: int
+    query: str
+    overview: bool = False
+
+
+class WorkerHomeRecallResult(Result):
+    context: str
+    count: int
+
+
+canonical_method('worker.home.recall', params=WorkerHomeRecallParams, result=WorkerHomeRecallResult,
+                 doc='Best-effort assignment-fenced Home read without a persistence receipt.')
 
 
 # ── hosted rooms (canonical-only verbs) ───────────────────────────────────────────────────────

@@ -371,7 +371,7 @@ def _sync_agent_fallback_with_config(sid: str, session: dict) -> None:
     """Adopt ``fallback_providers`` edits into the cached agent at turn start.
 
     Desktop/TUI chats keep one agent across turns, and ``_make_agent`` reads the chain once: a chat
-    opened before ``hermes fallback add`` kept an empty chain forever and a provider-quota 429 ended in
+    opened before ``tandem fallback add`` kept an empty chain forever and a provider-quota 429 ended in
     a provider error with a healthy fallback configured (#95066). Same per-turn contract the messaging
     gateway applies to its cached agents (``GatewayRunner._refresh_fallback_model``): the config is
     read fail-closed, so a torn/invalid config.yaml keeps the agent's last known-good chain instead of

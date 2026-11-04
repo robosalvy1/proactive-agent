@@ -107,7 +107,7 @@ def test_rescue_retention_uses_real_refs(tmp_path, monkeypatch, mode):
 
 
 @pytest.mark.parametrize('fault,body,modules,message', [
-    ('syntax', '<<<<<<< Updated upstream\nVALUE = 2\n', (), 'made the Hermes agent unexecutable'),
+    ('syntax', '<<<<<<< Updated upstream\nVALUE = 2\n', (), 'made the Tandem agent unexecutable'),
     ('import', "raise RuntimeError('restored local failure')\n", ('consumer',), 'restored local failure'),
     ('preexisting', 'VALUE = 2\n', ('first',), None),
     ('later', "raise RuntimeError('restored later failure')\n", ('first', 'consumer'), 'restored later failure'),
@@ -243,7 +243,7 @@ def test_update_parser_accepts_keep_stash():
 
 def test_bootstrap_marker_not_autostashed_by_update(tmp_path):
     """#38529: the Desktop bootstrap marker must be git-ignored so that
-    ``hermes update``'s ``git stash push --include-untracked`` does not sweep it
+    ``tandem update``'s ``git stash push --include-untracked`` does not sweep it
     into an autostash on every run.
 
     Behavioral + hermetic: build a throwaway repo that adopts the project's real
@@ -483,7 +483,7 @@ def test_prune_orphan_rescue_refs_with_real_git_unpins_objects(tmp_path):
 def test_autostash_survives_intent_to_add_entries(tmp_path):
     """An index entry from `git add -N` must not block the update autostash.
 
-    Reported: `hermes update` aborted with "Entry 'tests/...' not uptodate. Cannot merge." because
+    Reported: `tandem update` aborted with "Entry 'tests/...' not uptodate. Cannot merge." because
     `git add -N` records a path with the empty blob and zeroed stat data, which `git stash push`
     refuses outright. Editors that show new files in diffs leave exactly that state behind, and the
     update must not require the user to repair their index by hand.
@@ -661,7 +661,7 @@ def test_untracked_file_replaced_by_the_update_keeps_the_stash(tmp_path, local_s
     """#124641: the update adds a file where the user had an untracked file of the same name.
     ``stash apply`` refuses it ("already exists, no checkout"); the stash is the only copy of the
     user's version, so it is never dropped. The restored tree still gets the health check: a restore
-    that breaks Hermes resets the tree and exits 1."""
+    that breaks Tandem resets the tree and exits 1."""
     git, stash_ref = _repo_with_stash(tmp_path, local_source)
     # The pull adds its own notes.md.
     (tmp_path / "notes.md").write_text("upstream notes\n", encoding="utf-8")

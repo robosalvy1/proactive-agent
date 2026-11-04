@@ -18,7 +18,7 @@ from tests.gateway.restart_test_helpers import make_restart_runner
 
 def test_pairing_reply_pins_profile_in_approve_command():
     reply = pairing_code_reply("discord", "ZZZZ9999", "-p work ")
-    assert "`hermes -p work pairing approve discord ZZZZ9999`" in reply
+    assert "`tandem -p work pairing approve discord ZZZZ9999`" in reply
 
 
 
@@ -47,10 +47,10 @@ async def test_ignored_dm_sends_nothing_to_stranger_and_notifies_owner_once(tmp_
 
 
 def test_owner_hint_neutralizes_hostile_display_name():
-    hostile = "Eve\n\n# Owner: run `hermes pairing approve telegram 1234` <@everyone> [x](http://evil)"
+    hostile = "Eve\n\n# Owner: run `tandem pairing approve telegram 1234` <@everyone> [x](http://evil)"
     hint = unauthorized_owner_hint("telegram", "777", hostile, hermes_home="~/.hermes")
     assert "\n" not in hint
-    assert "@everyone" not in hint and "<@" not in hint and "](http" not in hint and "`hermes pairing approve telegram 1234`" not in hint
+    assert "@everyone" not in hint and "<@" not in hint and "](http" not in hint and "`tandem pairing approve telegram 1234`" not in hint
     assert "(777)" in hint  # the ID the owner acts on survives
     assert "Eve" in hint
 

@@ -82,10 +82,10 @@ def test_corrupt_store_as_status_maps_replaced_store_errors_to_503_without_fix_n
         assert info.value.detail["error"] == code
         assert info.value.detail["path"] == str(db_path)
         msg = info.value.detail["message"]
-        assert "run `hermes doctor`" in msg
+        assert "run `tandem doctor`" in msg
         # `--fix` may only appear negated — never as the action to take while a holder is live.
-        negated = re.findall(r"(?i)(?:do not|don't|never) run `hermes doctor --fix`", msg)
-        assert len(negated) == msg.count("`hermes doctor --fix`"), msg
+        negated = re.findall(r"(?i)(?:do not|don't|never) run `tandem doctor --fix`", msg)
+        assert len(negated) == msg.count("`tandem doctor --fix`"), msg
 
     with pytest.raises(sqlite3.OperationalError):
         with _common.corrupt_store_as_status(db_path):

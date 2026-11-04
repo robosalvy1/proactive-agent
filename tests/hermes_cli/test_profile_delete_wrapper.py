@@ -1,4 +1,4 @@
-"""`hermes profile delete` removes the profile's wrapper (#131753).
+"""`tandem profile delete` removes the profile's wrapper (#131753).
 
 Windows wrappers are ``<alias>.bat``; delete used to look only for the bare name, so the
 ``.bat`` survived as an orphan alias. A Windows wrapper written before ``.bat`` (#34796) is

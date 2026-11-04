@@ -91,9 +91,9 @@ def reconcile_profile_gateways(
 
     Always registers a ``gateway-default`` slot for the root profile (the implicit profile at
     the top of ``$HERMES_HOME``): ``hermes_cli.gateway`` maps an empty profile suffix to it,
-    so it is what ``hermes gateway start`` (no ``-p``) targets.
+    so it is what ``tandem gateway start`` (no ``-p``) targets.
 
-    Without it, bare ``hermes gateway start`` inside the container would land on ``s6-svc -u
+    Without it, bare ``tandem gateway start`` inside the container would land on ``s6-svc -u
     /run/service/gateway-default`` → uncaught ``CalledProcessError`` → traceback to the user (PR #30136
     review).
     """
@@ -218,7 +218,7 @@ def _strip_container_argv_prefix(argv: Sequence[str]) -> list[str]:
         args = args[1:]
     if args and args[0].endswith("entrypoint-dispatch.sh"):  # non-PID-1 dispatch shim
         args = args[1:]
-    if args and Path(args[0]).name == "hermes":  # the wrapper re-execs `hermes <subcommand>`
+    if args and Path(args[0]).name in ("hermes", "tandem"):  # the wrapper re-execs `hermes <subcommand>`
         args = args[1:]
     return args
 

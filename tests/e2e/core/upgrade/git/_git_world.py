@@ -1,4 +1,4 @@
-"""A real install served over real smart HTTP, and the real ``hermes update`` against it.
+"""A real install served over real smart HTTP, and the real ``tandem update`` against it.
 
 ``World`` is one sandboxed machine (``_install_helpers.new_sandbox``: bwrap, empty fake HOME, the
 git wrapper that reports the official remote URL) whose ``~/.gitconfig`` rewrites the official
@@ -8,7 +8,7 @@ single-branch clone N-1 users have), HEAD's for a HEAD install (a ``--filter=blo
 ``preclone`` seeds a checkout the installer then adopts, for the clone shapes users got another
 way (a manual full clone, a ``blob:none`` fallback clone).
 
-Everything a cell asserts is user-visible: the exit code and transcript of ``hermes update``, the
+Everything a cell asserts is user-visible: the exit code and transcript of ``tandem update``, the
 checkout's HEAD / branch / working tree / refs, the update receipt, and whether ``hermes
 --version`` still answers. ``diag()`` renders all of it, plus the HTTP request log, for a failure
 message that explains itself.
@@ -156,7 +156,7 @@ class World:
 
     def update(self, *extra: str, timeout: float = 1200) -> subprocess.CompletedProcess:
         cp = self.sb.cli("update", "--yes", "--branch", "main", *extra, timeout=timeout)
-        self.transcripts.append(f"$ hermes update --yes --branch main {' '.join(extra)} -> rc={cp.returncode}\n"
+        self.transcripts.append(f"$ tandem update --yes --branch main {' '.join(extra)} -> rc={cp.returncode}\n"
                                 f"{(cp.stdout or '')[-8000:]}\n{(cp.stderr or '')[-4000:]}")
         return cp
 

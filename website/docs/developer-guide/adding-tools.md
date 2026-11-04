@@ -1,10 +1,10 @@
 ---
 sidebar_position: 2
 title: "Adding Tools"
-description: "How to add a new tool to Hermes Agent — schemas, handlers, registration, and toolsets"
+description: "How to add a new tool to Tandem Agent — schemas, handlers, registration, and toolsets"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Adding Tools
@@ -12,12 +12,12 @@ description: "How to add a new tool to Hermes Agent — schemas, handlers, regis
 Before writing a tool, ask yourself: **should this be a [skill](creating-skills.md) instead?**
 
 :::warning Built-in Core Tools Only
-This page is for adding a **built-in Hermes tool** to the repository itself.
+This page is for adding a **built-in Tandem tool** to the repository itself.
 If you want a personal, project-local, or otherwise custom tool without
-modifying Hermes core, use the plugin route instead:
+modifying Tandem core, use the plugin route instead:
 
 - [Plugins](../user-guide/features/plugins.md)
-- [Build a Hermes Plugin](./plugins/index.md)
+- [Build a Tandem Plugin](./plugins/index.md)
 
 Default to plugins for most custom tool creation. Only follow this page when
 you explicitly want to ship a new built-in tool in `tools/` and `toolsets.py`.
@@ -211,4 +211,4 @@ OPTIONAL_ENV_VARS = {
 - [ ] Handler returns JSON strings, errors returned as `{"error": "..."}`
 - [ ] Optional: API key added to `OPTIONAL_ENV_VARS` in `hermes_cli/config.py`
 - [ ] Optional: Added to `toolset_distributions.py` for batch processing
-- [ ] Tested with `hermes chat -q "Use the weather tool for London"`
+- [ ] Tested with `tandem chat -q "Use the weather tool for London"`

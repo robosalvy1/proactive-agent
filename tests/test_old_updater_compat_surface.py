@@ -1,6 +1,6 @@
-"""An old `hermes update` must still find every name it loads mid-swap.
+"""An old `tandem update` must still find every name it loads mid-swap.
 
-`hermes update` replaces the checkout underneath a RUNNING process. The
+`tandem update` replaces the checkout underneath a RUNNING process. The
 old process then lazy-imports from the new tree: whatever it asks for
 must still exist, or the user's update dies half-applied. The names it
 can ask for are the contract of updaters shipped BEFORE the PM migration:

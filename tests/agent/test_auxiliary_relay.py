@@ -340,7 +340,7 @@ def test_auxiliary_model_routes_carry_classified_error_class(relay_turn, tmp_pat
     auxiliary_client.AuxiliaryExplicitCancellation(), InterruptedError("aux stream interrupted"), KeyboardInterrupt(),
 ])
 def test_aborted_auxiliary_call_is_cancelled_not_failed(relay_turn, tmp_path, abort):
-    """A Hermes abort (/stop, interrupt, Ctrl+C) mid aux call is not a provider failure."""
+    """A Tandem abort (/stop, interrupt, Ctrl+C) mid aux call is not a provider failure."""
     def run():
         with pytest.raises(type(abort)):
             _aux_call("compression", _aux_attempts(abort), 1)

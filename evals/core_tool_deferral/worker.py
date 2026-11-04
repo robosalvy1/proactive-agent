@@ -237,7 +237,7 @@ agent = AIAgent(
     connection_callback=connection_cb,
 )
 
-PREAMBLE = ("You are running inside the Hermes desktop app on the user's machine. "
+PREAMBLE = ("You are running inside the Tandem desktop app on the user's machine. "
             f"Your working directory (the workspace) is: {workspace}\n\nTask: ")
 
 t0 = time.time()

@@ -156,12 +156,12 @@ _NOTIFIER_BLIND_APPROVAL_PLATFORMS = frozenset({"webhook", "msgraph_webhook"})
 
 
 def _is_single_query_approval_context() -> bool:
-    """True for a single-query (-q) session: ``hermes chat -q`` exports
+    """True for a single-query (-q) session: ``tandem chat -q`` exports
     ``HERMES_INTERACTIVE=1`` (so sudo password prompts work) but nobody is waiting
     to answer approvals; without this marker the gate would wait the full timeout,
     fail closed and push the agent toward workarounds (e.g. execute_code).
     ``approvals.single_query_mode`` makes the path deterministic. A gateway-admitted turn
-    carries the same fact as the submission's ``finite`` flag (``hermes -z`` / ``chat -q``
+    carries the same fact as the submission's ``finite`` flag (``tandem -z`` / ``chat -q``
     over the daemon): the viewer detaches on the first prompt, so nobody answers there either."""
     try:
         from gateway.session_finite import finite_turn_required
@@ -174,7 +174,7 @@ def _is_single_query_approval_context() -> bool:
 
 
 def _no_user_can_answer() -> bool:
-    """True in single-query (-q), cron and unattended-platform sessions. `hermes chat -q` still registers the
+    """True in single-query (-q), cron and unattended-platform sessions. `tandem chat -q` still registers the
     CLI panel callback, so a prompt that only checks for a callback would wait the full timeout for nobody."""
     return (_is_single_query_approval_context() or _is_cron_approval_context()
             or _is_unattended_platform_approval_context())
@@ -299,7 +299,7 @@ def format_approval_window(seconds: int) -> str:
 
 def approval_timeout_notice_kwargs() -> dict:
     """``{waited, suggested}`` for the ``approval.timeout`` copy: how long we waited (``5 minutes`` /
-    ``90 seconds``) and a tripled ``approvals.timeout`` value the user can paste into ``hermes config set``."""
+    ``90 seconds``) and a tripled ``approvals.timeout`` value the user can paste into ``tandem config set``."""
     seconds = _get_approval_timeout()
     return {"waited": format_approval_window(seconds), "suggested": seconds * 3}
 

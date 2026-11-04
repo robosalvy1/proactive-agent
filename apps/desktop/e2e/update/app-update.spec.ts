@@ -68,7 +68,7 @@ test('clicking Update now moves the backend to the new commit, relaunches the ap
 
     await test.step('the update lands and the app relaunches itself', async () => {
       await waitFor(
-        'the updater to finish `hermes update`',
+        'the updater to finish `tandem update`',
         () => /hermes update exit code: \d+/.test(handoffLog(facts)),
         {
           timeout: 8 * 60_000,
@@ -76,7 +76,7 @@ test('clicking Update now moves the backend to the new commit, relaunches the ap
           explain: () => explain(`handoff log:\n${handoffLog(facts)}`)
         }
       )
-      expect(handoffLog(facts), `the updater's hermes update succeeded\n${explain()}`).toMatch(
+      expect(handoffLog(facts), `the updater's tandem update succeeded\n${explain()}`).toMatch(
         /hermes update exit code: 0\s*$|retry exit code: 0/m
       )
       expect(git(facts.checkout, 'rev-parse', 'HEAD'), 'the backend checkout is on the new upstream commit').toBe(

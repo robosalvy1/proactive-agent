@@ -518,7 +518,7 @@ def get_custom_provider_session_affinity_header(
     config: Optional[dict[str, Any]] = None) -> str:
     """Header NAME declared as ``session_affinity_header`` on the route-matching entry, else "".
 
-    Opt-in per provider (default off): Hermes never ships a session identifier to an endpoint
+    Opt-in per provider (default off): Tandem never ships a session identifier to an endpoint
     that did not ask for one (#86241).
     """
     for entry in _entries_for_route(base_url, custom_providers, config):

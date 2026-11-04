@@ -1,4 +1,4 @@
-"""`hermes acp` launch flags freeze into the gateway session they create (#134889 ACP-13)."""
+"""`tandem acp` launch flags freeze into the gateway session they create (#134889 ACP-13)."""
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -39,7 +39,7 @@ async def test_launch_env_rides_session_create(monkeypatch, tmp_path):
 
 @pytest.mark.asyncio
 async def test_safe_mode_acp_session_freezes_the_launch_model(monkeypatch, tmp_path):
-    """`hermes -m <model> --provider <name> --safe-mode acp`: the owner reads no profile default, so the
+    """`tandem -m <model> --provider <name> --safe-mode acp`: the owner reads no profile default, so the
     launch's model rides session.create and the owner's bypass policy accepts it."""
     for name in _ENV:
         monkeypatch.setenv(name, '')  # recorded, so cmd_acp's exports are undone after the test
@@ -74,7 +74,7 @@ async def test_bypass_without_a_model_names_the_missing_flag(monkeypatch, tmp_pa
 @pytest.mark.asyncio
 @pytest.mark.parametrize('flag', ['HERMES_SAFE_MODE', 'HERMES_IGNORE_USER_CONFIG'])
 async def test_bypass_with_a_model_but_no_provider_is_refused_at_session_new(monkeypatch, tmp_path, flag):
-    """`hermes -m <model> --safe-mode acp`: the owner would accept the session, then its first turn
+    """`tandem -m <model> --safe-mode acp`: the owner would accept the session, then its first turn
     could not build the agent. Refused before session.create, naming the missing flag."""
     from hermes_cli.gateway_client import GatewayClientError
     for name in _ENV:
@@ -89,7 +89,7 @@ async def test_bypass_with_a_model_but_no_provider_is_refused_at_session_new(mon
 
 @pytest.mark.asyncio
 async def test_cli_only_acp_flags_reach_the_session(monkeypatch, tmp_path):
-    """--accept-hooks / --ignore-rules have no other route from the `hermes acp` parser to the owner."""
+    """--accept-hooks / --ignore-rules have no other route from the `tandem acp` parser to the owner."""
     for name in _ENV:
         monkeypatch.setenv(name, '')  # recorded, so cmd_acp's exports are undone after the test
     import acp_adapter.entry

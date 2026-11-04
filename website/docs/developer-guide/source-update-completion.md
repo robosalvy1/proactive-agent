@@ -1,4 +1,4 @@
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 # Source update completion ownership
 
@@ -42,7 +42,7 @@ Verification publishes the final receipt.
 
 ## After the commit point nothing fails the update
 
-Once the tree has moved, `hermes update` exits 0 unless the code itself was rolled back.
+Once the tree has moved, `tandem update` exits 0 unless the code itself was rolled back.
 Every completion step is independent: a failed launcher publish, product build (each of
 TUI/web/desktop is attempted even when another failed), config migration,
 bytecode sweep, gateway restart/verification, Windows resume or retired-channel adoption
@@ -52,7 +52,7 @@ receipt's `outcome` stays `"success"`. The step's own obligation stays armed:
 the host fleet-restart obligation for gateways (the CLI startup warning keeps naming it; an
 owed restart records the pre-update gateways on the obligation, so a gateway that died at boot
 stays owed until it serves the checkout instead of being settled by the gateway-less discharge),
-the unstamped bytecode fingerprint for the sweep. The next launch or `hermes update` —
+the unstamped bytecode fingerprint for the sweep. The next launch or `tandem update` —
 including the "Already up to date" path, which runs the same completion — retries it. A host
 stamped "restarted" for this commit whose fleet is still off the checkout restarts again
 instead of dead-ending. Exit 2 (refused / concurrent) and exit 1 (nothing committed, or
@@ -74,7 +74,7 @@ boundary refreshes it, so a killed update leaves its own record. The next update
 `running` record whose processes are gone `interrupted` (naming its last stage) and reports
 it. Receipts and the `update.log` tee resolve to the root home
 (`hermes_constants.get_default_hermes_root()`), never a sticky profile's; so do their readers
-(`hermes logs update`, the debug bundle, the dashboard's update status, pm's sync receipts).
+(`tandem logs update`, the debug bundle, the dashboard's update status, pm's sync receipts).
 
 The completion bootstrap's dependency preparation (`ensure_tools_for_sync`, `pm.sync_venv`) also
 runs after the tree moved: its failure is a `dependencies` follow-up ("dependencies not installed
@@ -172,7 +172,7 @@ All names frozen from the complete reachable shipped updater history stay
 resolvable. Historical dependency hooks retain the stdlib-only takeover bridge:
 the old parent waits, carries receipt/recovery state and never resumes a retired
 installer. Newly retired preparation and module-reload hooks explicitly marked
-incomplete stop nonzero and request `hermes update` again; they cannot manufacture
+incomplete stop nonzero and request `tandem update` again; they cannot manufacture
 a missing completion request. Current Git/current/ZIP callers use only the
 canonical completion transport, not the historical takeover entrypoint.
 Unfrozen branch-only retry compositions are deleted, not shimmed. ACP convenience
@@ -193,8 +193,8 @@ or user state is touched by this implementation's test runs.
 
 ## Crash-cell matrix
 
-Each cell kills a real `hermes update` (or the Desktop hand-off script) at one point
-of the update, then asserts what the user is owed: the next `hermes` launch is
+Each cell kills a real `tandem update` (or the Desktop hand-off script) at one point
+of the update, then asserts what the user is owed: the next `tandem` launch is
 runnable, right after that launch the checkout is exactly the pre-update commit or
 the target (HEAD plus every tracked byte: `git status` clean and `git diff --quiet
 HEAD`; each target edits modules every launch imports), and nothing the dead update
@@ -214,8 +214,8 @@ inside its checkout by a filter with `index.lock` present, HEAD read from the re
 | Windows `mid_fetch` | `taskkill /T /F` while the update's `git fetch` child runs | `tests/e2e/core/windows_update/test_crash_cells.py::test_update_killed_mid_fetch_leaves_a_runnable_install` | green |
 | Windows `mid_git` | `taskkill /T /F` inside the fast-forward's checkout: a smudge filter the harness sets in the install's `.git/config` + `.git/info/attributes` holds `git merge` while it writes `hermes_constants.py` (index.lock held, two files already at the target, that one unlinked) | `tests/e2e/core/windows_update/test_crash_cells.py::test_update_killed_mid_git_leaves_a_runnable_install` | #132361 (stale `.git/index.lock`; launch-time interrupted-pull repair ran a bare `git` a machine with only the installer's Git does not have).; the launcher imported `hermes_constants` before `hermes_bootstrap` ran the repair, so the unlinked module killed every launch first: launchers now reach the repair before any other checkout module. Runs last in the journey |
 | Windows `tree_moved` | right after the checkout reached the target, before the update finished | `tests/e2e/core/windows_update/test_crash_cells.py::test_update_killed_after_the_tree_moved_leaves_a_runnable_install` | green on main |
-| Windows `desktop_handoff` | `scripts/desktop-update/windows.ps1` and its whole tree while its `hermes update` child runs | `tests/e2e/core/windows_update/test_crash_cells.py::test_desktop_handoff_killed_mid_run_leaves_a_runnable_install` | green on main |
-| Windows `orphaned_update` | only `windows.ps1` (no `/T`); its `hermes update` keeps running and must finish with the marker LIVE until it exits, then gone | `tests/e2e/core/windows_update/test_crash_cells.py::test_desktop_handoff_script_killed_alone_keeps_the_marker_live_until_its_update_ends` | #132354 + #132365 (line-4 delegate) |
+| Windows `desktop_handoff` | `scripts/desktop-update/windows.ps1` and its whole tree while its `tandem update` child runs | `tests/e2e/core/windows_update/test_crash_cells.py::test_desktop_handoff_killed_mid_run_leaves_a_runnable_install` | green on main |
+| Windows `orphaned_update` | only `windows.ps1` (no `/T`); its `tandem update` keeps running and must finish with the marker LIVE until it exits, then gone | `tests/e2e/core/windows_update/test_crash_cells.py::test_desktop_handoff_script_killed_alone_keeps_the_marker_live_until_its_update_ends` | #132354 + #132365 (line-4 delegate) |
 | POSIX commit points | per lane | `tests/e2e/core/upgrade/<area>/test_hostile_<lane>.py` | the lane that owns the file |
 
 The Windows cells run in the Windows install + update journey

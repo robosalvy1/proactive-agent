@@ -606,7 +606,7 @@ def discover_mcp_tools(allowed_mcp_names: Optional[list[str]] = None) -> list[st
 
     ``allowed_mcp_names``: spawn only the MCP servers named in it (built-in toolset names in the
     list simply don't match); ``None`` spawns every configured server. Used by
-    ``hermes -z -t <toolsets>`` to skip cold-starting servers the caller doesn't need (10-60s
+    ``tandem -z -t <toolsets>`` to skip cold-starting servers the caller doesn't need (10-60s
     each); it only affects which servers start, not which names ``-t`` validation can see."""
     from agent.safe_worker_policy import safe_worker_enabled
     if safe_worker_enabled():

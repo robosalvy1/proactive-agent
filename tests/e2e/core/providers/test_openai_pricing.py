@@ -6,7 +6,7 @@ picker calls it. The only fake is the vendor's price catalog: the aggregator cat
 (``https://openrouter.ai/api/v1/models``) is a hard-coded https constant with no override and
 lives only in process memory, so a ``sitecustomize`` shim on the child's ``PYTHONPATH``
 rewrites exactly that origin, at the ``urllib`` opener layer, to a loopback fake serving the
-vendor's catalog shape. No Hermes function is patched. Every other egress is pinned to a
+vendor's catalog shape. No Tandem function is patched. Every other egress is pinned to a
 closed loopback proxy so nothing reaches a real vendor.
 
 The config is the issue's: a ``providers:`` entry keyed ``openrouter`` pointing at the

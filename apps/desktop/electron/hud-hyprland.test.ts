@@ -16,7 +16,7 @@ import {
   resetHyprlandDispatchSyntax
 } from './hud-hyprland'
 
-const TITLE = 'Hermes HUD'
+const TITLE = 'Tandem HUD'
 const ADDRESS = '0x55d1'
 const SOCKET_ENV = { HYPRLAND_INSTANCE_SIGNATURE: 'abc123', XDG_RUNTIME_DIR: '/run/user/1000' }
 

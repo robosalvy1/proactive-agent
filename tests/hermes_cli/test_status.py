@@ -109,7 +109,7 @@ def _base_xai_mocks(monkeypatch, tmp_path):
 
 
 class TestShowStatusXaiOAuth:
-    """xAI OAuth row in hermes status."""
+    """xAI OAuth row in tandem status."""
 
     # ------------------------------------------------------------------
     # Logged-in branch
@@ -185,7 +185,7 @@ class TestShowStatusXaiOAuth:
 
 
 def test_show_status_reports_gateway_session_last_activity(monkeypatch, capsys, tmp_path):
-    """hermes status should surface freshest gateway last_active (#72016)."""
+    """tandem status should surface freshest gateway last_active (#72016)."""
     from hermes_cli import status as status_mod
     import hermes_cli.auth as auth_mod
     import hermes_cli.gateway as gateway_mod

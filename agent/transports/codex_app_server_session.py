@@ -1,6 +1,6 @@
 """Session adapter for codex app-server runtime.
 
-Owns one Codex thread per Hermes session: drives ``turn/start``, consumes
+Owns one Codex thread per Tandem session: drives ``turn/start``, consumes
 streaming notifications via CodexEventProjector, bridges server-initiated
 approval requests, translates cancellation, and returns a TurnResult that
 AIAgent.run_conversation() splices into ``messages``. Synchronous: the client's
@@ -108,7 +108,7 @@ _IMAGE_URL_SCHEMES = ("data:", "http://", "https://")
 
 
 def _image_part_to_turn_input(item: dict) -> Optional[dict]:
-    """Map one Hermes image part onto the app-server ``UserInput`` shape.
+    """Map one Tandem image part onto the app-server ``UserInput`` shape.
 
     ``turn/start`` accepts ``{type: image, url}`` (data:/http URLs) and ``{type: localImage, path}``
     natively (protocol schema ``v2/UserInput``), so nothing here is flattened into a text marker.
@@ -206,7 +206,7 @@ def _extract_thread_id(result: dict) -> Optional[str]:
 
 
 class CodexAppServerSession:
-    """One Codex thread per Hermes session, lifetime owned by AIAgent. Not thread-safe: one caller at a time."""
+    """One Codex thread per Tandem session, lifetime owned by AIAgent. Not thread-safe: one caller at a time."""
 
     def __init__(
         self, *, cwd: Optional[str] = None, codex_bin: str = "codex",
@@ -266,7 +266,7 @@ class CodexAppServerSession:
             return self._thread_id
         if self._client is None:
             self._client = self._client_factory(codex_bin=self._codex_bin, codex_home=self._codex_home)
-            self._client.initialize(client_name="hermes", client_title="Hermes Agent", client_version=_get_hermes_version())
+            self._client.initialize(client_name="hermes", client_title="Tandem Agent", client_version=_get_hermes_version())
         # Permissions are NOT sent on thread/start: codex gates ``thread/start.permissions``
         # behind experimentalApi + a matching ``[permissions]`` table in ~/.codex/config.toml.
         # Hermes supplies the agent identity through its own system prompt; ``personality: "none"`` strips
@@ -460,7 +460,7 @@ class CodexAppServerSession:
         model / reasoning_effort: sent on ``turn/start`` (codex applies them to this and later turns), so an
         in-place ``/model`` or effort change reaches a thread that was started with other settings.
         service_tier: sent only when it differs from what this thread last received, so codex's own configured
-        tier is left alone until Hermes selects one, and ``None`` after a selection clears it.
+        tier is left alone until Tandem selects one, and ``None`` after a selection clears it.
 
         post_tool_quiet_timeout: if codex emits a tool completion and then goes quiet for this many seconds
         without emitting another item or `turn/completed`, log a warning (once per tool result) and keep
@@ -696,7 +696,7 @@ class CodexAppServerSession:
             logger.warning("turn/interrupt timed out")
 
     def _handle_server_request(self, req: dict) -> None:
-        """Answer a codex server request (approval / elicitation) via Hermes' approval flow.
+        """Answer a codex server request (approval / elicitation) via Tandem's approval flow.
 
         Permission escalations are always declined (the user chose their profile in
         ~/.codex/config.toml); unknown methods get a JSON-RPC error so codex doesn't hang.
@@ -830,7 +830,7 @@ _APPROVAL_CHOICE_TO_DECISION = {"once": "accept", "session": "acceptForSession",
 
 
 def _approval_choice_to_codex_decision(choice: str) -> str:
-    """Map a Hermes approval choice onto codex's approval decision wire value."""
+    """Map a Tandem approval choice onto codex's approval decision wire value."""
     return _APPROVAL_CHOICE_TO_DECISION.get(choice, "decline")
 
 
@@ -840,7 +840,7 @@ def _has_turn_aborted_marker(text: str) -> bool:
 
 
 def _get_hermes_version() -> str:
-    """Best-effort Hermes version string for codex's userAgent line."""
+    """Best-effort Tandem version string for codex's userAgent line."""
     try:
         from importlib.metadata import version
 

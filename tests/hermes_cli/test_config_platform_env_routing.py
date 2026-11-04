@@ -1,4 +1,4 @@
-"""``hermes config set/get/unset`` route every name Hermes registers as an environment variable to
+"""``tandem config set/get/unset`` route every name Tandem registers as an environment variable to
 ``.env`` — the file the platform setup flows and ``/sethome`` already write (#111848)."""
 
 import pytest
@@ -61,7 +61,7 @@ def test_registered_env_setting_converges_stale_config_yaml_copy(tmp_path, monke
 
 
 def test_unregistered_upper_snake_name_routes_to_env_by_shape(tmp_path, monkeypatch, capsys):
-    """Any ``UPPER_SNAKE`` key is an environment setting even when Hermes never registered it
+    """Any ``UPPER_SNAKE`` key is an environment setting even when Tandem never registered it
     (``TELEGRAM_GROUP_ALLOWED_USERS`` is read straight from ``os.getenv``): it lands in ``.env``,
     the stale ``config.yaml`` copy converges, and ``get`` reads the ``.env`` value. A lowercase bare
     key keeps the open top-level namespace (control)."""

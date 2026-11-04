@@ -111,7 +111,7 @@ def liveness_for(server_name: str) -> Liveness:
 def _action(state: LivenessState, app_name: str, gpu_label: str) -> tuple[str, Retry]:
     actions: dict[LivenessState, tuple[str, Retry]] = {
         "app_not_running": (f"Start {app_name}, then try again.", "after_user_action"),
-        "hermes_not_connected": (f"Reconnect {app_name} in Hermes, then try again.", "after_user_action"),
+        "hermes_not_connected": (f"Reconnect {app_name} in Tandem, then try again.", "after_user_action"),
         "endpoint_unavailable": (f"Open {app_name} and enable its local connection, then try again.", "after_user_action"),
         "no_interactive_session": (f"Open an interactive desktop session and start {app_name}, then try again.", "never_here"),
         "version_too_old": (f"Update {app_name}, then try again.", "after_user_action"),

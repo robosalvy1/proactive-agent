@@ -69,7 +69,7 @@ def test_message_pages_type_untyped_failed_turn_rows(tmp_path, monkeypatch):
             {"role": "user", "content": "b"},
             {"role": "assistant", "content": PARTIAL_FAILED_TURN_NOTICE},
             {"role": "user", "content": "c"},
-            {"role": "assistant", "content": f"Quoting Hermes: {FAILED_TURN_NOTICE}"},
+            {"role": "assistant", "content": f"Quoting Tandem: {FAILED_TURN_NOTICE}"},
         ])
     finally:
         db.close()

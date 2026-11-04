@@ -61,7 +61,7 @@ class TestLifecycleGuardLaunchctlParity:
 
     def test_unrelated_labels_are_not_blocked(self):
         """The label anchor must still scope this to the gateway — unrelated
-        services, including other Hermes ones, stay runnable."""
+        services, including other Tandem ones, stay runnable."""
         from cron.lifecycle_guard import contains_gateway_lifecycle_command
 
         for cmd in (

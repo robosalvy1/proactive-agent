@@ -1,12 +1,12 @@
 ---
-title: "Hermes Agent Skill 编写——在仓库中编写 SKILL"
-sidebar_label: "Hermes Agent Skill 编写"
+title: "Tandem Agent Skill 编写——在仓库中编写 SKILL"
+sidebar_label: "Tandem Agent Skill 编写"
 description: "在仓库中编写 SKILL.md"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes Agent Skill 编写
+# Tandem Agent Skill 编写
 
 编写仓库内 SKILL.md：frontmatter（前置元数据）、验证器、结构。
 
@@ -26,10 +26,10 @@ description: "在仓库中编写 SKILL.md"
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 Tandem 在触发此 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
-# 编写 Hermes-Agent Skills（仓库内）
+# 编写 Tandem-Agent Skills（仓库内）
 
 ## 概述
 
@@ -96,7 +96,7 @@ One or two paragraphs: what and why.
 ## <Topic sections specific to the skill>
 - Quick-reference tables are common
 - Code blocks with exact commands
-- Hermes-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
+- Tandem-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
 
 ## Common Pitfalls
 Numbered list of mistakes and their fixes.

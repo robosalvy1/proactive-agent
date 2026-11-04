@@ -437,7 +437,7 @@ def test_friendly_names_and_desktop_slugs_resolve_to_folder_ids(tmp_path, monkey
 
 
 @pytest.mark.parametrize(("target", "local_name", "relayed"), [
-    ("hermes@mini", "Hermes Mini", True),
+    ("hermes@mini", "Tandem Mini", True),
     ("@hermes@mini", "HermesMini", True),
     ("Ops@Home", "Ops@Home", False),  # an '@' friendly name no connection answers to stays local (#100671)
 ])
@@ -475,7 +475,7 @@ def test_ambiguous_friendly_name_fails_closed(tmp_path, monkeypatch):
     _canonical_target(monkeypatch, home, *(home / "profiles" / name for name in ("aaa", "bbb", "ops")))
     _rename(home, "aaa", display_name="Scribe")
     _rename(home, "bbb", display_name="Scribe")
-    _rename(home, "ops", display_name="Hermes")
+    _rename(home, "ops", display_name="Tandem")
 
     ambiguous = json.loads(bot_mode_dm.message_agent_tool(target="Scribe", message="ping", agent=_FakeAgent(home)))
     hijack = json.loads(bot_mode_dm.message_agent_tool(target="hermes", message="ping",
@@ -490,7 +490,7 @@ def test_peer_delivery_command_pins_registry_profile_for_secondary_bots(
     tmp_path, monkeypatch
 ):
     """A secondary-profile bot's peer DM must run in the registry-owning
-    profile (#93935). `hermes peer` resolves bot_peers through
+    profile (#93935). `tandem peer` resolves bot_peers through
     profile-scoped load_config(); unpinned, the subprocess inherits the
     calling bot's profile and dies with "No peer named" even though the
     tool-side roster (read from the machine-root config) validated the
@@ -546,7 +546,7 @@ def test_peer_delivery_command(tmp_path, monkeypatch):
 
 def test_delivery_pins_the_hermes_entrypoint_beside_this_interpreter(tmp_path, monkeypatch):
     """A background delivery must not rely on PATH: the runner's service context
-    lacks the gateway's venv bin dir, so a bare ``hermes`` resolves to a system
+    lacks the gateway's venv bin dir, so a bare ``tandem`` resolves to a system
     install whose shebang picks the wrong interpreter and dies on import (#108628).
     With no published install launcher, both transports invoke the entrypoint beside
     this interpreter instead; a published launcher outranks that sibling (#124868)."""
@@ -603,7 +603,7 @@ def test_peer_delivery_author_carries_the_sender_hostname_and_local_stays_bare(t
 
 
 def test_renamed_primary_signs_with_its_friendly_name_and_is_reachable_by_it(tmp_path, monkeypatch):
-    """#89720: `hermes profile rename default Maia` writes profile.yaml ``display_name`` (no Bot Mode
+    """#89720: `tandem profile rename default Maia` writes profile.yaml ``display_name`` (no Bot Mode
     title). The primary must then sign `Maia (@hermes)`, not `hermes (@hermes)`, and a teammate must
     reach it as `maia` / `@maia` — the tag the Desktop roster inserts — while `@hermes` keeps resolving.
     A Bot Mode title outranks the display_name in the signature, as in the Desktop's botFriendlyNames."""

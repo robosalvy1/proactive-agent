@@ -364,7 +364,7 @@ class TestSensitivePathCheck:
         from tools.file_tools import write_file_tool
         result = json.loads(write_file_tool(str(fake_config), "approvals:\n  mode: off\n"))
         assert "error" in result
-        assert "Hermes config" in result["error"]
+        assert "Tandem config" in result["error"]
 
 
 
@@ -960,7 +960,7 @@ class TestSecretFileReadRedaction:
 
     @pytest.fixture
     def hermes_home(self, tmp_path, monkeypatch):
-        """A Hermes home with no ``.hermes`` segment, like ``%LOCALAPPDATA%\\hermes``."""
+        """A Tandem home with no ``.hermes`` segment, like ``%LOCALAPPDATA%\\hermes``."""
         from agent import file_safety
 
         home = tmp_path / "hermes"

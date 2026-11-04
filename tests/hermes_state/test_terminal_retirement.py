@@ -275,7 +275,7 @@ def test_deleted_history_is_not_recoverable_from_worker_or_mutation_receipts(tmp
 
 def test_mutation_receipts_naming_a_deleted_physical_target_drop_its_text(tmp_path):
     """D7 / pastels M07: a local owner's rewind receipt is keyed by the logical id but copies the
-    rewound turn from the physical reset child. Deleting that child (``hermes sessions delete`` on
+    rewound turn from the physical reset child. Deleting that child (``tandem sessions delete`` on
     the dashboard row, which removes the whole conversation) strips it and the user-set title."""
     import json
     from tests.hermes_state.test_target_advance_fence import _local_session

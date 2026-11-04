@@ -56,7 +56,7 @@ def _notify_session_boundary(event_type: str, session_id: str | None, platform: 
     return []
 
 
-_SESSION_OWNERSHIP_UNAVAILABLE = "Hermes could not safely reserve this session. Try again."
+_SESSION_OWNERSHIP_UNAVAILABLE = "Tandem could not safely reserve this session. Try again."
 _AUTOMATIC_SESSION_END_REASONS = frozenset({"ws_orphan_reap", "ws_disconnect", "idle_timeout", "lru_evict", "tui_shutdown"})
 
 
@@ -172,7 +172,7 @@ def _canonical_ledger_refusal(session: dict):
     logger.info("Refusing legacy turn for %s: canonical ledger holds %s work", key, row[0])
     return ActiveSessionRefusal(
         f"Session {key} has {'outcome-unknown' if row[0] == 'unknown' else 'pending'} work in the gateway's "
-        "durable queue. Resume it through the gateway (hermes chat --resume, Desktop or the TUI) to "
+        "durable queue. Resume it through the gateway (tandem chat --resume, Desktop or the TUI) to "
         "resolve it; nothing was run here.", SESSION_NOT_OWNED)
 
 

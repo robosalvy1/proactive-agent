@@ -4,23 +4,23 @@ sidebar_position: 3
 
 # Profile Distributions: Share a Whole Agent
 
-A **profile distribution** packages a complete Hermes agent — personality, skills, cron jobs, MCP connections, config — as a git repository. Anyone with access to the repo can install the whole agent with one command, update it in place, and keep their own memories, sessions, and API keys untouched.
+A **profile distribution** packages a complete Tandem agent — personality, skills, cron jobs, MCP connections, config — as a git repository. Anyone with access to the repo can install the whole agent with one command, update it in place, and keep their own memories, sessions, and API keys untouched.
 
 If a [profile](./profiles.md) is a local agent, a distribution is that agent made shareable.
 
 ## Two ways to share a profile
 
-Hermes has two sharing paths, and they answer different questions. Distributions are the durable one; export files are the quick one.
+Tandem has two sharing paths, and they answer different questions. Distributions are the durable one; export files are the quick one.
 
 | | **Distribution** (git repo) | **Export file** (`.tar.gz`) |
 |---|---|---|
-| Ship it by | `hermes profile install <repo>` | Send a file — chat, AirDrop, USB, email |
+| Ship it by | `tandem profile install <repo>` | Send a file — chat, AirDrop, USB, email |
 | Recipient needs | git, and access to the repo | The file |
-| Updates | `hermes profile update` pulls new versions | Re-send the file |
+| Updates | `tandem profile update` pulls new versions | Re-send the file |
 | Versioning | Tags, branches, commit SHAs | None — a snapshot in time |
 | Setup cost for the author | `distribution.yaml` + `.gitignore` + a repo | None — one command |
 | Carries | SOUL, config, skills, cron, MCP, plugins | The same, **plus** the desktop theme and layout |
-| Made with | `hermes profile install` / `update` | `/export` and `/import`, or `hermes profile export` / `import` |
+| Made with | `tandem profile install` / `update` | `/export` and `/import`, or `tandem profile export` / `import` |
 
 Pick a **distribution** when the agent is a product you'll keep improving and other people should track: a team's reviewed internal agent, a community release, the same agent deployed to five machines.
 
@@ -30,7 +30,7 @@ The two aren't exclusive. Plenty of authors dogfood a profile, `/export` it to a
 
 ## What this means
 
-Before distributions, sharing a Hermes agent meant sending someone:
+Before distributions, sharing a Tandem agent meant sending someone:
 
 1. Your SOUL.md
 2. A list of skills to install
@@ -56,10 +56,10 @@ my-research-agent/
 Recipients run:
 
 ```bash
-hermes profile install github.com/you/my-research-agent --alias
+tandem profile install github.com/you/my-research-agent --alias
 ```
 
-…and they now have the whole agent. They fill in their own API keys (`.env.EXAMPLE` → `.env`), and they can run `my-research-agent chat` or address it through Telegram / Discord / Slack / any gateway platform. When you push a new version, they run `hermes profile update my-research-agent` and pull your changes — their memories and sessions stay put.
+…and they now have the whole agent. They fill in their own API keys (`.env.EXAMPLE` → `.env`), and they can run `my-research-agent chat` or address it through Telegram / Discord / Slack / any gateway platform. When you push a new version, they run `tandem profile update my-research-agent` and pull your changes — their memories and sessions stay put.
 
 ## Why git?
 
@@ -72,7 +72,7 @@ We considered tarballs, HTTP archives, a custom format. None of them beat git:
 - **Private repos work for free.** SSH keys, `git credential` helpers, GitHub CLI stored credentials — whatever auth your terminal is already set up for applies transparently.
 - **Reproducibility is a commit SHA.** The same thing pip and npm record.
 
-The tradeoff: recipients need git installed. On any machine running Hermes in 2026, that's already true.
+The tradeoff: recipients need git installed. On any machine running Tandem in 2026, that's already true.
 
 ## When should you use a distribution?
 
@@ -87,11 +87,11 @@ Not a fit:
 
 - **You want to hand someone your setup once, right now.** A distribution needs a repo, a manifest, and a `.gitignore`. `/export` needs none of that — see [Export and import a profile file](#export-and-import-a-profile-file). Same for backing up or moving a profile to a new machine.
 - **You want to share your desktop theme and layout.** A distribution carries the agent — SOUL, config, skills, cron, MCP, plugins. An export made from the desktop app also carries the look: skin, light/dark mode, custom themes, rail color, and window layout.
-- **You want to share API keys alongside the agent.** `auth.json`, `.env` and the other credential stores Hermes reads from a profile (`.op.env`, `npmrc`, OAuth and bot token files, `honcho.json`, `mem0.json`, `teams_pipeline_store.json`, `mcp-tokens/`, `vault/`, `proxy/`, browser profiles, platform sessions, and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc` at the root or nested under a skill) are deliberately excluded from distributions. Each installer brings their own credentials. (Export files strip them too.)
+- **You want to share API keys alongside the agent.** `auth.json`, `.env` and the other credential stores Tandem reads from a profile (`.op.env`, `npmrc`, OAuth and bot token files, `honcho.json`, `mem0.json`, `teams_pipeline_store.json`, `mcp-tokens/`, `vault/`, `proxy/`, browser profiles, platform sessions, and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc` at the root or nested under a skill) are deliberately excluded from distributions. Each installer brings their own credentials. (Export files strip them too.)
 - **You want to share memories / sessions / conversation history.** Those are user data, not distribution content. Never shipped. (Export files are different here — read [what an export contains](#what-an-export-file-contains) before sending one.)
 
 :::caution
-**Hermes does not control git.** The file exclusions described on this page are applied by the **installer** when someone runs `hermes profile install` or `hermes profile update`. They are **not** applied when you run `git add` or `git commit`.
+**Tandem does not control git.** The file exclusions described on this page are applied by the **installer** when someone runs `tandem profile install` or `tandem profile update`. They are **not** applied when you run `git add` or `git commit`.
 :::
 
 ## The lifecycle: author to installer to update
@@ -107,7 +107,7 @@ Below is the full end-to-end flow. Pick the side you care about.
 Build and refine the agent like any other profile:
 
 ```bash
-hermes profile create research-bot
+tandem profile create research-bot
 research-bot setup                    # configure model, API keys
 # Edit ~/.hermes/profiles/research-bot/SOUL.md
 # Install skills, wire up MCP servers, schedule cron jobs, etc.
@@ -212,7 +212,7 @@ skills/.*
 
 This mirrors the [hard-excluded paths](#whats-not-in-a-distribution-ever) that the installer strips on its end. Anything else you want to keep out of the repo (scratch files, large assets, local-only skills) should also go in here.
 
-For cron, commit only `cron/jobs.json`. Hermes treats every other entry under `cron/` as runtime state (locks, ledgers, output, suggestions, and future scheduler sidecars) and never installs or replaces it from a distribution. Root-level hidden entries under `skills/` are likewise local Hermes bookkeeping; hidden files inside an authored skill directory remain part of that skill.
+For cron, commit only `cron/jobs.json`. Tandem treats every other entry under `cron/` as runtime state (locks, ledgers, output, suggestions, and future scheduler sidecars) and never installs or replaces it from a distribution. Root-level hidden entries under `skills/` are likewise local Tandem bookkeeping; hidden files inside an authored skill directory remain part of that skill.
 
 ### Step 4 — Push to a git repo
 
@@ -244,7 +244,7 @@ git tag v1.1.0
 git push --tags
 ```
 
-Recipients who run `hermes profile update research-bot` will pull the latest.
+Recipients who run `tandem profile update research-bot` will pull the latest.
 
 ### What the repo looks like
 
@@ -274,7 +274,7 @@ When an installer updates to a new version, some things get replaced (author's d
 |---|---|---|
 | **Distribution-owned** | `SOUL.md`, `config.yaml`, `mcp.json`, `skills/`, `cron/jobs.json`, `distribution.yaml` | Files are replaced from the new clone. Skill directories are merged per entry. `cron/jobs.json` is merged by job id: shipped definitions update in place, your local jobs and each job's paused/enabled state survive, and newly shipped jobs arrive paused. Other `cron/` files and root-level hidden `skills/` metadata are runtime state and stay local. |
 | **Config override** | `config.yaml` | Actually preserved by default — the installer may have tuned model or provider. Pass `--force-config` on update to reset. |
-| **User-owned** | `memories/`, `sessions/`, `state.db*`, `auth.json`, `.env` and the other credential stores (including those below a distribution-owned directory, such as `platforms/pairing/` and `platforms/whatsapp/session/`) and the recovery copies Hermes keeps of them (`state-snapshots/`, `auth.json.corrupt`, `.env.bak-*`), `logs/`, `workspace/`, `plans/`, `home/`, `*_cache/`, `local/` | Never touched, and `distribution_owned` cannot claim a credential store. An update that ships a file where your profile has a directory holding one (a file named `platforms`) is refused before anything is written |
+| **User-owned** | `memories/`, `sessions/`, `state.db*`, `auth.json`, `.env` and the other credential stores (including those below a distribution-owned directory, such as `platforms/pairing/` and `platforms/whatsapp/session/`) and the recovery copies Tandem keeps of them (`state-snapshots/`, `auth.json.corrupt`, `.env.bak-*`), `logs/`, `workspace/`, `plans/`, `home/`, `*_cache/`, `local/` | Never touched, and `distribution_owned` cannot claim a credential store. An update that ships a file where your profile has a directory holding one (a file named `platforms`) is refused before anything is written |
 
 You can override the distribution-owned list in the manifest:
 
@@ -294,7 +294,7 @@ When omitted, the defaults above apply — which is what most distributions want
 ### Install
 
 ```bash
-hermes profile install github.com/you/research-bot --alias
+tandem profile install github.com/you/research-bot --alias
 ```
 
 What happens:
@@ -313,22 +313,22 @@ Any git URL works:
 
 ```bash
 # GitHub shorthand
-hermes profile install github.com/you/research-bot
+tandem profile install github.com/you/research-bot
 
 # Full HTTPS
-hermes profile install https://github.com/you/research-bot.git
+tandem profile install https://github.com/you/research-bot.git
 
 # SSH
-hermes profile install git@github.com:you/research-bot.git
+tandem profile install git@github.com:you/research-bot.git
 
 # Self-hosted, GitLab, Gitea, Forgejo — any Git host
-hermes profile install https://git.example.com/team/research-bot.git
+tandem profile install https://git.example.com/team/research-bot.git
 
 # Private repo using your configured git auth
-hermes profile install git@github.com:your-org/internal-bot.git
+tandem profile install git@github.com:your-org/internal-bot.git
 
 # Local directory during development (no git push needed)
-hermes profile install ~/my-profile-in-progress/
+tandem profile install ~/my-profile-in-progress/
 ```
 
 ### Override the profile name
@@ -337,9 +337,9 @@ Two users wanting the same distribution under different profile names:
 
 ```bash
 # Alice
-hermes profile install github.com/acme/support-bot --name support-us --alias
+tandem profile install github.com/acme/support-bot --name support-us --alias
 # Bob (same distribution, different local name)
-hermes profile install github.com/acme/support-bot --name support-eu --alias
+tandem profile install github.com/acme/support-bot --name support-eu --alias
 ```
 
 ### Fill in env vars
@@ -347,7 +347,7 @@ hermes profile install github.com/acme/support-bot --name support-eu --alias
 After install, the agent's profile contains a `.env.EXAMPLE`:
 
 ```
-# Environment variables required by this Hermes distribution.
+# Environment variables required by this Tandem distribution.
 # Copy to `.env` and fill in your own values before running.
 
 # OpenAI API key (for model access)
@@ -371,7 +371,7 @@ Required keys that were already in your shell environment (e.g. `OPENAI_API_KEY`
 ### Check what you installed
 
 ```bash
-hermes profile info research-bot
+tandem profile info research-bot
 ```
 
 Shows:
@@ -381,7 +381,7 @@ Distribution: research-bot
 Version:      1.0.0
 Description:  Autonomous research assistant with arXiv and web tools
 Author:       Your Name
-Requires:     Hermes >=0.12.0
+Requires:     Tandem >=0.12.0
 Source:       https://github.com/you/research-bot
 Installed:    2026-05-08T17:04:32+00:00
 
@@ -390,7 +390,7 @@ Environment variables:
   SERPAPI_KEY (optional) — SerpAPI key for web search
 ```
 
-`hermes profile list` also shows a `Distribution` column so at a glance you can see which of your profiles came from repos and which you hand-built:
+`tandem profile list` also shows a `Distribution` column so at a glance you can see which of your profiles came from repos and which you hand-built:
 
 ```
  Profile          Model                        Gateway      Alias        Distribution
@@ -404,7 +404,7 @@ Environment variables:
 ### Update
 
 ```bash
-hermes profile update research-bot
+tandem profile update research-bot
 ```
 
 What happens:
@@ -419,7 +419,7 @@ No re-downloading the whole archive. No stomping your local changes to config. N
 ### Remove
 
 ```bash
-hermes profile delete research-bot
+tandem profile delete research-bot
 ```
 
 The delete prompt surfaces distribution info before asking you to confirm:
@@ -458,11 +458,11 @@ git remote add origin git@github.com:you/research-bot.git
 git push -u origin main
 
 # Workstation
-hermes profile install github.com/you/research-bot --alias
+tandem profile install github.com/you/research-bot --alias
 # Fill in .env. Done.
 ```
 
-Any iteration on the laptop (`git commit && push`) pulls onto the workstation with `hermes profile update research-bot`. Memories stay per-machine — the laptop remembers its own conversations, the workstation remembers its own, they don't collide.
+Any iteration on the laptop (`git commit && push`) pulls onto the workstation with `tandem profile update research-bot`. Memories stay per-machine — the laptop remembers its own conversations, the workstation remembers its own, they don't collide.
 
 ### Team: ship a reviewed internal agent
 
@@ -478,12 +478,12 @@ git tag v1.0.0
 git push -u origin main --tags    # push to your company's internal Git host
 
 # Each engineer
-hermes profile install git@github.com:your-org/pr-reviewer.git --alias
+tandem profile install git@github.com:your-org/pr-reviewer.git --alias
 # Fill in .env with their own API key (billed to them), .env.EXAMPLE points at what's required
 pr-reviewer chat
 ```
 
-When the lead ships v1.1 (better SOUL, new skill), engineers run `hermes profile update pr-reviewer` and everyone's on the new version within minutes.
+When the lead ships v1.1 (better SOUL, new skill), engineers run `tandem profile update pr-reviewer` and everyone's on the new version within minutes.
 
 ### Community: publish a public agent
 
@@ -501,14 +501,14 @@ git remote add origin https://github.com/you/hermes-polymarket-trader.git
 git push -u origin main --tags
 
 # Anyone
-hermes profile install github.com/you/hermes-polymarket-trader --alias
+tandem profile install github.com/you/hermes-polymarket-trader --alias
 ```
 
 Tweet the install command. People who try it send you issues and PRs. If someone wants to customize, they fork — same git workflow everyone already knows.
 
 ### Product: ship an opinionated agent
 
-You built Hermes-on-top — maybe a compliance-monitoring harness, a customer-support stack, a domain-specific research platform. You want to distribute it as a product.
+You built Tandem-on-top — maybe a compliance-monitoring harness, a customer-support stack, a domain-specific research platform. You want to distribute it as a product.
 
 ```yaml
 # distribution.yaml
@@ -544,10 +544,10 @@ You're the ops lead. You want a temporary agent that diagnoses a production inci
 git push -u origin main
 
 # Each on-call
-hermes profile install git@github.com:your-org/incident-2026-q2.git --alias
+tandem profile install git@github.com:your-org/incident-2026-q2.git --alias
 
 # Incident resolved — tear it down
-hermes profile delete incident-2026-q2
+tandem profile delete incident-2026-q2
 ```
 
 The install-delete cycle is cheap enough to be disposable.
@@ -559,14 +559,14 @@ The install-delete cycle is cheap enough to be disposable.
 ### Pin to a specific version
 
 :::note
-Git ref pinning (`#v1.2.0`) is planned but not in the initial release — install currently tracks the default branch. Track your installed version via `hermes profile info <name>` and hold off on updates until you're ready.
+Git ref pinning (`#v1.2.0`) is planned but not in the initial release — install currently tracks the default branch. Track your installed version via `tandem profile info <name>` and hold off on updates until you're ready.
 :::
 
 ### Check what version you're on vs. latest
 
 ```bash
 # Your installed version
-hermes profile info research-bot | grep Version
+tandem profile info research-bot | grep Version
 
 # Latest upstream (without installing)
 git ls-remote --tags https://github.com/you/research-bot | tail -5
@@ -587,11 +587,11 @@ The default update behavior already does this: `config.yaml` is preserved. To be
 
 ```bash
 # Nuke and re-install from scratch (loses memories/sessions too)
-hermes profile delete research-bot --yes
-hermes profile install github.com/you/research-bot --alias
+tandem profile delete research-bot --yes
+tandem profile install github.com/you/research-bot --alias
 
 # Update to current main but reset config.yaml to the distribution's default
-hermes profile update research-bot --force-config --yes
+tandem profile update research-bot --force-config --yes
 ```
 
 ### Fork and customize
@@ -600,7 +600,7 @@ The standard git workflow — distributions are just repos:
 
 ```bash
 # Fork the repo on GitHub, then install your fork
-hermes profile install github.com/yourname/forked-research-bot --alias
+tandem profile install github.com/yourname/forked-research-bot --alias
 
 # Iterate locally in ~/.hermes/profiles/forked-research-bot/
 # Edit SOUL.md, commit, push to your fork
@@ -613,11 +613,11 @@ From the author's machine:
 
 ```bash
 # Install from a local directory (no git push needed)
-hermes profile install ~/.hermes/profiles/research-bot --name research-bot-test --alias
+tandem profile install ~/.hermes/profiles/research-bot --name research-bot-test --alias
 
 # Tweak, delete, re-install until it's right
-hermes profile delete research-bot-test --yes
-hermes profile install ~/.hermes/profiles/research-bot --name research-bot-test
+tandem profile delete research-bot-test --yes
+tandem profile install ~/.hermes/profiles/research-bot --name research-bot-test
 ```
 
 ---
@@ -636,11 +636,11 @@ In the CLI, TUI, or desktop chat:
 /export research-bot -o ~/Desktop/research-bot.tar.gz
 ```
 
-Without `-o`, the CLI and TUI place the archive in Hermes's managed
-`profile-exports/` directory under the default Hermes home, not in the current
+Without `-o`, the CLI and TUI place the archive in Tandem's managed
+`profile-exports/` directory under the default Tandem home, not in the current
 working directory. This keeps routine exports out of source checkouts and
 prevents a generated profile snapshot from being mistaken for a repository
-source file. If the Hermes home itself lives inside a Git checkout (some
+source file. If the Tandem home itself lives inside a Git checkout (some
 Docker/custom deployments), the archive goes to `~/.hermes-profile-exports/`
 or, failing that, a per-user directory under the OS temp dir — never into
 the checkout. If no safe automatic location exists at all (every candidate
@@ -652,8 +652,8 @@ when you intentionally choose where to save the archive.
 Or from a shell, same machinery:
 
 ```bash
-hermes profile export research-bot
-hermes profile export research-bot -o ./research-bot.tar.gz
+tandem profile export research-bot
+tandem profile export research-bot -o ./research-bot.tar.gz
 ```
 
 In the **desktop app** there are three doors, all landing on a native save dialog:
@@ -672,11 +672,11 @@ A desktop export adds one extra file the CLI doesn't: `desktop.json`, carrying y
 ```
 
 ```bash
-hermes profile import ./research-bot.tar.gz
-hermes profile import ./research-bot.tar.gz --name research-bot-2
+tandem profile import ./research-bot.tar.gz
+tandem profile import ./research-bot.tar.gz --name research-bot-2
 ```
 
-The profile name is inferred from the archive unless you pass `--name`. Importing over an existing profile is refused — rename or delete the old one first. A shell wrapper (`research-bot` → `hermes -p research-bot`) is created when the name doesn't collide with an existing command.
+The profile name is inferred from the archive unless you pass `--name`. Importing over an existing profile is refused — rename or delete the old one first. A shell wrapper (`research-bot` → `tandem -p research-bot`) is created when the name doesn't collide with an existing command.
 
 Importing in the desktop app also applies the `desktop.json` overlay and drops you into the new profile on a fresh chat. Importing a desktop-made archive from the CLI is fine — the overlay file rides along on disk and applies the next time you open that profile in the desktop.
 
@@ -686,13 +686,13 @@ You cannot import as `default` — that name is the built-in root profile (`~/.h
 
 ### What an export file contains
 
-Always excluded, both profile types: `auth.json`, `.env` and the other credential stores Hermes reads from a profile (OAuth and bot token files such as WeChat's `weixin/accounts/`, `honcho.json`, `mcp-tokens/`, `vault/`, the iron-proxy keys in `proxy/`, browser profiles including the `/browser connect` one in `chrome-debug/`, platform sessions and pairing stores, the Teams pipeline's `teams_pipeline_store.json` with its Graph webhook `clientState`), and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc`, at the root or nested under a skill. Your API keys never leave the machine. `honcho.json` and `mem0.json` can hold the provider's API key next to its settings, so after an import run `hermes honcho setup` or `hermes memory setup` again.
+Always excluded, both profile types: `auth.json`, `.env` and the other credential stores Tandem reads from a profile (OAuth and bot token files such as WeChat's `weixin/accounts/`, `honcho.json`, `mcp-tokens/`, `vault/`, the iron-proxy keys in `proxy/`, browser profiles including the `/browser connect` one in `chrome-debug/`, platform sessions and pairing stores, the Teams pipeline's `teams_pipeline_store.json` with its Graph webhook `clientState`), and `.ssh/`, `.aws/`, `.gnupg/`, `.kube/`, `.docker/`, `.azure/`, `.config/gh/`, `.config/gcloud/` and `.envrc`, at the root or nested under a skill. Your API keys never leave the machine. `honcho.json` and `mem0.json` can hold the provider's API key next to its settings, so after an import run `tandem honcho setup` or `tandem memory setup` again.
 
-**The default profile** (`~/.hermes`) is exported through an allow-list — only known Hermes artifacts, so an unrelated file sitting in your home directory can't get swept in:
+**The default profile** (`~/.hermes`) is exported through an allow-list — only known Tandem artifacts, so an unrelated file sitting in your home directory can't get swept in:
 
 `config.yaml`, `SOUL.md`, `MEMORY.md`, `USER.md`, `todo.json`, `system_prompt.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `skills/`, `plugins/`, `cron/`, `scripts/`, `sessions/`, `memories/`, `knowledge/`, `preferences/`, and `desktop.json` when the desktop staged one.
 
-**A named profile** (`~/.hermes/profiles/<name>`) copies the whole directory minus those credential stores, `home/` (the `HOME` of Hermes' tool subprocesses, where `git`, `ssh`, `gh`, `npm` and skill CLIs keep their credentials), and the recovery copies Hermes keeps of them (`backups/`, `state-snapshots/`, any `auth.json.*` or `.env.bak*`, and the `config.yaml.bak-<timestamp>` copies `hermes update` writes). A copy you name yourself, such as `config.yaml.bak-my-note`, is exported, with its secrets redacted like `config.yaml`'s. That's broader — if the profile has `state.db`, logs, or caches, they go in the archive too, and the file gets big.
+**A named profile** (`~/.hermes/profiles/<name>`) copies the whole directory minus those credential stores, `home/` (the `HOME` of Tandem's tool subprocesses, where `git`, `ssh`, `gh`, `npm` and skill CLIs keep their credentials), and the recovery copies Tandem keeps of them (`backups/`, `state-snapshots/`, any `auth.json.*` or `.env.bak*`, and the `config.yaml.bak-<timestamp>` copies `tandem update` writes). A copy you name yourself, such as `config.yaml.bak-my-note`, is exported, with its secrets redacted like `config.yaml`'s. That's broader — if the profile has `state.db`, logs, or caches, they go in the archive too, and the file gets big.
 
 :::caution Read your archive before you send it
 An export is a snapshot of your profile, not a curated release. Unlike a distribution, it **can** include `memories/`, `sessions/`, and `USER.md` — and nothing scans skills, memories, or your persona for anything personal you wrote into them. Credentials are filtered by filename; content is not.
@@ -735,7 +735,7 @@ Profile distributions are unsigned by default. You're trusting:
 - **The git host** (GitHub / GitLab / wherever) to serve the bytes the author pushed.
 - **The author** to not ship a malicious SOUL, skills, or cron jobs.
 
-Cron jobs from a distribution are **not auto-scheduled** — newly shipped jobs are installed paused. Review them with `hermes -p <name> cron list` and resume only the jobs you trust. SOUL.md and skills ARE active as soon as you start chatting with the profile, so read them before your first run if you're installing from someone you don't know.
+Cron jobs from a distribution are **not auto-scheduled** — newly shipped jobs are installed paused. Review them with `tandem -p <name> cron list` and resume only the jobs you trust. SOUL.md and skills ARE active as soon as you start chatting with the profile, so read them before your first run if you're installing from someone you don't know.
 
 Rough analogy: installing a distribution is like installing a browser extension or a VS Code extension. Low friction, high power, trust the source. For internal company distributions, use a private repo and your normal git auth — nothing new to configure.
 
@@ -747,7 +747,7 @@ For implementation details, precise CLI behavior, and all flags, see the [Profil
 
 The short version:
 
-- `install`, `update`, `info` live inside `hermes profile` — not a parallel command tree.
+- `install`, `update`, `info` live inside `tandem profile` — not a parallel command tree.
 - The manifest format is YAML with a tiny required schema (`name` only).
 - The installer uses your local `git` binary for cloning, so any auth your shell already handles (SSH keys, credential helpers) works transparently.
 - After clone, `.git/` is stripped — the installed profile isn't itself a git checkout, avoiding "oh my, I accidentally committed my `.env` to the distribution's git history" traps.
@@ -757,8 +757,8 @@ The short version:
 
 - [Profiles: Running Multiple Agents](./profiles.md) — the base concept
 - [Profile Commands reference](../reference/profile-commands.md) — every flag, every option
-- [`hermes profile export` / `import`](../reference/profile-commands.md#hermes-profile-export) — the CLI form of [export files](#export-and-import-a-profile-file)
+- [`tandem profile export` / `import`](../reference/profile-commands.md#hermes-profile-export) — the CLI form of [export files](#export-and-import-a-profile-file)
 - [Slash Commands reference](../reference/slash-commands.md) — `/export`, `/import`, and every other in-chat command
-- [Using SOUL with Hermes](../guides/use-soul-with-hermes.md) — authoring personalities
+- [Using SOUL with Tandem](../guides/use-soul-with-hermes.md) — authoring personalities
 - [Personality & SOUL](./features/personality.md) — how SOUL fits into the agent
 - [Skills catalog](../reference/skills-catalog.md) — skills you can bundle

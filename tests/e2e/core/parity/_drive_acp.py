@@ -1,13 +1,13 @@
-"""Entrypoint driver for the parity matrix: the ACP stdio server (``hermes acp``).
+"""Entrypoint driver for the parity matrix: the ACP stdio server (``tandem acp``).
 
 Follows the driver contract in ``_drive_cli``. The client side speaks
 newline-delimited JSON-RPC 2.0 itself (no SDK client) so the driver controls
 every byte and the shutdown path: ``initialize`` -> ``session/new`` (ACP's
 documented cwd channel) -> ``session/prompt``, collecting
 ``agent_message_chunk`` text from ``session/update`` notifications, then stdin
-EOF — the way an editor host closes the server. ``hermes acp`` runs the turn in
+EOF — the way an editor host closes the server. ``tandem acp`` runs the turn in
 the profile's gateway daemon (``acp_adapter/gateway_server.py``), so the surface's
-shutdown ends with ``hermes gateway stop``.
+shutdown ends with ``tandem gateway stop``.
 """
 
 from __future__ import annotations

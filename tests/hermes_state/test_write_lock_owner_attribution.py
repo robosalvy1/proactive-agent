@@ -1,7 +1,7 @@
 """Regression: a state.db write-lock timeout names the process holding the lock.
 
-Before, ``database is locked (another Hermes process held the state.db write lock for over 60s)``
-identified the victim only; every Hermes process has the DB open, so the descriptor scan could not
+Before, ``database is locked (another Tandem process held the state.db write lock for over 60s)``
+identified the victim only; every Tandem process has the DB open, so the descriptor scan could not
 single out the writer. ``/proc/locks`` can.
 """
 

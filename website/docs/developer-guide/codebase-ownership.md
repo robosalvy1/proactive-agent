@@ -3,12 +3,12 @@ title: "Codebase Ownership Map"
 description: "Which directories belong to which subsystem, and where the right docs entry point lives for each"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Codebase Ownership Map
 
-Hermes is a large repository, and most contributions touch exactly one subsystem. This page maps each subsystem to its source directories and the documentation entry point you should read before changing it. Use it to find the right starting doc, the right place for a change, and the right test directory (tests mirror source: code in `tools/` is tested in `tests/tools/`, plugins in `tests/plugins/<type>/`, and so on).
+Tandem is a large repository, and most contributions touch exactly one subsystem. This page maps each subsystem to its source directories and the documentation entry point you should read before changing it. Use it to find the right starting doc, the right place for a change, and the right test directory (tests mirror source: code in `tools/` is tested in `tests/tools/`, plugins in `tests/plugins/<type>/`, and so on).
 
 | Subsystem | Source directories | Docs entry point |
 |-----------|-------------------|------------------|
@@ -18,7 +18,7 @@ Hermes is a large repository, and most contributions touch exactly one subsystem
 | Built-in tools | `tools/` | [Adding Tools](adding-tools.md), [Tools Runtime](tools-runtime.md) |
 | Messaging gateway | `gateway/`, `plugins/platforms/` | [Gateway Internals](gateway-internals.md), [Adding Platform Adapters](adding-platform-adapters.md) |
 | CLI | `hermes_cli/` | [Extending the CLI](extending-the-cli.md) |
-| Plugins system | `plugins/` | [Build a Hermes Plugin](plugins/index.md) |
+| Plugins system | `plugins/` | [Build a Tandem Plugin](plugins/index.md) |
 | Skills (bundled & optional) | `skills/`, `optional-skills/` | [Creating Skills](creating-skills.md) |
 | Cron / scheduled jobs | `cron/` | [Cron Internals](cron-internals.md) |
 | Session storage | `hermes_state.py`, `hermes_state_*.py` | [Session Storage](session-storage.md) |

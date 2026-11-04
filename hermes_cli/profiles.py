@@ -1,4 +1,4 @@
-"""Profile management for multiple isolated Hermes instances."""
+"""Profile management for multiple isolated Tandem instances."""
 
 import contextlib
 import json
@@ -95,7 +95,7 @@ NO_BUNDLED_SKILLS_MARKER = ".no-bundled-skills"
 
 # Header seeded into a profile's empty .env so it owns a credentials file from day one.
 _PLACEHOLDER_ENV = (
-    "# Per-profile secrets for this Hermes profile.\n"
+    "# Per-profile secrets for this Tandem profile.\n"
     "# API keys and tokens set here override the shell environment.\n"
     "# Behavioral settings belong in config.yaml, not here.\n"
 )
@@ -307,13 +307,13 @@ def _wrapper_path(alias: str) -> Path:
 
 
 def _find_our_wrapper(alias: str) -> Optional[Path]:
-    """The Hermes wrapper for *alias*: :func:`_wrapper_path`, else a pre-``.bat`` bare Windows one."""
+    """The Tandem wrapper for *alias*: :func:`_wrapper_path`, else a pre-``.bat`` bare Windows one."""
     candidates = [_wrapper_path(alias), _get_wrapper_dir() / alias] if sys.platform == "win32" else [_wrapper_path(alias)]
     return next((p for p in candidates if _is_our_wrapper(p)), None)
 
 
 def _is_our_wrapper(path: Path) -> bool:
-    """True when *path* reads as a Hermes-generated wrapper (``hermes -p`` in its head)."""
+    """True when *path* reads as a Tandem-generated wrapper (``tandem -p`` in its head)."""
     try:
         with open(path, encoding="utf-8-sig") as f:
             return "hermes -p" in f.read(_WRAPPER_READ_LIMIT)
@@ -322,18 +322,18 @@ def _is_our_wrapper(path: Path) -> bool:
 
 
 def _missing_profile_error(canon: str) -> FileNotFoundError:
-    return FileNotFoundError(f"Profile '{canon}' does not exist. Create it with: hermes profile create {canon}")
+    return FileNotFoundError(f"Profile '{canon}' does not exist. Create it with: tandem profile create {canon}")
 
 
 def _unknown_profile_error(canon: str) -> FileNotFoundError:
     """For delete/rename/export of a name that matches no profile (likely a typo)."""
-    return FileNotFoundError(f"No profile named '{canon}'. See your profiles with: hermes profile list")
+    return FileNotFoundError(f"No profile named '{canon}'. See your profiles with: tandem profile list")
 
 
 def _profile_exists_error(canon: str) -> FileExistsError:
     return FileExistsError(
-        f"A profile named '{canon}' already exists. Switch to it with `hermes profile use {canon}`, "
-        "see all profiles with `hermes profile list`, or choose a different name."
+        f"A profile named '{canon}' already exists. Switch to it with `tandem profile use {canon}`, "
+        "see all profiles with `tandem profile list`, or choose a different name."
     )
 
 
@@ -353,7 +353,7 @@ def _invalid_profile_name_error(name: str) -> ValueError:
     suggestion = _suggest_profile_name(name)
     return ValueError(
         f"{name!r} is not a valid profile name. {_PROFILE_NAME_RULE} (for example: {suggestion}). "
-        f"Then run `hermes profile create {suggestion}`."
+        f"Then run `tandem profile create {suggestion}`."
     )
 
 
@@ -402,7 +402,7 @@ def validate_profile_name(name: str) -> None:
     if name in _RESERVED_NAMES:
         raise ValueError(
             f"Profile name {name!r} is reserved — it collides with either "
-            f"the Hermes installation itself or a common system binary.  "
+            f"the Tandem installation itself or a common system binary.  "
             f"Pick a different name."
         )
 
@@ -479,7 +479,7 @@ def _iter_named_profile_dirs(*, live_only: bool = True) -> list[Path]:
     A dir is a profile only when it carries an identity marker (``named_profile_has_identity``):
     cron/logging side-effects and pre-tombstone ghost shells leave marker-less dirs that must
     not be listed, served, ticked, or ``.env``-seeded — that seeding is what turned a ghost
-    shell into a "real" profile on the next ``hermes update`` (#95188, #94823, #99392)."""
+    shell into a "real" profile on the next ``tandem update`` (#95188, #94823, #99392)."""
     profiles_root = _get_profiles_root()
     if not profiles_root.is_dir():
         return []
@@ -866,7 +866,7 @@ def _walk_skill_count(skills_dir: Path) -> int:
 
 def _count_skills(profile_dir: Path) -> int:
     """Count installed skills in a profile (cached by skills-dir signature + TTL). Walks
-    synchronously when stale — detail surfaces (``hermes profile info``, ``profiles.describe``)
+    synchronously when stale — detail surfaces (``tandem profile info``, ``profiles.describe``)
     want the fresh number; polled lists go through :func:`_cached_skill_count`."""
     skills_dir = profile_dir / "skills"
     if not skills_dir.is_dir():
@@ -917,7 +917,7 @@ def _cached_skill_count(profile_dir: Path) -> int:
 def read_profile_meta(profile_dir: Path) -> dict:
     """Read ``profile.yaml`` -> ``{description, description_auto, display_name,
     previous_names}`` (empty defaults when missing/unreadable). Never raises — a
-    corrupt file on one profile must not break ``hermes profile list``."""
+    corrupt file on one profile must not break ``tandem profile list``."""
     def _read() -> dict:
         data = _load_yaml_dict(profile_dir / "profile.yaml") or {}
         ui_meta = data.get("ui_meta")
@@ -1144,7 +1144,7 @@ def profiles_to_serve(multiplex: bool, *, include_standalone: bool = False,
     and parked profiles skipped). Pure directory read: never creates a profile dir (#94590).
 
     Named profiles that authored ``gateway.standalone: true`` are skipped because they opted
-    out of the host multiplexer; a ``gateway.parked`` marker (``hermes -p X gateway stop``) skips
+    out of the host multiplexer; a ``gateway.parked`` marker (``tandem -p X gateway stop``) skips
     a profile the host would otherwise serve. Callers enumerating INSTALLED profiles pass
     ``include_standalone=True, include_parked=True``; serving/ticking callers pass neither."""
     active = get_active_profile_name() or "default"
@@ -1354,9 +1354,9 @@ def _bootstrap_profile_dir(profile_dir: Path, source_dir: Optional[Path],
     config files, installed skills (the dashboard's "clone from default" must keep bundled
     AND user-installed skills), and memory/identity files from *source_dir*.
 
-    ``sync_imports`` also copies the source's ``import-sync.json`` (the ``hermes import-agent``
+    ``sync_imports`` also copies the source's ``import-sync.json`` (the ``tandem import-agent``
     manifest) so the clone stays registered against the same external Claude Code / Codex trees
-    and ``hermes -p <clone> import-agent --sync`` keeps pulling from them. The link is to the
+    and ``tandem -p <clone> import-agent --sync`` keeps pulling from them. The link is to the
     external tree, never to the source profile: both profiles stay independent islands."""
     profile_dir.mkdir(parents=True, exist_ok=True)
     for subdir in _PROFILE_DIRS:
@@ -1394,7 +1394,7 @@ def create_profile(
     sections, pairing/session state — unless ``clone_channels`` opts in: a copied bot credential
     makes two gateways fight over one bot (``hermes_cli.profile_channels``; callers list what
     was left behind with ``channel_platforms_configured(source_dir)``).
-    ``no_skills`` creates an empty profile and writes a marker so ``hermes update`` skips
+    ``no_skills`` creates an empty profile and writes a marker so ``tandem update`` skips
     re-seeding its skills; it is mutually exclusive with the clone options, which copy skills.
     ``sync_imports`` (``--clone`` only; ``--clone-all`` copies the file anyway) also copies the
     ``import-agent`` sync manifest so the clone can keep pulling the same external agent trees."""
@@ -1576,15 +1576,15 @@ _PYTHON_INTERPRETER_RE = re.compile(r"^python[\d.]*w?(\.exe)?$")
 # Console-script entry points this project ships (pyproject.toml [project.scripts]).
 # argv[1] is matched against exact names, not ``startswith("hermes")``: with a bare
 # interpreter argv[0], argv[1] can be ANY user script ("hermes-notes.py").
-_HERMES_CONSOLE_SCRIPT_NAMES = frozenset({"hermes", "hermes-agent", "hermes-acp"})
+_HERMES_CONSOLE_SCRIPT_NAMES = frozenset({"tandem", "hermes", "hermes-agent", "hermes-acp"})
 
 
 def _is_hermes_argv(argv: list) -> bool:
-    """True for a Hermes process: entrypoint marker in argv, executable named ``hermes*``,
-    or a python interpreter directly exec'ing a known ``hermes`` console-script shim."""
+    """True for a Tandem process: entrypoint marker in argv, executable named ``hermes*``,
+    or a python interpreter directly exec'ing a known ``tandem`` console-script shim."""
     joined = " ".join(argv)
     exe_name = os.path.basename(argv[0]).lower()
-    if any(marker in joined for marker in _HERMES_ARGV_MARKERS) or exe_name.startswith("hermes"):
+    if any(marker in joined for marker in _HERMES_ARGV_MARKERS) or exe_name.startswith("hermes") or exe_name in ("tandem", "tandem.exe"):
         return True
     if len(argv) >= 2 and _PYTHON_INTERPRETER_RE.match(exe_name):
         script_name = os.path.basename(str(argv[1])).lower()
@@ -1602,7 +1602,7 @@ def _argv_profile_selectors(argv: list):
 
 
 def _profile_bound_backend_pids(canon: str, profile_dir: Path) -> list[int]:
-    """PIDs of running Hermes *backends* bound to this profile (``gateway.pid`` only tracks
+    """PIDs of running Tandem *backends* bound to this profile (``gateway.pid`` only tracks
     the messaging gateway). Tightly scoped: current-user processes, backend subcommands only
     (never an interactive ``chat``/``tui``), never this process or its ancestors. Empty when
     ``psutil`` can't inspect anything."""
@@ -1743,7 +1743,7 @@ class ProfileIdentitySettlementPending(RuntimeError):
     settled (``hermes_cli.profile_identity.purge_profile_identity`` returned False).
 
     Subclasses ``RuntimeError`` so delete-failure handling that treats the error as fatal (the
-    CLI's ``hermes profile delete``) keeps working unchanged; surfaces that can report a partial
+    CLI's ``tandem profile delete``) keeps working unchanged; surfaces that can report a partial
     success (the dashboard's ``DELETE /api/profiles/{name}``) catch this type — it carries the
     profile, its now-removed path, and the retry command — instead of matching on the message.
     """
@@ -1751,7 +1751,7 @@ class ProfileIdentitySettlementPending(RuntimeError):
     def __init__(self, profile: str, path: Path):
         self.profile = profile
         self.path = path
-        self.retry_command = f"hermes profile purge-identity {profile}"
+        self.retry_command = f"tandem profile purge-identity {profile}"
         super().__init__(
             f"Profile '{profile}' was deleted, but its session/routing identity settlement is "
             f"still pending — run: {self.retry_command}")
@@ -1762,7 +1762,7 @@ def delete_profile(name: str, yes: bool = False) -> Path:
     to prevent auto-restart, gateway stopped if running)."""
     canon = normalize_profile_name(name)
     if canon == "default":
-        raise ValueError("Cannot delete the default profile (~/.hermes).\nTo remove everything, use: hermes uninstall")
+        raise ValueError("Cannot delete the default profile (~/.hermes).\nTo remove everything, use: tandem uninstall")
     canon, profile_dir = _existing_profile_dir(canon)
     gw_running = _check_gateway_running(profile_dir)
     wrapper_path = _find_our_wrapper(canon)
@@ -2000,7 +2000,7 @@ def _stop_gateway_process(profile_dir: Path) -> None:
 # Active profile (sticky default)
 
 def get_active_profile(root: Path | None = None) -> str:
-    """Read the sticky active profile name (of *root*, default: this process's Hermes root)."""
+    """Read the sticky active profile name (of *root*, default: this process's Tandem root)."""
     path = root / "active_profile" if root is not None else _get_active_profile_path()
     try:
         name = path.read_text(encoding="utf-8-sig").strip()
@@ -2265,7 +2265,7 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
     if not inferred_name:
         raise ValueError(
             "Cannot determine profile name from archive. "
-            "Specify it explicitly: hermes profile import <archive> --name <name>"
+            "Specify it explicitly: tandem profile import <archive> --name <name>"
         )
     if archive_root is None:
         raise ValueError("Profile archive must contain exactly one top-level directory.")
@@ -2276,7 +2276,7 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
     if canon == "default":
         raise ValueError(
             "Cannot import as 'default' — that is the built-in root profile (~/.hermes). "
-            "Specify a different name: hermes profile import <archive> --name <name>"
+            "Specify a different name: tandem profile import <archive> --name <name>"
         )
     profile_dir = get_profile_dir(canon)
     if profile_dir.exists():
@@ -2383,7 +2383,7 @@ def rename_profile(old_name: str, new_name: str) -> Path:
             _notify_multiplexer(old_canon)
         _maybe_register_gateway_service(old_canon)
         if service_removed:
-            print(f"⚠ The gateway service was removed. Reinstall it with: hermes -p {old_canon} gateway install")
+            print(f"⚠ The gateway service was removed. Reinstall it with: tandem -p {old_canon} gateway install")
         raise
     print(f"✓ Renamed {old_dir.name} → {new_dir.name}")
     # The tombstone lives at profiles/.deleted/<old_name>; old_dir is gone so nothing can
@@ -2423,14 +2423,14 @@ def rename_profile(old_name: str, new_name: str) -> Path:
         _notify_multiplexer(new_canon)
     _maybe_register_gateway_service(new_canon)
     if service_removed:
-        print(f"⚠ The gateway service was removed. Reinstall it with: hermes -p {new_canon} gateway install")
+        print(f"⚠ The gateway service was removed. Reinstall it with: tandem -p {new_canon} gateway install")
     return new_dir
 
 
 # Profile env resolution (called from _apply_profile_override)
 
 def profile_root_for_env_home(env_home: str, default_root: Path) -> Path:
-    """Hermes root named by an exported ``HERMES_HOME``: the grandparent of a profile-shaped value
+    """Tandem root named by an exported ``HERMES_HOME``: the grandparent of a profile-shaped value
     (``<root>/profiles/<name>``, mirrors ``get_default_hermes_root()``), the value itself otherwise,
     *default_root* when unset. Pure: callers pass any process's env, not only ``os.environ``."""
     env_home = env_home.strip()
@@ -2446,7 +2446,7 @@ def resolve_profile_env(profile_name: str) -> str:
 
     When HERMES_HOME is already set, the configured spelling IS the launch root (it may be a
     junction/symlink alias of the platform default). Keep that spelling so profile re-home does not destroy
-    the launcher's lexical provenance -- the subprocess sanitizer needs it to match Hermes-owned PYTHONPATH
+    the launcher's lexical provenance -- the subprocess sanitizer needs it to match Tandem-owned PYTHONPATH
     entries written in the same spelling (#82581 junction follow-up). Physically the paths are identical
     (junction-transparent); only the spelling is preserved.
     """

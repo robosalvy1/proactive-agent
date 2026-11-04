@@ -1,6 +1,6 @@
 """A peer turn into the canonical Bot Chat under session authority is that chat's own admission.
 
-``hermes peer dm`` / ``peer run`` reach the API edge; under the unified runtime the Bot Chat is
+``tandem peer dm`` / ``peer run`` reach the API edge; under the unified runtime the Bot Chat is
 a LOCAL session whose only writer is the authority FIFO, so the turn goes through the
 ``bot_relay.deliver`` door (``gateway/session_bot.py``) and the reply is its admission's
 receipt. Binding the chat as an API conversation would be a second writer (``permission_denied``).

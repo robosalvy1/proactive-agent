@@ -19,7 +19,7 @@ const digestModule = pathToFileURL(path.join(import.meta.dirname, 'payload-diges
 // provides; a PATH python would fail later with an unrelated ImportError.
 function preparedPython() {
   const configured = process.env.HERMES_PYTHON
-  if (!configured) throw new Error('mac-sign tests need HERMES_PYTHON set to the prepared Hermes runtime interpreter')
+  if (!configured) throw new Error('mac-sign tests need HERMES_PYTHON set to the prepared Tandem runtime interpreter')
   return configured
 }
 

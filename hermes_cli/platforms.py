@@ -1,4 +1,4 @@
-"""Shared platform registry for Hermes Agent."""
+"""Shared platform registry for Tandem Agent."""
 
 from collections import OrderedDict
 from typing import NamedTuple

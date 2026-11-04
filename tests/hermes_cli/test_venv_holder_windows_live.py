@@ -1,7 +1,7 @@
 """LIVE Windows E2E for retained lifecycle holder discovery (fleet-update #91277).
 
 Runs ONLY on a real Windows host (the on-demand ``windows-venv-e2e.yml``
-lane). Spawns REAL processes with realistic Hermes argv shapes and drives
+lane). Spawns REAL processes with realistic Tandem argv shapes and drives
 the actual detection code against the live
 process table — no mocked psutil, no faked cmdlines.
 
@@ -87,7 +87,7 @@ class TestDetection:
             _kill(proc)
 
     def test_foreign_python_not_detected(self):
-        """A python process with no Hermes argv, cwd OUTSIDE the install AND an
+        """A python process with no Tandem argv, cwd OUTSIDE the install AND an
         interpreter outside the project venv must not be reported as a holder.
 
         ``sys.executable`` is the wrong sleeper here: the runner's ``uv run`` interpreter

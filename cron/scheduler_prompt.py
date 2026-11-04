@@ -280,6 +280,32 @@ _CRON_HINT = (
 )
 
 
+def _attention_hint(job: dict) -> str:
+    """The [ALERT] contract, only for jobs whose results go through the attention gate; every other
+    job keeps a byte-identical prompt."""
+    from cron import attention, attention_watch
+
+    try:
+        if attention_watch.job_role(job) is not None:
+            return ""  # watcher/discovery jobs carry their own output contract in the run context
+        routed = attention.routes_cron_job(job)
+    except Exception:  # an unreadable attention config must not fail the job's prompt
+        logger.warning("Attention routing check failed; prompt without [ALERT] hint", exc_info=True)
+        return ""
+    return f"[{attention.CRON_ATTENTION_GUIDANCE}]\n\n" if routed else ""
+
+
+def _attention_watch_context(job: dict) -> str:
+    """Per-run data for proactive watcher/discovery jobs; "" (prompt unchanged) for every other job."""
+    from cron import attention_watch
+
+    try:
+        return attention_watch.runtime_context(job)
+    except Exception:  # the watcher still runs; it just lacks its inbox/loop context this time
+        logger.warning("Attention watch context failed", exc_info=True)
+        return ""
+
+
 def _build_job_prompt(
     job: dict, prerun_script: Optional[tuple] = None, extra_prompt: Optional[str] = None,
     runtime_data_prompt: Optional[str] = None,
@@ -301,6 +327,8 @@ def _build_job_prompt(
     # Runtime DATA (script stdout, upstream output) legitimately quotes command-shape strings, so it
     # must not be scanned with the strict user-prompt set — see _scan_assembled_cron_prompt.
     has_injected_data = False
+    if watch_context := _attention_watch_context(job):
+        runtime_data_prompt = "\n\n".join(filter(None, (runtime_data_prompt, watch_context)))
     if runtime_data_prompt:
         prompt = f"{prompt}\n\n## Run Context\n{runtime_data_prompt}"
         has_injected_data = True
@@ -333,7 +361,7 @@ def _build_job_prompt(
         prompt = f"{notepad_section}{prompt}"
         has_injected_data = True
 
-    prompt = _CRON_HINT + prompt
+    prompt = _CRON_HINT + _attention_hint(job) + prompt
     skill_names = _job_skill_names(job)
     if not skill_names:
         return _scan_assembled_cron_prompt(

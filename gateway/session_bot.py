@@ -106,7 +106,7 @@ async def _target(authority, actor):
 
 
 async def _create_bot_chat(authority, actor):
-    """No Bot Chat yet: mint it the way ``hermes chat --in ~ -c "Bot Chat" --create-if-missing``
+    """No Bot Chat yet: mint it the way ``tandem chat --in ~ -c "Bot Chat" --create-if-missing``
     did on the CLI lane this door replaced, so a fresh profile's first delivery has somewhere
     to land instead of being recorded as failed. Same owner step as ``session.create`` with a
     title: lookup, creation and title run under the authority's titled-create lock, with the

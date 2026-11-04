@@ -1,21 +1,21 @@
-"""Regression test: ``hermes dump`` reports a real git SHA inside the container.
+"""Regression test: ``tandem dump`` reports a real git SHA inside the container.
 
 ``.dockerignore`` excludes ``.git``, so ``git rev-parse HEAD`` fails inside
 the published image. CI writes ``install-stamp.json`` before ``docker build``
 (scripts/write_install_stamp.py) and it is COPY'd to the canonical
-``/opt/hermes/install-stamp.json``. ``hermes dump`` reads the
+``/opt/hermes/install-stamp.json``. ``tandem dump`` reads the
 commit from that stamp through ``hermes_cli.version_info``.
 
 A local ``docker build`` (the ``built_image`` fixture in
 ``tests/docker/conftest.py``) has no CI stamp — only the Dockerfile's
 distribution-only fallback, whose all-zero commit version_info skips. In
-that case ``hermes dump`` falls back to ``(unknown)``.
+that case ``tandem dump`` falls back to ``(unknown)``.
 
 This test asserts both cases:
 
-* When the stamp exists in the image, ``hermes dump`` must show the first 8
+* When the stamp exists in the image, ``tandem dump`` must show the first 8
   characters of its commit, not ``(unknown)``.
-* When the stamp is absent, ``hermes dump`` must show ``(unknown)`` — a guard
+* When the stamp is absent, ``tandem dump`` must show ``(unknown)`` — a guard
   against the helper inventing a SHA from another source.
 """
 from __future__ import annotations
@@ -48,7 +48,7 @@ def _run_dump(image: str) -> str:
         check=False,
     )
     assert r.returncode == 0, (
-        f"hermes dump exited {r.returncode}: "
+        f"tandem dump exited {r.returncode}: "
         f"stderr={r.stderr[-1000:]!r}\nstdout={r.stdout[-1000:]!r}"
     )
     return r.stdout

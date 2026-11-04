@@ -1,7 +1,7 @@
 """Local readers of a gateway's ``identify`` answer see what launched it, not the protocol's "none".
 
 The session runtime protocol reports a manual or Desktop-spawned gateway as ``supervisor: "none"``.
-``hermes gateway restart`` read that as an external supervisor: it SIGUSR1'd an auto-started
+``tandem gateway restart`` read that as an external supervisor: it SIGUSR1'd an auto-started
 gateway, waited for a relaunch that never came, and exited 1 with no gateway running (#134889).
 """
 from pathlib import Path

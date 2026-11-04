@@ -36,7 +36,7 @@ export function generateIcons(args = [], { root = repoRoot, run = spawnSync, env
   ], { cwd: source, stdio: 'inherit', windowsHide: true, env: childEnv })
   if (result.error) {
     console.error('[generate-icons] failed to launch icon generator:', result.error.message)
-    console.error('[generate-icons] a Hermes runtime Python (HERMES_PYTHON or PATH) is required')
+    console.error('[generate-icons] a Tandem runtime Python (HERMES_PYTHON or PATH) is required')
     return 1
   }
   return result.status ?? 1

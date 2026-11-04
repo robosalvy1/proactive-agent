@@ -34,6 +34,7 @@ import {
   FileText,
   Globe,
   Heart,
+  House,
   KeyRound,
   Menu,
   MessageSquare,
@@ -109,6 +110,7 @@ import { isDashboardEmbeddedChatEnabled } from "@/lib/dashboard-flags";
 import { latchChatActivation } from "@/lib/chat-activation";
 import { sharedGatewayProfiles, sharedGatewayRestartDescription } from "@/lib/shared-gateway";
 import { api } from "@/lib/api";
+import { PERSONAL_HOME_PATH } from "@/personal/lib/route";
 import type { StatusResponse, UpdateCheckResponse } from "@/lib/api";
 
 function RouteFallback({ label = "Loading…" }: { label?: string }) {
@@ -127,7 +129,7 @@ function RouteFallback({ label = "Loading…" }: { label?: string }) {
 }
 
 function RootRedirect() {
-  return <Navigate to="/sessions" replace />;
+  return <Navigate to={PERSONAL_HOME_PATH} replace />;
 }
 
 function UnknownRouteFallback({ pluginsLoading }: { pluginsLoading: boolean }) {
@@ -187,6 +189,7 @@ function ChatRouteSink() {
 }
 
 const BUILTIN_NAV_REST: NavItem[] = [
+  { path: PERSONAL_HOME_PATH, label: "Home", icon: House },
   {
     path: "/sessions",
     labelKey: "sessions",
@@ -619,7 +622,7 @@ export default function App() {
                 <PluginSlot name="header-left" />
 
                 <Typography className="font-bold text-[1.125rem] leading-[0.95] tracking-[0.0525rem] text-midground uppercase">
-                  Hermes
+                  Tandem
                   <br />
                   Agent
                 </Typography>
@@ -983,12 +986,12 @@ function SidebarSystemActions({
     if (updateConfirmInfo?.behind && updateConfirmInfo.behind > 0) {
       const cmd = updateConfirmInfo.update_command;
       const n = updateConfirmInfo.behind;
-      return `This will run 'hermes update' (${cmd}) and pull ${n} new commit${n === 1 ? "" : "s"}. The gateway restarts when the update finishes; the current session keeps its prompt cache until then.`;
+      return `This will run 'tandem update' (${cmd}) and pull ${n} new commit${n === 1 ? "" : "s"}. The gateway restarts when the update finishes; the current session keeps its prompt cache until then.`;
     }
     const cmd = updateConfirmInfo?.update_command ?? "hermes update";
     return (
       t.status.updateHermesConfirmMessage ??
-      `This will run 'hermes update' (${cmd}) and restart the gateway when it finishes.`
+      `This will run 'tandem update' (${cmd}) and restart the gateway when it finishes.`
     );
   }, [t.status.updateHermesConfirmMessage, updateConfirmInfo]);
 
@@ -1088,7 +1091,7 @@ function SidebarSystemActions({
         sharedGateway
           ? sharedGatewayRestartDescription(sharedGateway)
           : (t.status.restartGatewayConfirmMessage ??
-            "This restarts the Hermes gateway process. Connected channels and active sessions will reconnect afterward.")
+            "This restarts the Tandem gateway process. Connected channels and active sessions will reconnect afterward.")
       }
       loading={pendingAction === "restart"}
       onCancel={() => setRestartConfirmOpen(false)}

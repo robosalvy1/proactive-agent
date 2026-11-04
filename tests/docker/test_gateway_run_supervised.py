@@ -15,7 +15,7 @@ These tests verify the three load-bearing properties of that redirect:
   3. The supervised process itself does NOT recurse — the
      ``HERMES_S6_SUPERVISED_CHILD`` sentinel breaks the loop.
 
-Every ``docker exec`` runs as ``hermes`` per the conftest module
+Every ``docker exec`` runs as ``tandem`` per the conftest module
 docstring; see ``tests/docker/conftest.py`` for rationale.
 """
 from __future__ import annotations
@@ -176,11 +176,11 @@ def test_supervised_gateway_does_not_recurse(
     built_image: str, container_name: str,
 ) -> None:
     """The HERMES_S6_SUPERVISED_CHILD sentinel must prevent the
-    supervised ``hermes gateway run`` from re-entering the redirect.
+    supervised ``tandem gateway run`` from re-entering the redirect.
 
     If recursion happened, every supervised gateway start would itself
     re-dispatch to s6 and exec ``sleep infinity`` — so the supervised
-    gateway slot would never actually run a python ``hermes gateway
+    gateway slot would never actually run a python ``tandem gateway
     run`` process. The slot would oscillate or settle into a state
     with no python in the supervise tree at all.
 
@@ -212,7 +212,7 @@ def test_supervised_gateway_does_not_recurse(
     assert r.returncode == 0
     n = int(r.stdout.strip() or 0)
     assert n <= 1, (
-        f"expected at most one supervised python `hermes gateway run` "
+        f"expected at most one supervised python `tandem gateway run` "
         f"process (the legitimately-supervised gateway); found {n}. "
         f"Recursion guard may have failed. "
         f"ps:\n{docker_exec_sh(container_name, 'ps -eo pid,ppid,cmd').stdout}"

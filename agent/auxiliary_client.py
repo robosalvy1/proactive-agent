@@ -172,7 +172,7 @@ def _openai_http_client_kwargs(base_url: Optional[str], *, async_mode: bool = Fa
             logger.warning(
                 "agent.process_bootstrap.build_keepalive_http_client is "
                 "unavailable — mixed/stale install detected (#64333). Falling "
-                "back to the SDK default HTTP client. Run `hermes update` (or "
+                "back to the SDK default HTTP client. Run `tandem update` (or "
                 "reinstall the Desktop app) to resync the runtime.")
         client = None
     return {"http_client": client} if client is not None else {}
@@ -866,7 +866,7 @@ _PROVIDERS_WITHOUT_VISION: frozenset = frozenset({"kimi-coding", "kimi-coding-cn
 # OpenRouter app attribution (always sent). `X-Title` is what the dashboard reads.
 _OR_HEADERS_BASE = {
     "HTTP-Referer": "https://hermes-agent.nousresearch.com",
-    "X-Title": "Hermes Agent",
+    "X-Title": "Tandem Agent",
     "X-OpenRouter-Categories": "productivity,cli-agent",
 }
 
@@ -934,7 +934,7 @@ from hermes_cli.version_info import get_version_info
 
 _AI_GATEWAY_HEADERS = {
     "HTTP-Referer": "https://hermes-agent.nousresearch.com",
-    "X-Title": "Hermes Agent",
+    "X-Title": "Tandem Agent",
     "User-Agent": f"HermesAgent/{get_version_info().base_version}",
 }
 
@@ -2357,7 +2357,7 @@ def _try_nous(vision: bool = False) -> tuple[Optional[OpenAI], Optional[str]]:
     nous = _read_nous_auth()
     runtime = _resolve_nous_runtime_api(force_refresh=False)
     if runtime is None and not nous:
-        logger.warning("Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).")
+        logger.warning("Auxiliary Nous client unavailable: no Nous authentication found (run: tandem auth).")
         _mark_provider_unhealthy("nous", ttl=60, reason="no Nous authentication found", level=logging.DEBUG)
         return None, None
     if runtime is None and nous:
@@ -2369,7 +2369,7 @@ def _try_nous(vision: bool = False) -> tuple[Optional[OpenAI], Optional[str]]:
         if not api_key:
             logger.warning(
                 "Auxiliary Nous client unavailable: no usable inference JWT found "
-                "(run: hermes auth add nous)."
+                "(run: tandem auth add nous)."
             )
             _mark_provider_unhealthy("nous", ttl=60, reason="no usable Nous inference JWT", level=logging.DEBUG)
             return None, None
@@ -2887,7 +2887,7 @@ def _validate_base_url(base_url: str) -> None:
     except ValueError as exc:
         raise RuntimeError(
             f"Malformed custom endpoint URL: {candidate!r}. "
-            "Run `hermes setup` or `hermes model` and enter a valid http(s) base URL."
+            "Run `tandem setup` or `tandem model` and enter a valid http(s) base URL."
         ) from exc
 
 
@@ -4526,7 +4526,7 @@ def _try_main_fallback_chain(
 
 def _warn_stale_openai_base_url(runtime_provider: str) -> None:
     """Warn once when OPENAI_BASE_URL is set but config.yaml names a non-custom provider (a stale
-    ~/.hermes/.env value after `hermes model` poisons routing)."""
+    ~/.hermes/.env value after `tandem model` poisons routing)."""
     global _stale_base_url_warned
     if _stale_base_url_warned:
         return
@@ -4536,7 +4536,7 @@ def _warn_stale_openai_base_url(runtime_provider: str) -> None:
         logger.warning(
             "OPENAI_BASE_URL is set (%s) but model.provider is '%s'. "
             "Auxiliary clients may route to the wrong endpoint. "
-            "Run: hermes model to reconfigure, or remove "
+            "Run: tandem model to reconfigure, or remove "
             "OPENAI_BASE_URL from ~/.hermes/.env",
             _env_base, _cfg_provider,
         )
@@ -4627,7 +4627,7 @@ def _discovery_chain_allowed(main_provider: str, task: Optional[str] = None) -> 
         return True
     logger.warning(
         "Auxiliary %s: main provider %s is unavailable and no fallback_chain / fallback_providers is "
-        "configured — refusing to guess another logged-in provider. Re-authenticate (`hermes model`) "
+        "configured — refusing to guess another logged-in provider. Re-authenticate (`tandem model`) "
         "or declare a fallback.", task or "call", main_provider)
     return False
 
@@ -5016,7 +5016,7 @@ def _resolve_nous_branch(req: _ResolveRequest) -> _ResolveResult:
     client, default = _try_nous(vision=(req.is_vision or model in _PROVIDER_VISION_MODELS.values()
                                         or (model or "").strip().lower() == "mimo-v2-omni"))
     if client is None:
-        logger.warning("resolve_provider_client: nous requested but Nous Portal not configured (run: hermes auth)")
+        logger.warning("resolve_provider_client: nous requested but Nous Portal not configured (run: tandem auth)")
         return None, None
     final_model = _normalize_resolved_model(model or default, req.provider)
     # Dual-wire: anthropic/* → /v1/messages, else /chat/completions. Derive from the catalog id
@@ -5037,7 +5037,7 @@ def _resolve_openai_codex_branch(req: _ResolveRequest) -> _ResolveResult:
                        "model; pass model explicitly (e.g. model.model in config.yaml "
                        "or auxiliary.<task>.model for per-task aux routing).")
         return None, None
-    no_token_msg = "resolve_provider_client: openai-codex requested but no Codex OAuth token found (run: hermes model)"
+    no_token_msg = "resolve_provider_client: openai-codex requested but no Codex OAuth token found (run: tandem model)"
     if req.raw_codex:
         # Raw OpenAI client for callers needing responses.stream() (main agent loop).
         codex_token, base_url = _resolve_codex_credential_and_base()
@@ -5057,7 +5057,7 @@ def _resolve_xai_oauth_branch(req: _ResolveRequest) -> _ResolveResult:
     client, default = _build_xai_oauth_aux_client(req.model)
     return _route_or_warn(req, client, default,
                           "resolve_provider_client: xai-oauth requested but no xAI "
-                          "OAuth token found (run: hermes model -> xAI Grok OAuth — SuperGrok / Premium+)")
+                          "OAuth token found (run: tandem model -> xAI Grok OAuth — SuperGrok / Premium+)")
 
 
 def _resolve_custom_branch(req: _ResolveRequest) -> _ResolveResult:
@@ -5232,7 +5232,7 @@ def _resolve_azure_foundry_branch(req: _ResolveRequest) -> _ResolveResult:
                                                explicit_base_url=req.explicit_base_url, api_mode=req.api_mode)
     return _route_or_warn(req, client, default_model,
                           "resolve_provider_client: azure-foundry requested but "
-                          "runtime resolution failed (run: hermes doctor for diagnostics)")
+                          "runtime resolution failed (run: tandem doctor for diagnostics)")
 
 
 def _api_key_profile_supplied_client(provider: str, **client_kwargs: Any) -> Any | None:
@@ -6879,7 +6879,7 @@ def _note_relay_auxiliary_error(exc: BaseException) -> None:
 
 
 def _fail_relay_auxiliary_call(exc: BaseException) -> None:
-    """Close a call that ended in ``exc`` without replacing it: a Hermes abort is ``cancelled``,
+    """Close a call that ended in ``exc`` without replacing it: a Tandem abort is ``cancelled``,
     anything else ``failed`` with the classifier's reason for the error that ended it."""
     try:
         from agent import auxiliary_call_outcome
@@ -7028,7 +7028,7 @@ def _managed_local_netloc() -> str:
 
 
 def _is_managed_local_endpoint(base_url: Optional[str]) -> bool:
-    """True when *base_url* targets the llama-server this Hermes manages."""
+    """True when *base_url* targets the llama-server this Tandem manages."""
     if not base_url:
         return False
     managed = _managed_local_netloc()
@@ -7456,7 +7456,7 @@ def _resolve_call_client(
                 effective_provider = _effective_provider_for_client(client, "auto")
     if client is None:
         raise AuxiliaryClientUnavailable(f"No LLM provider configured for task={task} "
-                                         f"provider={resolved_provider}. Run: hermes setup")
+                                         f"provider={resolved_provider}. Run: tandem setup")
     return _ResolvedAuxRoute(client, final_model, resolved_provider, effective_provider)
 
 

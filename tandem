@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Tandem Agent terminal entry point (Hermes runtime)."""
+
+if __name__ == "__main__":
+    from hermes_cli.main import main
+    main()

@@ -228,7 +228,7 @@ def load_memory_provider(name: str, *, register_skills: Optional[bool] = None) -
     if provider_dir is not None and _explicitly_disabled(name, provider_dir):
         # The Plugins hub / `hermes plugins disable` park a user-installed provider in
         # ``plugins.disabled``; the loader must honour it or "disabled" is a lie in the UI.
-        logger.warning("Memory provider '%s' is disabled via plugins.disabled; run `hermes plugins enable %s` "
+        logger.warning("Memory provider '%s' is disabled via plugins.disabled; run `tandem plugins enable %s` "
                        "or change memory.provider.", name, name)
         return None
 
@@ -248,7 +248,7 @@ def load_memory_provider(name: str, *, register_skills: Optional[bool] = None) -
 def import_memory_provider_module(name: Optional[str] = None) -> bool:
     """Import the provider's module (default: the configured ``memory.provider``) WITHOUT
     constructing a provider — the later ``load_memory_provider`` then hits ``sys.modules``
-    instead of a fresh native extension load. Exists so ``hermes acp`` can pay the heavy
+    instead of a fresh native extension load. Exists so ``tandem acp`` can pay the heavy
     import (numpy / ML stack) on the main thread before any other thread starts: on Windows
     a first-time native import racing another thread's import chain deadlocked
     ``session/new`` (#58083). False when no provider is configured, the provider is

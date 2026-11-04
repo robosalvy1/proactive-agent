@@ -3,16 +3,16 @@ title: Public Subagent Lifecycle API
 sidebar_label: Subagent lifecycle API
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Public Subagent Lifecycle API
 
-Plugins can launch and supervise fresh Hermes child sessions without importing
+Plugins can launch and supervise fresh Tandem child sessions without importing
 `tools.delegate_tool`, gateway internals, TUI state, or `AIAgent` fields.
 The service resolves its parent from the current agent turn, so it works in
 CLI, gateway, non-interactive, and kanban-worker sessions. Launching outside an
-active agent turn fails closed with `No active Hermes parent session`.
+active agent turn fails closed with `No active Tandem parent session`.
 The facade also works when a plugin runs under `plugins.isolation: host`.
 
 Requests accept `goal`, `context`, `role`, `model`, `provider`, `allowed_toolsets`,
@@ -71,9 +71,9 @@ exit; callers must treat those handles as interrupted by process exit.
 Requests are fail-closed: goal/context/metadata sizes are capped, unknown or
 parent-broadening toolsets are rejected (plugin-registered toolsets count as
 known), and per-tool blocks, working-directory overrides, and per-launch
-timeouts are explicitly rejected until Hermes can
+timeouts are explicitly rejected until Tandem can
 support them without weakening isolation. Use `allowed_toolsets` to narrow a
-child; Hermes's existing unsafe-tool block remains enforced.
+child; Tandem's existing unsafe-tool block remains enforced.
 
 ## Routing
 

@@ -6,7 +6,7 @@ dispatcher ``start_oauth_login`` hardcoded ``_start_anthropic_pkce()``
 for any pkce-flagged provider. So clicking "Login" next to MiniMax in
 the dashboard's Keys tab silently launched the Anthropic/Claude OAuth
 flow. The Anthropic dashboard flow was later removed entirely because
-Hermes must not mint subscription OAuth tokens from an unattended HTTP
+Tandem must not mint subscription OAuth tokens from an unattended HTTP
 endpoint; only the approved external CLI path remains.
 
 The fix:
@@ -178,7 +178,7 @@ def test_oauth_provider_status_uses_profile_query(tmp_path, monkeypatch):
         "id": "fake-oauth",
         "name": "Fake OAuth",
         "flow": "pkce",
-        "cli_command": "hermes auth add fake-oauth",
+        "cli_command": "tandem auth add fake-oauth",
         "docs_url": "https://example.com",
         "status_fn": fake_status,
     },)
@@ -544,7 +544,7 @@ def test_anthropic_dashboard_oauth_is_removed_and_external():
 
 def test_accounts_offers_every_oauth_provider_from_catalog():
     """PARITY CONTRACT: every accounts-tab provider in the unified catalog (the
-    `hermes model` universe) must be offered by /api/providers/oauth. This keeps
+    `tandem model` universe) must be offered by /api/providers/oauth. This keeps
     the desktop Accounts tab in lockstep with the CLI picker — no provider the
     CLI can sign into may be missing from the GUI.
     """
@@ -556,7 +556,7 @@ def test_accounts_offers_every_oauth_provider_from_catalog():
     for d in provider_catalog():
         if d.tab == "accounts":
             assert d.slug in offered, (
-                f"{d.slug} is an accounts-tab provider in `hermes model` but is "
+                f"{d.slug} is an accounts-tab provider in `tandem model` but is "
                 f"missing from the desktop Accounts tab (/api/providers/oauth)"
             )
 
@@ -605,7 +605,7 @@ def test_xai_dashboard_poller_seeds_single_entry_and_clears_suppression(tmp_path
     singleton only; the seed is the single source of truth.
 
     Suppression: an interactive dashboard login must also clear any
-    ``device_code`` suppression left by a prior ``hermes auth remove
+    ``device_code`` suppression left by a prior ``tandem auth remove
     xai-oauth``.
     """
     from hermes_cli import auth as auth_mod

@@ -1,18 +1,18 @@
 """File tools keep the documented write sandbox, write denylist and read denylist under ../ and symlink spellings.
 
-Hermes documents three file-tool boundaries (website/docs/user-guide/security.md, "File write safety"):
+Tandem documents three file-tool boundaries (website/docs/user-guide/security.md, "File write safety"):
 
 * ``HERMES_WRITE_SAFE_ROOT``: ``write_file`` / ``patch`` may only land inside the listed roots.
-* Protected paths: the Hermes-home ``.env`` / OAuth stores, ``~/.ssh`` keys and ``authorized_keys`` are
+* Protected paths: the Tandem-home ``.env`` / OAuth stores, ``~/.ssh`` keys and ``authorized_keys`` are
   never written; ``~/.ssh/config`` is approval-gated (a ``-q`` run has no approver, so it is blocked).
-* Read denylist: ``auth.json`` / ``.env`` under the Hermes home and project-local ``.env`` files are never
+* Read denylist: ``auth.json`` / ``.env`` under the Tandem home and project-local ``.env`` files are never
   returned by ``read_file`` / ``search_files``.
 
 There is no read confinement to a workspace (reads outside the cwd are allowed), so none is asserted.
 Each boundary is judged on the RESOLVED target, so spelling the same file through ``../``, an absolute
 path, a symlink inside the workspace, or a symlinked parent directory must get the same verdict as the
-direct spelling. Everything runs through the real agent tool path: ``hermes chat -q`` with the loopback
-model issuing the tool calls; outcomes are read on disk and in the tool results Hermes sent back.
+direct spelling. Everything runs through the real agent tool path: ``tandem chat -q`` with the loopback
+model issuing the tool calls; outcomes are read on disk and in the tool results Tandem sent back.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ class Layout:
 
     def plant(self, path: Path, label: str, *, json_store: bool = False) -> str:
         """Write a canary file. ``json_store`` writes a well-formed auth store (a malformed auth.json is
-        quarantined by Hermes at startup, which would move the canary elsewhere)."""
+        quarantined by Tandem at startup, which would move the canary elsewhere)."""
         self.marks[label] = mark = H.canary(label)
         path.parent.mkdir(parents=True, exist_ok=True)
         body = json.dumps({"version": 1, "providers": {}, "credential_pool": {}, "e2e_mark": mark}) if json_store else mark
@@ -89,7 +89,7 @@ class Layout:
 @dataclass
 class Step:
     """One tool call. Each spelling gets its own subject where the layout allows it; the protected rows
-    that cannot (there is one Hermes-home ``.env`` and one ``authorized_keys``) share it, and a breach of a
+    that cannot (there is one Tandem-home ``.env`` and one ``authorized_keys``) share it, and a breach of a
     shared subject is charged to the spellings whose tool result was not a refusal (see ``_culprits``).
     ``expect``: ``absent`` (subject must not exist after), ``unchanged`` (subject bytes identical), ``hidden``
     (the protected file's canary never appears in the tool result), ``setup`` (no check)."""

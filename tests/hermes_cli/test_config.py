@@ -122,7 +122,7 @@ class TestLoadConfigDefaults:
             assert "max_turns" not in config
             assert "terminal" in config
             assert config["terminal"]["backend"] == "local"
-            assert config["display"]["interim_assistant_messages"] is True
+            assert config["display"]["interim_assistant_messages"] is False  # Opt-in since minimal responses.
 
     def test_legacy_root_level_max_turns_migrates_to_agent_config(self, tmp_path):
         with patch.dict(os.environ, {"HERMES_HOME": str(tmp_path)}):
@@ -140,7 +140,7 @@ class TestLoadConfigParseFailure:
     Before issue #23570 this was a single ``print(...)`` that scrolled past
     on the first invocation — users saw aux-fallback misbehavior with no clue
     their config.yaml was being ignored. The helper must:
-      * log at WARNING (so ``hermes logs`` surfaces it)
+      * log at WARNING (so ``tandem logs`` surfaces it)
       * also write to stderr (so it's visible at startup even before
         ``setup_logging()`` has wired up file handlers)
       * dedup on (path, mtime_ns, size) so concurrent loads don't spam
@@ -445,7 +445,7 @@ class TestSaveAndLoadRoundtrip:
 class TestLoadEnvInlineComments:
     def test_unquoted_hash_is_a_comment_quoted_hash_is_data(self, tmp_path):
         """load_env is the one dotenv reader (agent.secret_scope.load_env_file): an unquoted ` #...` tail
-        is a comment, a quoted value keeps its hash. Hermes' own writer (_quote_env_value) always quotes
+        is a comment, a quoted value keeps its hash. Tandem's own writer (_quote_env_value) always quotes
         values containing `#`, so a saved secret round-trips."""
         from hermes_cli.config import invalidate_env_cache
 
@@ -717,7 +717,7 @@ class TestOptionalEnvVarsRegistry:
     def test_max_iterations_not_offered_as_env_var(self):
         """HERMES_MAX_ITERATIONS must NOT be in OPTIONAL_ENV_VARS (issue #17534).
 
-        Offering it as an editable env var (dashboard, `hermes setup`) lets a
+        Offering it as an editable env var (dashboard, `tandem setup`) lets a
         user write it to .env, recreating the stale ghost that shadows
         config.yaml's agent.max_turns. The iteration budget is configured ONLY
         via config.yaml; HERMES_MAX_ITERATIONS remains a read-only backward-compat
@@ -869,7 +869,7 @@ class TestConfigSupportFloor:
         )
         assert expected_fragment in captured.out
         assert expected_fragment in captured.err
-        assert "run `hermes setup` to regenerate" in captured.out
+        assert "run `tandem setup` to regenerate" in captured.out
         assert "_config_version: 12" in captured.out
         assert any(expected_fragment in w for w in results["warnings"])
         # No 'Config version: X → Y' line — nothing was migrated.
@@ -1205,11 +1205,11 @@ class TestInterimAssistantMessageConfig:
         assert raw["_config_version"] == DEFAULT_CONFIG["_config_version"]
         # The user's explicit non-default value is preserved on disk.
         assert raw["display"]["tool_progress"] == "off"
-        # interim_assistant_messages defaults to True and merges in transparently
-        # at read time, so the migration must NOT materialise it to disk (that
-        # was the config-bloat bug). It is still effective via load_config().
+        # interim_assistant_messages has a default (opt-in, False) that merges in
+        # transparently at read time, so the migration must NOT materialise it to
+        # disk (that was the config-bloat bug). It is still effective via load_config().
         assert "interim_assistant_messages" not in raw.get("display", {})
-        assert loaded["display"]["interim_assistant_messages"] is True
+        assert loaded["display"]["interim_assistant_messages"] is False
         assert not any(
             "interim_assistant_messages" in item
             for item in results["config_added"]
@@ -1271,13 +1271,13 @@ class TestDiscordChannelPromptsConfig:
 class TestEnvWriteDenylist:
     """``save_env_value`` refuses to persist env-var names that
     influence how subprocesses execute — ``LD_PRELOAD``, ``PYTHONPATH``,
-    ``PATH``, ``EDITOR``, etc. — or selected Hermes runtime/security controls.
+    ``PATH``, ``EDITOR``, etc. — or selected Tandem runtime/security controls.
 
     The dashboard exposes ``PUT /api/env`` to any authed caller (and
     the session token lives in the SPA's HTML where any future plugin
     XSS or local process could exfiltrate it). Without this gate, an
     attacker who steals the token could plant
-    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next Hermes
+    ``LD_PRELOAD=/tmp/evil.so`` in ``.env`` and own the next Tandem
     process on next startup via the dotenv → ``os.environ`` chain in
     ``hermes_cli/env_loader.py``.
 
@@ -1865,7 +1865,7 @@ def test_default_config_has_no_duplicate_top_level_keys():
 
 
 class TestConfigCommandFailClosedSurface:
-    """`hermes config set/unset` must exit cleanly (no traceback) when the
+    """`tandem config set/unset` must exit cleanly (no traceback) when the
     fail-closed write guard refuses an unparseable config.yaml."""
 
     def _args(self, **kw):
@@ -1892,7 +1892,7 @@ class TestConfigCommandFailClosedSurface:
 
         assert excinfo.value.code == 1
         err = capsys.readouterr().err
-        assert "formatting error" in err and "`hermes config edit`" in err
+        assert "formatting error" in err and "`tandem config edit`" in err
         assert config_path.read_text(encoding="utf-8") == original
 
     def test_config_command_unset_exits_cleanly_on_broken_yaml(self, tmp_path, capsys):
@@ -1912,7 +1912,7 @@ class TestConfigCommandFailClosedSurface:
 
 
 def test_gateway_multiplex_keys_are_recognized_config_keys():
-    """``hermes config set gateway.multiplex_profiles true`` used to warn 'not a recognized config
+    """``tandem config set gateway.multiplex_profiles true`` used to warn 'not a recognized config
     key' although gateway/config.py reads it; the key (and profile_routes) live in DEFAULT_CONFIG."""
     from hermes_cli.config import _validate_config_key
     from hermes_cli.config_defaults import DEFAULT_CONFIG
@@ -1944,7 +1944,7 @@ def test_empty_dict_default_sections_are_open_containers():
 
 def test_lsp_root_policy_keys_are_recognized_and_off_by_default():
     """``lsp.warmup_timeout`` / ``broken_retry_seconds`` / ``exclude_roots`` (#116446) must be settable via
-    ``hermes config set`` and must default to today's behaviour (no grace, lifetime broken set, no exclusion)."""
+    ``tandem config set`` and must default to today's behaviour (no grace, lifetime broken set, no exclusion)."""
     from hermes_cli.config import _validate_config_key
     for key in ("lsp.warmup_timeout", "lsp.broken_retry_seconds", "lsp.exclude_roots"):
         assert _validate_config_key(key) == (True, None)

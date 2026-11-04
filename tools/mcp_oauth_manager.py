@@ -178,7 +178,7 @@ class HermesMCPOAuthProvider(HermesProviderMixin, *_SDK_BASES):
         is dead server-side: delete ``client.json`` (+ stale metadata) so the SDK re-runs DCR next flow.
         Conservative: acts ONLY on 400/401 at the discovered ``token_endpoint`` (the only request carrying our
         ``client_id``) with ``invalid_client`` in the body; pre-registered clients are never poisoned; any failure
-        is swallowed. The browser-side "Redirect URI Mismatch" case has no HTTP signal (``hermes mcp reauth``).
+        is swallowed. The browser-side "Redirect URI Mismatch" case has no HTTP signal (``tandem mcp reauth``).
 
         See #36767.
         """
@@ -236,7 +236,7 @@ class HermesMCPOAuthProvider(HermesProviderMixin, *_SDK_BASES):
             f"server advertises no registration_endpoint), so the SDK's fallback would POST {expected} and fail "
             "(Google's hosted Gmail/Drive MCP servers and similar providers return 404 for it). Create an OAuth "
             "client for this provider and add it under config.yaml mcp_servers.<name>.oauth (client_id, "
-            f"client_secret), then run `hermes mcp login {name}`.")
+            f"client_secret), then run `tandem mcp login {name}`.")
 
     async def async_auth_flow(self, request):  # type: ignore[override]
         try:  # pre-flow hook: reload from disk if it changed (non-fatal on error)
@@ -354,13 +354,13 @@ class MCPOAuthManager:
         if get_dashboard_oauth_flow() is None and not _is_interactive() and not storage.has_cached_tokens():
             raise OAuthNonInteractiveError(
                 f"MCP OAuth for '{server_name}': non-interactive environment and no cached tokens found. "
-                f"Run `hermes mcp login {server_name}` interactively first to complete initial authorization.")
+                f"Run `tandem mcp login {server_name}` interactively first to complete initial authorization.")
         return _HERMES_PROVIDER_CLS(
             server_name=server_name, preregistered=bool(cfg.get("client_id")), server_url=entry.server_url,
             **build_provider_kwargs(cfg, storage, ssh_proxy_hint=False))
 
     def remove(self, server_name: str, *, hermes_home: str | Path | None = None) -> _ProviderEntry | None:
-        """Evict the provider from cache AND delete tokens from disk (``hermes mcp remove`` / forced re-auth)."""
+        """Evict the provider from cache AND delete tokens from disk (``tandem mcp remove`` / forced re-auth)."""
         entry = self.evict(server_name, hermes_home=hermes_home)
         from tools.mcp_oauth import remove_oauth_tokens
         remove_oauth_tokens(server_name, hermes_home=hermes_home)

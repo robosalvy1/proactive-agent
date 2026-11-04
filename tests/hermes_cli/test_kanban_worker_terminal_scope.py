@@ -107,7 +107,7 @@ def test_launch_profiles_own_worker_keeps_its_credentials(tmp_path, monkeypatch)
 
 
 def test_worker_for_another_profile_can_still_import_hermes(profile_b, tmp_path, monkeypatch):
-    """The routed-profile scrub strips Hermes-owned PYTHONPATH entries, but the worker IS Hermes
+    """The routed-profile scrub strips Tandem-owned PYTHONPATH entries, but the worker IS Tandem
     (`-m hermes_cli.kanban_worker_client`): a PYTHONPATH-launched dispatcher must hand it a tree
     it can import, or it dies on `No module named 'hermes_cli'` before reaching the owner."""
     repo_root = Path(kanban_db_dispatch.__file__).resolve().parent.parent

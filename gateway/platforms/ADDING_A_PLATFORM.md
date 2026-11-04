@@ -1,6 +1,6 @@
 # Adding a New Messaging Platform
 
-There are two ways to add a platform to the Hermes gateway:
+There are two ways to add a platform to the Tandem gateway:
 
 ## Plugin Path (Recommended for Community/Third-Party)
 
@@ -8,7 +8,7 @@ Create a plugin directory in `~/.hermes/plugins/` (or under `plugins/platforms/`
 for bundled plugins) with a `plugin.yaml` and `adapter.py`.  The adapter
 inherits from `BasePlatformAdapter` and registers via
 `ctx.register_platform()` in the `register(ctx)` entry point.  This requires
-**zero changes to core Hermes code**.
+**zero changes to core Tandem code**.
 
 The plugin system automatically handles: adapter creation, config parsing,
 user authorization, cron delivery, send_message routing, system prompt hints,
@@ -19,7 +19,7 @@ status display, gateway setup, and more.
 - `env_enablement_fn: () -> Optional[dict]` — seeds `PlatformConfig.extra`
   (and an optional `home_channel` dict) from env vars BEFORE the adapter is
   constructed.  Without this, env-only setups don't surface in
-  `hermes gateway status` or `get_connected_platforms()` until the SDK
+  `tandem gateway status` or `get_connected_platforms()` until the SDK
   instantiates.  Build it from a `(ENV_VAR, extra_key, conv)` table with
   `gateway.platforms._shared.seed_extra_from_env(spec, home_env=...)`; every
   read goes through `_shared.get_scoped_secret` (multiplex-safe, never
@@ -81,6 +81,21 @@ See `plugins/platforms/irc/`, `plugins/platforms/teams/`, and
 `website/docs/developer-guide/adding-platform-adapters.md` for the full
 plugin guide with code examples and hook documentation.
 
+### Shared onboarding and current-app context
+
+Route human messages through the standard gateway message handler with the adapter's
+registered `Platform` value and accurate `SessionSource.chat_type` (`dm` for private
+conversations). The shared turn-preparation path automatically offers personalization
+on the first eligible DM. No onboarding platform allowlist or per-adapter implementation
+is needed. Its saved flag belongs to the runtime profile, so adding another app or
+restarting the gateway does not repeat onboarding for that profile.
+
+The shared session-context builder also supplies the current app in the prompt's
+`Source` field from `SessionSource.platform`, including dynamically registered adapters.
+Keep the actual receiving platform on the source; do not infer it from the profile's
+first configured app or copy a previous conversation's source. The context is pinned
+per session to preserve prompt caching, while each app's conversation has its own source.
+
 ---
 
 Plugin-registered native handlers (`ctx.register_platform_handler(<platform>, factory)`): call
@@ -92,7 +107,7 @@ catch-all last (Telegram hoists late handlers ahead of core); see `gateway/run_p
 
 ## Built-in Path (Core Contributors Only)
 
-Checklist for integrating a platform directly into the Hermes core.
+Checklist for integrating a platform directly into the Tandem core.
 Use this as a reference when building a built-in adapter — every item here
 is a real integration point. Missing any of them will cause broken
 functionality, missing features, or inconsistent behavior.

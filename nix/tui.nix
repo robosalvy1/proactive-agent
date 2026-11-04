@@ -1,4 +1,4 @@
-# Self-contained Hermes TUI, compiled by the same recipe as npm.
+# Self-contained Tandem TUI, compiled by the same recipe as npm.
 { hermesNpmLib, ... }:
 hermesNpmLib.buildNpmPackage {
   dirs = [

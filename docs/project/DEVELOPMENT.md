@@ -18,7 +18,7 @@ These paths are ignored by Git. Keep the same environment variables for later co
 
 For PowerShell and platform prerequisites, follow the retained [PM developer workflow](../../website/docs/reference/package-management.md#developer-workflow), substituting this repository and a disposable development home.
 
-Configure a development provider interactively with `hermes setup`, then launch `hermes` from the activated shell. Provider credentials and live calls are only needed for live runtime checks. This bootstrap does not configure them or start background services.
+Configure a development provider interactively with `tandem setup`, then launch `tandem` from the activated shell. Provider credentials and live calls are only needed for live runtime checks. This bootstrap does not configure them or start background services.
 
 ## Prepare tests
 
@@ -54,3 +54,27 @@ These need no provider credentials and verify only whitespace, metadata parsing,
 ## Handoff
 
 Record the behavior changed, exact checks run/results, and any unavailable dependency or live integration in the task handoff. Update [STATUS.md](STATUS.md) for milestone changes. Keep private runtime data in `.dev/`, never in documentation or fixtures.
+
+## Terminal command
+
+`tandem` is the public command; `hermes` remains a compatibility alias.
+Activation exposes both in Bash, fish, and PowerShell with the same worktree guard.
+For a source install, PM/source completion publishes both launchers; Python package
+installation also declares both console entry points. Existing installs need launcher
+publication before a new shell can find `tandem`. After PM has provisioned and selected runtime dependencies in the isolated home, publish this checkout's commands with:
+
+```bash
+python hermes_cli/_launchers.py "$HERMES_HOME/bin"
+export PATH="$HERMES_HOME/bin:$PATH"
+tandem --help
+tandem chat --help
+```
+
+This keeps `hermes-agent` package metadata, `hermes_cli` imports, `HERMES_*` variables,
+and profile paths intact. Retained upstream docs and some subcommand guidance still
+spell commands `hermes`; those invocations continue to work. Do not run external
+installers or `tandem update` to refresh this fork.
+
+For this checkout’s separately prepared test environment, `.venv/bin/python tandem --help`
+checks the real CLI without provisioning a PM runtime or changing global PATH.
+Launcher publication alone does not install missing runtime dependencies.

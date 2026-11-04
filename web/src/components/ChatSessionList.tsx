@@ -26,6 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { ChatWorkspacePicker } from "@/components/ChatWorkspacePicker";
+import { HomeChatButton } from "@/components/HomeChatButton";
 import { useI18n } from "@/i18n";
 import { api, type SessionInfo } from "@/lib/api";
 import { cn, timeAgo } from "@/lib/utils";
@@ -278,6 +279,8 @@ export function ChatSessionList({
           onChange={onWorkspaceChange}
         />
       )}
+
+      <HomeChatButton key={`${scopeKey}:${activeSessionId ?? "new"}`} profile={scopeKey} onOpen={pick} />
 
       <Button
         outlined

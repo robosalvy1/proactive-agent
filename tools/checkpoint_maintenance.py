@@ -426,7 +426,7 @@ def auto_prune_from_config() -> dict[str, object]:
     """``maybe_auto_prune_checkpoints`` driven by the ``checkpoints:`` config section — the one
     startup/housekeeping entry point for the CLI and the gateway. ``delete_orphans`` is never
     honoured unattended: a missing workdir is ambiguous (deleted vs. unmounted share); orphan
-    cleanup is only via explicit ``hermes checkpoints prune``. Never raises."""
+    cleanup is only via explicit ``tandem checkpoints prune``. Never raises."""
     try:
         from hermes_cli.config import load_config
         cfg = load_config().get("checkpoints") or {}
@@ -466,8 +466,8 @@ def checkpoint_footprint_notice() -> Optional[str]:
         from hermes_cli.sizefmt import format_bytes
         return (f"Filesystem checkpoints (/rollback) are on: {format_bytes(size)} across "
                 f"{project_count} project(s), above the {cap_mb} MB cap (one snapshot per project is "
-                f"always kept). Not using /rollback? `hermes config set checkpoints.enabled false` then "
-                f"`hermes checkpoints clear`; or lower `checkpoints.retention_days`.")
+                f"always kept). Not using /rollback? `tandem config set checkpoints.enabled false` then "
+                f"`tandem checkpoints clear`; or lower `checkpoints.retention_days`.")
     except Exception as exc:
         logger.debug("checkpoint footprint notice skipped: %s", exc)
         return None

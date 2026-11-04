@@ -64,7 +64,7 @@ test('camofox is not in root dependencies (must stay opt-in)', () => {
       'out of root package.json dependencies. It belongs in the ' +
       'Camofox post_setup handler in hermes_cli/tools_config.py so it ' +
       'only installs when the user explicitly selects Camofox via ' +
-      '`hermes tools` → Browser Automation → Camofox.'
+      '`tandem tools` → Browser Automation → Camofox.'
   )
 })
 

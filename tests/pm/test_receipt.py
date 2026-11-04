@@ -25,7 +25,7 @@ def _isolated_receipt_context():
 
 @pytest.fixture
 def homed(tmp_path, monkeypatch):
-    """Receipt dir inside a temp hermes home."""
+    """Receipt dir inside a temp tandem home."""
     import hermes_constants
 
     monkeypatch.setattr(hermes_constants, "get_hermes_home", lambda: tmp_path)

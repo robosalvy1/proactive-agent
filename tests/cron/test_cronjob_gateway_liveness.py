@@ -4,7 +4,7 @@ The builtin cron ticker only runs inside the gateway process. Before the
 fix, ``cronjob(action="create")`` returned a clean success even with no
 gateway running, so the agent confidently told the user a recurring task
 was scheduled while the job could never fire. The CLI already warned
-(``hermes cron list`` / ``hermes cron status``); the agent path did not.
+(``tandem cron list`` / ``tandem cron status``); the agent path did not.
 
 Contract pinned here:
 

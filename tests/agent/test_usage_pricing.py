@@ -299,7 +299,7 @@ def test_bedrock_claude_opus_5_prices_like_direct_anthropic(bare, scope):
 
 
 def test_static_bedrock_catalog_claude_models_price_from_snapshot():
-    """Every Claude id Hermes offers in the offline Bedrock picker must price
+    """Every Claude id Tandem offers in the offline Bedrock picker must price
     from the official snapshot; a missing row records $0 / ``unknown``."""
     from hermes_cli.models_catalog_static import _PROVIDER_MODELS
 

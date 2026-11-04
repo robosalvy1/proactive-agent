@@ -68,7 +68,7 @@ def destructive_profile(profile: Optional[str], route: str) -> Optional[str]:
     (``is_multiplex_active()``, decided once at boot by
     ``activate_multi_profile_hosting_eagerly``). A genuinely single-profile host has
     nothing to confuse, so there an omitted profile keeps meaning the launch profile
-    and `curl` against a plain ``hermes serve`` is unchanged.
+    and `curl` against a plain ``tandem serve`` is unchanged.
 
     "Privileged" is the same class as "destructive": arming an auto-approved shell hook
     in the wrong profile is at least as bad as removing one from it.
@@ -104,7 +104,7 @@ def http_failure(log_msg: str, status: int, prefix: Optional[str] = None, *, det
 def spawn_profile_action(
     profile: Optional[str], argv: list, name: str, *, log_msg: str, prefix: str
 ) -> dict:
-    """Spawn a background ``hermes -p <profile> <argv>`` action; a spawn
+    """Spawn a background ``tandem -p <profile> <argv>`` action; a spawn
     failure is logged and becomes ``500 "<prefix>: <exc>"``."""
     with http_failure(log_msg, 500, prefix):
         proc = _spawn_hermes_action(_profile_cli_args(profile) + argv, name)
@@ -158,7 +158,7 @@ _corrupt_store_warned_at: dict[str, float] = {}  # {db path: monotonic}
 
 CORRUPT_STORE_DETAIL = {
     "error": "state_db_corrupt",
-    "message": "state.db corrupt — run `hermes doctor` (then `hermes doctor --fix` or `hermes sessions repair`).",
+    "message": "state.db corrupt — run `tandem doctor` (then `tandem doctor --fix` or `tandem sessions repair`).",
 }
 # One payload per persistence-cause bucket (``classify_persistence_error``); ``error`` codes
 # all follow the ``state_db_*`` scheme of the pre-existing ``state_db_corrupt``.
@@ -166,14 +166,14 @@ CORRUPT_STORE_DETAIL = {
 # lives would repair the wrong generation in place, so it is deliberately NOT suggested here.
 DELETED_WAL_DETAIL = {
     "error": "state_db_deleted_wal",
-    "message": "another Hermes process still holds an old copy of the session database's write-ahead log — "
-               "quit every Hermes process on this profile, run `hermes doctor` (it names the holders), "
-               "then start Hermes again. Do not run `hermes doctor --fix` while they run.",
+    "message": "another Tandem process still holds an old copy of the session database's write-ahead log — "
+               "quit every Tandem process on this profile, run `tandem doctor` (it names the holders), "
+               "then start Tandem again. Do not run `tandem doctor --fix` while they run.",
 }
 STATE_DB_REPLACED_DETAIL = {
     "error": "state_db_replaced",
-    "message": "state.db was replaced while Hermes was running — stop Hermes, run `hermes doctor`, "
-               "then start it again. Do not run `hermes doctor --fix`, which would repair the wrong file in place.",
+    "message": "state.db was replaced while Tandem was running — stop Tandem, run `tandem doctor`, "
+               "then start it again. Do not run `tandem doctor --fix`, which would repair the wrong file in place.",
 }
 # Every other bucket a malformed image can classify as ("corrupt", "fts_index") is the corrupt payload.
 _STORE_STATUS_DETAIL_BY_CAUSE = {"deleted_wal": DELETED_WAL_DETAIL, "replaced": STATE_DB_REPLACED_DETAIL}
@@ -189,7 +189,7 @@ def corrupt_store_status(db_path, exc) -> HTTPException:
     if last is None or now - last >= _CORRUPT_STORE_WARN_INTERVAL_S:
         _corrupt_store_warned_at[key] = now
         log.warning("state.db at %s is unreadable (%s); dashboard reads return a status payload until it is "
-                    "repaired — run `hermes doctor`", db_path, exc)
+                    "repaired — run `tandem doctor`", db_path, exc)
     else:
         log.debug("state.db at %s still has error: %s", db_path, exc)
     return HTTPException(status_code=503, detail={**detail, "path": key})

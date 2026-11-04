@@ -38,7 +38,7 @@ class TestUpdateStatusRootLog:
             encoding="utf-8",
         )
         (root / "logs" / "update.log").write_text(
-            "=== hermes update started 2026-08-17T11:19:35 ===\n"
+            "=== tandem update started 2026-08-17T11:19:35 ===\n"
             "✓ Update complete!\n"
             f"=== hermes-update completed {action_id} ===\n",
             encoding="utf-8",
@@ -76,7 +76,7 @@ class TestUpdateStatusRootLog:
 
         def status_after_root_completion(action_id):
             (root / "logs" / "update.log").write_text(
-                "=== hermes update started 2026-08-17T11:19:35 ===\n"
+                "=== tandem update started 2026-08-17T11:19:35 ===\n"
                 f"=== hermes-update completed {action_id} ===\n", encoding="utf-8")
             return self.client.get("/api/actions/hermes-update/status?lines=2000").json()
 

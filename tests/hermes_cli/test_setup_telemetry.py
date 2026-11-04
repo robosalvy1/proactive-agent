@@ -26,7 +26,7 @@ def test_setup_telemetry_enables_shared_metrics(monkeypatch):
 
 
 def test_disabling_collection_closes_the_send_consent_window(monkeypatch, tmp_path):
-    """`hermes tools` -> disable shared metrics must withdraw send consent.
+    """`tandem tools` -> disable shared metrics must withdraw send consent.
 
     The not-enabled branch returned early without recording anything, so the
     consent window stayed open and re-enabling later would release every
@@ -116,7 +116,7 @@ def test_chat_offer_asks_an_undecided_profile_once(monkeypatch):
 
 
 def test_offer_drops_keys_typed_before_it_appeared(monkeypatch):
-    """An Enter typed while Hermes booted answered "No thanks" before the offer was on screen."""
+    """An Enter typed while Tandem booted answered "No thanks" before the offer was on screen."""
     from hermes_cli.observability import shared_metrics_consent as consent
 
     events = []

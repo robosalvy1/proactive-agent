@@ -7,7 +7,7 @@ const PERMANENT_ENSURE_FAILURES = [
   // ensureLocalGateway: protocol verdict `incompatible` (runtime_protocol, session authority missing).
   'Gateway incompatible (',
   // parseGatewayEnsureOutput: the installed `hermes` has no ensure protocol, or the profile is missing.
-  'hermes gateway ensure produced no result',
+  'tandem gateway ensure produced no result',
   // assertLocalGatewayEndpoint: a ready verdict that is not a loopback session-authority endpoint.
   'Invalid local gateway endpoint',
   // privateNode / the group-writable ticket refusal: needs a chmod/chown, never a re-ensure.

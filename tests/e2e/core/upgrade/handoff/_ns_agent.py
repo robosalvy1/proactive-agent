@@ -1,9 +1,9 @@
 """In-sandbox command agent for the hand-off suite (stdlib only, run as a plain script).
 
 The hand-off cells need several long-lived processes (gateway, dashboard, cron ticker, kanban
-dispatcher) and the real ``hermes update`` to share ONE PID namespace, exactly as they share one
+dispatcher) and the real ``tandem update`` to share ONE PID namespace, exactly as they share one
 machine for a user: the updater's process scans must see the gateway it restarts, and a relaunched
-gateway must be findable by the next ``hermes gateway status``. ``_helpers.sandbox_argv`` gives every
+gateway must be findable by the next ``tandem gateway status``. ``_helpers.sandbox_argv`` gives every
 command its own namespace, so this agent is started once inside the sandbox and runs every command
 of a cell on request.
 

@@ -381,7 +381,7 @@ class TestLoadGatewayConfig:
 
     def test_multiplex_profiles_from_nested_gateway_section(self, tmp_path, monkeypatch):
         """``gateway.multiplex_profiles: true`` (the nested form written by
-        ``hermes config set gateway.multiplex_profiles true``) must enable
+        ``tandem config set gateway.multiplex_profiles true``) must enable
         multiplexing when loaded via load_gateway_config().
 
         Regression: load_gateway_config() only surfaced the *top-level*
@@ -1409,7 +1409,7 @@ class TestMultiplexProfilesConfig:
 
 
     def test_multiplex_profiles_nested_under_gateway(self, tmp_path, monkeypatch):
-        """gateway.multiplex_profiles (the form written by `hermes config set
+        """gateway.multiplex_profiles (the form written by `tandem config set
         gateway.multiplex_profiles true`) must be honored. Regression test for
         the silent-fallback bug where the loader only forwarded the top-level
         key, so users who wrote it under gateway: got multiplex_profiles=False
@@ -1593,7 +1593,7 @@ class TestOnAllAdaptersDown:
     """gateway.on_all_adapters_down: what the runner does when the last messaging
     adapter goes down (#118080). Default 'exit' preserves the service-restart
     contract; 'stay_alive' is for launchers with no supervising service manager
-    (the desktop app's direct `hermes serve` child)."""
+    (the desktop app's direct `tandem serve` child)."""
 
     def test_default_is_exit(self):
         config = GatewayConfig.from_dict({})

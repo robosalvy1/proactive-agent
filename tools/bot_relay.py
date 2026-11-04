@@ -189,7 +189,7 @@ def resolve_remote_target(raw_target: str, roster: list[dict]) -> Any:
 
 def _title_slug(row: dict) -> str:
     """The Bot Mode title's slug form (``"CoS Bot"`` → ``cos-bot``, what the picker inserts); "" when the
-    title is empty, reserved (a bot titled "Hermes") or not a valid handle."""
+    title is empty, reserved (a bot titled "Tandem") or not a valid handle."""
     title = str(row.get("title") or "")
     slug = re.sub(r"[^a-z0-9_-]+", "-", title.strip().lower()).strip("-")
     return slug if slug in alias_forms(title) else ""
@@ -566,7 +566,7 @@ def relaying_principal_author(principal: str) -> dict:
 
 
 def delivery_env(author: Optional[dict], profile_home: str | Path | None = None) -> dict[str, str]:
-    """Environment for one delivery turn's ``hermes -p <profile>`` child. The dispatcher's own
+    """Environment for one delivery turn's ``tandem -p <profile>`` child. The dispatcher's own
     HERMES_TURN_AUTHOR is dropped first so a delivery without an author never inherits the author of the turn
     that sent it. Dispatcher session identity (the canonical ``gateway.session_context`` session env names) is
     dropped too: a nested recipient that ``message_agent``s onward must not stamp that grandchild

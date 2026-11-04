@@ -1,6 +1,6 @@
 """A peer DM into a Bot Chat is answered by that chat, never by a second writer.
 
-``hermes peer dm`` posts to ``/api/sessions/{id}/chat`` on the peer. Under session authority the
+``tandem peer dm`` posts to ``/api/sessions/{id}/chat`` on the peer. Under session authority the
 Bot Chat's single writer is the authority FIFO and the turn enters through the ``bot_relay.deliver``
 door (``tests/gateway/test_peer_dm_bot_chat_authority.py``). This file keeps the no-authority lane:
 a Desktop lease is a viewer, not an executor (the lease-advertised mailbox consumer was retired), so

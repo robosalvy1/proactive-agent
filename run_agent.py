@@ -41,7 +41,7 @@ from hermes_constants import get_hermes_home
 
 
 def _launch_cwd_for_session(source: str) -> Optional[str]:
-    """cwd to stamp on a new session row (``hermes -c`` / ``--resume``), or None.
+    """cwd to stamp on a new session row (``tandem -c`` / ``--resume``), or None.
 
     Only local CLI sessions record one: gateway/cron/remote backends (non-"local" ``TERMINAL_ENV``) have no
     stable host cwd for the agent's tools.
@@ -308,7 +308,7 @@ class AIAgent(
 
     def _session_row_model_config(self) -> Any:
         """``model_config`` for the lazily created session row: the init config plus a live /yolo toggled
-        before the first turn (``hermes --resume`` restores it)."""
+        before the first turn (``tandem --resume`` restores it)."""
         from tools.approval_yolo import with_session_yolo
         return with_session_yolo(self._session_init_model_config, self.session_id)
 
@@ -760,13 +760,13 @@ class AIAgent(
 
         A review whose runtime is the MANAGED LOCAL llama-server is queued for machine idle (``defer: auto``)
         instead of hitting the user's GPU mid-session; everything else spawns immediately. ``explicit``
-        (/refine) is never deferred but does not touch the ``focus``-keyed delegate/enabled gates.
+        (/refine) bypasses automatic-review gates and is never deferred.
         """
         # Gates run at enqueue/spawn time; the idle dispatcher re-checks `enabled` at dispatch time.
-        if focus is None and getattr(self, "_delegate_depth", 0) > 0:
+        if not explicit and focus is None and getattr(self, "_delegate_depth", 0) > 0:
             return
         task_cfg = None
-        if focus is None:
+        if not explicit and focus is None:
             from agent.background_review import load_background_review_settings
             enabled, task_cfg = load_background_review_settings()
             if not enabled:
@@ -836,7 +836,7 @@ class AIAgent(
         """
         try:
             # Not cancelled == ran to completion (or was never admitted).
-            if not review_run.cancel_requested.is_set() or kwargs.get("focus") is not None:
+            if not review_run.cancel_requested.is_set() or kwargs.get("focus") is not None or kwargs.get("explicit"):
                 return
             if kwargs.get("_requeue_attempts", 0) > self._REVIEW_REQUEUE_MAX_ATTEMPTS:
                 logger.info("Preempted background review dropped after %d requeues", self._REVIEW_REQUEUE_MAX_ATTEMPTS)

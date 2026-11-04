@@ -1,8 +1,8 @@
 """Dispatcher SIGKILLed mid-tick and restarted: the board keeps every real task row (#119003 class).
 
-A real ``hermes kanban dispatch`` process is SIGKILLed at three points of a tick — right after it
+A real ``tandem kanban dispatch`` process is SIGKILLed at three points of a tick — right after it
 claimed a card (before the spawn), right after it spawned a worker, and immediately after launch —
-then plain ticks run until the board drains. Workers are real ``hermes chat -q`` processes (they
+then plain ticks run until the board drains. Workers are real ``tandem chat -q`` processes (they
 survive the dispatcher: own session) and the model is the recording fake.
 
 Invariants, read from kanban.db and the provider's request log:

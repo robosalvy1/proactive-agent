@@ -711,7 +711,7 @@ export interface SharedMetricsStartupLatencyParams {
 export interface SharedMetricsStartupLatencyResult {
   ok: boolean
 }
-/** One Desktop PACKAGED self-update (electron-updater / App Installer / Store). Source-checkout hand-offs run ``hermes update`` and are counted from its receipt, never here. Raw words; the backend buckets them: ``outcome`` success|failed|noop|refused, ``failed_stage`` download|verify|apply|restart, ``mechanism`` the updater strategy kind, ``duration_ms`` wall time, ``from_commit_date`` the updated-from build's commit time (epoch seconds) when known. */
+/** One Desktop PACKAGED self-update (electron-updater / App Installer / Store). Source-checkout hand-offs run ``tandem update`` and are counted from its receipt, never here. Raw words; the backend buckets them: ``outcome`` success|failed|noop|refused, ``failed_stage`` download|verify|apply|restart, ``mechanism`` the updater strategy kind, ``duration_ms`` wall time, ``from_commit_date`` the updated-from build's commit time (epoch seconds) when known. */
 export interface SharedMetricsUpdateRunParams {
   profile?: string | null
   outcome: string
@@ -1882,6 +1882,16 @@ export interface BrowserControllerParams {
 export interface BrowserControllerDetachResult {
   detached?: boolean
 }
+export interface HomeActionParams {
+  session_id?: string | null
+  profile?: string | null
+  action?: string
+  cwd?: string | null
+}
+export interface HomeActionResult {
+  output: string
+  session_id?: string | null
+}
 export interface I18nLanguagesResult {
   languages: LanguageOption[]
 }
@@ -2180,11 +2190,11 @@ export interface ProfilesGetAssetResult {
   size?: number | null
   data?: string | null
 }
-/** ``assume_fresh``: the unpackaged desktop's ``--fresh-install`` launch; the backend treats this machine as one that never used Hermes. Packaged builds never send it. */
+/** ``assume_fresh``: the unpackaged desktop's ``--fresh-install`` launch; the backend treats this machine as one that never used Tandem. Packaged builds never send it. */
 export interface OnboardingStateParams {
   assume_fresh?: boolean
 }
-/** ``run``: onboarding opens on this launch (root config ``onboarding.run``, else a machine that never used Hermes). ``eligible``: this is the desktop's local backend and the welcome trial or a configured provider can carry the first chat. ``session_id``: the stored id of the onboarding chat still in progress, so a relaunch reopens it; ``run_id``: that run's id, which ``onboarding.ended`` names. */
+/** ``run``: onboarding opens on this launch (root config ``onboarding.run``, else a machine that never used Tandem). ``eligible``: this is the desktop's local backend and the welcome trial or a configured provider can carry the first chat. ``session_id``: the stored id of the onboarding chat still in progress, so a relaunch reopens it; ``run_id``: that run's id, which ``onboarding.ended`` names. */
 export interface OnboardingRunStateResult {
   run: boolean
   eligible: boolean
@@ -4544,7 +4554,7 @@ export interface SessionMutateResult {
   revision?: number | null
   [key: string]: unknown
 }
-/** Exactly one of ``filters`` (``SessionDB.prune_sessions`` keyword filters, as ``hermes sessions prune`` builds them) or ``never_active_days`` (``--never-active``). */
+/** Exactly one of ``filters`` (``SessionDB.prune_sessions`` keyword filters, as ``tandem sessions prune`` builds them) or ``never_active_days`` (``--never-active``). */
 export interface SessionPruneParams {
   filters?: Record<string, unknown> | null
   never_active_days?: number | null
@@ -4799,6 +4809,22 @@ export interface WorkerPersistParams {
 }
 /** The operation's durable receipt (``message_id`` for an append, delegation results, …). */
 export type WorkerPersistResult = Record<string, unknown>
+export interface WorkerHomeRecallParams {
+  profile_id: string
+  session_id: string
+  execution_id: string
+  generation: number
+  pid: number
+  birth: number
+  secret: string
+  epoch: number
+  query: string
+  overview?: boolean
+}
+export interface WorkerHomeRecallResult {
+  context: string
+  count: number
+}
 export interface GroupsAttachmentUploadParams {
   profile?: string | null
   room_id: string
@@ -6036,6 +6062,8 @@ export interface RpcMethods {
   'handoff.request': { params: HandoffRequestParams; result: HandoffRequestResult }
   /** Poll the handoff row for this session. */
   'handoff.state': { params: SessionParams; result: HandoffStateResult }
+  /** Resolve the persistent Home conversation or manage profile-owned cross-chat recall. */
+  'home.action': { params: HomeActionParams; result: HomeActionResult }
   /** Pack + overlay messages for one language and surface; the renderer merges them over its bundled catalog. */
   'i18n.catalog': { params: I18nCatalogParams; result: I18nCatalogResult }
   /** Every language some layer supplies (bundled ∪ user overlay ∪ plugin packs), en first. */
@@ -6470,6 +6498,7 @@ export const RPC_METHODS = [
   'handoff.fail',
   'handoff.request',
   'handoff.state',
+  'home.action',
   'i18n.catalog',
   'i18n.languages',
   'image.attach',
@@ -6700,7 +6729,7 @@ export interface CanonicalRpcMethods {
   'session.list': { params: CanonicalListParams; result: CanonicalListResult }
   /** Revision-fenced, retry-idempotent session edit (rename, archive, sidebar, branch, delete, rewind, reset, model, reasoning, workspace, compress, import). */
   'session.mutate': { params: SessionMutateParams; result: SessionMutateResult }
-  /** Local operator only: the owner deletes the ended sessions `hermes sessions prune` selected, skipping busy sessions and retained reset owners. */
+  /** Local operator only: the owner deletes the ended sessions `tandem sessions prune` selected, skipping busy sessions and retained reset owners. */
   'session.prune': { params: SessionPruneParams; result: SessionPruneResult }
   'session.redirect': { params: CanonicalCorrectionParams; result: CanonicalCorrectionResult }
   'session.resume': { params: CanonicalResumeParams; result: CanonicalSnapshot }
@@ -6711,6 +6740,8 @@ export interface CanonicalRpcMethods {
   'shell.exec': { params: CanonicalShellExecParams; result: ShellExecResult }
   /** Adopt a registered execution after verifying the live producer claim. */
   'worker.adopt': { params: WorkerScopeParams; result: WorkerExecution }
+  /** Best-effort assignment-fenced Home read without a persistence receipt. */
+  'worker.home.recall': { params: WorkerHomeRecallParams; result: WorkerHomeRecallResult }
   /** Sequence-fenced typed persistence write from an adopted worker. */
   'worker.persist': { params: WorkerPersistParams; result: WorkerPersistResult }
   /** Register a compute worker execution on an idle session. */
@@ -6758,6 +6789,7 @@ export const CANONICAL_RPC_METHODS = [
   'session.steer',
   'shell.exec',
   'worker.adopt',
+  'worker.home.recall',
   'worker.persist',
   'worker.register'
 ] as const satisfies readonly CanonicalRpcMethod[]
@@ -6851,7 +6883,7 @@ export interface BackendGatewayEventMap {
   'display.install.log': DisplayInstallLogPayload
   /** The takeover lease changed hands; every client repaints. */
   'display.lease': DisplayLeasePayload
-  /** This profile's screen started or stopped (also for transitions made outside hermes serve). */
+  /** This profile's screen started or stopped (also for transitions made outside tandem serve). */
   'display.status': DisplayStatusPayload
   /** A session-level failure outside a turn (agent init, model switch, compression, resume). */
   error: ErrorPayload

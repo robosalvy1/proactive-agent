@@ -1,10 +1,10 @@
 ---
 sidebar_position: 3
 title: "Android / Termux"
-description: "Install Hermes Agent on Android from its signed Termux APT repository"
+description: "Install Tandem Agent on Android from its signed Termux APT repository"
 ---
 
-# Hermes on Android with Termux
+# Tandem on Android with Termux
 
 :::danger Termux is currently broken
 The Termux package does not work right now. A fix is in progress and will
@@ -12,7 +12,7 @@ ship soon. Until then, the steps below may fail or install a package that
 does not run.
 :::
 
-The Termux package runs Hermes on **aarch64 (arm64-v8a)** Android devices.
+The Termux package runs Tandem on **aarch64 (arm64-v8a)** Android devices.
 Two APT channels are published under
 `https://hermes-assets.nousresearch.com/releases/termux/<channel>`:
 
@@ -77,7 +77,7 @@ Do not use the desktop/server `install.sh` or a glibc Linux archive on this targ
      > "$PREFIX/etc/apt/sources.list.d/hermes-agent.list"
    ```
 
-5. Install Hermes:
+5. Install Tandem:
 
    ```bash
    pkg update
@@ -87,11 +87,11 @@ Do not use the desktop/server `install.sh` or a glibc Linux archive on this targ
 6. Configure a provider, then start the TUI:
 
    ```bash
-   hermes setup
-   hermes --tui
+   tandem setup
+   tandem --tui
    ```
 
-The `hermes`, `hermes-agent`, and `hermes-acp` commands use the packaged runtimes.
+The `tandem`, `hermes-agent`, and `hermes-acp` commands use the packaged runtimes.
 They do not require Termux's `python` or `nodejs` packages.
 
 ## Files and updates
@@ -109,7 +109,7 @@ pkg update
 pkg upgrade hermes-agent
 ```
 
-`hermes update` refuses to modify an APT-owned installation.
+`tandem update` refuses to modify an APT-owned installation.
 It prints the package-manager command instead.
 Canary versions contain `~canary.<timestamp>` and sort before the corresponding
 stable version. Each suite only lists its own channel's packages; to move
@@ -122,14 +122,14 @@ This APT installation does not use systemd, launchd, or Windows Scheduled Tasks.
 Run the gateway in a Termux session:
 
 ```bash
-hermes gateway run
+tandem gateway run
 ```
 
 For a background process:
 
 ```bash
 mkdir -p "${HERMES_HOME:-$HOME/.hermes}/logs"
-nohup hermes gateway run >> "${HERMES_HOME:-$HOME/.hermes}/logs/gateway.log" 2>&1 &
+nohup tandem gateway run >> "${HERMES_HOME:-$HOME/.hermes}/logs/gateway.log" 2>&1 &
 ```
 
 :::warning Android process limits
@@ -170,4 +170,4 @@ APT removes the package and its command symlinks. It preserves your configuratio
 - **Missing library or TUI bundle:** report `hermes --version` and the complete error. The core package must not require a local rebuild.
 - **Gateway stops with the screen off:** review Android's battery and background-process limits.
 
-For general diagnostics, run `hermes doctor`.
+For general diagnostics, run `tandem doctor`.

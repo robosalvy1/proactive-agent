@@ -1,7 +1,7 @@
 """An isolated serve says so in the spawn ledger; an ordinary serve does not.
 
 Desktop's attach-first discovery reads ``spawn-ledger.json`` and attaches to any live loopback
-serve. ``hermes serve --isolated`` (the backend another machine's Desktop spawns over SSH) opts out
+serve. ``tandem serve --isolated`` (the backend another machine's Desktop spawns over SSH) opts out
 of the host singleton on the CLI side, so the ledger row must carry that fact as a structured field
 for Desktop to honour it too. Real processes against a temp ``HERMES_HOME``; no mocks.
 """

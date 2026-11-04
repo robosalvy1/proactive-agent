@@ -16,7 +16,7 @@ def test_follow_up_on_an_open_run_is_recorded_once_not_amended_again(_isolate_he
     archive = update_receipt._run_file(update_receipt._receipt_dir(), run)
 
     update_receipt.owe_followup(run["update_id"], "channel_adoption", "remote refused",
-                                retry="the next `hermes update` adopts it again")
+                                retry="the next `tandem update` adopts it again")
 
     # The durable running record (what an interrupted run leaves behind) owes it once.
     assert _steps(archive) == ["channel_adoption"]

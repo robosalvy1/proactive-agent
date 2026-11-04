@@ -1,15 +1,15 @@
 ---
 sidebar_position: 8
 title: "Extending the CLI"
-description: "Build wrapper CLIs that extend the Hermes TUI with custom widgets, keybindings, and layout changes"
+description: "Build wrapper CLIs that extend the Tandem TUI with custom widgets, keybindings, and layout changes"
 ---
 
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 
 # Extending the CLI
 
-Hermes exposes protected extension hooks on `HermesCLI` so wrapper CLIs can add widgets, keybindings, and layout customizations without overriding the `run()` method or the TUI construction in `hermes_cli/cli_tui_mixin.py` (where these hooks are defined; `HermesCLI` in `cli.py` mixes it in). This keeps your extension decoupled from internal changes.
+Tandem exposes protected extension hooks on `HermesCLI` so wrapper CLIs can add widgets, keybindings, and layout customizations without overriding the `run()` method or the TUI construction in `hermes_cli/cli_tui_mixin.py` (where these hooks are defined; `HermesCLI` in `cli.py` mixes it in). This keeps your extension decoupled from internal changes.
 
 ## Extension points
 
@@ -29,7 +29,7 @@ The first three are new protected hooks. The last two already existed.
 
 ```python
 #!/usr/bin/env python3
-"""my_cli.py — Example wrapper CLI that extends Hermes."""
+"""my_cli.py — Example wrapper CLI that extends Tandem."""
 
 from cli import HermesCLI
 from prompt_toolkit.layout import FormattedTextControl, Window
@@ -112,7 +112,7 @@ def _get_extra_tui_widgets(self):
 
 ### `_register_extra_tui_keybindings(kb, *, input_area)`
 
-Called after Hermes registers its own keybindings and before the layout is built. Add your keybindings to `kb`.
+Called after Tandem registers its own keybindings and before the layout is built. Add your keybindings to `kb`.
 
 ```python
 def _register_extra_tui_keybindings(self, kb, *, input_area):

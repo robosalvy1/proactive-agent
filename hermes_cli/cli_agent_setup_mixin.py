@@ -13,7 +13,7 @@ from utils import base_url_host_matches
 
 
 def _single_query_clarify_callback(questions: list) -> dict:
-    """Headless clarify answer for ``hermes chat -q``.
+    """Headless clarify answer for ``tandem chat -q``.
 
     A -q turn never builds the prompt_toolkit app, so the interactive clarify modal
     can never be painted or answered — the CLI callback would poll until
@@ -454,7 +454,7 @@ class CLIAgentSetupMixin:
 
     def _offer_first_run_setup(self) -> bool:
         """Offer the provider picker when no provider is configured at all (interactive
-        startup, TTY). Runs the same flow as ``hermes model`` so onboarding has a single
+        startup, TTY). Runs the same flow as ``tandem model`` so onboarding has a single
         source of truth. True when a provider was configured."""
         from cli import _cprint, logger
         _cprint("")

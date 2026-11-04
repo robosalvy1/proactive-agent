@@ -1,4 +1,4 @@
-> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Proactive Agent.
+> Project scope: follow the repository root `AGENTS.md` and `CONTRIBUTING.md` for goals, allowed work, and review. This page is a technical reference; external contribution restrictions, contacts, and approval processes do not govern Tandem Agent.
 
 # Browser CDP Supervisor — 设计文档
 
@@ -35,7 +35,7 @@ Camofox 在本 PR 中暂不支持；计划在 `jo-inc/camofox-browser` 提交上
 
 ### CDPSupervisor
 
-每个 Hermes `task_id` 对应一个在后台守护线程中运行的 `asyncio.Task`。持有一个到后端 CDP 端点的持久 WebSocket 连接。维护：
+每个 Tandem `task_id` 对应一个在后台守护线程中运行的 `asyncio.Task`。持有一个到后端 CDP 端点的持久 WebSocket 连接。维护：
 
 - **对话框队列** — `List[PendingDialog]`，包含 `{id, type, message, default_prompt, session_id, opened_at}`
 - **框架树** — `Dict[frame_id, FrameInfo]`，包含父子关系、URL、origin，以及是否为跨域子会话

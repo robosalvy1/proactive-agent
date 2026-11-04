@@ -58,7 +58,7 @@ def _read_proc_argv(pid: int) -> Optional[list[str]]:
 
 
 def describe_holder_pid(pid: int) -> str:
-    """``PID 123 (hermes gateway run)`` for operator-facing holder lists; /proc argv first, psutil elsewhere."""
+    """``PID 123 (tandem gateway run)`` for operator-facing holder lists; /proc argv first, psutil elsewhere."""
     argv = _read_proc_argv(pid)
     if argv is None and psutil is not None:
         try:
@@ -120,7 +120,7 @@ def _python_execution_target(argv: Sequence[str]) -> Optional[tuple[str, str]]:
 
 
 def _looks_like_hermes(argv: Sequence[str]) -> bool:
-    """Return whether argv identifies a supported Hermes execution target."""
+    """Return whether argv identifies a supported Tandem execution target."""
     if not argv:
         return False
     program = os.path.basename(argv[0]).lower().removesuffix(".exe")
@@ -186,7 +186,7 @@ def _store_install_layout(this_home: str) -> tuple[Optional[str], Optional[str]]
     """``(<install root>, <our profile name>)`` for the home holding the store, else ``(None, None)``.
 
     Derived with the canonical ``named_profile_home`` predicate, never a ``basename == "profiles"``
-    string test: an arbitrary ``<X>/profiles/<n>/`` tree is not a Hermes install, and promoting
+    string test: an arbitrary ``<X>/profiles/<n>/`` tree is not a Tandem install, and promoting
     ``<X>`` to "ours" swallows an unrelated instance living under it — the literal two-instance
     shape of #92401. The root store (``~/.hermes/state.db``) is its own root with no profile name,
     so ANY named-profile selection contradicts it.
@@ -261,7 +261,7 @@ def _argv_scoped_to_other_home(argv: Sequence[str], db_path: Path) -> bool:
 
     ``state.db`` lives at the HERMES_HOME root, so an absolute-path token
     containing a ``/.hermes`` segment (or naming a ``state.db``/WAL/SHM under
-    some other parent) identifies that token's own Hermes home.  When at least
+    some other parent) identifies that token's own Tandem home.  When at least
     one such token exists AND no token references this instance's state.db,
     its sidecars, or its home directory, the process provably works on a
     different generation and must not be counted as an uninspectable holder
@@ -586,7 +586,7 @@ def held_store_refusal(db_path: Path, *, command: str, force_hint: Optional[str]
     """Operator-facing refusal for structural maintenance (VACUUM, index rebuild, bulk delete) while another
     process holds ``db_path`` or a WAL sidecar; ``None`` when the store is provably quiet.
 
-    Running ``hermes sessions optimize-storage`` underneath a fleet of live gateways put every agent into
+    Running ``tandem sessions optimize-storage`` underneath a fleet of live gateways put every agent into
     the retired-WAL refusal until all writers were stopped (#110054). Same fail-closed scan doctor and
     repair use: an incomplete scan refuses too, it never reads as an all-clear.
     """
@@ -603,7 +603,7 @@ def held_store_refusal(db_path: Path, *, command: str, force_hint: Optional[str]
             unknown.append(target)
         else:
             by_pid.setdefault(pid, set()).add(Path(target.removesuffix(" (deleted)")).name)
-    lines = [f"Refusing `hermes sessions {command}`: another process is using {db_path}."]
+    lines = [f"Refusing `tandem sessions {command}`: another process is using {db_path}."]
     lines += [f"  {describe_holder_pid(pid)}: {', '.join(sorted(by_pid[pid]))}" for pid in sorted(by_pid)]
     if unknown:
         lines.append(f"  cannot prove the database is quiet (holder scan incomplete: {unknown[0][:120]})")
@@ -611,7 +611,7 @@ def held_store_refusal(db_path: Path, *, command: str, force_hint: Optional[str]
     lines += [
         "Rewriting the database under a live writer is how every agent ends up refusing turns with the "
         "retired state.db-wal error. Nothing is lost.",
-        f"Stop them first (`hermes {profile_arg}gateway stop`, quit the Desktop app, pause cron), then re-run.",
+        f"Stop them first (`tandem {profile_arg}gateway stop`, quit the Desktop app, pause cron), then re-run.",
     ]
     if force_hint:
         lines.append(f"Override with {force_hint} if you accept the risk.")

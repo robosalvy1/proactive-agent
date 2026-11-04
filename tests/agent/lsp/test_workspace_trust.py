@@ -5,7 +5,7 @@ interpreter), ``node_modules/typescript`` (typescript-language-server loads it),
 ``svelte.config.js``, Rust build scripts and Gradle builds (rust-analyzer, jdtls and
 kotlin-language-server evaluate them), and a ``node_modules/.bin/tsc`` or ``rust-toolchain.toml``
 the post-write shell linters would pick up.  Nothing here executes those files: the tests record
-which servers Hermes would start, the configuration it hands them, and the shell commands it runs.
+which servers Tandem would start, the configuration it hands them, and the shell commands it runs.
 """
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ def _strings(value):
 
 def _record_spawns(tmp_path, monkeypatch, launcher, roots, *, trusted_workspaces=()):
     """Config → service → spawn for every ``_SERVERS`` file in every root, cwd inside ``tmp/launch``.
-    Returns ``{(server_id, root): initialization_options}`` for the servers Hermes would start, and the status."""
+    Returns ``{(server_id, root): initialization_options}`` for the servers Tandem would start, and the status."""
     _write(tmp_path / "home" / "config.yaml", json.dumps({"lsp": {
         "trusted_workspaces": [str(p) for p in trusted_workspaces],
         "servers": {sid: {"command": [launcher]} for sid in _SERVERS},

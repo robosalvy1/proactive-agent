@@ -25,7 +25,7 @@ from tools import browser_tool_real_profile as _real_profile
 from tools import browser_tool_snapshot as _snapshot
 
 _DOCKER_PULL = "docker pull ghcr.io/nousresearch/hermes-agent:latest"
-_CHROMIUM_INSTALL = "hermes pm install chromium (system libraries: npx playwright install-deps chromium)"
+_CHROMIUM_INSTALL = "tandem pm install chromium (system libraries: npx playwright install-deps chromium)"
 _CHROMIUM_MISSING_DOCKER_HINT = ("Chromium browser is missing. You're running in Docker — pull the latest image "
                                  f"to get the bundled Chromium: {_DOCKER_PULL}")
 _CHROMIUM_MISSING_HINT = f"Chromium browser is missing. Install it with: {_CHROMIUM_INSTALL}"
@@ -825,7 +825,7 @@ def run_fenced_pair(session_info: dict[str, Any], fn: Callable[[], tuple[str, di
 
 def _shares_bot_desktop_browser(session_info: dict[str, Any]) -> bool:
     """Decided by provenance, not transport: every LOCAL session (plain ``--session``, real-profile CDP
-    attach, Lightpanda) is a browser Hermes launched with this profile's Bot Desktop DISPLAY, so it is the
+    attach, Lightpanda) is a browser Tandem launched with this profile's Bot Desktop DISPLAY, so it is the
     screen a human who took over is typing into. Cloud / user-supplied CDP sessions are another browser.
     A human lease with the screen already gone (dead Xvnc) still fences — computer_use does the same."""
     if not (session_info.get("features") or {}).get("local"):

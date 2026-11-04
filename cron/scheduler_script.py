@@ -143,7 +143,7 @@ def _posix_cron_script_argv(script: Path) -> tuple[list[str], dict[str, str]]:
     interpreter: the store Python has the repo and managed site-packages only on its in-process
     ``sys.path``, so its children import neither (#123044). No ``PYTHONPATH``: everything the
     script spawns would inherit it and a foreign interpreter would load the store's compiled
-    extensions (#123440). The venv resolves Hermes from its generation's workspace snapshot,
+    extensions (#123440). The venv resolves Tandem from its generation's workspace snapshot,
     rebuilt only on a dependency change, so the bootstrap puts the live checkout first.
     Lazy installs are off for the script's process tree: a script importing ``hermes_bootstrap``
     could otherwise complete a source update and ``execv`` itself onto the bare store Python."""
@@ -359,7 +359,7 @@ def _resolve_script_path(script_path: str) -> tuple[Optional[Path], Optional[str
         return None, (
             f"Script not found: {path}. Cron scripts are looked up only in this profile's folder "
             f"({scripts_dir_resolved}); if the job was copied from another profile, copy the script "
-            f"there too, or edit the job with `hermes cron edit`."
+            f"there too, or edit the job with `tandem cron edit`."
         )
     if not path.is_file():
         return None, f"Script path is not a file: {path}"

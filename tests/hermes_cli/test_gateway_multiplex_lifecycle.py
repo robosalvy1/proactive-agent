@@ -153,7 +153,7 @@ def test_parked_status_and_topology_keep_roster(homes, monkeypatch, capsys):
     monkeypatch.setattr(profiles, 'get_active_profile_name', lambda: 'worker')
     monkeypatch.setattr(profiles, '_check_gateway_running', lambda home: False)
     gw._cmd_status(SimpleNamespace())
-    assert 'parked (hermes -p worker gateway start)' in capsys.readouterr().out
+    assert 'parked (tandem -p worker gateway start)' in capsys.readouterr().out
     topology = _collect_profile_gateway_topology()
     assert topology['profiles'] == ['default', 'worker']
     assert topology['parked_profiles'] == ['worker']
@@ -250,7 +250,7 @@ def test_parked_status_still_reports_a_forced_gateway(homes, monkeypatch, capsys
     monkeypatch.setattr(gw, '_installed_service_kind_for', lambda _check: None)
     gw._cmd_status(SimpleNamespace())
     output = capsys.readouterr().out
-    assert 'parked (hermes -p worker gateway start)' in output
+    assert 'parked (tandem -p worker gateway start)' in output
     assert 'Gateway is running (PID: 4242)' in output
 
 
@@ -275,4 +275,4 @@ def test_status_flags_a_gateway_this_hermes_cannot_attach(homes, monkeypatch, ca
     output = capsys.readouterr().out
     assert ('✓ Gateway is running (PID: 4242)' in output) is healthy
     assert ('incompatible: runtime_protocol' in output) is not healthy
-    assert ('hermes gateway restart' in output) is not healthy
+    assert ('tandem gateway restart' in output) is not healthy

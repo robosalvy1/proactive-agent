@@ -1,4 +1,4 @@
-"""A failed ``hermes skills install|update|uninstall|snapshot import`` exits non-zero (#118301).
+"""A failed ``tandem skills install|update|uninstall|snapshot import`` exits non-zero (#118301).
 
 The Desktop spawns these as detached actions and learns their outcome only from the
 exit code (``apps/desktop/src/store/hub-actions.ts`` toasts on non-zero), so a refused

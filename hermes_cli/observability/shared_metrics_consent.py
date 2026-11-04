@@ -7,8 +7,8 @@ Every answer also writes ``offer_version``. A "No thanks" without it predates th
 (an Enter pressed during startup could save it unseen), so that profile is asked once more, with
 the reason, and any response (Esc or dismiss included) settles it for good.
 Desktop paints the offer as a composer strip (``consent-strip.tsx`` over the ``shared_metrics.*``
-RPCs). The terminal asks at the end of every ``hermes setup`` flow and, for a profile that never
-answered, once before an interactive ``hermes`` / ``hermes --tui`` chat (which also covers the
+RPCs). The terminal asks at the end of every ``tandem setup`` flow and, for a profile that never
+answered, once before an interactive ``tandem`` / ``tandem --tui`` chat (which also covers the
 dashboard's Chat tab, a PTY-hosted TUI). The messaging gateway never asks: a chat participant is
 not the install owner.
 """
@@ -40,7 +40,7 @@ _OFFER_DESCRIPTION = "\n".join((
     "a separate choice, and apart from that install note, data from before you opt in",
     "is never sent.",
     f"Details: {DOCS_URL}",
-    "Change it any time: hermes setup telemetry",
+    "Change it any time: tandem setup telemetry",
 ))
 _REASK_NOTE = "Asking once more: an earlier version could save \"No thanks\" before you saw this question."
 
@@ -130,25 +130,25 @@ def offer_consent(config: dict | None = None, *, reask: bool = False) -> bool:
     # answer it ("No thanks") before it was ever on screen, so the user was never really asked.
     flush_stdin()
     idx = curses_radiolist(
-        "Help improve Hermes?", [label for label, _, _ in OFFER_CHOICES], selected=_NO_THANKS, cancel_returns=-1,
+        "Help improve Tandem?", [label for label, _, _ in OFFER_CHOICES], selected=_NO_THANKS, cancel_returns=-1,
         description=f"{_REASK_NOTE}\n{_OFFER_DESCRIPTION}" if reask else _OFFER_DESCRIPTION,
     )
     if idx < 0 and reask:
         save_consent(False, False, config)
-        print_info("Kept \"No thanks\". Change it any time with `hermes setup telemetry`.")
+        print_info("Kept \"No thanks\". Change it any time with `tandem setup telemetry`.")
         return True
     if idx < 0:
-        print_info("Not answered; Hermes will ask again. Decide any time with `hermes setup telemetry`.")
+        print_info("Not answered; Tandem will ask again. Decide any time with `tandem setup telemetry`.")
         return False
     _, enabled, send = OFFER_CHOICES[idx]
     save_consent(enabled, send, config)
     outcome = "collected and sent to Nous" if send else "collected on this machine only" if enabled else "off"
-    print_success(f"Shared metrics {outcome}. Change it any time with `hermes setup telemetry`.")
+    print_success(f"Shared metrics {outcome}. Change it any time with `tandem setup telemetry`.")
     return True
 
 
 def offer_consent_if_undecided(config: dict | None = None) -> None:
-    """The end-of-setup offer: every ``hermes setup`` flow funnels through the setup-completed
+    """The end-of-setup offer: every ``tandem setup`` flow funnels through the setup-completed
     record, so this one call covers Quick, Full, Blank Slate, Portal and ``--quick``."""
     from hermes_cli.config import is_managed
     from hermes_cli.setup import is_noninteractive

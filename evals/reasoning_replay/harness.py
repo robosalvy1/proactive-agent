@@ -3,7 +3,7 @@
 A 200 only proves a carrier was accepted. This harness measures whether it reached the model's
 prompt: the prompt-token delta of a request carrying a ~400-token reasoning trace versus the
 byte-identical request without it, plus a canary-recall question. Stdlib HTTP only; it measures
-the WIRE, not Hermes. See README.md for the method and how to read the matrix.
+the WIRE, not Tandem. See README.md for the method and how to read the matrix.
 
     python evals/reasoning_replay/harness.py models --route nous
     python evals/reasoning_replay/harness.py run --route nous --models x-ai/grok-4.7 --out DIR

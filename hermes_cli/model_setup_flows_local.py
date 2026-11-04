@@ -1,4 +1,4 @@
-"""``hermes model`` → Local models: the desktop's Local Models setup, in the terminal.
+"""``tandem model`` → Local models: the desktop's Local Models setup, in the terminal.
 
 The flow drives the handlers behind the desktop's Local Models pane
 (``hermes_cli/web_routers/local_models.py``) in-process, so both surfaces run one code path:
@@ -82,7 +82,7 @@ def _follow_job(lm, job_id: str) -> str:
         deadline = time.monotonic() + _PAUSE_WAIT_S
         while time.monotonic() < deadline and lm._JOBS[job_id]["status"] == "running":
             time.sleep(_POLL_S)
-        print("  Paused. Run `hermes model` → Local models again to resume; finished bytes are kept.")
+        print("  Paused. Run `tandem model` → Local models again to resume; finished bytes are kept.")
         return "paused"
     if shown_phase is not None:
         print()

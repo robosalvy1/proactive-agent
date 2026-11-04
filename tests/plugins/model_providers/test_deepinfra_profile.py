@@ -1,7 +1,7 @@
 """DeepInfra profile puts the reasoning switch on the wire (#111872).
 
 DeepInfra's OpenAI-compatible endpoint reads one top-level ``reasoning_effort`` field validated
-against a gateway-wide enum (``none``..``max``; Hermes-internal ``ultra`` is rejected). The
+against a gateway-wide enum (``none``..``max``; Tandem-internal ``ultra`` is rejected). The
 profile is the ONLY source of that field on the transport's profile path, and the core
 ``_supports_reasoning_extra_body`` allowlist passes ``supports_reasoning=False`` for this host,
 so the profile must emit without gating on it.

@@ -731,7 +731,7 @@ def test_openrouter_env_file_key_survives_exhausted_pool(monkeypatch):
 
     Regression test for #117667: with the pool's OPENROUTER_API_KEY entry benched
     (select() -> None), the terminal resolver read os.environ only, so the documented
-    .env location was skipped and `hermes chat --provider openrouter` failed with
+    .env location was skipped and `tandem chat --provider openrouter` failed with
     "No API key found" until the key was exported in the shell.
     """
     monkeypatch.setattr(rp, "resolve_provider", lambda *a, **k: "openrouter")

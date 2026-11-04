@@ -1,4 +1,4 @@
-"""Settles a ZIP ``hermes update`` swap whose owner died: its journal, owner lock and recovery.
+"""Settles a ZIP ``tandem update`` swap whose owner died: its journal, owner lock and recovery.
 
 Split out of ``_early_recovery`` (stdlib-only, like it). ``_early_recovery.restore_interrupted_pull``
 imports this only when the journal exists, so the git-marker repair and its published closure
@@ -231,7 +231,7 @@ def restore_interrupted_zip_swap(project_root: Path | None = None) -> bool:
 
     ``committed``: every rename landed, only backups remain -> drop them (finish). ``swapping``: put
     each moved-aside entry back and remove entries the swap added (roll back to the old tree, which
-    the venv was built for; ``hermes update`` redoes it). ``staging``: nothing live moved -> drop the
+    the venv was built for; ``tandem update`` redoes it). ``staging``: nothing live moved -> drop the
     staging copies. Either way no ``*.hermes-update-staging``/``-old`` sibling is left to wedge the
     next run's free-space or dirty-tree checks. A live owner (lock held) is never second-guessed.
     Provenance (review Z1): a sibling or entry is deleted only when its identity is the one the journal
@@ -284,6 +284,6 @@ def restore_interrupted_zip_swap(project_root: Path | None = None) -> bool:
             return changed  # the journal stays: the next launch retries
         journal.unlink(missing_ok=True)
     if changed:
-        print("⚠ A previous ZIP `hermes update` was interrupted mid-swap; the old install was put back. "
-              "`hermes update` updates it again.", file=sys.stderr)
+        print("⚠ A previous ZIP `tandem update` was interrupted mid-swap; the old install was put back. "
+              "`tandem update` updates it again.", file=sys.stderr)
     return changed

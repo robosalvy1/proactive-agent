@@ -315,7 +315,7 @@ class ProviderProfile:
         """Whether discovery surfaces may offer this provider.
 
         Every non-``hidden`` profile is listed. A ``hidden`` (pre-release) one surfaces once the user
-        opted in by name (``hermes auth add <name>`` put a row in its credential pool), so the
+        opted in by name (``tandem auth add <name>`` put a row in its credential pool), so the
         pickers can then offer it. Reads auth.json only: it runs on every picker build.
         """
         if not self.hidden:

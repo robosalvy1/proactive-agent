@@ -14,7 +14,7 @@ Iterative Python via live Jupyter kernel (hamelnb).
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/data-science/jupyter-notebook` |
+| Source | Optional — install with `tandem skills install official/data-science/jupyter-notebook` |
 | Path | `optional-skills/data-science/jupyter-notebook` |
 | Version | `1.0.0` |
 | Author | Hermes Agent |
@@ -25,7 +25,7 @@ Iterative Python via live Jupyter kernel (hamelnb).
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Jupyter Notebook (hamelnb live kernel)

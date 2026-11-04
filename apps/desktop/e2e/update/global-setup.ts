@@ -25,7 +25,7 @@ function assertIsolated(): void {
 
   if (init === 'systemd' || init === 'init') {
     throw new Error(
-      'The Desktop update suite runs real `hermes update --gateway` hand-offs. Run it on CI, or locally inside ' +
+      'The Desktop update suite runs real `tandem update --gateway` hand-offs. Run it on CI, or locally inside ' +
         'its own PID namespace with the user bus hidden (PID 1 here is the host init).'
     )
   }

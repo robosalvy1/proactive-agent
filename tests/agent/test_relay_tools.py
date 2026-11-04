@@ -1,4 +1,4 @@
-"""Tests for the core Relay-managed Hermes tool adapter."""
+"""Tests for the core Relay-managed Tandem tool adapter."""
 
 from __future__ import annotations
 

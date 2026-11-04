@@ -113,9 +113,9 @@ def _running_interpreter_fallback() -> str:
 
 
 def resolve_exec_command(project_root: Optional[Path] = None) -> str:
-    """Build the absolute ``Exec=`` command line for ``hermes desktop``.
+    """Build the absolute ``Exec=`` command line for ``tandem desktop``.
 
-    Prefer the real ``hermes`` launcher; fall back to ``<python> -m hermes_cli.main desktop``.
+    Prefer the real ``tandem`` launcher; fall back to ``<python> -m hermes_cli.main desktop``.
     """
     from hermes_cli.relaunch import resolve_hermes_bin
 
@@ -235,7 +235,7 @@ def _resolve_hermes_bin_for_desktop_entry(
     checkout is a launch-context artifact, not a durable installed launcher — persisting it makes
     the entry depend on how the previous launch happened (a bootstrap loop). Skip such candidates
     and fall through to PATH, then to the installer's known wrapper locations. A candidate that
-    provably cannot serve ``hermes desktop`` (a code tree carrying ``hermes_cli`` but no desktop
+    provably cannot serve ``tandem desktop`` (a code tree carrying ``hermes_cli`` but no desktop
     app beside it — a managed runtime env's console script) is skipped the same way: its entry
     would only ever die with "Desktop GUI source not found". ``resolve_fn`` is injectable for tests.
 
@@ -421,7 +421,7 @@ def _launcher_tree(path: Path) -> Path:
 
 
 def _tree_desktop_state(tree: Path) -> Optional[bool]:
-    """``True`` when *tree* can serve ``hermes desktop``, ``False`` when it provably cannot, else ``None``.
+    """``True`` when *tree* can serve ``tandem desktop``, ``False`` when it provably cannot, else ``None``.
 
     ``False`` is reserved for a tree that IS a hermes code tree (carries ``hermes_cli``) yet has no
     desktop app beside it — the managed runtime env layout, whose launcher runs but dies with
@@ -505,7 +505,7 @@ def _known_wrapper_candidates():
     """Durable installed-launcher locations, most likely first.
 
     Mirrors the installer's ``get_command_link_dir()`` layouts: Termux (``$PREFIX/bin``), root FHS
-    (``/usr/local/bin``), and user (``~/.local/bin``). The wrapper is always named ``hermes``.
+    (``/usr/local/bin``), and user (``~/.local/bin``). The wrapper is always named ``tandem``.
     """
     candidates = []
     prefix = os.environ.get("PREFIX")
@@ -582,9 +582,9 @@ def render_desktop_entry(exec_command: str, icon: str) -> str:
     return (
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=Hermes\n"
-        "GenericName=Hermes Desktop\n"
-        "Comment=Launch Hermes Desktop\n"
+        "Name=Tandem\n"
+        "GenericName=Tandem Desktop\n"
+        "Comment=Launch Tandem Desktop\n"
         f"Exec={exec_command}\n"
         f"Icon={icon}\n"
         "Terminal=false\n"
@@ -772,7 +772,7 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
 
     Shells resolve a taskbar pin by the entry file name it was pinned against: deleting the
     file makes GNOME drop the favourite and Plasma leave an inert item, and nothing can
-    re-pin for the user. The alias stays launchable for old pins without listing Hermes
+    re-pin for the user. The alias stays launchable for old pins without listing Tandem
     twice. Only a file that still names this app is converted; anything else at that path
     is left alone. True when the legacy file was (re)written.
     """
@@ -781,7 +781,8 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
         text = legacy.read_text(encoding="utf-8-sig")
     except OSError:
         return False
-    if not any(line.strip() == "Name=Hermes" for line in text.splitlines()):
+    if not any(line.strip() in ("Name=Tandem", "Name=Hermes")  # brand-compat
+         for line in text.splitlines()):
         return False
     alias_contents = _render_legacy_alias_entry(exec_command, icon)
     if text == alias_contents:
@@ -803,7 +804,7 @@ def install_desktop_entry(project_root: Path) -> Optional[Path]:
     into a hidden alias once the new entry exists, and only while launcher management is
     enabled — deleting it instead would silently kill existing taskbar pins (#124492).
     ``None`` on non-Linux platforms, when the write fails, or when the resolved ``Exec``
-    provably cannot serve ``hermes desktop`` — a convenience, never a reason to fail a launch.
+    provably cannot serve ``tandem desktop`` — a convenience, never a reason to fail a launch.
     """
     if not is_supported():
         return None

@@ -1,11 +1,11 @@
-"""Custom / Ollama-style chat-completions endpoints through REAL ``hermes -z`` processes.
+"""Custom / Ollama-style chat-completions endpoints through REAL ``tandem -z`` processes.
 
 * Ollama's chat renderer refuses a payload with no ``user`` message (HTTP 500 ``no user
   query found in messages``). The fake enforces that rule on every main request while
   the session goes through a tool continuation, a stream that drops mid-tool-call and
   is retried, and a ``--resume`` of the result: no request may ever lack the user turn
   (#120828 reports one escaping on a continuation/retry path). Ollama answers that
-  refusal with a 500, which Hermes (correctly, it cannot tell) treats as a transient
+  refusal with a 500, which Tandem (correctly, it cannot tell) treats as a transient
   outage and keeps retrying under ``agent.auto_recovery_cycles`` for minutes; the test
   turns that recovery off and bounds each turn, and checks the recorded requests FIRST so
   a regression fails in seconds naming the request that lost the user turn.

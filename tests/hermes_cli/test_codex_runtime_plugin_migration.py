@@ -230,7 +230,7 @@ class TestMigrate:
 
     def test_preserves_user_mcp_server_outside_managed_block(self, tmp_path):
         """Quirk #6: when a user adds their own MCP server entry directly
-        to ~/.codex/config.toml outside Hermes' managed block, re-running
+        to ~/.codex/config.toml outside Tandem's managed block, re-running
         migration must preserve it. Tested both above and below the
         managed block."""
         target = tmp_path / "config.toml"
@@ -273,7 +273,7 @@ class TestStripUnmanagedPluginTables:
 
     When codex itself writes ``[plugins."<name>@<marketplace>"]`` tables
     (via the user running ``codex plugins enable`` directly), re-running
-    ``hermes codex-runtime migrate`` would re-emit them inside the managed
+    ``tandem codex-runtime migrate`` would re-emit them inside the managed
     block and the resulting duplicate-table-header would crash codex.
     """
 
@@ -414,7 +414,7 @@ class TestHermesHomeLeakGuard:
 
 
 class TestSameNameUserMcpTable:
-    """Issue #79023: a Hermes server whose name the user already declares outside the managed
+    """Issue #79023: a Tandem server whose name the user already declares outside the managed
     block must not be emitted twice (duplicate table header = TOML codex refuses to load)."""
 
     def test_user_table_wins_and_output_stays_valid_toml(self, tmp_path):
@@ -454,8 +454,8 @@ class TestSameNameUserMcpTable:
 
 
     def test_cli_migrate_dry_run_json_reports_without_writing(self, tmp_path, monkeypatch, capsys):
-        """`hermes codex-runtime migrate --dry-run --json` is the supported automation seam:
-        drive it through the real ``hermes`` argparse tree so the subcommand registration in
+        """`tandem codex-runtime migrate --dry-run --json` is the supported automation seam:
+        drive it through the real ``tandem`` argparse tree so the subcommand registration in
         hermes_cli/main.py stays pinned, and honour ``CODEX_HOME`` like every codex sibling."""
         import json
 

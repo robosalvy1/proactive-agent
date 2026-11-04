@@ -1,6 +1,6 @@
 """Regression guard for #98790 — profile isolation in cron status.
 
-Issue #98790: `hermes cron status` in profile B reports profile A's gateway
+Issue #98790: `tandem cron status` in profile B reports profile A's gateway
 PID as proof that B's jobs will fire. Root causes:
 
 1. systemd branch of ``_get_service_pids()`` returns every hermes-gateway*

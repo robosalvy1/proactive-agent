@@ -1,8 +1,8 @@
 """Oneshot (-z) mode: send a prompt, get the final content block, exit.
 
-Toolsets = explicit --toolsets, else the user's "cli" toolsets from `hermes tools`. Rules /
+Toolsets = explicit --toolsets, else the user's "cli" toolsets from `tandem tools`. Rules /
 memory / AGENTS.md / preloaded skills = same as a normal chat turn. Approvals are auto-bypassed
-(HERMES_YOLO_MODE=1). Model/provider mirror `hermes chat`: both optional; only --model → auto-detect
+(HERMES_YOLO_MODE=1). Model/provider mirror `tandem chat`: both optional; only --model → auto-detect
 the provider; only --provider → error (ambiguous).
 """
 
@@ -134,7 +134,7 @@ def _build_preloaded_skills_prompt(skills: object = None) -> str | None:
         if not loaded_skills:
             raise ValueError(format_missing_skills(missing_skills))
         logging.warning(
-            "Skipping %s. Continuing with: %s. List available skills with `hermes skills list`.",
+            "Skipping %s. Continuing with: %s. List available skills with `tandem skills list`.",
             format_missing_skills(missing_skills),
             ", ".join(loaded_skills),
         )
@@ -169,7 +169,7 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
     try:
         from toolsets import validate_toolset
     except Exception as exc:
-        return None, f"hermes -z: failed to validate --toolsets: {exc}\n"
+        return None, f"tandem -z: failed to validate --toolsets: {exc}\n"
 
     built_in = [name for name in normalized if validate_toolset(name)]
     unresolved = [name for name in normalized if name not in built_in]
@@ -189,7 +189,7 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
         ignored = [name for name in normalized if name not in _ALL_TOOLSETS]
         if ignored:
             sys.stderr.write(
-                "hermes -z: --toolsets all enables every toolset; "
+                "tandem -z: --toolsets all enables every toolset; "
                 f"ignoring additional entries: {', '.join(ignored)}\n"
             )
         return None, None
@@ -201,14 +201,14 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
     valid = built_in + mcp_valid
 
     if unknown:
-        sys.stderr.write(f"hermes -z: ignoring unknown --toolsets entries: {', '.join(unknown)}\n")
+        sys.stderr.write(f"tandem -z: ignoring unknown --toolsets entries: {', '.join(unknown)}\n")
     if disabled:
         sys.stderr.write(
-            "hermes -z: ignoring disabled MCP servers (set enabled: true in config.yaml to use): "
+            "tandem -z: ignoring disabled MCP servers (set enabled: true in config.yaml to use): "
             f"{', '.join(disabled)}\n"
         )
     if not valid:
-        return None, "hermes -z: --toolsets did not contain any valid toolsets.\n"
+        return None, "tandem -z: --toolsets did not contain any valid toolsets.\n"
     return valid, None
 
 
@@ -261,7 +261,7 @@ def run_oneshot(
     env_model_early = os.getenv("HERMES_INFERENCE_MODEL", "").strip()
     if provider and not ((model or "").strip() or env_model_early):
         sys.stderr.write(
-            "hermes -z: --provider requires --model (or HERMES_INFERENCE_MODEL). "
+            "tandem -z: --provider requires --model (or HERMES_INFERENCE_MODEL). "
             "Pass both explicitly, or neither to use your configured defaults.\n"
         )
         return 2
@@ -317,7 +317,7 @@ def run_oneshot(
             _write_usage_file(usage_file, result, failure=repr(failure))
             raise failure
         _write_usage_file(usage_file, result, failure=str(failure))
-        real_stderr.write(f"hermes -z: agent failed: {failure}\n")
+        real_stderr.write(f"tandem -z: agent failed: {failure}\n")
         real_stderr.flush()
         return 1
 
@@ -337,7 +337,7 @@ def run_oneshot(
 
     exit_code = _oneshot_exit_code(response, result)
     if exit_code == 1:
-        real_stderr.write("hermes -z: no final response was produced; treating the run as failed.\n")
+        real_stderr.write("tandem -z: no final response was produced; treating the run as failed.\n")
         real_stderr.flush()
     return exit_code
 
@@ -442,7 +442,7 @@ def _load_resume_target(session_db, resume: Optional[str]) -> tuple[Optional[str
     ``session_meta`` rows dropped. An unknown session raises (the user passed an explicit id;
     silently starting a fresh session is the resume-dropped failure mode this exists to fix —
     see #105892). An empty stored transcript still returns the resolved id: the turn replays
-    nothing but is recorded under the requested session — ``hermes -z "hello" -c <title>
+    nothing but is recorded under the requested session — ``tandem -z "hello" -c <title>
     --create-if-missing`` must fill the titled session it created, not mint a fresh id
     (same contract as the interactive /resume of an empty session).
 
@@ -641,6 +641,10 @@ def _close_agent(agent, session_db, relay_session_id=None) -> None:
         # close() kill_all()s the task and the dying parent owns the children's stdout pipes, so
         # exiting now destroys in-flight deliveries (e.g. Bot Mode handoff replies).
         _quietly("background completion wait", _linger_for_background_completions)
+        # The hard exit kills daemon threads: let a started open-loop capture commit first.
+        from agent.open_loops import wait_for_pending_captures
+
+        _quietly("open-loop capture wait", wait_for_pending_captures)
         if relay_session_id:
             # run_conversation ends the turn but keeps the Relay root resumable; one-shot has no
             # next turn and os._exit skips atexit, so close the root (and fire on_session_finalize).

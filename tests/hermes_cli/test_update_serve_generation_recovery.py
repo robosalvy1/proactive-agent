@@ -1,9 +1,9 @@
-"""Regression coverage for stale ``hermes serve`` generations after an abort.
+"""Regression coverage for stale ``tandem serve`` generations after an abort.
 
-Issue #92145: ``hermes update`` moves the checkout from generation N to N+1
+Issue #92145: ``tandem update`` moves the checkout from generation N to N+1
 while the updater still holds the pre-pull module graph.  When the in-process
 restart phase raises, a fresh process retries the *gateway* profiles — but
-``hermes serve`` is not a gateway profile.  It hosts ``tui_gateway.server``,
+``tandem serve`` is not a gateway profile.  It hosts ``tui_gateway.server``,
 systemd lists ``hermes-gateway.service`` before ``hermes-serve.service`` (so
 the serve unit is the one an abort typically never reaches), and the final
 read-back (``collect_fleet_versions``) only inspects gateway state.  A serve
@@ -315,7 +315,7 @@ class _Systemctl:
             if "--user" not in argv:
                 return _Completed(0, stdout="")
             body = "\n".join(
-                f"{unit} loaded active running Hermes" for unit in self.listed
+                f"{unit} loaded active running Tandem" for unit in self.listed
             )
             return _Completed(0, stdout=body)
         if "is-active" in argv:
@@ -893,7 +893,7 @@ def _fake_systemctl_path(tmp_path):
         "#!/bin/sh\n"
         f"printf '%s\\n' \"$*\" >> '{log}'\n"
         'case " $* " in\n'
-        '  *" --user list-units hermes-serve* "*) echo "hermes-serve.service loaded active running Hermes" ;;\n'
+        '  *" --user list-units hermes-serve* "*) echo "hermes-serve.service loaded active running Tandem" ;;\n'
         '  *" is-active "*) echo active ;;\n'
         f"  *\" show \"*) if [ -e '{marker}' ]; then echo 200; else echo 100; fi ;;\n"
         f"  *\" restart \"*) : > '{marker}' ;;\n"

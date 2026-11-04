@@ -1,4 +1,4 @@
-"""``hermes gui --setup-tcc-identity``: a persistent self-signed macOS code-signing identity.
+"""``tandem gui --setup-tcc-identity``: a persistent self-signed macOS code-signing identity.
 
 Split out of ``hermes_cli/main_desktop.py``. The facade's build/sign helpers are imported lazily
 inside the function that uses them (the facade late-imports this module from ``cmd_gui``).

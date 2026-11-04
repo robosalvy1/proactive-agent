@@ -14,7 +14,7 @@ Poll RSS, JSON APIs, and GitHub with watermark dedup.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/devops/watchers` |
+| Source | Optional — install with `tandem skills install official/devops/watchers` |
 | Path | `optional-skills/devops/watchers` |
 | Version | `1.0.0` |
 | Author | Hermes Agent |
@@ -25,7 +25,7 @@ Poll RSS, JSON APIs, and GitHub with watermark dedup.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Watchers

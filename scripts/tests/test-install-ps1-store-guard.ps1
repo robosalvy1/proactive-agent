@@ -8,7 +8,7 @@
 # HermesHome nested inside -InstallDir) makes the pm tool store land at
 # <InstallDir>\tools, INSIDE the checkout. Two failures follow: the
 # repository stage's occupied-directory preflight refuses every retry after
-# the first run populated the folder ("exists and is not a Hermes git
+# the first run populated the folder ("exists and is not a Tandem git
 # checkout"), and `git stash --include-untracked` would sweep the toolchain
 # into the stash. The installer now refuses the combination up front, before
 # any download, unless HERMES_RUNTIME_DIR parks the store elsewhere.

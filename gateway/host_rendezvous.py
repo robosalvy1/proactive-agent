@@ -1,6 +1,6 @@
 """Host-wide singleton rendezvous: one lock + one record per ROLE per OS user.
 
-Multiplex-only (Teknium ruling): exactly ONE ``hermes serve`` and ONE ``hermes gateway run``
+Multiplex-only (Teknium ruling): exactly ONE ``tandem serve`` and ONE ``tandem gateway run``
 per host, each multiplexing every profile. The per-``HERMES_HOME`` gateway lock/PID files
 (``gateway.status``) cannot express that — N profiles are N homes, so N processes each take
 their own flock and none of them ever sees the others. This module adds the missing layer:
@@ -21,7 +21,7 @@ A dead PID or a mismatched process incarnation is STALE and ignored — an attac
 never dial a recycled PID's port.
 
 **Relationship to ``spawn-ledger.json``** (``hermes_cli/process_identity.py``): the ledger stays
-the append-only machine roster of every long-lived Hermes process (Desktop's attach ladder reads
+the append-only machine roster of every long-lived Tandem process (Desktop's attach ladder reads
 it) and is still written unchanged. It cannot be the host record: it has no lock, no
 single-writer semantics, no removal on exit, and no place to publish a protocol version or
 an authentication handle. The record here is authoritative for "who owns this host role"; the

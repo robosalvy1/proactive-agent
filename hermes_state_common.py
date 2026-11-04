@@ -549,6 +549,18 @@ CREATE TABLE IF NOT EXISTS worker_receipts (
     PRIMARY KEY (execution_id, sequence)
 );
 
+-- Home revocations use stable message identities, including compression copies.
+-- No content or foreign keys: suppression must survive physical transcript removal.
+CREATE TABLE IF NOT EXISTS home_source_controls (
+    message_uid TEXT PRIMARY KEY,
+    source_session_id TEXT NOT NULL,
+    source_message_id INTEGER NOT NULL,
+    principal_id TEXT,
+    action TEXT NOT NULL CHECK(action IN ('forgotten','superseded')),
+    replacement_uid TEXT,
+    created_at REAL NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS state_meta (
     key TEXT PRIMARY KEY,
     value TEXT
@@ -694,7 +706,7 @@ BEFORE DELETE ON sessions
 WHEN EXISTS (SELECT 1 FROM session_admissions WHERE target_session_id = old.id)
   OR EXISTS (SELECT 1 FROM worker_executions WHERE session_id = old.id)
 BEGIN
-    SELECT RAISE(ABORT, 'Refused to delete a session that has gateway runtime history: state.db was upgraded by a newer Hermes, and this older Hermes cannot delete such sessions. Downgrading is unsupported. Run hermes update to go back to the newer release, or restore the pre-update snapshot: https://hermes-agent.nousresearch.com/docs/getting-started/updating#rolling-back-to-an-older-release');
+    SELECT RAISE(ABORT, 'Refused to delete a session that has gateway runtime history: state.db was upgraded by a newer Tandem, and this older Tandem cannot delete such sessions. Downgrading is unsupported. Run tandem update to go back to the newer release, or restore the pre-update snapshot: https://hermes-agent.nousresearch.com/docs/getting-started/updating#rolling-back-to-an-older-release');
 END;
 CREATE INDEX IF NOT EXISTS idx_messages_session_active
     ON messages(session_id, active, timestamp);
@@ -787,6 +799,8 @@ CREATE INDEX IF NOT EXISTS idx_messages_active_null
 -- Logical-identity recovery (agent.transcript_repair._active_logical_message_row) runs inside the write lock.
 CREATE INDEX IF NOT EXISTS idx_messages_session_uid
     ON messages(session_id, message_uid) WHERE active = 1;
+-- Home source revalidation resolves a message identity across chats (compaction copies keep it).
+CREATE INDEX IF NOT EXISTS idx_messages_uid ON messages(message_uid, id);
 CREATE INDEX IF NOT EXISTS idx_sessions_session_key
     ON sessions(session_key, started_at DESC);
 CREATE INDEX IF NOT EXISTS idx_sessions_gateway_peer

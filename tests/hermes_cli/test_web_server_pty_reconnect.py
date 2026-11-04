@@ -172,7 +172,7 @@ def test_profile_switch_closes_previous_profile_keepalive_pty(pty_client, monkey
     Regression for #125287: the profile switch spawned a new keep-alive PTY under
     ``token\\0profile`` and left the previous profile's TUI alive (detached) for the
     registry TTL, still holding that chat's active-session lease, so returning to the
-    chat was refused with "open in another Hermes window".
+    chat was refused with "open in another Tandem window".
     """
     import time
 

@@ -1,8 +1,8 @@
 """Install on a musl libc host (Alpine) through the real ``scripts/install.sh``.
 
-Failure class: libc. Hermes's PM store pins glibc (``-linux-gnu``) builds of uv, CPython and
+Failure class: libc. Tandem's PM store pins glibc (``-linux-gnu``) builds of uv, CPython and
 Node. On a musl host those binaries either fail to exec or, with the ``gcompat`` shim, load and
-segfault, so an install or update that publishes them leaves every later ``hermes`` command dead
+segfault, so an install or update that publishes them leaves every later ``tandem`` command dead
 (#123682). The acceptable outcomes are: musl-compatible tools that run, or a refusal that tells
 the user why (names musl) and publishes nothing unrunnable.
 

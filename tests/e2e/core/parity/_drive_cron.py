@@ -1,16 +1,16 @@
-"""Entrypoint driver for the parity matrix: cron run-now (``hermes cron run <id>``).
+"""Entrypoint driver for the parity matrix: cron run-now (``tandem cron run <id>``).
 
-Follows the driver contract in ``_drive_cli``. ``hermes cron create`` writes the
+Follows the driver contract in ``_drive_cli``. ``tandem cron create`` writes the
 job (``--deliver local``: no platform; ``--workdir``: cron's documented
-per-job cwd/context channel, see ``hermes cron create --help``), then
-``hermes cron run <id>`` executes it: the CLI waits synchronously
+per-job cwd/context channel, see ``tandem cron create --help``), then
+``tandem cron run <id>`` executes it: the CLI waits synchronously
 (``hermes_cli/cron.py::_job_action`` forces the synchronous path) while the turn
 runs in the profile's gateway daemon (``cron.scheduler_authority.run_canonical_job``
 → ``connect_gateway``, which spawns the daemon when none owns the profile) — the
 same agent build the ticker uses — and prints ``Ran now: succeeded.``. The job's
 saved output file (``cron/output/<id>/<ts>.md``, ``## Response`` section) is what
 cron delivers locally, so that is ``final_text``. The daemon outlives the CLI, so
-the surface's shutdown ends with ``hermes gateway stop``.
+the surface's shutdown ends with ``tandem gateway stop``.
 
 Both CLI calls run from the fake HOME, not the project: a scheduled job's
 process cwd is whatever the ticker had, so the workdir is the only channel
@@ -50,15 +50,15 @@ def drive_cron(ph: ParityHome, srv: FakeLLMServer, prompt: str) -> DriveResult:
                     "--workdir", str(ph.project))
     match = _JOB_ID.search(created.stdout)
     assert created.returncode == 0 and match, (
-        f"hermes cron create exited {created.returncode}: {created.stdout[-1000:]} {created.stderr[-2000:]}")
+        f"tandem cron create exited {created.returncode}: {created.stdout[-1000:]} {created.stderr[-2000:]}")
     job_id = match.group(1)
 
     ran = _cron(ph, "run", job_id)
     gateway_stopped = stop_profile_gateway(ph)
-    assert ran.returncode == 0, f"hermes cron run exited {ran.returncode}: {ran.stderr[-2000:]}"
+    assert ran.returncode == 0, f"tandem cron run exited {ran.returncode}: {ran.stderr[-2000:]}"
     # Anything but a synchronous verdict means the run was handed to a ticker/background
     # worker this driver cannot observe — a harness problem, not a parity result.
-    assert "Ran now:" in ran.stdout, f"hermes cron run did not execute synchronously: {ran.stdout[-1000:]}"
+    assert "Ran now:" in ran.stdout, f"tandem cron run did not execute synchronously: {ran.stdout[-1000:]}"
 
     outputs = sorted((ph.hermes_home / "cron" / "output" / job_id).glob("*.md"))
     final_text = None

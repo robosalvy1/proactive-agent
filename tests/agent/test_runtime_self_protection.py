@@ -1,6 +1,6 @@
 """The runtime's own interpreter/venv is not agent-deletable (#58748).
 
-A Hermes session asked to clean up "older Pythons" removed the base
+A Tandem session asked to clean up "older Pythons" removed the base
 interpreter its own venv pointed at; the next boot died with ``uv trampoline
 failed to spawn Python child process``. These tests pin both defense layers:
 

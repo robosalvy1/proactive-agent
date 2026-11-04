@@ -2,7 +2,7 @@
 
 Three real input paths a Windows user hits:
 
-* ``hermes chat -q "<text>"`` — argv (CreateProcessW) into the oneshot turn; the reply,
+* ``tandem chat -q "<text>"`` — argv (CreateProcessW) into the oneshot turn; the reply,
   with its own emoji, is printed back through a pipe (Windows code-page territory).
 * the TUI gateway's stdio JSON-RPC — UTF-8 frames from the Ink TUI (Node writes literal
   non-ASCII, never ``\\u`` escapes).
@@ -127,7 +127,7 @@ def test_classic_cli_console_non_ascii_reaches_wire(tmp_path: Path) -> None:
     """Typed into the classic CLI composer through a real ConPTY: Latin-1 + CJK letters.
     Symbols (✓, emoji) typed this way never reached the composer (not echoed before Enter);
     without a harness control proving pywinpty delivers them, that loss can't be pinned on
-    Hermes, so they are left out here (#120776 is the submit-time half)."""
+    Tandem, so they are left out here (#120776 is the submit-time half)."""
     tag = nonce("CONPTY")
     with FakeLLMServer([Text(f"ack {tag}")]) as srv:
         home = make_home(tmp_path, srv.base_url)

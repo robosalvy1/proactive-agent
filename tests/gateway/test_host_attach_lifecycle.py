@@ -296,7 +296,7 @@ def test_the_default_profile_arriving_second_starts_beside_a_standalone_named_ow
 
 
 def test_another_tenants_host_gateway_never_yields_attach_or_the_lock_refusal(tmp_path, monkeypatch, owner_pid):
-    """#121352: two Hermes roots on one host (one OS user) each expose a profile named ``default``.
+    """#121352: two Tandem roots on one host (one OS user) each expose a profile named ``default``.
     Tenant A's live multiplexer serves A's ``default`` + ``coder``; tenant B's ``default`` must START,
     not ATTACH (exit 0 with nothing running), and losing the per-OS-user host lock to A must not
     refuse 75 (a race B can never win, so its gateway would never start)."""

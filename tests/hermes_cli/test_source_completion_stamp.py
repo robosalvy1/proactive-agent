@@ -22,7 +22,7 @@ def _repo(tmp_path: Path) -> Path:
         subprocess.run(["git", *args], cwd=root, env=env, check=True, capture_output=True)
 
     git("init", "-q")
-    git("config", "user.name", "Hermes Test")
+    git("config", "user.name", "Tandem Test")
     git("config", "user.email", "hermes@example.invalid")
     (root / "tracked").write_text("release\n", encoding="utf-8")
     git("add", "tracked")

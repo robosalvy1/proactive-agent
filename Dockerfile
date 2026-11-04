@@ -161,7 +161,7 @@ RUN set -eu; \
 
 # #34192 / #66679: backward-compat shim for orchestration templates that
 # still reference the legacy /usr/bin/tini entrypoint (Hostinger's
-# 'Hermes WebUI' catalog, NAS compose projects that preserve an old
+# 'Tandem WebUI' catalog, NAS compose projects that preserve an old
 # entrypoint on image update, etc.). A plain symlink to /init made the
 # path exist, but forwarded tini flags like `-g` into s6-overlay's
 # rc.init as the container CMD (`rc.init: 91: -g: not found`) and
@@ -257,7 +257,7 @@ FROM runtime_base AS python_deps
 #
 # The [otlp] extra contains the SDK/exporter imported by Hermes when Gateway
 # Health export is enabled. Collector and observability-backend dependencies
-# remain external and are not part of the Hermes production image.
+# remain external and are not part of the Tandem production image.
 #
 # The Matrix gateway's deps ([matrix] extra) are baked in because
 # python-olm (transitive via mautrix[encryption]) builds from source on

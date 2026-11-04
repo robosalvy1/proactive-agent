@@ -24,7 +24,7 @@ COMMANDS = {
     'pinned': ['sessions', 'pinned', '--json'],
 }
 EXPECTED = {
-    'insights': ['No sessions found in the last 30 days (source: tui).', 'Hermes Insights'],
+    'insights': ['No sessions found in the last 30 days (source: tui).', 'Tandem Insights'],
     'list': ['No sessions found.', 'reader-fixture'],
     'stats': ['Total sessions: 0', 'Total sessions: 1'],
     'pinned': ['[]', 'reader-fixture'],

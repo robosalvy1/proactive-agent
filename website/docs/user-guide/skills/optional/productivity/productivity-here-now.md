@@ -14,7 +14,7 @@ Publish sites to &#123;slug&#125;.here.now and store files in Drives.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/here-now` |
+| Source | Optional — install with `tandem skills install official/productivity/here-now` |
 | Path | `optional-skills/productivity/here-now` |
 | Version | `1.15.3` |
 | Author | here.now |
@@ -25,7 +25,7 @@ Publish sites to &#123;slug&#125;.here.now and store files in Drives.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Tandem loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # here.now
@@ -215,7 +215,7 @@ For Drives:
 | `--title {text}`       | Viewer title (non-HTML sites)             |
 | `--description {text}` | Viewer description                            |
 | `--ttl {seconds}`      | Set expiry (authenticated only)               |
-| `--client {name}`      | Agent name for attribution (e.g. `hermes`)    |
+| `--client {name}`      | Agent name for attribution (e.g. `tandem`)    |
 | `--base-url {url}`     | API base URL (default: `https://here.now`)    |
 | `--allow-nonherenow-base-url` | Allow sending auth to non-default `--base-url` |
 | `--api-key {key}`      | API key override (prefer credentials file)    |

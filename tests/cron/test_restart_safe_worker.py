@@ -814,7 +814,7 @@ runpy.run_module("cron.scheduler", run_name="__main__", alter_sys=True)
 def test_relaunch_replays_the_worker_before_its_ack(tmp_path, cause):
     """Importing ``hermes_bootstrap`` may relaunch the process: finishing a source
     update (into an ``-I`` interpreter that ignores the pinned PYTHONPATH), or the restore of a
-    tree a killed ``hermes update`` half-wrote. Reached inside ``run_one_job``, either came after
+    tree a killed ``tandem update`` half-wrote. Reached inside ``run_one_job``, either came after
     the ack: the payload was deleted, the marker consumed, and the new process died on ``ruamel``
     or found no payload, leaving the adopted run ``unknown``. The relaunch must instead replay
     the whole worker: payload unread, no ack, marker set, the same worker re-run."""
@@ -1061,7 +1061,7 @@ def test_worker_delivery_queue_is_keyed_by_the_delivering_jobs_own_execution(
     monkeypatch, tmp_path
 ):
     """A nested in-process dispatch inside a worker (e.g. a script running
-    ``hermes cron run <other>``) must not queue under the OUTER execution id."""
+    ``tandem cron run <other>``) must not queue under the OUTER execution id."""
     from cron import scheduler
     from cron import scheduler_delivery
 

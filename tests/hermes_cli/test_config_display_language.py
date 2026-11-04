@@ -1,4 +1,4 @@
-"""``hermes config set display.language`` accepts every ``supported_languages()`` id — bundled, alias,
+"""``tandem config set display.language`` accepts every ``supported_languages()`` id — bundled, alias,
 and a plugin language pack found through real discovery — and refuses unknown ids naming the options."""
 
 from __future__ import annotations

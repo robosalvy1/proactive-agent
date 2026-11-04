@@ -4,8 +4,8 @@ The catch-up machinery already ran late fires after gateway downtime, but
 the run then looked like an ordinary on-time success: nothing recorded the
 scheduled instant vs the actual dispatch time. The due-scan now persists a
 ``last_dispatch`` stamp (scheduled_at / dispatched_at / lateness_seconds /
-kind) on every recurring dispatch so `hermes cron list` and
-`hermes cron status` can surface late catch-ups.
+kind) on every recurring dispatch so `tandem cron list` and
+`tandem cron status` can surface late catch-ups.
 """
 
 from datetime import datetime, timedelta, timezone, UTC
