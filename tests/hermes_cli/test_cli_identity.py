@@ -1,4 +1,4 @@
-"""The CLI agent name comes from the profile's AGENT_NAME.txt, then the skin, then Tandem."""
+"""The CLI agent name comes from the profile's AGENT_NAME.txt, then the skin, then Hermes."""
 
 from hermes_cli import cli_identity, skin_engine
 
@@ -50,4 +50,4 @@ def test_missing_name_and_skin_falls_back_to_hermes(tmp_path, monkeypatch):
 
     monkeypatch.setattr(skin_engine, "get_active_skin", _broken)
 
-    assert cli_identity.get_agent_name() == "Tandem"
+    assert cli_identity.get_agent_name() == "Hermes"
